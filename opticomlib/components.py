@@ -323,7 +323,7 @@ def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=
     ### Returns:
     - `optical_signal`
     """
-    from tqdm.auto import tqdm
+    from tqdm.auto import tqdm # barra de progreso
 
     tic()
     alpha  = alpha/4.343 # [1/km]

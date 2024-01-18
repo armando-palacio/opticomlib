@@ -86,31 +86,5 @@ def Pe_S(mu1,s0,s1,M):
     fun = np.vectorize(lambda mu1,s0,s1,M: 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu1+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0])
     return fun(mu1,s0,s1,M)*0.5*M/(M-1)
 
-
-linestyles = ['-.', '--', '-', ':']
-colors = ['b', 'g', 'r', 'c', 'm','y','k','w','C0','C1','C2','C3','C4']
-markers = ['.',',','o','v','^','>','<','1','2','3','4','8','s','p','P','*','h','H','+','x','X','d','D','|','_']
-
-
-def fmt_plot(s: str, line: plt.Line2D):
-    line.set_linestyle('-')
-    line.set_c('C0')
-    
-    for ls in linestyles:
-        if ls in s:
-            line.set_linestyle(ls)
-            s=s.replace(ls,'')
-            if not s: return
-            break
-    for c in colors:
-        if c in s:
-            line.set_c(c)
-            s=s.replace(c,'')
-            if not s: return
-            break 
-    for mk in markers:
-        if mk in s:
-            line.set_marker(mk)
-            return
         
 

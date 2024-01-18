@@ -1,4 +1,12 @@
-from setuptools import setup, find_packages
+# FROM LOCAL FOLDER
+# python setup.py bdist_wheel 
+# pip install [--upgrade] .\dist\opticomlib-x.x-py3-none-any.whl
+
+# FROM GITHUB
+# pip install [--upgrade] git+https://github.com/armando-palacio/opticomlib.git
+
+
+from setuptools import setup
 
 setup(
     name='opticomlib',
@@ -15,4 +23,12 @@ setup(
         "Operating System :: OS Independent"
     ],
     zip_safe=False,
+    install_requires=[
+        'scipy',
+        'numpy',
+        'matplotlib',
+        'sklearn',
+        'tqdm',
+        'pympler'
+    ],
 )
