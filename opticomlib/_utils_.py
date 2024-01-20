@@ -1,90 +1,184 @@
+import re
 import numpy as np
 import timeit, time as tm
 import scipy.special as sp
-import scipy.signal as sg
-from scipy.constants import pi, c, h, k as kB, e
-import matplotlib.pyplot as plt
+
+from typing import Literal, Union
+from numpy import ndarray
+
+from scipy.constants import pi, k as kB, e
 from scipy.integrate import quad
-from matplotlib.pyplot import plot, subplots, psd, axvline, legend, xlabel, ylabel, savefig, show, suptitle
-
-plt.rcParams['font.family'] = 'serif'
 
 
-def generate_prbs(k):
+def generate_prbs(order: int=None):
+    """
+        Esta función genera una secuencia pseudoaleatoria binaria (PRBS) de orden deseado.
+
+    Args:
+    - `order` [Opcional] - orden del polinomio generador {7, 9, 11, 15, 20, 23, 31} (default: `order=7`)
+
+    Returns:
+    - `prbs` - secuencia PRBS de orden `order` (array de 0s y 1s)
+    """
+    
     taps = {7: [7,6], 9: [9,5], 11: [11,9], 15: [15,14], 20: [20,3], 23: [23,18], 31: [31,28]}
-    if k not in taps.keys():
-        raise ValueError(f'k must be in {list(taps.keys())}')
+    if order is None: 
+        order = 7
+    elif order not in taps.keys():
+        raise ValueError(f'`order` must be in {list(taps.keys())}')
 
     prbs = []
-    lfsr = (1<<k)-1
-    tap1, tap2 = np.array(taps[k])-1
+    lfsr = (1<<order)-1
+    tap1, tap2 = np.array(taps[order])-1
 
     while True:
         prbs.append(lfsr&1)
         new = ((lfsr>>tap1)^(lfsr>>tap2))&1
-        lfsr = ((lfsr<<1) | new) & (1<<k)-1
-        if lfsr == (1<<k)-1:
+        lfsr = ((lfsr<<1) | new) & (1<<order)-1
+        if lfsr == (1<<order)-1:
             break
     return np.array(prbs, np.uint8)
 
 
-def dec2bin(n, k=8):
-    binary = np.zeros(k, np.uint8)
-    if n > 2**k-1: raise ValueError('El número es demasiado grande para ser representado con k bits.')
-    i = k - 1
-    while n > 0 and i >= 0:
-        binary[i] = n % 2
-        n //= 2
+
+def dec2bin(num: int, digits: int=8) -> np.ndarray:
+    """
+        Esta función convierte un número entero a su representación binaria.
+
+    Args:
+    - `num` - número entero a convertir
+    - `digits` [Opcional] - cantidad de bits de la representación binaria (default: `digits=8`)
+
+    Returns:
+    - `binary` - representación binaria de `num` (array de 0s y 1s)
+    """
+
+    binary = np.zeros(digits, np.uint8)
+    if num > 2**digits-1: raise ValueError(f'El número es demasiado grande para ser representado con {digits} bits.')
+    i = digits - 1
+    while num > 0 and i >= 0:
+        binary[i] = num % 2
+        num //= 2
         i -= 1
     return binary
 
 
-def str2ndarray(string: str): 
-    return np.array(list(map(int, string.replace(',','').replace(' ',''))))
+
+def str2array(string: str): 
+    """
+        Esta función convierte una cadena de caracteres a un array. Usar como separadores de elementos comas o espacios en blancos.
+        los elementos pueden ser enteros o de punto flotante.
+
+    Args:
+    - `string` - cadena de caracteres a convertir
+
+    Returns:
+    - `array` - array numérico
+    """
+    
+    # Definir el patrón regex que permite números, espacios en blanco, comas y puntos
+    patron = r'^[0-9, .\s]+$'
+    if not re.match(patron, string): 
+        raise ValueError('La cadena de caracteres contiene caracteres no permitidos.')
+    
+    if '.' in string:
+        type = float
+    else:
+        type = int
+    
+    string = re.split(r'[,\s]+', string)
+
+    return np.array(string).astype(type)
+
 
 
 def get_time(line_of_code: str, n:int): return timeit.timeit(line_of_code, number=n)/n
+
 
 
 def tic(): global __; __ = tm.time()
 def toc(): global __; return tm.time()-__ 
 
 
-db = lambda x: 10*np.log10(x) # función de conversión a dB
 
+db = lambda x: 10*np.log10(x) # función de conversión a dB
 
 dbm = lambda x: 10*np.log10(x*1e3) # función de conversión a dBm (x en Watts)
 
-
 idb = lambda x: 10**(x/10) # función de conversión a veces
-
 
 idbm = lambda x: 10**(x/10-3) # función de conversión a Watts
 
-
 gaus = lambda x,mu,std: 1/std/(2*pi)**0.5*np.exp(-0.5*(x-mu)**2/std**2) # función gaussiana
-
 
 Q = lambda x: 0.5*sp.erfc(x/2**0.5) # función Q
 
 
-def Pe_OOK(mu1,s0,s1):
-    def fun(mu1,s0,s1):
-        r = np.linspace(0,mu1,1000)
-        return 0.5*np.min(Q((mu1-r)/s1) + Q(r/s0))
-    return np.vectorize(fun)(mu1,s0,s1)
+
+def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray], modulation: str='OOK', M: int=None, kind: Literal['soft','hard']='soft'):
+    """
+        Esta función calcula la probabilidad de error de bit teórica para un sistema de comunicaciones ópticas y una modulación dada.
+
+    Args:
+    - `mu1` - valor de corriente (o tensión) medio de la señal correspondiente a un bit 1
+    - `s0` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 0
+    - `s1` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 1
+    - `modulation` [Opcional] - modulación utilizada (default: `modulation='OOK'`)
+    - `M` [Opcional] - orden de la modulación PPM (default: `M=None`). Se debe especificar si `modulation='PPM'`
+    - `kind` [Opcional] - tipo de decodificación PPM (default: `kind='soft'`). Se debe especificar si `modulation='PPM'`
+
+    Returns:
+    - `BER` - probabilidad de error de bit teórica
+    """
+
+    if modulation == 'OOK':
+        def fun(mu1_,s0_,s1_):
+            r = np.linspace(0,mu1_,1000)
+            return 0.5*np.min(Q((mu1_-r)/s1_) + Q(r/s0_))
+        fun = np.vectorize( fun )
+        return fun(mu1,s0,s1)
+
+    if modulation == 'PPM':
+        if M is None: raise ValueError('`M` must be specified for PPM modulation.')
+
+        if kind == 'soft':
+            fun = np.vectorize( lambda mu1,s0,s1,M: 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu1+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0] )
+        elif kind == 'hard':
+            def fun(mu1_,s0_,s1_,M_):
+                r = np.linspace(0,mu1_,1000)
+                return np.min(1 - Q((r-mu1_)/s1_) * (1-Q((r)/s0_))**(M_-1))
+            fun = np.vectorize( fun )
+        else:
+            raise ValueError('`kind` must be `soft` or `hard`.')
+        return fun(mu1,s0,s1,M)*0.5*M/(M-1)
+    
+    # Others modulations
+    else:
+        raise ValueError('`modulation` must be `OOK` or `PPM`. More modulations will be added in the future.')
+    
 
 
-def Pe_H(mu1,s0,s1,M):
-    def fun(mu1,s0,s1,M):
-        r = np.linspace(0,mu1,1000)
-        return np.min(1 - Q((r-mu1)/s1) * (1-Q((r)/s0))**(M-1))
-    return np.vectorize(fun)(mu1,s0,s1,M)*0.5*M/(M-1)
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
 
+    P = np.linspace(-25,-15,1000)
+    p = idbm(P)
+    
+    B = 5e9 # Hz
 
-def Pe_S(mu1,s0,s1,M):
-    fun = np.vectorize(lambda mu1,s0,s1,M: 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu1+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0])
-    return fun(mu1,s0,s1,M)*0.5*M/(M-1)
+    mu1 = p
+    s0 = (4 * kB * 300 * B / 50)**0.5
+    s1 = (4 * kB * 300 * B / 50 + 2 * e * mu1 * B)**0.5
 
-        
-
+    plt.semilogy(dbm(p/2), theory_BER(mu1,s0,s1, 'OOK'), '-r', lw=2, label='OOK')
+    
+    for M, c in zip([2,4,8,16], ['C0', 'C1', 'C2', 'C3']):
+        plt.semilogy(dbm(p/M), theory_BER(mu1,s0,s1, 'PPM', M, 'soft'), f'--{c}', label=f'{M}-PPM - soft')
+        plt.semilogy(dbm(p/M), theory_BER(mu1,s0,s1, 'PPM', M, 'hard'), f'{c}', label=f'{M}-PPM - hard')
+    
+    plt.legend()
+    plt.ylim(1e-9,0.5)
+    plt.grid()
+    plt.xlabel('Potencia media (dBm)')
+    plt.ylabel('BER')
+    plt.show()

@@ -1,11 +1,33 @@
-import os, sys; sys.path.append(os.path.dirname(__file__)+'\..') # Agrego el directorio anterior al path 
+"""
+======================================
+Data types (:mod:`opticomlib._types_`)
+======================================
 
-from typing import Any, Union, Literal
-from numpy.fft import fft, ifft, fftfreq, fftshift, ifftshift
+.. autosummary::
+   :toctree: generated/
+
+   global_variables      -- Global variables class
+   binary_sequence       -- Binary sequence class
+   electrical_signal     -- Electrical signal class
+   optical_signal        -- Optical signal class
+   eye                   -- Eye diagram class
+"""
+
+from numpy.fft import fft, ifft, fftfreq, fftshift
 from pympler.asizeof import asizeof as sizeof
 
-from opticomlib._utils_ import *
+import numpy as np
+from scipy.constants import c, pi
 
+import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'serif'
+
+from typing import Literal, Union, Any
+
+from _utils_ import (
+    str2array, 
+    dbm, 
+)
 
 class global_variables():
     def __init__(self):
@@ -108,7 +130,7 @@ class binary_sequence():
             raise TypeError("El argumento debe ser una cadena de texto, una lista, una tupla o un array de numpy!")
         
         if isinstance(data, str):
-            data = str2ndarray(data)
+            data = str2array(data)
             if set(data)-set([0,1]):
                 raise ValueError("La cadena de texto debe contener únicamente números binarios!")
 
@@ -121,7 +143,7 @@ class binary_sequence():
     def __getitem__(self, key): return binary_sequence(self.data[key])
     def __add__(self, other): 
         if isinstance(other, str):
-            other = str2ndarray(other)
+            other = str2array(other)
         elif isinstance(other, binary_sequence):
             other = other.data.tolist()
         return binary_sequence(self.data.tolist() + other)
@@ -243,19 +265,18 @@ class electrical_signal():
         
     def __gt__(self, other): 
         if isinstance(other, electrical_signal): 
-            return binary_sequence( (self.signal > other.signal).astype(int) )
+            return binary_sequence( (self.signal+self.noise > other.signal).astype(int) )
         if isinstance(other, (int, float, complex, np.ndarray)):
-            return binary_sequence( (self.signal > other).astype(int) )
+            return binary_sequence( (self.signal+self.noise > other).astype(int) )
 
-    def plot(self, fmt=None, n=None, **kargs): 
-        sps = global_vars.sps
+    def plot(self, fmt=None, n=None, xlabel=None, ylabel=None, **kargs): 
         if fmt is None:
             fmt = '-'  
         if n is None: 
             n = self.len()
-        line = plot(self.t()[:n], (self[:n].signal+self[:n].noise).real, fmt, **kargs)
-        xlabel('Tiempo [s]')
-        ylabel('Amplitud [u.a.]')
+        plt.plot(self.t()[:n], np.abs(self[:n].signal+self[:n].noise), fmt, **kargs)
+        plt.xlabel(xlabel if xlabel else 'Tiempo [s]')
+        plt.ylabel(ylabel if ylabel else 'Amplitud [u.a.]')
         return self
     
     def psd(self, fmt=None, n=None, **kargs):
@@ -267,9 +288,9 @@ class electrical_signal():
         f = fftshift( fftfreq(n, d=self.dt())*1e-9)  # GHz
         psd = fftshift(self[:n]('w').abs('signal')**2/n**2)
         
-        plot(f, psd*1e3, fmt, **kargs)
-        xlabel('Frecuencia [GHz]')
-        ylabel('Potencia [mW]')
+        plt.plot(f, psd*1e3, fmt, **kargs)
+        plt.xlabel('Frecuencia [GHz]')
+        plt.ylabel('Potencia [mW]')
         return self
     
     def grid(self, n=None):
@@ -277,10 +298,10 @@ class electrical_signal():
         if n is None: 
             n = self.len()
         for i in t[:n*sps][::M*sps]:
-            axvline(i, color='k', ls='--')
-        axvline(t[:n*sps][-1]+self.dt(), color='k', ls='--')
+            plt.axvline(i, color='k', ls='--')
+        plt.axvline(t[:n*sps][-1]+self.dt(), color='k', ls='--')
         for i in t[:n*sps][::sps]:
-            axvline(i, color='k', ls='--', alpha=0.3,lw=1)
+            plt.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
         return self
 
 
@@ -330,25 +351,25 @@ class optical_signal(electrical_signal):
 
         if mode =='x':
             label = label if label else 'Polarización X'
-            line = plot(t[:n], np.abs(self.signal[0,:n] + self.noise[0,:n])**2, fmt[0], label=label, **kargs)
-            legend()
+            line = plt.plot(t[:n], np.abs(self.signal[0,:n] + self.noise[0,:n])**2, fmt[0], label=label, **kargs)
+            plt.legend()
         elif mode == 'y':
             label = label if label else 'Polarización Y'
-            line = plot(t[:n], np.abs(self.signal[1,:n] + self.noise[1,:n])**2, fmt[0], label=label, **kargs)
-            legend()
+            line = plt.plot(t[:n], np.abs(self.signal[1,:n] + self.noise[1,:n])**2, fmt[0], label=label, **kargs)
+            plt.legend()
         elif mode == 'xy':
-            line = plot(t[:n], np.abs(self.signal[0,:n]+self.noise[0,:n])**2, fmt[0], t[:n], np.abs(self.signal[1,:n]+self.noise[1,:n])**2, fmt[1], label=['Polarización X', 'Polarización Y'], **kargs)
-            legend()
+            line = plt.plot(t[:n], np.abs(self.signal[0,:n]+self.noise[0,:n])**2, fmt[0], t[:n], np.abs(self.signal[1,:n]+self.noise[1,:n])**2, fmt[1], label=['Polarización X', 'Polarización Y'], **kargs)
+            plt.legend()
         elif mode == 'abs':
             label = label if label else 'Abs'
             s = self.abs()[:n]
-            line = plot(t[:n], (s[0]**2 + s[1]**2), fmt[0], label=label, **kargs)
-            legend()
+            line = plt.plot(t[:n], (s[0]**2 + s[1]**2), fmt[0], label=label, **kargs)
+            plt.legend()
         else:
             raise TypeError('El argumento `mode` debe se uno de los siguientes valores ("x","y","xy","abs").')
 
-        xlabel('Tiempo [s]')
-        ylabel('Potencia [W]')
+        plt.xlabel('Tiempo [s]')
+        plt.ylabel('Potencia [W]')
         return self
     
     def psd(self, fmt=None, mode: Literal['x','y']=None, n=None, **kargs):
@@ -368,9 +389,9 @@ class optical_signal(electrical_signal):
         else:
             raise TypeError('El argumento `mode` debe ser uno de los siguientes valores ("x" o "y")')    
         
-        plot(f, psd*1e3, fmt, **kargs)
-        xlabel('Frecuencia [GHz]')
-        ylabel('Potencia [mW]')
+        plt.plot(f, psd*1e3, fmt, **kargs)
+        plt.xlabel('Frecuencia [GHz]')
+        plt.ylabel('Potencia [mW]')
         return self
     
     def grid(self, n=None):
@@ -378,10 +399,10 @@ class optical_signal(electrical_signal):
         if n is None: 
             n = self.len()
         for i in t[:n*sps][::M*sps]:
-            axvline(i,color='k', ls='--')
-        axvline(t[:n*sps][-1]+self.dt(),color='k', ls='--')
+            plt.axvline(i,color='k', ls='--')
+        plt.axvline(t[:n*sps][-1]+self.dt(),color='k', ls='--')
         for i in t[:n*sps][::sps]:
-            axvline(i,color='k', ls='--', alpha=0.3, lw=1)
+            plt.axvline(i,color='k', ls='--', alpha=0.3, lw=1)
         return self
     
 
@@ -425,7 +446,7 @@ class eye():
         
         nbits = min(nbits, self.y.size//self.sps)
         
-        fig,ax = subplots(2,2, gridspec_kw={'width_ratios': [4,1], 
+        fig,ax = plt.subplots(2,2, gridspec_kw={'width_ratios': [4,1], 
                                             'height_ratios': [2,6], 
                                             'wspace': 0.03,
                                             'hspace': 0.05},
@@ -582,8 +603,12 @@ class eye():
         if save_: 
             if filename is None:
                 filename = 'eyediagram.png'
-            savefig(filename, dpi=300)
+            plt.savefig(filename, dpi=300)
         if show_: 
-            show()
+            plt.show()
         plt.style.use('default')
         return self
+
+
+if __name__ == '__main__':
+    print('done')
