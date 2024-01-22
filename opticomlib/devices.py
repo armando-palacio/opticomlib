@@ -16,8 +16,7 @@ Models for optoelectronic components (:mod:`opticomlib.components`)
    PD                    -- Photodetector (PD) model
    ADC                   -- Analog-to-digital converter (ADC) model
    GET_EYE               -- Eye diagram parameters and metrics estimator
-   DOWN_SAMPLER          -- Down Sampler device
-   UP_SAMPLER            -- Up Sampler device
+   SAMPLER               -- Sampler device
 """
 
 
@@ -723,7 +722,7 @@ def SAMPLER(input: electrical_signal, _eye_: eye) -> electrical_signal:
 
 
 ### algunas funciones de prueba
-def animated_fiber_propagation(input: optical_signal, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05):
+def animated_fiber_propagation(input: optical_signal, M :int, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05):
     from matplotlib.animation import FuncAnimation
 
     # cambio las unidades
@@ -786,7 +785,7 @@ def animated_fiber_propagation(input: optical_signal, length_: float, alpha_: fl
     def init():
         line.set_data([],[])
         time_text.set_text('z = 0.0 Km')
-        for i in t[::global_vars.M*global_vars.sps]:
+        for i in t[::M*global_vars.sps]:
            plt.axvline(i, color='k', ls='--')
         for i in t[::global_vars.sps]:
            plt.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
@@ -802,10 +801,10 @@ def animated_fiber_propagation(input: optical_signal, length_: float, alpha_: fl
     plt.show()
 
 
-def animated_fiber_propagation_with_psd(input: optical_signal, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05, n:int=None):
+def animated_fiber_propagation_with_psd(input: optical_signal, M :int, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05, n:int=None):
     from matplotlib.animation import FuncAnimation
 
-    n = input.len() if n is None else n*global_vars.M*input.sps() 
+    n = input.len() if n is None else n*M*input.sps() 
     
     length = length_
     alpha  = alpha_/4.343
@@ -883,7 +882,7 @@ def animated_fiber_propagation_with_psd(input: optical_signal, length_: float, a
     def init():
         line1.set_data([],[])
         z_text.set_text('z = 0.0 Km')
-        for i in t[:n:global_vars.M*global_vars.sps]:
+        for i in t[:n:M*global_vars.sps]:
             ax1.axvline(i, color='k', ls='--')
         for i in t[:n:global_vars.sps]:
             ax1.axvline(i, color='k', ls='--', alpha=0.3,lw=1)

@@ -38,80 +38,41 @@ class global_variables():
             ---
 
             ### Parámetros de la clase:
-            - `M` (int) - orden de modulación PPM (default: 4)
             - `sps` (int) - muestras por slot (default: 16) 
             - `slot_rate` (float) - tasa de slots en [Hz] (default: 1e9)
-            - `p_laser` (float) - potencia del laser en [dBm] (default: 0)
             - `fs` (float) - frecuencia de muestreo en [Hz] (default: slot_rate*sps)
             - `dt` (float) - periodo de muestreo en [s] (default: 1/fs)
-            - `BW_opt` (float) - ancho de banda del canal óptico en [Hz] (default: 100e9)
             - `lambda_opt` (float) - longitud de onda del canal óptico en [m] (default: 1550e-9)
             - `f0` (float) - frecuencia central del canal óptico en [Hz] (default: c/lambda_opt)
         """
 
-        self.M = None
-        self.sps = 64
-        self.bit_rate = None
-        self.slot_rate = None
-        self.p_laser = None
-        self.fs = None
-        self.dt = None
-        self.BW_opt = None
-        self.BW_elec = None
+        self.sps = 16
+        self.R = 1e9
+        self.fs = self.R*self.sps
+        self.dt = 1/self.fs
         self.lambda_opt = 1550e-9
         self.f0 = c/self.lambda_opt
     
     def update(self):
-        self.slot_rate = self.bit_rate*self.M/np.log2(self.M)
-        self.BW_elec = 0.75*self.slot_rate
-        self.fs = self.slot_rate*self.sps
+        self.R = self.bit_rate*self.M/np.log2(self.M)
+        self.fs = self.R*self.sps
         self.dt = 1/self.fs
         self.f0 = c/self.lambda_opt
 
-    def __call__(self, M=4, sps=None, Rb=None, R=None, P_laser=None, fs=None, dt=None, BW_opt=None, BW_elec=None, lambda_opt=1550e-9, f0=None) -> Any:
-        self.M = M
-
-        if R:
-            self.slot_rate = R
-            self.bit_rate = Rb = R*np.log2(M)/M
-        elif Rb:
-            self.bit_rate = Rb
-            self.slot_rate = R = Rb*M/np.log2(M)
-        else:
-            raise ValueError('Debe especificar la tasa de bits o la tasa de slots.')
-
-        if fs:
-            self.fs = fs
-            self.sps = sps = fs/R
-            self.dt = dt = 1/fs
-        elif sps:
-            self.sps = sps
+    def __call__(self, sps, R=None, fs=None, lambda_opt=1550e-9) -> Any:
+        self.sps = sps
+        
+        if R: 
+            self.R = R
             self.fs = fs = R*sps
-            self.dt = dt = 1/fs
-        else: 
-            raise ValueError('Debe especificar la frecuencia de muestreo o la cantidad de muestras por slot.')
-        
-        if dt:
-            self.dt = dt
-
-        if P_laser:
-            self.p_laser = P_laser
-        
-        if BW_opt:
-            self.BW_opt = BW_opt
-        
-        if BW_elec:
-            self.BW_elec = BW_elec
-        else: 
-            self.BW_elec = 0.75*R
+        elif fs:
+            self.fs = fs
+            self.R = fs/sps
+            self.dt = 1/fs
         
         self.lambda_opt = lambda_opt
+        self.f0 = c/lambda_opt
         
-        if f0:
-            self.f0 = f0
-            self.lambda_opt =  c/f0
-        else:
-            self.f0 = c/lambda_opt
         return self
         
     def print(self):
