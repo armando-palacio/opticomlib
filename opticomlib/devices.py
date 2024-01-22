@@ -14,8 +14,10 @@ Models for optoelectronic components (:mod:`opticomlib.components`)
    FIBER                 -- Optical fiber model (dispersion, attenuation and non-linearities, Split-Step Fourier Method)
    LPF                   -- Electrical low-pass filter (LPF) bessel model
    PD                    -- Photodetector (PD) model
+   ADC                   -- Analog-to-digital converter (ADC) model
    GET_EYE               -- Eye diagram parameters and metrics estimator
-   SAMPLER               -- Sampler model
+   DOWN_SAMPLER          -- Down Sampler device
+   UP_SAMPLER            -- Up Sampler device
 """
 
 
@@ -26,8 +28,9 @@ from typing import Literal, Union
 from numpy import ndarray
 from scipy.constants import pi, k as kB, e, h
 from numpy.fft import fft, ifft, fftshift
-from scipy.integrate import quad
 import matplotlib.pyplot as plt
+import sklearn.cluster as sk
+from tqdm.auto import tqdm # barra de progreso
 
 from _types_ import (
     electrical_signal,
@@ -39,13 +42,10 @@ from _types_ import (
 
 from _utils_ import (
     generate_prbs,
-    str2array,
-    dec2bin,
     idbm,
     idb,
     tic,
     toc,
-    Q,
 )
 
 
@@ -319,7 +319,6 @@ def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=
     ### Returns:
     - `optical_signal`
     """
-    from tqdm.auto import tqdm # barra de progreso
 
     tic()
     alpha  = alpha/4.343 # [1/km]
@@ -367,7 +366,7 @@ def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=
 
 
 
-def LPF(input: Union[np.ndarray, electrical_signal], BW: float, n: int=4, fs: float=None) -> electrical_signal:
+def LPF(input: Union[ndarray, electrical_signal], BW: float, n: int=4, fs: float=None) -> electrical_signal:
         """
         ### Descripción:
         Filtro Pasa Bajo (LPF) Eléctrico. Filtra la señal eléctrica de entrada, dejando pasar la banda de frecuencias deseada. 
@@ -388,7 +387,7 @@ def LPF(input: Union[np.ndarray, electrical_signal], BW: float, n: int=4, fs: fl
         tic()
 
         if not isinstance(input, electrical_signal):
-            if not isinstance(input, np.ndarray):
+            if not isinstance(input, ndarray):
                 raise TypeError("`input` debe ser del tipo (ndarray ó electrical_signal).")
             else:
                 input = electrical_signal(input)
@@ -397,7 +396,7 @@ def LPF(input: Union[np.ndarray, electrical_signal], BW: float, n: int=4, fs: fl
 
         sos_band = sg.bessel(N = n, Wn = BW, btype = 'low', fs=fs, output='sos', norm='mag')
 
-        output = electrical_signal( np.zeros((2,input.len())) )
+        output = electrical_signal( np.zeros(input.len()) )
 
         output.signal = sg.sosfiltfilt(sos_band, input.signal)
 
@@ -474,6 +473,63 @@ def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_lo
     return output
 
 
+
+def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) -> binary_sequence:
+    """
+    ### Descripción:
+    Conversor analógico a digital. Convierte una señal eléctrica analógica en una señal digital de amplitud cuantizada, muestreada a una frecuencia `fs`
+    y filtrada a un ancho de banda BW.
+
+    ---
+
+    ### Args:
+    - `input` - señal eléctrica a cuantizar
+    - `fs` [Opcional] - frecuencia de muestreo de la señal de salida (default: `global_vars.fs`)
+    - `BW` [Opcional] - ancho de banda del ADC en [Hz] (default: `inf` no se filtra la señal)
+    - `nbits` [Opcional] - cantidad de bits del ADC (default: `nbits=8`)
+
+    ---
+    
+    ### Returns:
+    - `electrical_signal`
+    """
+    tic()
+
+    if not isinstance(input, electrical_signal):
+        raise TypeError("`input` debe ser del tipo (electrical_signal).")
+    
+    if not fs:
+        fs = global_vars.fs
+
+    if BW:
+        filt = sg.bessel(N = 4, Wn = BW, btype = 'low', fs=input.fs(), output='sos', norm='mag')
+        signal = sg.sosfiltfilt(filt, input.signal)
+    else: 
+        signal = input.signal
+
+    signal = sg.resample(signal, int(input.len()*fs/input.fs()))
+
+    V_min = signal.min()
+    V_max = signal.max()
+    dig_signal = np.round( (signal - V_min) / (V_max - V_min) * (2**nbits - 1) ) # normalizo la señal entre 0 y 2**nbits-1
+    dig_signal = dig_signal / (2**nbits - 1) * (V_max - V_min) + V_min # vuelvo a la amplitud original
+
+    if np.sum(input.noise):
+        noise = sg.sosfiltfilt(filt, input.noise)
+        noise = sg.resample(noise, int(input.len()*fs//input.fs()))
+        V_min = noise.min()
+        V_max = noise.max()
+        dig_noise = np.round( (noise - V_min) / (V_max - V_min) * (2**nbits - 1) ) # normalizo la señal entre 0 y 2**nbits-1
+        dig_noise = dig_noise / (2**nbits - 1) * (V_max - V_min) + V_min # vuelvo a la amplitud original
+
+        output = electrical_signal( dig_signal, dig_noise )
+    else:
+        output = electrical_signal( dig_signal )
+
+    output.ejecution_time = toc()
+    return output
+
+
 def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamplig: int = None):
     """
     ### Descripción:
@@ -538,8 +594,6 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
             return levels[np.argmin(np.abs(levels - data))]
         else:
             return levels[np.argmin( np.abs( np.repeat([levels],len(data),axis=0) - np.reshape(data,(-1,1)) ),axis=1 )]
-    
-    import sklearn.cluster as sk
 
     eye_dict = {}
 
@@ -850,29 +904,30 @@ def animated_fiber_propagation_with_psd(input: optical_signal, length_: float, a
 
 
 if __name__ == '__main__':
-    def Spectrogram(signal, T_L):
-        N = signal.len()//T_L
-        y = np.zeros(N*T_L)
-        for i in range(N):
-            y[i*T_L:(i+1)*T_L] = fftshift(np.abs( fft(signal.signal[i*T_L:(i+1)*T_L]) )**2)
-        y = y.reshape((N, T_L)).T
-        return y
+    # def Spectrogram(signal, T_L):
+    #     N = signal.len()//T_L
+    #     y = np.zeros(N*T_L)
+    #     for i in range(N):
+    #         y[i*T_L:(i+1)*T_L] = fftshift(np.abs( fft(signal.signal[i*T_L:(i+1)*T_L]) )**2)
+    #     y = y.reshape((N, T_L)).T
+    #     return y
 
 
-    sps = 2048
-    global_vars(M=8, sps=sps, R=10e9)
-    y = DAC('0 1 0 1 0 0 1', pulse_shape='gaussian', T=sps, m=1, c=-50)
-    N_TL = 128
-    # g = Spectrogram(y, N_TL)
-    # f = y.w()/(2*np.pi)
-    # plt.imshow(g, cmap='hot', aspect='auto', interpolation='blackman', extent=[y.t().min()*1e9, y.t().max()*1e9, f.min()*1e-9, f.max()*1e-9])
-    # plt.ylim(-1000,1000)
-    # y.plot(ylabel='Voltaje (V)',c='red').grid()
-    plt.figure()
-    plt.plot(y.t(), y.abs('signal'))
-    # for i in range(y.len()//N_TL):
-    #     plt.axvline(y.t()[i*N_TL], ls='--')
-    plt.show()
+    # sps = 2048
+    # global_vars(M=8, sps=sps, R=10e9)
+    # y = DAC('0 1 0 1 0 0 1', pulse_shape='gaussian', T=sps, m=1, c=-50)
+    # N_TL = 128
+    # # g = Spectrogram(y, N_TL)
+    # # f = y.w()/(2*np.pi)
+    # # plt.imshow(g, cmap='hot', aspect='auto', interpolation='blackman', extent=[y.t().min()*1e9, y.t().max()*1e9, f.min()*1e-9, f.max()*1e-9])
+    # # plt.ylim(-1000,1000)
+    # # y.plot(ylabel='Voltaje (V)',c='red').grid()
+    # plt.figure()
+    # plt.plot(y.t(), y.abs('signal'))
+    # # for i in range(y.len()//N_TL):
+    # #     plt.axvline(y.t()[i*N_TL], ls='--')
+    # plt.show()
+    pass
 
 
 
