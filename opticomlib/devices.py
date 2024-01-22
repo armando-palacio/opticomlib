@@ -1,10 +1,53 @@
-import os, sys; sys.path.append(os.path.dirname(__file__)+'\..') # Agrego el directorio anterior al path 
+"""
+===================================================================
+Models for optoelectronic components (:mod:`opticomlib.components`)
+===================================================================
 
-from opticomlib._types_ import *
+.. autosummary::
+   :toctree: generated/
+
+   PRBS                  -- Pseudorandom binary sequence generator
+   DAC                   -- Digital-to-analog converter (DAC) model
+   BPF                   -- Optical band-pass filter (BPF) bessel model
+   EDFA                  -- Erbium-doped fiber amplifier (EDFA) simple model
+   DM                    -- Dispersion medium model
+   FIBER                 -- Optical fiber model (dispersion, attenuation and non-linearities, Split-Step Fourier Method)
+   LPF                   -- Electrical low-pass filter (LPF) bessel model
+   PD                    -- Photodetector (PD) model
+   ADC                   -- Analog-to-digital converter (ADC) model
+   GET_EYE               -- Eye diagram parameters and metrics estimator
+   SAMPLER               -- Sampler device
+"""
+
+
+"""Basic physical models for optical/electronic components."""
+import numpy as np
 import scipy.signal as sg
+from typing import Literal, Union
+from numpy import ndarray
+from scipy.constants import pi, k as kB, e, h
+from numpy.fft import fft, ifft, fftshift
+import matplotlib.pyplot as plt
+import sklearn.cluster as sk
+from tqdm.auto import tqdm # barra de progreso
 
-#--------------------------------------------------------------------------------------------------------------
-# Definición de componentes
+from _types_ import (
+    electrical_signal,
+    binary_sequence,
+    optical_signal,
+    global_vars,
+    eye,
+)
+
+from _utils_ import (
+    generate_prbs,
+    idbm,
+    idb,
+    tic,
+    toc,
+)
+
+
 
 def PRBS(n: int=2**8, user: list=[], defined: int=None) -> binary_sequence:
     """
@@ -35,58 +78,11 @@ def PRBS(n: int=2**8, user: list=[], defined: int=None) -> binary_sequence:
     return output
 
 
-def PPM_ENCODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int=None) -> binary_sequence:
-    """
-    ### Descripción:
-    Codificador digital PPM. Convierte una secuencia binaria de entrada en una secuencia binaria codificada en PPM. 
 
-    ---
-    
-    ### Args:
-    - `input` - secuencia binaria de entrada
-    - `M` [Opcional] - cantidad de slots que contiene un símbolo (default: `M=global_vars.M`)
-
-    ---
-    
-    ### Returns:
-    - `binary_sequence`
-    """
-    tic()
-
-    if isinstance(input, binary_sequence):
-        input = input.data
-    elif isinstance(input, str):
-        input = str2ndarray(input)
-    elif isinstance(input, (list, tuple)):
-        input = np.array(input)
-    else:
-        raise TypeError("El argumento `input` debe ser del tipo (str, list, tuple, ndarray, binary_sequence).")
-    
-    if not M:
-        M = global_vars.M
-    
-    k = int(np.log2(M))
-
-    input = input[:len(input)//k*k] # truncamos la secuencia de bits a un múltiplo de k
-
-    decimal = np.sum(input.reshape(-1,k)*2**np.arange(k)[::-1], axis=-1) # convertimos los símbolos a decimal
-    ppm_s = np.zeros(decimal.size*M, dtype=np.uint8)
-
-    ppm_s[np.arange(decimal.size)*M + decimal] = 1 # codificamos los símbolos en PPM
-   
-    output = binary_sequence(ppm_s) 
-    output.ejecution_time = toc()
-    return output
-
-
-def DAC(seq: Union[str, list, tuple, np.ndarray, binary_sequence], 
-        sps: int=None, 
-        type: Literal['rect','gaussian']='rect', 
-        c: float=0.0, 
-        m: int=1, 
-        T0: float=None, 
-        output: Literal['electrical_signal', 'optical_signal'] = None,
-        power = None) -> electrical_signal:  
+def DAC(input: Union[str, list, tuple, ndarray, binary_sequence], 
+        Vout: float=None,
+        pulse_shape: Literal['rect','gaussian']='rect', 
+        **kargs) -> electrical_signal:  
     """
     ### Descripción:
     Conversor digital a analógico. Convierte una secuencia binaria en una señal eléctrica, muestreada a una frecuencia `fs`.
@@ -94,54 +90,53 @@ def DAC(seq: Union[str, list, tuple, np.ndarray, binary_sequence],
     ---
 
     ### Args:
-    - `seq` - secuencia binaria de entrada
-    - `sps` [Opcional] - cantidad de muestras por slot (default: `sps=global_vars.sps`)
-    - `type` [Opcional] - forma de pulso a la salida, puede ser "rect" o "gaussian" (default: `type="rect"`)
-    - `c` [Opcional] - chirp del pulso. Solo para el caso de pulsos gausianos (default: `c=0.0`)
-    - `m` [Opcional] - orden del pulso supergausiano (default: `m=1`)
-    - `T0` [Opcional] - ancho a mitad de artura del pulso gaussiano (default: ancho de un slot)
+    - `input` - secuencia binaria de entrada
+    - `Vout` [Opcional] - amplitud de la señal de salida [-15 a 15 Voltios] (default: `amplitud=5.0`)
+    - `pulse_shape` [Opcional] - forma de pulso a la salida, puede ser "rect" o "gaussian" (default: `type="rect"`)
+
+    ---
     
+    ### Kargs:
+    - `c` [Opcional] - chirp del pulso gaussiano. Solo si `type=gaussian` (default: `c=0.0`)
+    - `m` [Opcional] - orden del pulso supergausiano. Solo si `type=gaussian` (default: `m=1`)
+    - `T` [Opcional] - ancho a mitad de altura del pulso gaussiano en cantidad de muestras. Solo si `type=gaussian` (default: `T=sps`)
     ---
 
     ### Returns:
     - `electrical_signal`
     """
     tic()
-    if not isinstance(seq, binary_sequence):
-        seq = binary_sequence(seq)
-    if not sps:
-        sps = global_vars.sps
-
-    if type == 'rect':
-        x = np.kron(seq.data, np.ones(sps))
+    if not isinstance(input, binary_sequence):
+        input = binary_sequence(input)
     
-    elif type == 'gaussian':
-        p = lambda t, T0: np.exp(-(1+1j*c)/2 * (t/T0)**(2*m))
+    sps = kargs['sps'] if 'sps' in kargs.keys() else global_vars.sps
 
-        M = global_vars.M
-        T = 1/global_vars.slot_rate # tiempo de slot
-        T0 = T0/2.35482 if T0 else T/2.35482 # desviación estándar del pulso gaussiano (considerando T como el ancho a la mitad de la potencia)
+    if pulse_shape == 'rect':
+        x = np.kron(input.data, np.ones(sps))
+    
+    elif pulse_shape == 'gaussian':
+        c = kargs['c'] if 'c' in kargs.keys() else 0.0
+        m = kargs['m'] if 'm' in kargs.keys() else 1
+        T = kargs['T'] if 'T' in kargs.keys() else sps
 
-        tp = np.linspace(-M/2*T, M/2*T, M*sps) # vector de tiempo del pulso gaussiano
-        pulse = p(tp, T0) # pulso gaussiano
+        p = lambda t, T: np.exp(-(1+1j*c)/2 * (t/T)**(2*m))
 
-        s = np.zeros(seq.len()*sps)
-        s[int(sps//2)::sps]=seq.data
-        s[int(sps//2-1)::sps]=seq.data
+        t = np.linspace(-2*sps, 2*sps, 4*sps) # vector de tiempo del pulso gaussiano
+        k = 2*(2*np.log(2))**(1/(2*m)) # factor de escala entre el ancho de un slot y la desviación estándar del pulso gaussiano
+        pulse = p(t, T/k) # pulso gaussiano
+
+        s = np.zeros(input.len()*sps)
+        s[int(sps//2)::sps]=input.data
+        s[int(sps//2-1)::sps]=input.data
 
         x = sg.fftconvolve(s, pulse, mode='same')/2
     else:
         raise NameError('El parámetro `type` debe ser uno de los siguientes valores ("rect","gaussian").')
 
-    if power:
-        x = x * (power / np.mean(np.abs(x)**2))**0.5
-    
-    if output == 'optical_signal':
-        output = optical_signal( x )
-    elif output == 'electrical_signal':
-        output = electrical_signal( x )
-    else:
-        raise TypeError("El argumento `output` debe ser ('electrical_signal' o 'optical_signal').")
+    if Vout:
+        x = x * Vout / x.max()
+
+    output = electrical_signal( x )
 
     output.ejecution_time = toc()
     return output
@@ -269,7 +264,7 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float=None) -> tuple: #
     return output
 
 
-def DISPERSIVE_MEDIUM(input: optical_signal, beta_2: float, length: float) -> optical_signal:
+def DM(input: optical_signal, beta_2: float, length: float) -> optical_signal:
     """
     ### Descripción:
     Medio Dispersivo. Emula un medio con solo la propiedad de dispersión, es decir solo `beta_2` diferente de cero. 
@@ -323,7 +318,6 @@ def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=
     ### Returns:
     - `optical_signal`
     """
-    from tqdm.auto import tqdm # barra de progreso
 
     tic()
     alpha  = alpha/4.343 # [1/km]
@@ -371,7 +365,7 @@ def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=
 
 
 
-def LPF(input: Union[np.ndarray, electrical_signal], BW: float, n: int=4, fs: float=None) -> electrical_signal:
+def LPF(input: Union[ndarray, electrical_signal], BW: float, n: int=4, fs: float=None) -> electrical_signal:
         """
         ### Descripción:
         Filtro Pasa Bajo (LPF) Eléctrico. Filtra la señal eléctrica de entrada, dejando pasar la banda de frecuencias deseada. 
@@ -392,7 +386,7 @@ def LPF(input: Union[np.ndarray, electrical_signal], BW: float, n: int=4, fs: fl
         tic()
 
         if not isinstance(input, electrical_signal):
-            if not isinstance(input, np.ndarray):
+            if not isinstance(input, ndarray):
                 raise TypeError("`input` debe ser del tipo (ndarray ó electrical_signal).")
             else:
                 input = electrical_signal(input)
@@ -401,7 +395,7 @@ def LPF(input: Union[np.ndarray, electrical_signal], BW: float, n: int=4, fs: fl
 
         sos_band = sg.bessel(N = n, Wn = BW, btype = 'low', fs=fs, output='sos', norm='mag')
 
-        output = electrical_signal( np.zeros((2,input.len())) )
+        output = electrical_signal( np.zeros(input.len()) )
 
         output.signal = sg.sosfiltfilt(sos_band, input.signal)
 
@@ -411,69 +405,6 @@ def LPF(input: Union[np.ndarray, electrical_signal], BW: float, n: int=4, fs: fl
         output.ejecution_time = toc()
         return output
 
-
-# def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
-#     """
-#     ### Descripción:
-#     Photodetector. Simula la detección de una señal óptica por un fotodetector.
-    
-#     ---
-
-#     ### Args:
-#     - `input` - señal óptica a detectar
-#     - `BW` - ancho de banda del detector en [Hz]
-#     - `R` - Responsividad del detector en [A/W] (default: `R=1.0`)
-#     - `T` - Temperatura del detector en [K] (default: `T=300.0`)
-#     - `R_load` - Resistencia de carga del detector en [Ohm] (default: `R_load=50.0`)
-    
-#     ---
-    
-#     ### Returns:
-#     - `electrical_signal`
-#     """
-#     tic()
-#     if BW is None:
-#         BW = global_vars.BW_elec
-
-#     i_sig = R * np.sum(input.abs('signal')**2, axis=0) # se suman las dos polarizaciones
-
-#     if 'thermal' in noise or 'all' in noise:
-#         S_T = 4 * kB * T * (100*BW) / R_load # Density of thermal noise in [A^2]
-#         i_T = np.random.normal(0, S_T**0.5, input.len())
-    
-#     if 'shot' in noise or 'all' in noise:
-#         S_N = 2 * e * i_sig * (100*BW) # Density of shot noise in [A^2]
-#         i_N = np.vectorize(lambda s: np.random.normal(0,s))(S_N**0.5)
-
-#     if 'ase' in noise or 'all' in noise:
-#         i_sig_sp = R * np.abs(input.signal[0]*input.noise[0].conjugate() + \
-#                             input.signal[0].conjugate()*input.noise[0] + \
-#                             input.signal[1]*input.noise[1].conjugate() + \
-#                             input.signal[1].conjugate()*input.noise[1])
-#         i_sp_sp = R * np.sum(input.abs('noise')**2, axis=0) # se suman las dos polarizaciones
-
-#     if noise == 'ase-only':
-#         iph = electrical_signal( i_sig, i_sig_sp  + i_sp_sp )
-#     elif noise == 'thermal-only':
-#         iph = electrical_signal( i_sig, i_T )
-#     elif noise == 'shot-only':
-#         iph = electrical_signal( i_sig, i_N )
-#     elif noise == 'ase-shot':
-#         iph = electrical_signal( i_sig, i_sig_sp  + i_sp_sp + i_N )
-#     elif noise == 'ase-thermal':
-#         iph = electrical_signal( i_sig, i_sig_sp  + i_sp_sp + i_T )
-#     elif noise == 'thermal-shot':
-#         iph = electrical_signal( i_sig, i_T + i_N )
-#     elif noise == 'all':
-#         iph = electrical_signal( i_sig, i_sig_sp  + i_sp_sp + i_N + i_T )
-#     else:
-#         raise ValueError(f"El argumento `noise` debe ser uno de los siguientes: 'ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all'.")
-    
-#     time = toc()
-#     output = LPF(iph, BW, n=4)
-
-#     output.ejecution_time += time
-#     return output
 
 
 def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
@@ -541,7 +472,64 @@ def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_lo
     return output
 
 
-def GET_EYE(input: Union[electrical_signal, optical_signal], M: int=None, nslots: int=4096, sps_resamplig: int = None):
+
+def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) -> binary_sequence:
+    """
+    ### Descripción:
+    Conversor analógico a digital. Convierte una señal eléctrica analógica en una señal digital de amplitud cuantizada, muestreada a una frecuencia `fs`
+    y filtrada a un ancho de banda BW.
+
+    ---
+
+    ### Args:
+    - `input` - señal eléctrica a cuantizar
+    - `fs` [Opcional] - frecuencia de muestreo de la señal de salida (default: `global_vars.fs`)
+    - `BW` [Opcional] - ancho de banda del ADC en [Hz] (default: `inf` no se filtra la señal)
+    - `nbits` [Opcional] - cantidad de bits del ADC (default: `nbits=8`)
+
+    ---
+    
+    ### Returns:
+    - `electrical_signal`
+    """
+    tic()
+
+    if not isinstance(input, electrical_signal):
+        raise TypeError("`input` debe ser del tipo (electrical_signal).")
+    
+    if not fs:
+        fs = global_vars.fs
+
+    if BW:
+        filt = sg.bessel(N = 4, Wn = BW, btype = 'low', fs=input.fs(), output='sos', norm='mag')
+        signal = sg.sosfiltfilt(filt, input.signal)
+    else: 
+        signal = input.signal
+
+    signal = sg.resample(signal, int(input.len()*fs/input.fs()))
+
+    V_min = signal.min()
+    V_max = signal.max()
+    dig_signal = np.round( (signal - V_min) / (V_max - V_min) * (2**nbits - 1) ) # normalizo la señal entre 0 y 2**nbits-1
+    dig_signal = dig_signal / (2**nbits - 1) * (V_max - V_min) + V_min # vuelvo a la amplitud original
+
+    if np.sum(input.noise):
+        noise = sg.sosfiltfilt(filt, input.noise)
+        noise = sg.resample(noise, int(input.len()*fs//input.fs()))
+        V_min = noise.min()
+        V_max = noise.max()
+        dig_noise = np.round( (noise - V_min) / (V_max - V_min) * (2**nbits - 1) ) # normalizo la señal entre 0 y 2**nbits-1
+        dig_noise = dig_noise / (2**nbits - 1) * (V_max - V_min) + V_min # vuelvo a la amplitud original
+
+        output = electrical_signal( dig_signal, dig_noise )
+    else:
+        output = electrical_signal( dig_signal )
+
+    output.ejecution_time = toc()
+    return output
+
+
+def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamplig: int = None):
     """
     ### Descripción:
     Estima todos los parámetros fundamentales y métricas del diagrama de ojo de la señal eléctrica de entrada.
@@ -550,7 +538,6 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], M: int=None, nslots
 
     ### Args:
     - `input` - señal eléctrica a partir de la cual se estimará el diagrama de ojos
-    - `M` [Opcional] - orden de modulación PPM (default: `M=global_vars.M`)
     - 'nslots' [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: `nslots=4096`)
     - 'sps_resamplig' [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: `sps_resamplig=256`)
     
@@ -606,12 +593,9 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], M: int=None, nslots
             return levels[np.argmin(np.abs(levels - data))]
         else:
             return levels[np.argmin( np.abs( np.repeat([levels],len(data),axis=0) - np.reshape(data,(-1,1)) ),axis=1 )]
-    
-    import sklearn.cluster as sk
 
     eye_dict = {}
 
-    M = M if M is not None else global_vars.M; eye_dict['M'] = M
     sps = input.sps(); eye_dict['sps'] = sps
     dt = input.dt(); eye_dict['dt'] = dt
 
@@ -707,10 +691,6 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], M: int=None, nslots
     # Obtenemos la apertura del ojo
     eye_h = mu1 - 3 * s1 - mu0 - 3 * s0; eye_dict['eye_h'] = eye_h
 
-    # obtenemos el umbral de decisión para PPM
-    r = np.linspace(mu0, mu1, 1000)
-    umbral = r[np.argmin(1 - Q((r-mu1)/s1) * (1-Q((r-mu0)/s0))**(M-1))]; eye_dict['umbral'] = umbral
-
     eye_dict['ejecution_time'] = toc()
     return eye(eye_dict)
 
@@ -737,230 +717,12 @@ def SAMPLER(input: electrical_signal, _eye_: eye) -> electrical_signal:
     return output
 
 
-def THRESHOLD(input: electrical_signal, _eye_: eye) -> binary_sequence:
-    """
-    ### Descripción:
-    Realiza la comparación con un umbral de decisión de la señal eléctrica, muestreando a una mustra por slot.
-    
-    ---
-
-    ### Args:
-    - `input` - señal eléctrica a muestrear
-    - `eye`  - objeto de tipo `eye` que contiene la información del diagrama de ojo
-
-    ### Returns:
-    - `binary_sequence` - secuencia binaria obtenida
-    """
-    tic()
-    output = SAMPLER(input, _eye_) > _eye_.umbral
-    output.ejecution_time = toc()
-    return output
-
-
-def HARD_DECISION(input: binary_sequence, M: int=None) -> binary_sequence:
-    """
-    ### Descripción:
-    Estima los símbolos PPM más probables a partir de la secuencia binaria dada como entrada.
-    
-    ---
-
-    ### Args:
-    - `input` - secuencia binaria a estimar
-
-    ### Returns:
-    - `binary_sequence` - secuencia de símbolos estimados
-    """
-    tic()
-
-    if not M:
-        M = global_vars.M
-    assert M < 256, 'El máximo orden de modulación PPM es 256!!'
-
-    n_simb = int(input.len()/M)
-
-    s = np.sum(input.data.reshape(n_simb, M), axis=-1)
-
-    output = np.array(input.data, dtype=np.uint8)
-
-    for i in np.where(s==0)[0]: # si existe algún símbolo sin ningún slot encendidos, se prende uno al azar
-        output[i*M + np.random.randint(M)] = 1
-
-    for i in np.where(s>1)[0]: # si existe algún símbolo con más de 1 slot encendido, se elige uno de ellos al azar)
-        j = np.where(output[i*M:(i+1)*M]==1)[0]
-        output[i*M:(i+1)*M] = 0
-        output[i*M + np.random.choice(j)]=1
-
-    output = binary_sequence(output)
-    output.ejecution_time = toc()
-    return output
-
-
-def SOFT_DECISION(input: electrical_signal, M: int=None) -> binary_sequence:
-    """
-    ### Descripción:
-    Estima los símbolos PPM más probables a partir de la señal eléctrica dada como entrada.
-    
-    ---
-
-    ### Args:
-    - `input` - señal eléctrica sin muestrear
-
-    ### Returns:
-    - `binary_sequence` - secuencia de símbolos estimados
-    """
-    tic()
-
-    if not M:
-        M = global_vars.M
-    assert M < 256, 'El máximo orden de modulación PPM es 256!!'
-
- 
-    signal = np.sum( (input.signal + input.noise).reshape(-1, input.sps()), axis=-1)
-
-    i = np.argmax( signal.reshape(-1, M), axis=-1)
-
-    output = np.zeros_like(signal, dtype=np.uint8)
-    output[np.arange(i.shape[0])*M+i] = 1
-
-    output = binary_sequence(output)
-    output.ejecution_time = toc()
-    return output
-
-
-def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int=None) -> binary_sequence:
-    """
-    ### Descripción:
-    Recibe una secuencia de bits codificada en PPM y la decodifica.
-    
-    ---
-
-    ### Args:
-    - `input` - secuencia binaria codificada en PPM
-    - `M` [Opcional] - orden de modulación PPM
-
-    ### Returns:
-    - `binary_sequence` - secuencia binaria decodificada
-    """
-    tic()
-
-    if isinstance(input, binary_sequence):
-        input = input.data
-    elif isinstance(input, str):
-        input = str2ndarray(input)
-    elif isinstance(input, (list, tuple)):
-        input = np.array(input)
-    else:
-        raise TypeError("El argumento `input` debe ser del tipo (str, list, tuple, ndarray, binary_sequence).")
-
-    if not M:
-        M = global_vars.M
-    
-    k = int(np.log2(M))
-
-    decimal = np.where(input==1)[0]%M # obtenemos el decimal de cada símbolo
-
-    output = np.array(list(map(lambda x: dec2bin(x,k), decimal))).ravel() # convertimos a binario cada decimal
-    output= binary_sequence(output)
-
-    output.ejecution_time = toc()
-    return output
-
-
-def DSP(input: electrical_signal, _eye_: eye=eye(), decision: Literal['hard','soft']='hard') -> binary_sequence:
-    """
-    ### Descripción:
-    Este componente realiza todas las tareas de decisión y decodificación de la señal digital. 
-    
-    Si se selecciona la decisión dura, se realiza el submuestreo de la señal digital a 1 muestra por slot en el instante óptimo 
-    determinado por el objeto `eye`, luego se realiza la comparación con un umbral de decisión estimado por `eye`, se decide que 
-    símbolo PPM se transmitió y se decodifica la secuencia binaria.
-
-    Si se selecciona la decisión blanda, se realiza la integración de cada slot de la señal digital, se decide que símbolo PPM tiene
-    mayor verosimilitud y se decodifica la secuencia binaria.
-    
-    ---
-
-    ### Args:
-    - `input` - secuencia binaria codificada en PPM
-    - `_eye_` [Opcional] - objeto eye con los parámetros del diagrama de ojos (default: `_eye_=eye()`)
-    - `decision` [Opcional] - tipo de decisión a realizar (default: `decision='hard'`)
-
-    ### Returns:
-    - `binary_sequence` - secuencia binaria decodificada
-    """
-    
-    if decision == 'hard':
-        output = THRESHOLD(input, _eye_)
-        simbols = HARD_DECISION(output); simbols.ejecution_time += output.ejecution_time
-    elif decision == 'soft':
-        simbols = SOFT_DECISION(input)
-    else:
-        raise TypeError('No existe el tipo de decisión seleccionada!!')
-
-    output = PPM_DECODER(simbols) 
-
-    output.ejecution_time += simbols.ejecution_time 
-    return output
-
-
-def BER_COUNTER(Tx: binary_sequence, Rx: binary_sequence) -> float:
-    """
-    ### Descripción:
-    Calcula la tasa de error de bits (BER) entre dos secuencias binarias.
-    
-    ---
-
-    ### Args:
-    - `Tx` - secuencia binaria transmitida
-    - `Rx` - secuencia binaria recibida
-
-    ### Returns:
-    - `float` - BER entre las secuencias dadas
-    """
-    Tx = Tx[:Rx.len()]
-    assert Tx.len() == Rx.len(), 'Las secuencias deben tener la misma longitud!!'
-    return np.sum(Tx.data != Rx.data)/Tx.len()
-
-
-def BER_FROM_EYE(_eye_: eye, decision: Literal['hard','soft']='hard') -> float:
-    """
-    ### Descripción:
-    Calcula la tasa de error de bits (BER) a partir de los parámetros estimados del diagrama de ojos
-    
-    ---
-
-    ### Args:
-    - `Tx` - secuencia binaria transmitida
-    - `Rx` - secuencia binaria recibida
-
-    ### Returns:
-    - `float` - BER entre las secuencias dadas
-    """
-    M = _eye_.M
-    I1 = _eye_.mu1
-    I0 = _eye_.mu0
-    s1 = _eye_.s1
-    s0 = _eye_.s0
-    um = _eye_.umbral
-
-    if decision == 'hard':
-        Pe_sym = 1 - Q((um-I1)/s1) * (1-Q((um-I0)/s0))**(M-1)
-    elif decision == 'soft':
-        Pe_sym = 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((I1-I0+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0]
-    else:
-        raise TypeError('decision debe ser "hard" o "soft"!!') 
-    return M/2/(M-1)*Pe_sym
-    
-
-
-
-
 
 
 
 
 ### algunas funciones de prueba
-def animated_fiber_propagation(input: optical_signal, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05):
+def animated_fiber_propagation(input: optical_signal, M :int, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05):
     from matplotlib.animation import FuncAnimation
 
     # cambio las unidades
@@ -1006,12 +768,12 @@ def animated_fiber_propagation(input: optical_signal, length_: float, alpha_: fl
 
     t = input.t()*global_vars.slot_rate
 
-    fig, ax = subplots()
+    fig, ax = plt.subplots()
 
     line, = ax.plot(t, np.abs(A_z[0]), lw=2, color = 'red', ls='--')
     line, = ax.plot([], [], lw=2, color = 'k')
 
-    suptitle(r'Fiber: $\alpha = {:.2f}$ dB/km, $\beta_2 = {}$ ps^2/km, $\gamma = {}$ (W·km)^-1'.format(alpha_, beta_2_, gamma_))
+    plt.suptitle(r'Fiber: $\alpha = {:.2f}$ dB/km, $\beta_2 = {}$ ps^2/km, $\gamma = {}$ (W·km)^-1'.format(alpha_, beta_2_, gamma_))
     ax.set_xlabel(r'$t/T_{slot}$')
     ax.set_ylabel('|A(z,t)|')
     ax.set_xlim((0, t.max()))
@@ -1023,10 +785,10 @@ def animated_fiber_propagation(input: optical_signal, length_: float, alpha_: fl
     def init():
         line.set_data([],[])
         time_text.set_text('z = 0.0 Km')
-        for i in t[::global_vars.M*global_vars.sps]:
-           axvline(i, color='k', ls='--')
+        for i in t[::M*global_vars.sps]:
+           plt.axvline(i, color='k', ls='--')
         for i in t[::global_vars.sps]:
-           axvline(i, color='k', ls='--', alpha=0.3,lw=1)
+           plt.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
         return [line, time_text] 
 
     def animate(i):
@@ -1036,13 +798,13 @@ def animated_fiber_propagation(input: optical_signal, length_: float, alpha_: fl
         return [line, time_text] 
 
     anim = FuncAnimation(fig, animate, init_func=init, frames=len(A_z), interval=100, blit=True, repeat=False)
-    show()
+    plt.show()
 
 
-def animated_fiber_propagation_psd(input: optical_signal, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05, n:int=None):
+def animated_fiber_propagation_with_psd(input: optical_signal, M :int, length_: float, alpha_: float=0.0, beta_2_: float=0.0, beta_3_: float=0.0, gamma_: float=0.0, phi_max:float=0.05, n:int=None):
     from matplotlib.animation import FuncAnimation
 
-    n = input.len() if n is None else n*global_vars.M*input.sps() 
+    n = input.len() if n is None else n*M*input.sps() 
     
     length = length_
     alpha  = alpha_/4.343
@@ -1089,12 +851,12 @@ def animated_fiber_propagation_psd(input: optical_signal, length_: float, alpha_
 
     t = input.t()*global_vars.slot_rate
 
-    fig, (ax1,ax2) = subplots(2,1, figsize=(6,6))
+    fig, (ax1,ax2) = plt.subplots(2,1, figsize=(6,6))
 
     line1, = ax1.plot(t[:n], np.abs(A_z[0])[:n], lw=2, color = 'red', ls='--')
     line1, = ax1.plot([], [], lw=2, color = 'k')
 
-    suptitle(r'Fiber: $\alpha = {:.2f}$ dB/km, $\beta_2 = {}$ ps^2/km, $\gamma = {}$ (W·km)^-1'.format(alpha_, beta_2_, gamma_))
+    plt.suptitle(r'Fiber: $\alpha = {:.2f}$ dB/km, $\beta_2 = {}$ ps^2/km, $\gamma = {}$ (W·km)^-1'.format(alpha_, beta_2_, gamma_))
     ax1.set_xlabel('t/T')
     ax1.set_ylabel('|A(z,t)|')
     ax1.set_xlim((0, t[:n].max()))
@@ -1120,7 +882,7 @@ def animated_fiber_propagation_psd(input: optical_signal, length_: float, alpha_
     def init():
         line1.set_data([],[])
         z_text.set_text('z = 0.0 Km')
-        for i in t[:n:global_vars.M*global_vars.sps]:
+        for i in t[:n:M*global_vars.sps]:
             ax1.axvline(i, color='k', ls='--')
         for i in t[:n:global_vars.sps]:
             ax1.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
@@ -1136,106 +898,34 @@ def animated_fiber_propagation_psd(input: optical_signal, length_: float, alpha_
         return [line1, line2, z_text] 
 
     anim = FuncAnimation(fig, animate, init_func=init, frames=len(A_z), interval=100, blit=True, repeat=False)
-    show()
-
-
-
-## Funciones para el Laboratorio
-def SYNC(signal_rx: electrical_signal, bits_tx: binary_sequence, sps_osc:int=None) -> tuple[electrical_signal, int]:
-    """
-    ### Descripción:
-    Se realiza una sincronización de la señal recibida con la señal transmitida para saber a 
-    partir de que posición de la señal recibida se debe comenzar a procesar. Para ello se realiza una correlación 
-    entre la señal recibida y la señal transmitida y se busca el máximo de la correlación.
-    
-    ---
-
-    ### Args:
-    - `signal_rx` - señal digital recibida (del osciloscopio).
-    - `bits_tx` - secuencia de bits transmitida.
-
-    ### Returns:
-    - `signal_sync` - señal digital sincronizada.
-    - `i` - posición del vector 'signal' a partir de la cual se realiza la sincronización.  
-    """
-
-    M, sps = global_vars.M, signal_rx.sps()
-    if not isinstance(sps, int):
-        raise TypeError('Los sps deben ser un número entero para realizar la sincronización.')
-
-    slots = PPM_ENCODER(bits_tx, M)
-    signal_tx = np.kron(slots.data, np.ones(sps))
-    signal_rx = signal_rx.signal
-
-    if len(signal_rx)<len(signal_tx): raise BufferError('La longitud del vector recibido debe ser mayor al vector transmitido!!')
-
-    l = len(signal_tx)
-    corr = sg.fftconvolve(signal_rx[:2*l], signal_tx[l::-1], mode='valid') # Correlación de la señal transmitida con la señal recibida en una ventana de 2*l (suficiente para encontrar un máximo)
-
-    if np.max(corr) < 3*np.std(corr): raise ValueError('No se encontró un máximo de correlación!!') # falso positivo
-    
-    i = np.argmax(corr)
-
-    signal_sync = electrical_signal(signal_rx[i:-(l-i)])
-    signal_sync.ejecution_time = toc()
-    return signal_sync, i
-
-
-def GET_EYE_PARAMS_v2(sync_signal: electrical_signal, bits_tx: binary_sequence, nslots:int=8192) -> tuple[float, float, float, float]:
-    """
-    ### Descripción:
-    Esta función obtiene las medias y desviaciones estándar de los niveles 0 y 1 de la señal recibida. Utiliza los
-    slots de la señal transmitida para determinar los instantes de tiempo en los que se encuentran los niveles 0 y 1.
-    
-    ---
-
-    ### Args:
-    - `sync_signal` - señal digital sincronizada en tiempo con la señal transmitida.
-    - `bits_tx` - secuencia de bits transmitida.
-    - `sps` [Opcional] - muestras por slot de la señal digital (default: global_vars.sps).
-    - `nslots` [Opcional] - cantidad de slots a utilizar para la estimación (default: 8192).
-
-    ### Returns:
-    - `signal_sync` - señal digital sincronizada.
-    - `i` - posición del vector 'signal' a partir de la cual se realiza la sincronización.  
-    """
-    sps = sync_signal.sps()
-    M = global_vars.M
-
-    eye_dict = {}
-
-    eye_dict['M'] = M
-    eye_dict['sps'] = sps
-
-
-    rx = sync_signal[:nslots*sps].signal + sync_signal[:nslots*sps].noise; eye_dict['y'] = rx
-    tx = np.kron(PPM_ENCODER(bits_tx, M).data[:nslots], np.ones(sps))
-
-    unos = rx[tx==1]; eye_dict['unos']=unos
-    zeros = rx[tx==0]; eye_dict['zeros']=zeros
-
-    t0 = np.kron(np.ones(zeros.size//sps), np.linspace(-0.5, 0.5, sps, endpoint=False)); eye_dict['t0']=t0
-    t1 = np.kron(np.ones(unos.size//sps), np.linspace(-0.5, 0.5, sps, endpoint=False)); eye_dict['t1']=t1
-
-    eye_dict['i']=sps//2
-
-    unos_ = unos[(t1<0.05) & (t1>-0.05)]
-    zeros_ = zeros[(t0<0.05) & (t0>-0.05)]
-
-    mu0 = np.mean(zeros_).real; eye_dict['mu0'] = mu0
-    mu1 = np.mean(unos_).real; eye_dict['mu1'] = mu1
-
-    s0 = np.std(zeros_).real; eye_dict['s0'] = s0
-    s1 = np.std(unos_).real; eye_dict['s1'] = s1
-
-    r = np.linspace(mu0,mu1,1000)
-    umbral = r[np.argmin( 1 - Q((r-mu1)/s1) * (1-Q((r-mu0)/s0))**(M-1) )]; eye_dict['umbral'] = umbral
-
-    return eye(eye_dict)
+    plt.show()
 
 
 
 if __name__ == '__main__':
+    # def Spectrogram(signal, T_L):
+    #     N = signal.len()//T_L
+    #     y = np.zeros(N*T_L)
+    #     for i in range(N):
+    #         y[i*T_L:(i+1)*T_L] = fftshift(np.abs( fft(signal.signal[i*T_L:(i+1)*T_L]) )**2)
+    #     y = y.reshape((N, T_L)).T
+    #     return y
+
+
+    # sps = 2048
+    # global_vars(M=8, sps=sps, R=10e9)
+    # y = DAC('0 1 0 1 0 0 1', pulse_shape='gaussian', T=sps, m=1, c=-50)
+    # N_TL = 128
+    # # g = Spectrogram(y, N_TL)
+    # # f = y.w()/(2*np.pi)
+    # # plt.imshow(g, cmap='hot', aspect='auto', interpolation='blackman', extent=[y.t().min()*1e9, y.t().max()*1e9, f.min()*1e-9, f.max()*1e-9])
+    # # plt.ylim(-1000,1000)
+    # # y.plot(ylabel='Voltaje (V)',c='red').grid()
+    # plt.figure()
+    # plt.plot(y.t(), y.abs('signal'))
+    # # for i in range(y.len()//N_TL):
+    # #     plt.axvline(y.t()[i*N_TL], ls='--')
+    # plt.show()
     pass
 
 
