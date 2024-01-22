@@ -27,7 +27,7 @@ setup(
         'scipy',
         'numpy',
         'matplotlib',
-        'sklearn',
+        'scikit-learn',
         'tqdm',
         'pympler'
     ],
