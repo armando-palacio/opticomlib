@@ -21,8 +21,8 @@ from numpy import ndarray
 from scipy.integrate import quad
 from scipy.constants import pi
 
-from _types_ import binary_sequence, electrical_signal, global_vars, eye
-from _utils_ import tic, toc, str2array, dec2bin, Q
+from ._types_ import binary_sequence, electrical_signal, global_vars, eye
+from ._utils_ import tic, toc, str2array, dec2bin, Q
 
 
 

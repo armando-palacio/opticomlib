@@ -12,9 +12,9 @@ Laboratory and Practice funcions (:mod:`opticomlib.lab`)
 import numpy as np
 import scipy.signal as sg
 
-from _types_ import binary_sequence, electrical_signal, eye
+from ._types_ import binary_sequence, electrical_signal, eye
 
-from _utils_ import tic, toc
+from ._utils_ import tic, toc
 
 
 ## Funciones para el Laboratorio
