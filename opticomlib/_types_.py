@@ -255,11 +255,9 @@ class electrical_signal():
         return self
     
     def grid(self, n=None):
-        M,sps,t = global_vars.M, global_vars.sps, self.t()
+        sps,t = global_vars.sps, self.t()
         if n is None: 
             n = self.len()
-        for i in t[:n*sps][::M*sps]:
-            plt.axvline(i, color='k', ls='--')
         plt.axvline(t[:n*sps][-1]+self.dt(), color='k', ls='--')
         for i in t[:n*sps][::sps]:
             plt.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
@@ -356,11 +354,9 @@ class optical_signal(electrical_signal):
         return self
     
     def grid(self, n=None):
-        M,sps,t = global_vars.M, global_vars.sps, self.t()
+        sps,t = global_vars.sps, self.t()
         if n is None: 
             n = self.len()
-        for i in t[:n*sps][::M*sps]:
-            plt.axvline(i,color='k', ls='--')
         plt.axvline(t[:n*sps][-1]+self.dt(),color='k', ls='--')
         for i in t[:n*sps][::sps]:
             plt.axvline(i,color='k', ls='--', alpha=0.3, lw=1)

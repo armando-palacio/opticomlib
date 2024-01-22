@@ -26,7 +26,7 @@ from _utils_ import tic, toc, str2array, dec2bin, Q
 
 
 
-def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int=None) -> binary_sequence:
+def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int) -> binary_sequence:
     """
     ### Descripción:
     Codificador digital PPM. Convierte una secuencia binaria de entrada en una secuencia binaria codificada en PPM. 
@@ -35,7 +35,7 @@ def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int
     
     ### Args:
     - `input` - secuencia binaria de entrada
-    - `M` [Opcional] - cantidad de slots que contiene un símbolo (default: `M=global_vars.M`)
+    - `M` - cantidad de slots que contiene un símbolo
 
     ---
     
@@ -52,10 +52,7 @@ def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int
         input = np.array(input)
     else:
         raise TypeError("El argumento `input` debe ser del tipo (str, list, tuple, ndarray, binary_sequence).")
-    
-    if not M:
-        M = global_vars.M
-    
+
     k = int(np.log2(M))
 
     input = input[:len(input)//k*k] # truncamos la secuencia de bits a un múltiplo de k
@@ -71,7 +68,7 @@ def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int
 
 
 
-def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int=None) -> binary_sequence:
+def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int) -> binary_sequence:
     """
     ### Descripción:
     Recibe una secuencia de bits codificada en PPM y la decodifica.
@@ -80,7 +77,7 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
 
     ### Args:
     - `input` - secuencia binaria codificada en PPM
-    - `M` [Opcional] - orden de modulación PPM
+    - `M` - orden de modulación PPM
 
     ### Returns:
     - `binary_sequence` - secuencia binaria decodificada
@@ -95,9 +92,6 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
         input = np.array(input)
     else:
         raise TypeError("El argumento `input` debe ser del tipo (str, list, tuple, ndarray, binary_sequence).")
-
-    if not M:
-        M = global_vars.M
     
     k = int(np.log2(M))
 
@@ -110,7 +104,7 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
     return output
 
 
-def HDD(input: binary_sequence, M: int=None) -> binary_sequence:
+def HDD(input: binary_sequence, M: int) -> binary_sequence:
     """
     ### Descripción:
     Estima los símbolos PPM más probables a partir de la secuencia binaria dada como entrada.
@@ -124,10 +118,6 @@ def HDD(input: binary_sequence, M: int=None) -> binary_sequence:
     - `binary_sequence` - secuencia de símbolos estimados
     """
     tic()
-
-    if not M:
-        M = global_vars.M
-    assert M < 256, 'El máximo orden de modulación PPM es 256!!'
 
     n_simb = int(input.len()/M)
 
@@ -149,7 +139,7 @@ def HDD(input: binary_sequence, M: int=None) -> binary_sequence:
 
 
 
-def SDD(input: electrical_signal, M: int=None) -> binary_sequence:
+def SDD(input: electrical_signal, M: int) -> binary_sequence:
     """
     ### Descripción:
     Estima los símbolos PPM más probables a partir de la señal eléctrica dada como entrada.
@@ -164,11 +154,6 @@ def SDD(input: electrical_signal, M: int=None) -> binary_sequence:
     """
     tic()
 
-    if not M:
-        M = global_vars.M
-    assert M < 256, 'El máximo orden de modulación PPM es 256!!'
-
- 
     signal = np.sum( (input.signal + input.noise).reshape(-1, input.sps()), axis=-1)
 
     i = np.argmax( signal.reshape(-1, M), axis=-1)
@@ -182,7 +167,7 @@ def SDD(input: electrical_signal, M: int=None) -> binary_sequence:
 
 
 
-def THRESHOLD(eye_obj: eye, M: int=None):
+def THRESHOLD_EST(eye_obj: eye, M: int):
     """
     ### Descripción: 
     Esta función estima el umbral de decisión para M-PPM a partir de las medias y desviaciones estándar.
@@ -191,12 +176,9 @@ def THRESHOLD(eye_obj: eye, M: int=None):
 
     ### Args:
     - `eye_obj` - objeto `eye` con los parámetros del diagrama de ojos
-    - `M` [Opcional] - orden PPM (default `M=global_vars.M`)
+    - `M` - orden PPM
     """
 
-    if not M:
-        M = global_vars.M 
-    
     mu0 = eye_obj.mu0
     mu1 = eye_obj.mu1
     s0 = eye_obj.s0
@@ -209,7 +191,7 @@ def THRESHOLD(eye_obj: eye, M: int=None):
 
 
 
-def DSP(input: electrical_signal, eye_obj: eye=eye(), decision: Literal['hard','soft']='hard') -> binary_sequence:
+def DSP(input: electrical_signal, eye_obj: eye, M :int, decision: Literal['hard','soft']='hard') -> binary_sequence:
     """
     ### Descripción:
     Este componente realiza todas las tareas de decisión y decodificación de la señal eléctrica photodetectada. 
@@ -233,14 +215,14 @@ def DSP(input: electrical_signal, eye_obj: eye=eye(), decision: Literal['hard','
     """
     
     if decision == 'hard':
-        output = input[eye_obj.i::eye_obj.sps] > THRESHOLD(eye_obj)
-        simbols = HDD(output); simbols.ejecution_time += output.ejecution_time
+        output = input[eye_obj.i::eye_obj.sps] > THRESHOLD_EST(eye_obj, M)
+        simbols = HDD(output, M); simbols.ejecution_time += output.ejecution_time
     elif decision == 'soft':
-        simbols = SDD(input)
+        simbols = SDD(input, M)
     else:
         raise TypeError('No existe el tipo de decisión seleccionada!!')
 
-    output = PPM_DECODER(simbols) 
+    output = PPM_DECODER(simbols, M) 
 
     output.ejecution_time += simbols.ejecution_time 
     return output
@@ -267,6 +249,7 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
     
     si `mode='estimator'`:
     - `eye_obj` - objeto `eye` con los parámetros estimados del diagrama de ojo
+    - `M` - orden de modulación PPM
     - `decision` [Opcional] - tipo de decision `'hard'` o `'soft'` (default: `decision='soft'`)
 
     ### Returns:
@@ -289,7 +272,10 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
 
     elif mode == 'estimator':
         assert 'eye_obj' in kargs.keys(), "Introduzca un objeto `eye` como argumento"
+        assert 'M' in kargs.keys(), "Introduzca el orden de modulación `M` como argumento"
+
         eye_obj = kargs['eye_obj']
+        M = kargs['M']
         decision = kargs['decision'] if 'decision' in kargs.keys() else 'soft'
 
         assert decision.lower() in ('hard', 'soft'), "Error: el argumento decision debe tomar los valores `hard` o `soft`"
@@ -298,8 +284,7 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
         I0 = eye_obj.mu0
         s1 = eye_obj.s1
         s0 = eye_obj.s0
-        um = THRESHOLD(eye_obj)
-        M = global_vars.M
+        um = THRESHOLD_EST(eye_obj, M)
 
         if decision == 'hard':
             Pe_sym = 1 - Q((um-I1)/s1) * (1-Q((um-I0)/s0))**(M-1)
