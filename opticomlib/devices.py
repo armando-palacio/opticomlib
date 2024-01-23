@@ -142,7 +142,7 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
     return output
 
 
-def MODULATOR(input: electrical_signal, p_laser: float=None, pol: str='x') -> optical_signal:
+def MODULATOR(input: electrical_signal, p_laser: float=0, pol: str='x') -> optical_signal:
     """
     ### Descripción:
     Modula la señal óptica de un láser de potencia dada,79 a partir de una señal eléctrica de entrada.
@@ -165,8 +165,6 @@ def MODULATOR(input: electrical_signal, p_laser: float=None, pol: str='x') -> op
 
     if not isinstance(input, electrical_signal):
         raise TypeError("`input` debe ser del tipo (electrical_signal).")
-    if not p_laser:
-        p_laser = idbm(global_vars.p_laser)
     if pol not in ['x','y']:
         raise TypeError("`pol` debe ser ('x' o 'y').")
 
