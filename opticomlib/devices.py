@@ -49,7 +49,7 @@ from ._utils_ import (
 
 
 
-def PRBS(n: int=2**8, user: list=[], defined: int=None) -> binary_sequence:
+def PRBS(n: int=2**8, user: list=[], order: int=None) -> binary_sequence:
     """
     ### Descripción:
     Generador Pseudoaleatorio de secuencias binarias.
@@ -70,8 +70,8 @@ def PRBS(n: int=2**8, user: list=[], defined: int=None) -> binary_sequence:
 
     if user:
         output = binary_sequence( user )
-    elif defined:
-        output = binary_sequence( generate_prbs(defined) )
+    elif order:
+        output = binary_sequence( generate_prbs(order) )
     else:
         output = binary_sequence( np.random.randint(0, 2, n) )
     output.ejecution_time = toc()
@@ -407,7 +407,7 @@ def LPF(input: Union[ndarray, electrical_signal], BW: float, n: int=4, fs: float
 
 
 
-def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
+def PD(input: optical_signal, BW: float=None, responsivity: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
     """
     ### Descripción:
     Photodetector. Simula la detección de una señal óptica por un fotodetector.
@@ -430,7 +430,7 @@ def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_lo
     if BW is None:
         BW = global_vars.BW_elec
 
-    i_sig = R * np.sum(input.abs('signal')**2, axis=0) # se suman las dos polarizaciones
+    i_sig = responsivity * np.sum(input.abs('signal')**2, axis=0) # se suman las dos polarizaciones
 
     if 'thermal' in noise or 'all' in noise:
         S_T = 4 * kB * T * BW / R_load # Density of thermal noise in [A^2]
@@ -441,11 +441,11 @@ def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_lo
         i_N = np.vectorize(lambda s: np.random.normal(0,s))(S_N**0.5)
 
     if 'ase' in noise or 'all' in noise:
-        i_sig_sp = R * np.abs(input.signal[0]*input.noise[0].conjugate() + \
+        i_sig_sp = responsivity * np.abs(input.signal[0]*input.noise[0].conjugate() + \
                             input.signal[0].conjugate()*input.noise[0] + \
                             input.signal[1]*input.noise[1].conjugate() + \
                             input.signal[1].conjugate()*input.noise[1])
-        i_sp_sp = R * np.sum(input.abs('noise')**2, axis=0) # se suman las dos polarizaciones
+        i_sp_sp = responsivity * np.sum(input.abs('noise')**2, axis=0) # se suman las dos polarizaciones
 
     if noise == 'ase-only':
         noise = i_sig_sp  + i_sp_sp
@@ -538,8 +538,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
 
     ### Args:
     - `input` - señal eléctrica a partir de la cual se estimará el diagrama de ojos
-    - 'nslots' [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: `nslots=4096`)
-    - 'sps_resamplig' [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: `sps_resamplig=256`)
+    - `nslots` [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: `nslots=4096`)
+    - `sps_resamplig` [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: `sps_resamplig=256`)
     
     ---
     

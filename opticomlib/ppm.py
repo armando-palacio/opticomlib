@@ -10,9 +10,10 @@ PPM devices (:mod:`opticomlib.ppm`)
    PPM_DECODER           -- Pulse position modulation decoder
    HDD                   -- Hard-decision decoder model 
    SDD                   -- Soft-decision decoder model 
-   THRESHOLD             -- Threshold for detection
+   THRESHOLD_EST         -- Threshold for detection
    DSP                   -- Digital signal processing for PPM systems
    BER_analizer          -- Bit error rate analizer
+   theory_BER            -- Theoretical bit error rate
 """
 
 import numpy as np
@@ -296,6 +297,34 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
 
     else:
         raise TypeError('Elija entre `counter` o `estimator` e introduzca los argumentos correspondientes en cada caso.')
+
+
+def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray], M: int, kind: Literal['soft','hard']='soft'):
+    """
+        Esta función calcula la probabilidad de error de bit teórica para un sistema PPM.
+
+    Args:
+    - `mu1` - valor de corriente (o tensión) medio de la señal correspondiente a un bit 1
+    - `s0` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 0
+    - `s1` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 1
+    - `M` - orden de la modulación PPM. 
+    - `kind` [Opcional] - tipo de decodificación PPM (default: `kind='soft'`). Se debe especificar si `modulation='PPM'`
+
+    Returns:
+    - `BER` - probabilidad de error de bit teórica
+    """
+
+    if kind == 'soft':
+        fun = np.vectorize( lambda mu1,s0,s1,M: 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu1+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0] )
+    elif kind == 'hard':
+        def fun(mu1_,s0_,s1_,M_):
+            r = np.linspace(0,mu1_,1000)
+            return np.min(1 - Q((r-mu1_)/s1_) * (1-Q((r)/s0_))**(M_-1))
+        fun = np.vectorize( fun )
+    else:
+        raise ValueError('`kind` must be `soft` or `hard`.')
+    return fun(mu1,s0,s1,M)*0.5*M/(M-1)
+
 
 if __name__ == '__main__':
     print(BER_analizer('counter', Tx='0 1 0 1', Rx='0,1,0,0'))
