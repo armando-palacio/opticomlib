@@ -8,6 +8,7 @@ Models for optoelectronic components (:mod:`opticomlib.components`)
 
    PRBS                  -- Pseudorandom binary sequence generator
    DAC                   -- Digital-to-analog converter (DAC) model
+   PM                    -- Optical phase modulator (PM) model
    BPF                   -- Optical band-pass filter (BPF) bessel model
    EDFA                  -- Erbium-doped fiber amplifier (EDFA) simple model
    DM                    -- Dispersion medium model
@@ -140,6 +141,53 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 
     output.ejecution_time = toc()
     return output
+
+
+
+def PM(input: optical_signal, v: Union[int, float, ndarray, electrical_signal], Vpi: float=5.0)-> optical_signal:
+    """
+    ### Descripción:
+    Modula en fase la señal óptica de entrada, a partir de una señal eléctrica de entrada.
+    
+    ---
+
+    ### Args:
+    - `input` - señal óptica a modular
+    - `v` - voltaje del driver. Puede ser valor entero en cuyo caso la modulación de fase es constante, o una señal eléctrica de la misma longitud que la señal óptica.
+    - `Vpi` [Opcional] - voltaje para el cual el dispositivo logra un desfasaje de π (default: `Vpi=5.0` [V])
+
+    ---
+
+    ### Returns:
+    - `optical_signal`
+    """
+    tic()
+
+    if not isinstance(input, optical_signal):
+        raise TypeError("`input` debe ser del tipo (optical_signal).")
+
+    if isinstance(v, (float, int)):
+        v = np.ones(input.len()) * v
+    elif isinstance(v, electrical_signal):
+        v = v.signal
+        if v.size != input.signal.len():
+            raise ValueError("La longitud de `v` debe ser igual a la longitud de `input`.")
+    elif isinstance(v, ndarray):
+        if len(v) != input.len():
+            raise ValueError("La longitud de `v` debe ser igual a la longitud de `input`.")
+    else:
+        raise TypeError("`v` debe ser del tipo (int ó electrical_signal).")
+    
+    output = optical_signal( np.zeros_like(input.signal) )
+
+    output.signal = input.signal * np.exp(1j * v * pi / Vpi)
+
+    if np.sum(input.noise):
+        output.noise = input.noise * np.exp(1j * v * pi / Vpi)
+    
+    output.ejecution_time = toc()
+    return output
+
 
 
 def MODULATOR(input: electrical_signal, p_laser: float=0, pol: str='x') -> optical_signal:
