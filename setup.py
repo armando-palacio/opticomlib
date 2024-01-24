@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='opticomlib',
-    version='0.3',
+    version='0.4',
     description='Python package for optical communication systems.',
     url='https://github.com/armando-palacio/opticomlib.git',
     author='Armando Palacio',

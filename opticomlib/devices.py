@@ -49,7 +49,7 @@ from ._utils_ import (
 
 
 
-def PRBS(n: int=2**8, user: list=[], defined: int=None) -> binary_sequence:
+def PRBS(n: int=2**8, user: list=[], order: int=None) -> binary_sequence:
     """
     ### Descripción:
     Generador Pseudoaleatorio de secuencias binarias.
@@ -70,8 +70,8 @@ def PRBS(n: int=2**8, user: list=[], defined: int=None) -> binary_sequence:
 
     if user:
         output = binary_sequence( user )
-    elif defined:
-        output = binary_sequence( generate_prbs(defined) )
+    elif order:
+        output = binary_sequence( generate_prbs(order) )
     else:
         output = binary_sequence( np.random.randint(0, 2, n) )
     output.ejecution_time = toc()
@@ -142,7 +142,7 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
     return output
 
 
-def MODULATOR(input: electrical_signal, p_laser: float=None, pol: str='x') -> optical_signal:
+def MODULATOR(input: electrical_signal, p_laser: float=0, pol: str='x') -> optical_signal:
     """
     ### Descripción:
     Modula la señal óptica de un láser de potencia dada,79 a partir de una señal eléctrica de entrada.
@@ -165,10 +165,10 @@ def MODULATOR(input: electrical_signal, p_laser: float=None, pol: str='x') -> op
 
     if not isinstance(input, electrical_signal):
         raise TypeError("`input` debe ser del tipo (electrical_signal).")
-    if not p_laser:
-        p_laser = idbm(global_vars.p_laser)
     if pol not in ['x','y']:
         raise TypeError("`pol` debe ser ('x' o 'y').")
+    
+    p_laser = idbm(p_laser)
 
     output = optical_signal( np.zeros((2,input.len())) )
 
@@ -221,7 +221,7 @@ def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_s
     return output
 
 
-def EDFA(input: optical_signal, G: float, NF: float, BW: float=None) -> tuple: # modelo simplificado del EDFA (no satura)
+def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple: # modelo simplificado del EDFA (no satura)
     """
     ### Descripción:
     Amplificador de fibra dopada con Erbium. Amplifica la señal óptica a la entrada, agregando ruido de emisión espontánea amplificada (ASE). 
@@ -232,7 +232,7 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float=None) -> tuple: #
     - `input` - señal óptica a amplificar
     - `G` - ganancia del amplificador en [dB]
     - `NF` - figura de ruido del amplificador en [dB]
-    - `BW` [Opcional] - ancho de banda del amplificador en [Hz] (default: `BW=global_vars.BW_opt`)
+    - `BW` - ancho de banda del amplificador en [Hz] 
     
     ---
 
@@ -243,8 +243,6 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float=None) -> tuple: #
 
     if not isinstance(input, optical_signal):
         raise TypeError("`input` debe ser del tipo (optical_signal).")
-    if BW is None:
-        BW = global_vars.BW_opt
      
     output = BPF( input * idb(G)**0.5, BW )
     ase = BPF( optical_signal( np.zeros_like(input.signal), np.exp(-1j*np.random.uniform(0, 2*pi, input.noise.shape)) ), BW )
@@ -407,7 +405,7 @@ def LPF(input: Union[ndarray, electrical_signal], BW: float, n: int=4, fs: float
 
 
 
-def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
+def PD(input: optical_signal, BW: float, responsivity: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
     """
     ### Descripción:
     Photodetector. Simula la detección de una señal óptica por un fotodetector.
@@ -417,9 +415,9 @@ def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_lo
     ### Args:
     - `input` - señal óptica a detectar
     - `BW` - ancho de banda del detector en [Hz]
-    - `R` - Responsividad del detector en [A/W] (default: `R=1.0`)
-    - `T` - Temperatura del detector en [K] (default: `T=300.0`)
-    - `R_load` - Resistencia de carga del detector en [Ohm] (default: `R_load=50.0`)
+    - `responsivity` [Opcional] - Responsividad del detector en [A/W] (default: `R=1.0`)
+    - `T` [Opcional] - Temperatura del detector en [K] (default: `T=300.0`)
+    - `R_load` [Opcional] - Resistencia de carga del detector en [Ohm] (default: `R_load=50.0`)
     
     ---
     
@@ -427,10 +425,8 @@ def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_lo
     - `electrical_signal`
     """
     tic()
-    if BW is None:
-        BW = global_vars.BW_elec
 
-    i_sig = R * np.sum(input.abs('signal')**2, axis=0) # se suman las dos polarizaciones
+    i_sig = responsivity * np.sum(input.abs('signal')**2, axis=0) # se suman las dos polarizaciones
 
     if 'thermal' in noise or 'all' in noise:
         S_T = 4 * kB * T * BW / R_load # Density of thermal noise in [A^2]
@@ -441,11 +437,11 @@ def PD(input: optical_signal, BW: float=None, R: float=1.0, T: float=300.0, R_lo
         i_N = np.vectorize(lambda s: np.random.normal(0,s))(S_N**0.5)
 
     if 'ase' in noise or 'all' in noise:
-        i_sig_sp = R * np.abs(input.signal[0]*input.noise[0].conjugate() + \
+        i_sig_sp = responsivity * np.abs(input.signal[0]*input.noise[0].conjugate() + \
                             input.signal[0].conjugate()*input.noise[0] + \
                             input.signal[1]*input.noise[1].conjugate() + \
                             input.signal[1].conjugate()*input.noise[1])
-        i_sp_sp = R * np.sum(input.abs('noise')**2, axis=0) # se suman las dos polarizaciones
+        i_sp_sp = responsivity * np.sum(input.abs('noise')**2, axis=0) # se suman las dos polarizaciones
 
     if noise == 'ase-only':
         noise = i_sig_sp  + i_sp_sp
@@ -529,7 +525,7 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
     return output
 
 
-def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamplig: int = None):
+def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamplig: int=None):
     """
     ### Descripción:
     Estima todos los parámetros fundamentales y métricas del diagrama de ojo de la señal eléctrica de entrada.
@@ -538,8 +534,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
 
     ### Args:
     - `input` - señal eléctrica a partir de la cual se estimará el diagrama de ojos
-    - 'nslots' [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: `nslots=4096`)
-    - 'sps_resamplig' [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: `sps_resamplig=256`)
+    - `nslots` [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: `nslots=4096`)
+    - `sps_resamplig` [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: `global_vars.sps`)
     
     ---
     
@@ -602,7 +598,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
     
     n = input[sps:].len()%(2*input.sps())
     if n: input = input[sps:-n]
-    nslots = min(input.len()//sps, nslots)
+    
+    nslots = min(input.len()//sps//2*2, nslots)
     input = input[:nslots*sps]
 
     if isinstance(input, optical_signal):
@@ -617,12 +614,12 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
     y_set = np.unique(input)
 
     # realizamos un resampling de la señal para obtener una mayor resolución en ambos ejes
-    if sps_resamplig is not None:
+    if sps_resamplig:
         input = sg.resample(input, nslots*sps_resamplig); eye_dict['y'] = input
         t = np.kron(np.ones(nslots//2), np.linspace(-1, 1-dt, 2*sps_resamplig)); eye_dict['t'] = t
     else:
         eye_dict['y'] = input
-        t = np.kron(np.ones((len(input)//sps)//2), np.linspace(-1,1,2*sps, endpoint=False)); eye_dict['t'] = t
+        t = np.kron(np.ones((len(input)//sps)//2), np.linspace(-1, 1-dt, 2*sps)); eye_dict['t'] = t
 
     # Obtenemos el centroide de las muestras en el eje Y
     vm = np.mean(sk.KMeans(n_clusters=2, n_init=10).fit(input.reshape(-1,1)).cluster_centers_)
@@ -671,7 +668,12 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
     y_center = find_nearest(y_set, (state_0 + state_1)/2)
 
     # Obtenemos el instante óptimo para realizar el down sampling
-    instant = np.abs(t-t_center).argmin() - sps//2 + 1; eye_dict['i'] = instant
+    if sps_resamplig:
+        instant = np.abs(t-t_center).argmin() - sps_resamplig//2 + 1
+        instant = int(instant/sps_resamplig*sps)
+    else:
+        instant = np.abs(t-t_center).argmin() - sps//2 + 1
+    eye_dict['i'] = instant
 
     # Obtenemos el cluster superior
     y_top = input[(input > y_center) & ((t_span0 < t) & (t < t_span1))]; eye_dict['y_top'] = y_top
