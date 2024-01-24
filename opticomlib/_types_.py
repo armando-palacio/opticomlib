@@ -238,9 +238,12 @@ class electrical_signal():
         plt.plot(self.t()[:n], np.abs(self[:n].signal+self[:n].noise), fmt, **kargs)
         plt.xlabel(xlabel if xlabel else 'Tiempo [s]')
         plt.ylabel(ylabel if ylabel else 'Amplitud [u.a.]')
+        
+        if 'label'  in kargs.keys():
+            plt.legend()
         return self
     
-    def psd(self, fmt=None, n=None, **kargs):
+    def psd(self, fmt=None, kind: Literal['linear','log']='log', n=None, **kargs):
         if fmt is None:
             fmt = '-'
         if n is None:
@@ -249,16 +252,22 @@ class electrical_signal():
         f = fftshift( fftfreq(n, d=self.dt())*1e-9)  # GHz
         psd = fftshift(self[:n]('w').abs('signal')**2/n**2)
         
-        plt.plot(f, psd*1e3, fmt, **kargs)
+        if kind == 'linear':
+            plt.plot(f, psd*1e3, fmt, **kargs)
+        elif kind == 'log':
+            plt.semilogy(f, psd*1e3, fmt, **kargs)
+        else:
+            raise TypeError('El argumento `kind` debe ser uno de los siguientes valores ("linear", "log")')
         plt.xlabel('Frecuencia [GHz]')
         plt.ylabel('Potencia [mW]')
+        if 'label'  in kargs.keys():
+            plt.legend()
         return self
     
     def grid(self, n=None):
         sps,t = global_vars.sps, self.t()
         if n is None: 
             n = self.len()
-        plt.axvline(t[:n*sps][-1]+self.dt(), color='k', ls='--')
         for i in t[:n*sps][::sps]:
             plt.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
         return self
@@ -299,8 +308,8 @@ class optical_signal(electrical_signal):
         else:
             raise TypeError("solo se aceptan los argumentos 'w' o 't'")
 
-    def plot(self, fmt=None, mode: Literal['x','y','xy','abs']='abs', n=None, label=None, **kargs): 
-        t = self.t()
+    def plot(self, fmt=None, mode: Literal['x','y','xy','abs']='abs', n=None, **kargs): 
+        t = self.t()[:n]
         if fmt is None:
             fmt = ['-', '-']
         if isinstance(fmt, str):
@@ -308,30 +317,34 @@ class optical_signal(electrical_signal):
         if n is None: 
             n = self.len()
 
-        if mode =='x':
-            label = label if label else 'Polarización X'
-            line = plt.plot(t[:n], np.abs(self.signal[0,:n] + self.noise[0,:n])**2, fmt[0], label=label, **kargs)
-            plt.legend()
+        if 'label' in kargs.keys():
+            label = kargs['label']
+            label_flag = True
+            kargs.pop('label')
+        else:
+            label_flag = False
+
+        if mode == 'x':
+            label = label if label_flag else 'Polarización X'
+            plt.plot(t, np.abs(self.signal[0,:n] + self.noise[0,:n])**2, fmt[0], label=label, **kargs)
         elif mode == 'y':
-            label = label if label else 'Polarización Y'
-            line = plt.plot(t[:n], np.abs(self.signal[1,:n] + self.noise[1,:n])**2, fmt[0], label=label, **kargs)
-            plt.legend()
+            label = label if label_flag else 'Polarización Y'
+            plt.plot(t, np.abs(self.signal[1,:n] + self.noise[1,:n])**2, fmt[0], label=label, **kargs)
         elif mode == 'xy':
-            line = plt.plot(t[:n], np.abs(self.signal[0,:n]+self.noise[0,:n])**2, fmt[0], t[:n], np.abs(self.signal[1,:n]+self.noise[1,:n])**2, fmt[1], label=['Polarización X', 'Polarización Y'], **kargs)
-            plt.legend()
+            plt.plot(t, np.abs(self.signal[0,:n]+self.noise[0,:n])**2, fmt[0], t, np.abs(self.signal[1,:n]+self.noise[1,:n])**2, fmt[1], label=['Polarización X', 'Polarización Y'], **kargs)
         elif mode == 'abs':
-            label = label if label else 'Abs'
-            s = self.abs()[:n]
-            line = plt.plot(t[:n], (s[0]**2 + s[1]**2), fmt[0], label=label, **kargs)
-            plt.legend()
+            label = label if label_flag else 'Abs'
+            s = self[:n].abs()
+            plt.plot(t, (s[0]**2 + s[1]**2), fmt[0], label=label, **kargs)
         else:
             raise TypeError('El argumento `mode` debe se uno de los siguientes valores ("x","y","xy","abs").')
 
+        plt.legend()
         plt.xlabel('Tiempo [s]')
         plt.ylabel('Potencia [W]')
         return self
     
-    def psd(self, fmt=None, mode: Literal['x','y']=None, n=None, **kargs):
+    def psd(self, fmt=None, kind: Literal['linear', 'log']='log', mode: Literal['x','y']=None, n=None, **kargs):
         if fmt is None:
             fmt = '-'
         if mode is None:
@@ -348,16 +361,22 @@ class optical_signal(electrical_signal):
         else:
             raise TypeError('El argumento `mode` debe ser uno de los siguientes valores ("x" o "y")')    
         
-        plt.plot(f, psd*1e3, fmt, **kargs)
+        if kind == 'linear':
+            plt.plot(f, psd*1e3, fmt, **kargs)
+        elif kind == 'log':
+            plt.semilogy(f, psd*1e3, fmt, **kargs)
+        else:
+            raise TypeError('El argumento `kind` debe ser uno de los siguientes valores ("linear", "log")')
         plt.xlabel('Frecuencia [GHz]')
         plt.ylabel('Potencia [mW]')
+        if 'label'  in kargs.keys():
+            plt.legend()
         return self
     
     def grid(self, n=None):
         sps,t = global_vars.sps, self.t()
         if n is None: 
             n = self.len()
-        plt.axvline(t[:n*sps][-1]+self.dt(),color='k', ls='--')
         for i in t[:n*sps][::sps]:
             plt.axvline(i,color='k', ls='--', alpha=0.3, lw=1)
         return self
@@ -382,7 +401,7 @@ class eye():
             print(f'{key} : {value}')
         return self
     
-    def plot(self, nbits=1000, medias_=True, legend_=True, show_=True, save_=False, filename=None, style: Literal['dark', 'light']='dark', cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter'):
+    def plot(self, umbral, nbits=1000, medias_=True, legend_=True, show_=True, save_=False, filename=None, style: Literal['dark', 'light']='dark', cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter'):
         if not show_:
             return self
 
@@ -418,7 +437,7 @@ class eye():
         ax[1,0].set_xticks([-1,-0.5,0,0.5,1])
         ax[1,0].set_xlabel(r'Time [$t/T_{slot}$]', fontsize=12)
         t_line1 = ax[1,0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
-        y_line1 = ax[1,0].axhline(self.umbral, color = r_th_color, ls = '--', alpha = 0.7)
+        y_line1 = ax[1,0].axhline(umbral, color = r_th_color, ls = '--', alpha = 0.7)
 
         t_line_span0 = ax[1,0].axvline(self.t_span0, color = t_opt_color, ls = '-', alpha = 0.4)
         t_line_span1 = ax[1,0].axvline(self.t_span1, color = t_opt_color, ls = '-', alpha = 0.4)
@@ -439,7 +458,7 @@ class eye():
         ax[1,1].tick_params(axis='x', which='both', length=0, labelbottom=False)
         ax[1,1].tick_params(axis='y', which='both', length=0, labelleft=False)
         ax[1,1].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
-        y_line2 = ax[1,1].axhline(self.umbral, color = r_th_color, ls = '--', alpha = 0.7)
+        y_line2 = ax[1,1].axhline(umbral, color = r_th_color, ls = '--', alpha = 0.7)
 
         ax[0,0].sharex(ax[1,0])
         ax[0,0].tick_params(axis='y', which='both', length=0, labelleft=False)
@@ -472,7 +491,7 @@ class eye():
         )
 
         ax[0,0].hist(
-            t_[(y_>self.umbral*0.95) & (y_<self.umbral*1.05)], 
+            t_[(y_>umbral*0.95) & (y_<umbral*1.05)], 
             bins=200, 
             density=True, 
             orientation = 'vertical', 
@@ -494,7 +513,7 @@ class eye():
             valmin=y_min, 
             valmax=y_max,
             valstep=(y_max-y_min)/20,
-            valinit=self.umbral, 
+            valinit=umbral, 
             initcolor=r_th_color,
             orientation='vertical',
             valfmt='',
