@@ -326,16 +326,16 @@ class optical_signal(electrical_signal):
 
         if mode == 'x':
             label = label if label_flag else 'Polarización X'
-            plt.plot(t, np.abs(self.signal[0,:n] + self.noise[0,:n])**2, fmt[0], label=label, **kargs)
+            plt.plot(t, (self.signal[0,:n] + self.noise[0,:n]).real, fmt[0], label=label, **kargs)
         elif mode == 'y':
             label = label if label_flag else 'Polarización Y'
-            plt.plot(t, np.abs(self.signal[1,:n] + self.noise[1,:n])**2, fmt[0], label=label, **kargs)
+            plt.plot(t, (self.signal[1,:n] + self.noise[1,:n]).real, fmt[0], label=label, **kargs)
         elif mode == 'xy':
-            plt.plot(t, np.abs(self.signal[0,:n]+self.noise[0,:n])**2, fmt[0], t, np.abs(self.signal[1,:n]+self.noise[1,:n])**2, fmt[1], label=['Polarización X', 'Polarización Y'], **kargs)
+            plt.plot(t, (self.signal[0,:n]+self.noise[0,:n]).real, fmt[0], t, (self.signal[1,:n]+self.noise[1,:n]).real, fmt[1], label=['Polarización X', 'Polarización Y'], **kargs)
         elif mode == 'abs':
             label = label if label_flag else 'Abs'
             s = self[:n].abs()
-            plt.plot(t, (s[0]**2 + s[1]**2), fmt[0], label=label, **kargs)
+            plt.plot(t, (s[0]**2 + s[1]**2)**0.5, fmt[0], label=label, **kargs)
         else:
             raise TypeError('El argumento `mode` debe se uno de los siguientes valores ("x","y","xy","abs").')
 
