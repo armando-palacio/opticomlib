@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 import sklearn.cluster as sk
 from tqdm.auto import tqdm # barra de progreso
 
-from ._types_ import (
+from .typing import (
     electrical_signal,
     binary_sequence,
     optical_signal,
@@ -39,7 +39,7 @@ from ._types_ import (
     eye,
 )
 
-from ._utils_ import (
+from .utils import (
     generate_prbs,
     idbm,
     idb,

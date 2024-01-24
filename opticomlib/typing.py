@@ -24,7 +24,7 @@ plt.rcParams['font.family'] = 'serif'
 
 from typing import Literal, Union, Any
 
-from ._utils_ import (
+from .utils import (
     str2array, 
     dbm, 
 )

@@ -17,8 +17,8 @@ from typing import Literal, Union
 
 import numpy as np
 
-from ._types_ import binary_sequence, electrical_signal, eye
-from ._utils_ import Q, tic, toc
+from .typing import binary_sequence, electrical_signal, eye
+from .utils import Q, tic, toc
 
 
 def THRESHOLD_EST(eye_obj: eye):
