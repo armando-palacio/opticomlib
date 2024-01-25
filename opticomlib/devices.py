@@ -9,6 +9,7 @@ Models for optoelectronic components (:mod:`opticomlib.components`)
    PRBS                  -- Pseudorandom binary sequence generator
    DAC                   -- Digital-to-analog converter (DAC) model
    PM                    -- Optical phase modulator (PM) model
+   MZM                   -- Mach-Zehnder modulator (MZM) model
    BPF                   -- Optical band-pass filter (BPF) bessel model
    EDFA                  -- Erbium-doped fiber amplifier (EDFA) simple model
    DM                    -- Dispersion medium model
@@ -185,6 +186,59 @@ def PM(input: optical_signal, v: Union[int, float, ndarray, electrical_signal], 
     if np.sum(input.noise):
         output.noise = input.noise * np.exp(1j * v * pi / Vpi)
     
+    output.ejecution_time = toc()
+    return output
+
+
+
+def MZM(input: optical_signal, V: Union[int, float, ndarray, electrical_signal], bias: float=0.0, Vpi: float=5.0, loss_dB: float=0.0, eta: float=0.1, BW: float=40e9) -> optical_signal:
+    """
+    ### Descripción:
+    Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2).
+    
+    ---
+
+    ### Args:
+    - `input` - señal óptica a modular
+    - `V` - voltaje del driver. 
+    - `bias` [Opcional] - voltaje de polarización del modulador (default: `bias=0.0` [V])
+    - `Vpi` [Opcional] - voltaje para el cual el dispositivo pasa de on-state a off-state (default: `Vpi=5.0` [V])
+    - `loss_dB` [Opcional] - pérdidas de propagación o insersión en el modulador, valor en dB (default: `loss_dB=0.0`)
+    - `eta` [Opcional] - relación de imbalancede la intensidad de la luz entre los dos brazos del modulador (default: `eta=0.1`). ER = -20*log10(eta/2) = 26 dB
+    - `BW` [Opcional] - ancho de banda del modulador en [Hz] (default: `BW=10e9`)
+
+    ---
+
+    ### Returns:
+    - `optical_signal`
+    """
+    tic()
+    if not isinstance(input, optical_signal): 
+        raise TypeError("`input` debe ser del tipo (optical_signal).")
+    
+    if isinstance(V, (int, float)):
+        V = np.ones(input.len()) * V
+    elif isinstance(V, electrical_signal):
+        V = V.signal
+        if V.size != input.signal.len():
+            raise ValueError("La longitud de `V` debe ser igual a la longitud de `input`.")
+    elif isinstance(V, ndarray):
+        if len(V) != input.len():
+            raise ValueError("La longitud de `V` debe ser igual a la longitud de `input`.")
+    else:
+        raise TypeError("`V` debe ser del tipo (int, float, ndarray ó electrical_signal).")
+    
+    loss = idb(-loss_dB)
+
+    output = input.copy()
+    g_t = pi/2/Vpi * (V + bias)
+    output.signal = input.signal * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
+
+    if np.sum(input.noise):
+        output.noise = input.noise * loss * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
+
+    output = LPF(output, BW)
+
     output.ejecution_time = toc()
     return output
 
