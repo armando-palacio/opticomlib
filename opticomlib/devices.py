@@ -1,7 +1,7 @@
 """
-===================================================================
-Models for optoelectronic components (:mod:`opticomlib.components`)
-===================================================================
+==============================================================
+Models for Opto-Electronic devices (:mod:`opticomlib.devices`)
+==============================================================
 
 .. autosummary::
    :toctree: generated/
@@ -53,7 +53,6 @@ from .utils import (
 
 def PRBS(n: int=2**8, user: list=[], order: int=None) -> binary_sequence:
     """
-    ### Descripción:
     Generador Pseudoaleatorio de secuencias binarias.
 
     ---
@@ -86,7 +85,6 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
         pulse_shape: Literal['rect','gaussian']='rect', 
         **kargs) -> electrical_signal:  
     """
-    ### Descripción:
     Conversor digital a analógico. Convierte una secuencia binaria en una señal eléctrica, muestreada a una frecuencia `fs`.
 
     ---
@@ -147,7 +145,6 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 
 def PM(input: optical_signal, v: Union[int, float, ndarray, electrical_signal], Vpi: float=5.0)-> optical_signal:
     """
-    ### Descripción:
     Modula en fase la señal óptica de entrada, a partir de una señal eléctrica de entrada.
     
     ---
@@ -193,8 +190,9 @@ def PM(input: optical_signal, v: Union[int, float, ndarray, electrical_signal], 
 
 def MZM(input: optical_signal, V: Union[int, float, ndarray, electrical_signal], bias: float=0.0, Vpi: float=5.0, loss_dB: float=0.0, eta: float=0.1, BW: float=40e9) -> optical_signal:
     """
-    ### Descripción:
-    Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2).
+    Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2 Push-Pull config). 
+    
+    See model theory in `Tetsuya Kawanishi - Electro-optic Modulation for Photonic Networks (Textbooks in Telecommunication Engineering)-Springer (2022)` Chapter 4.3.
     
     ---
 
@@ -246,7 +244,6 @@ def MZM(input: optical_signal, V: Union[int, float, ndarray, electrical_signal],
 
 def MODULATOR(input: electrical_signal, p_laser: float=0, pol: str='x') -> optical_signal:
     """
-    ### Descripción:
     Modula la señal óptica de un láser de potencia dada,79 a partir de una señal eléctrica de entrada.
     
     ---
@@ -287,7 +284,6 @@ def MODULATOR(input: electrical_signal, p_laser: float=0, pol: str='x') -> optic
 
 def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_signal:
     """
-    ### Descripción:
     Filtro Pasa Banda (BPF) Óptico. Filtra la señal óptica de entrada, dejando pasar la banda de frecuencias deseada. 
     
     ---
@@ -325,7 +321,6 @@ def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_s
 
 def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple: # modelo simplificado del EDFA (no satura)
     """
-    ### Descripción:
     Amplificador de fibra dopada con Erbium. Amplifica la señal óptica a la entrada, agregando ruido de emisión espontánea amplificada (ASE). 
     
     ---
@@ -366,7 +361,6 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple: # mode
 
 def DM(input: optical_signal, beta_2: float, length: float) -> optical_signal:
     """
-    ### Descripción:
     Medio Dispersivo. Emula un medio con solo la propiedad de dispersión, es decir solo `beta_2` diferente de cero. 
     
     ---
@@ -398,7 +392,6 @@ def DM(input: optical_signal, beta_2: float, length: float) -> optical_signal:
 
 def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=0.0, beta_3: float=0.0, gamma: float=0.0, phi_max:float=0.05, show_progress=False) -> optical_signal:
     """
-    ### Descripción:
     Fibra Óptica. Simula la transmisión por fibra de una señal óptica de entrada teniendo en cuenta los efectos de la atenuación, dispersión y no linealidades. 
     
     ---
@@ -467,7 +460,6 @@ def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=
 
 def LPF(input: Union[ndarray, electrical_signal], BW: float, n: int=4, fs: float=None) -> electrical_signal:
         """
-        ### Descripción:
         Filtro Pasa Bajo (LPF) Eléctrico. Filtra la señal eléctrica de entrada, dejando pasar la banda de frecuencias deseada. 
         
         ---
@@ -509,7 +501,6 @@ def LPF(input: Union[ndarray, electrical_signal], BW: float, n: int=4, fs: float
 
 def PD(input: optical_signal, BW: float, responsivity: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
     """
-    ### Descripción:
     Photodetector. Simula la detección de una señal óptica por un fotodetector.
     
     ---
@@ -573,7 +564,6 @@ def PD(input: optical_signal, BW: float, responsivity: float=1.0, T: float=300.0
 
 def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) -> binary_sequence:
     """
-    ### Descripción:
     Conversor analógico a digital. Convierte una señal eléctrica analógica en una señal digital de amplitud cuantizada, muestreada a una frecuencia `fs`
     y filtrada a un ancho de banda BW.
 
@@ -629,7 +619,6 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
 
 def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamplig: int=None):
     """
-    ### Descripción:
     Estima todos los parámetros fundamentales y métricas del diagrama de ojo de la señal eléctrica de entrada.
     
     ---
@@ -649,7 +638,6 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
 
     def shorth_int(data: np.ndarray) -> tuple[float, float]:
         """
-        ### Descripción:
         Estimación del intervalo más corto que contiene el 50% de las muestras de 'data'.
         
         ---
@@ -674,7 +662,6 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
     
     def find_nearest(levels: np.ndarray, data: Union[np.ndarray, float]) -> Union[np.ndarray, float]: 
         """
-        ### Descripción:
         Encuentra el elemento de 'levels' más cercano a cada valor de 'data'.
         
         ---
@@ -801,7 +788,6 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
 
 def SAMPLER(input: electrical_signal, _eye_: eye) -> electrical_signal:
     """
-    ### Descripción:
     Recibe una señal de tipo `electrical_signal` y un objeto de tipo `eye` y realiza el muestreo de la señal 
     en el instante óptimo determinado por el objeto `eye`.
     
