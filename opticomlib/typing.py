@@ -353,7 +353,6 @@ class electrical_signal():
             xlabel (str): X-axis label (default - ``'Tiempo [ns]'``).
             ylabel (str): Y-axis label (default - ``'Amplitud [u.a]'``).
             **kargs : all arguments compatible with ``matplotlib.pyplot.plot()``.
-        if ``'label'`` is in ``kargs.keys()``, legend will be show be default. 
 
         Returns:
             electrical_signal: Same object.

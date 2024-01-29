@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Models for Opto-Electronic devices (opticomlib.devices) &mdash; opticomlib 0.4 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7f00635f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="opticomlib.devices.PRBS" href="generated/opticomlib.devices.PRBS.html" />
+    <link rel="prev" title="opticomlib.typing.eye" href="generated/opticomlib.typing.eye.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            opticomlib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="typing.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.PRBS.html">opticomlib.devices.PRBS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.DAC.html">opticomlib.devices.DAC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.PM.html">opticomlib.devices.PM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.MZM.html">opticomlib.devices.MZM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.BPF.html">opticomlib.devices.BPF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.EDFA.html">opticomlib.devices.EDFA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.DM.html">opticomlib.devices.DM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.FIBER.html">opticomlib.devices.FIBER</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.LPF.html">opticomlib.devices.LPF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.PD.html">opticomlib.devices.PD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.ADC.html">opticomlib.devices.ADC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.GET_EYE.html">opticomlib.devices.GET_EYE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/opticomlib.devices.SAMPLER.html">opticomlib.devices.SAMPLER</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">opticomlib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/devices.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="models-for-opto-electronic-devices-opticomlib-devices">
+<h1>Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)<a class="headerlink" href="#models-for-opto-electronic-devices-opticomlib-devices" title="Link to this heading"></a></h1>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/opticomlib.devices.PRBS.html#opticomlib.devices.PRBS" title="opticomlib.devices.PRBS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PRBS</span></code></a>([n, user, order])</p></td>
+<td><p>Generador Pseudoaleatorio de secuencias binarias.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/opticomlib.devices.DAC.html#opticomlib.devices.DAC" title="opticomlib.devices.DAC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DAC</span></code></a>(input[, Vout, pulse_shape])</p></td>
+<td><p>Conversor digital a analógico.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/opticomlib.devices.PM.html#opticomlib.devices.PM" title="opticomlib.devices.PM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PM</span></code></a>(input, v[, Vpi])</p></td>
+<td><p>Modula en fase la señal óptica de entrada, a partir de una señal eléctrica de entrada.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/opticomlib.devices.MZM.html#opticomlib.devices.MZM" title="opticomlib.devices.MZM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MZM</span></code></a>(input, V[, bias, Vpi, loss_dB, eta, BW])</p></td>
+<td><p>Mach-Zehnder modulator (MZM) model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/opticomlib.devices.BPF.html#opticomlib.devices.BPF" title="opticomlib.devices.BPF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BPF</span></code></a>(input, BW[, n, fs])</p></td>
+<td><p>Filtro Pasa Banda (BPF) Óptico.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/opticomlib.devices.EDFA.html#opticomlib.devices.EDFA" title="opticomlib.devices.EDFA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EDFA</span></code></a>(input, G, NF, BW)</p></td>
+<td><p>Amplificador de fibra dopada con Erbium.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/opticomlib.devices.DM.html#opticomlib.devices.DM" title="opticomlib.devices.DM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DM</span></code></a>(input, beta_2, length)</p></td>
+<td><p>Medio Dispersivo.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/opticomlib.devices.FIBER.html#opticomlib.devices.FIBER" title="opticomlib.devices.FIBER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FIBER</span></code></a>(input, length[, alpha, beta_2, ...])</p></td>
+<td><p>Fibra Óptica.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/opticomlib.devices.LPF.html#opticomlib.devices.LPF" title="opticomlib.devices.LPF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LPF</span></code></a>(input, BW[, n, fs])</p></td>
+<td><p>Filtro Pasa Bajo (LPF) Eléctrico.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/opticomlib.devices.PD.html#opticomlib.devices.PD" title="opticomlib.devices.PD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PD</span></code></a>(input, BW[, responsivity, T, R_load, noise])</p></td>
+<td><p>Photodetector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/opticomlib.devices.ADC.html#opticomlib.devices.ADC" title="opticomlib.devices.ADC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ADC</span></code></a>(input[, fs, BW, nbits])</p></td>
+<td><p>Conversor analógico a digital.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/opticomlib.devices.GET_EYE.html#opticomlib.devices.GET_EYE" title="opticomlib.devices.GET_EYE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GET_EYE</span></code></a>(input[, nslots, sps_resamplig])</p></td>
+<td><p>Estima todos los parámetros fundamentales y métricas del diagrama de ojo de la señal eléctrica de entrada.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/opticomlib.devices.SAMPLER.html#opticomlib.devices.SAMPLER" title="opticomlib.devices.SAMPLER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAMPLER</span></code></a>(input, _eye_)</p></td>
+<td><p>Recibe una señal de tipo <cite>electrical_signal</cite> y un objeto de tipo <cite>eye</cite> y realiza el muestreo de la señal en el instante óptimo determinado por el objeto <cite>eye</cite>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">ADC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#ADC"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Conversor analógico a digital. Convierte una señal eléctrica analógica en una señal digital de amplitud cuantizada, muestreada a una frecuencia <cite>fs</cite>
+y filtrada a un ancho de banda BW.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal eléctrica a cuantizar
+- <cite>fs</cite> [Opcional] - frecuencia de muestreo de la señal de salida (default: <cite>global_vars.fs</cite>)
+- <cite>BW</cite> [Opcional] - ancho de banda del ADC en [Hz] (default: <cite>inf</cite> no se filtra la señal)
+- <cite>nbits</cite> [Opcional] - cantidad de bits del ADC (default: <cite>nbits=8</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>electrical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">BPF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#BPF"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Filtro Pasa Banda (BPF) Óptico. Filtra la señal óptica de entrada, dejando pasar la banda de frecuencias deseada.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal óptica a filtrar
+- <cite>BW</cite> - ancho de banda del filtro en [Hz]
+- <cite>n</cite> [Opcional] - orden del filtro (default: <cite>n=4</cite>)
+- <cite>fs</cite> [Opcional] - frecuencia de muestreo de la señal de entrada (default: <cite>fs=globals_vars.fs</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>optical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">DAC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulse_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'rect'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'gaussian'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rect'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#DAC"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Conversor digital a analógico. Convierte una secuencia binaria en una señal eléctrica, muestreada a una frecuencia <cite>fs</cite>.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - secuencia binaria de entrada
+- <cite>Vout</cite> [Opcional] - amplitud de la señal de salida [-15 a 15 Voltios] (default: <cite>amplitud=5.0</cite>)
+- <cite>pulse_shape</cite> [Opcional] - forma de pulso a la salida, puede ser “rect” o “gaussian” (default: <cite>type=”rect”</cite>)</p>
+<p>—</p>
+<p>### Kargs:
+- <cite>c</cite> [Opcional] - chirp del pulso gaussiano. Solo si <cite>type=gaussian</cite> (default: <cite>c=0.0</cite>)
+- <cite>m</cite> [Opcional] - orden del pulso supergausiano. Solo si <cite>type=gaussian</cite> (default: <cite>m=1</cite>)
+- <cite>T</cite> [Opcional] - ancho a mitad de altura del pulso gaussiano en cantidad de muestras. Solo si <cite>type=gaussian</cite> (default: <cite>T=sps</cite>)
+—</p>
+<p>### Returns:
+- <cite>electrical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">DM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#DM"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Medio Dispersivo. Emula un medio con solo la propiedad de dispersión, es decir solo <cite>beta_2</cite> diferente de cero.</p>
+<p>—</p>
+<p>### Args:
+- <cite>signal</cite> - señal óptica de entrada
+- <cite>beta_2</cite> - coeficiente de dispersión de la fibra en [ps^2/km]
+- <cite>length</cite> - longitud del medio dispersivo en [km]</p>
+<p>—</p>
+<p>### Returns:
+- <cite>optical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">EDFA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#EDFA"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Amplificador de fibra dopada con Erbium. Amplifica la señal óptica a la entrada, agregando ruido de emisión espontánea amplificada (ASE).</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal óptica a amplificar
+- <cite>G</cite> - ganancia del amplificador en [dB]
+- <cite>NF</cite> - figura de ruido del amplificador en [dB]
+- <cite>BW</cite> - ancho de banda del amplificador en [Hz]</p>
+<p>—</p>
+<p>### Returns:
+-
+- <cite>output</cite> (optical_signal) - señal óptica de salida</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">FIBER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#FIBER"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Fibra Óptica. Simula la transmisión por fibra de una señal óptica de entrada teniendo en cuenta los efectos de la atenuación, dispersión y no linealidades.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal óptica de entrada
+- <cite>length</cite> - longitud de la fibra en [km]
+- <cite>alpha</cite> [Opcional] - coeficiente de atenuación de la fibra en [dB/km] (default: <cite>alpha=0.0</cite>)
+- <cite>beta_2</cite> [Opcional] - coeficiente de dispersión de segundo orden de la fibra en [ps^2/km] (default: <cite>beta_2=0.0</cite>)
+- <cite>beta_3</cite> [Opcional] - coeficiente de dispersión de tercer orden de la fibra en [ps^3/km] (default: <cite>beta_3=0.0</cite>)
+- <cite>gamma</cite> [Opcional] - coeficiente de no linealidad de la fibra en [(W·km)^-1] (default: <cite>gamma=0.0</cite>)
+- <cite>phi_max</cite> [Opcional] - cota superior de la fase no lineal en [rad] (default: <cite>phi_max=0.05</cite>)
+- <cite>show_progress</cite> [Opcional] - mostrar barra de progreso (default: <cite>show_progress=False</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>optical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">GET_EYE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nslots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps_resamplig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#GET_EYE"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Estima todos los parámetros fundamentales y métricas del diagrama de ojo de la señal eléctrica de entrada.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal eléctrica a partir de la cual se estimará el diagrama de ojos
+- <cite>nslots</cite> [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: <cite>nslots=4096</cite>)
+- <cite>sps_resamplig</cite> [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: <cite>global_vars.sps</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>eye</cite> - objeto de la clase <cite>Eye</cite> con todos los parámetros y métricas del diagrama de ojo</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">LPF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#LPF"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Filtro Pasa Bajo (LPF) Eléctrico. Filtra la señal eléctrica de entrada, dejando pasar la banda de frecuencias deseada.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal eléctrica a filtrar
+- <cite>BW</cite> - ancho de banda del filtro en [Hz]
+- <cite>n</cite> [Opcional] - orden del filtro (default: <cite>n=4</cite>)
+- <cite>fs</cite> [Opcional] - frecuencia de muestreo de la señal de entrada (default: <cite>fs=globals_vars.fs</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>electrical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">MODULATOR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_laser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'x'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#MODULATOR"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Modula la señal óptica de un láser de potencia dada,79 a partir de una señal eléctrica de entrada.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal eléctrica moduladora
+- <cite>p_laser</cite> [Opcional] - potencia del laser en [dBm] (default: <cite>p_laser=global_vars.p_laser</cite>)
+- <cite>pol</cite> [Opcional] - eje de polarización de la señal óptica de salida (default: <cite>x</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>optical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">MZM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vpi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_dB</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40000000000.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#MZM"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2 Push-Pull config).</p>
+<p>See model theory in <cite>Tetsuya Kawanishi - Electro-optic Modulation for Photonic Networks (Textbooks in Telecommunication Engineering)-Springer (2022)</cite> Chapter 4.3.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal óptica a modular
+- <cite>V</cite> - voltaje del driver.
+- <cite>bias</cite> [Opcional] - voltaje de polarización del modulador (default: <cite>bias=0.0</cite> [V])
+- <cite>Vpi</cite> [Opcional] - voltaje para el cual el dispositivo pasa de on-state a off-state (default: <cite>Vpi=5.0</cite> [V])
+- <cite>loss_dB</cite> [Opcional] - pérdidas de propagación o insersión en el modulador, valor en dB (default: <cite>loss_dB=0.0</cite>)
+- <cite>eta</cite> [Opcional] - relación de imbalancede la intensidad de la luz entre los dos brazos del modulador (default: <cite>eta=0.1</cite>). ER = -20*log10(eta/2) = 26 dB
+- <cite>BW</cite> [Opcional] - ancho de banda del modulador en [Hz] (default: <cite>BW=10e9</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>optical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responsivity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ase-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'thermal-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'shot-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ase-thermal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ase-shot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'thermal-shot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#PD"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Photodetector. Simula la detección de una señal óptica por un fotodetector.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal óptica a detectar
+- <cite>BW</cite> - ancho de banda del detector en [Hz]
+- <cite>responsivity</cite> [Opcional] - Responsividad del detector en [A/W] (default: <cite>R=1.0</cite>)
+- <cite>T</cite> [Opcional] - Temperatura del detector en [K] (default: <cite>T=300.0</cite>)
+- <cite>R_load</cite> [Opcional] - Resistencia de carga del detector en [Ohm] (default: <cite>R_load=50.0</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>electrical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vpi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#PM"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Modula en fase la señal óptica de entrada, a partir de una señal eléctrica de entrada.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal óptica a modular
+- <cite>v</cite> - voltaje del driver. Puede ser valor entero en cuyo caso la modulación de fase es constante, o una señal eléctrica de la misma longitud que la señal óptica.
+- <cite>Vpi</cite> [Opcional] - voltaje para el cual el dispositivo logra un desfasaje de π (default: <cite>Vpi=5.0</cite> [V])</p>
+<p>—</p>
+<p>### Returns:
+- <cite>optical_signal</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PRBS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#PRBS"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Generador Pseudoaleatorio de secuencias binarias.</p>
+<p>—</p>
+<p>### Args:
+- <cite>n</cite> [Opcional] - cantidad de dígitos a generar (default: <cite>n=2**8</cite>)
+- <cite>user</cite> [Opcional] - secuencia binaria de entrada (default: <cite>user=[]</cite>)
+- <cite>defined</cite> [Opcional] - grado del polinómio generador (default: <cite>defined=None</cite>)</p>
+<p>—</p>
+<p>### Returns:
+- <cite>binary_sequence</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">SAMPLER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">_eye_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.eye.html#opticomlib.typing.eye" title="opticomlib.typing.eye"><span class="pre">eye</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></span><a class="reference internal" href="_modules/opticomlib/devices.html#SAMPLER"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Recibe una señal de tipo <cite>electrical_signal</cite> y un objeto de tipo <cite>eye</cite> y realiza el muestreo de la señal
+en el instante óptimo determinado por el objeto <cite>eye</cite>.</p>
+<p>—</p>
+<p>### Args:
+- <cite>input</cite> - señal eléctrica a muestrear
+- <cite>eye</cite>  - objeto de tipo <cite>eye</cite> que contiene la información del diagrama de ojo</p>
+<p>### Returns:
+- <cite>electrical_signal</cite> - señal electrica muestreada a una muestra por slot</p>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generated/opticomlib.typing.eye.html" class="btn btn-neutral float-left" title="opticomlib.typing.eye" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/opticomlib.devices.PRBS.html" class="btn btn-neutral float-right" title="opticomlib.devices.PRBS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ing. Armando P. Romeu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

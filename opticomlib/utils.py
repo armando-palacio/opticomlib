@@ -12,7 +12,7 @@ from scipy.integrate import quad
 
 def generate_prbs(order: int=None):
     """
-        Esta función genera una secuencia pseudoaleatoria binaria (PRBS) de orden deseado.
+    Esta función genera una secuencia pseudoaleatoria binaria (PRBS) de orden deseado.
 
     Args:
     - `order` [Opcional] - orden del polinomio generador {7, 9, 11, 15, 20, 23, 31} (default: `order=7`)

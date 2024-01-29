@@ -51,21 +51,40 @@ from .utils import (
 
 
 
-def PRBS(n: int=2**8, user: list=[], order: int=None) -> binary_sequence:
+def PRBS(n=2**8, user=[], order=None):
     """
-    Generador Pseudoaleatorio de secuencias binarias.
+    Pseudorandom binary sequence generator.
 
-    ---
-    
-    ### Args:
-    - `n` [Opcional] - cantidad de dígitos a generar (default: `n=2**8`)
-    - `user` [Opcional] - secuencia binaria de entrada (default: `user=[]`)
-    - `defined` [Opcional] - grado del polinómio generador (default: `defined=None`)
+    Args:
+        n (int) : lenght of random binary sequence (default: `n=2**8`)
+        user (str | list | ndarray) : binary sequence user pattern (default: `user=[]`)
+        order (int) : degree of the generating pseudorandom polynomial (default: `order=None`)
 
-    ---
-    
-    ### Returns:
-    - `binary_sequence`
+    Returns:
+        binary_sequence: generated binary sequence
+
+    Examples:
+        Using parameter **n**, this function generate a random sequence of lenght `n`. Internally it use ``numpy.random.randint`` function.
+        
+        >>> PRBS(10).data
+        array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1], dtype=uint8)
+
+        On the other hand, the **user** parameter can be used for a custom sequence.
+        We can input it in *str* format separating the values by spaces ``' '`` or by commas ``','``. 
+
+        >>> PRBS(user='1 0 1 0   0 1 1 1   0,1,0,0   1,1,0,1').data
+        array([1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1], dtype=uint8)
+
+        The last way in which the function can be used is by passing the **order** of the generating polynomial
+        as an argument, which will return a pseudo-random binary sequence of lenght 2^order-1, using an internal algorithm.
+
+        >>> PRBS(order=7).data 
+        array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+            0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,
+            0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,
+            0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,
+            0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,
+            0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)
     """
     tic()
 

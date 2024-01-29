@@ -1,10 +1,10 @@
 """
-========================================================
-Laboratory and Practice funcions (:mod:`opticomlib.lab`)
-========================================================
+==========================================================
+Laboratory and practical functions (:mod:`opticomlib.lab`)
+==========================================================
 
 .. autosummary::
-   :toctree: generated/
+   :toctree: generated/lab
 
    SYNC                  -- Sincronizador de inicio de trama
    GET_EYE_v2            -- Eye diagram parameters and metrics estimator v2
