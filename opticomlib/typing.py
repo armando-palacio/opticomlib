@@ -56,7 +56,7 @@ class global_variables():
         self.R = 1e9
         self.fs = self.R*self.sps
         self.dt = 1/self.fs
-        self.lambda_opt = 1550e-9
+        self.lambda_opt = 1550
         self.f0 = c/self.lambda_opt
 
 
@@ -313,6 +313,12 @@ class electrical_signal():
         if by not in ['signal', 'noise', 'all']:
             raise TypeError('`by` debe tomar los valores ("signal", "noise", "all")')
         return np.mean(self.abs(by)**2, axis=-1)
+    
+    def phase(self):
+        """
+        Get phase of the signal.
+        """
+        return np.unwrap(np.angle(self.signal))
 
     ## Métodos propios de esta clase
     def copy(self, n: int=None):
@@ -363,7 +369,7 @@ class electrical_signal():
             n = self.len()
         plt.plot(self.t()[:n]*1e9, (self[:n].signal+self[:n].noise).real, fmt, **kargs)
         plt.xlabel(xlabel if xlabel else 'Tiempo [ns]')
-        plt.ylabel(ylabel if ylabel else 'Amplitud [u.a.]')
+        plt.ylabel(ylabel if ylabel else 'Amplitud [V]')
         
         if 'label'  in kargs.keys():
             plt.legend()
@@ -414,7 +420,7 @@ class electrical_signal():
         Returns:
             electrical_signal: Same object.
         """
-        sps,t = self.sps(), self.t()
+        sps,t = self.sps(), self.t()*1e9
         if n is None: 
             n = self.len()
         for i in t[:n*sps+1][::sps]:
@@ -512,7 +518,7 @@ class optical_signal(electrical_signal):
             s = self[:n].abs()
             plt.plot(t, (s[0]**2 + s[1]**2), fmt[0], label=label, **kargs)
         else:
-            raise TypeError('El argumento `mode` debe se uno de los siguientes valores ("x","y","xy","abs").')
+            raise TypeError('El argumento `mode` debe se uno de los siguientes valores ("x","y","both","abs").')
 
         plt.legend()
         plt.xlabel('Tiempo [ns]')
@@ -573,7 +579,7 @@ class optical_signal(electrical_signal):
         Returns:
             optical_signal: Same object.
         """
-        sps,t = global_vars.sps, self.t()
+        sps,t = global_vars.sps, self.t()*1e9
         if n is None: 
             n = self.len()
         for i in t[:n*sps+1][::sps]:

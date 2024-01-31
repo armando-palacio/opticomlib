@@ -111,7 +111,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n</strong> (<em>int</em>) – lenght of random binary sequence (default: <cite>n=2**8</cite>)</p></li>
 <li><p><strong>user</strong> (<em>str</em><em> | </em><em>list</em><em> | </em><em>ndarray</em>) – binary sequence user pattern (default: <cite>user=[]</cite>)</p></li>
-<li><p><strong>order</strong> (<em>int</em>) – degree of the generating pseudorandom polynomial (default: <cite>order=None</cite>)</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – degree of the generating pseudorandom polynomial (default: <cite>order=None</cite>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -134,7 +134,7 @@ We can input it in <em>str</em> format separating the values by spaces <code cla
 </pre></div>
 </div>
 <p>The last way in which the function can be used is by passing the <strong>order</strong> of the generating polynomial
-as an argument, which will return a pseudo-random binary sequence of lenght 2*order-1, using an internal algorithm.</p>
+as an argument, which will return a pseudo-random binary sequence of lenght 2^order-1, using an internal algorithm.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,</span>
 <span class="go">    0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,</span>

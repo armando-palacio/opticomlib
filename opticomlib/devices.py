@@ -58,7 +58,7 @@ def PRBS(n=2**8, user=[], order=None):
     Args:
         n (int) : lenght of random binary sequence (default: `n=2**8`)
         user (str | list | ndarray) : binary sequence user pattern (default: `user=[]`)
-        order (int) : degree of the generating pseudorandom polynomial (default: `order=None`)
+        order (int, optional) : degree of the generating pseudorandom polynomial (default: `order=None`)
 
     Returns:
         binary_sequence: generated binary sequence
@@ -102,27 +102,69 @@ def PRBS(n=2**8, user=[], order=None):
 def DAC(input: Union[str, list, tuple, ndarray, binary_sequence], 
         Vout: float=None,
         pulse_shape: Literal['rect','gaussian']='rect', 
-        **kargs) -> electrical_signal:  
+        **kargs):  
     """
-    Conversor digital a analógico. Convierte una secuencia binaria en una señal eléctrica, muestreada a una frecuencia `fs`.
+    Digital-to-Analog Converter. Converts a binary sequence into an electrical signal, sampled at a frequency ``fs``.
 
-    ---
+    Args:
+        input (str | list | tuple | ndarray | binary_sequence): Input binary sequence.
+        Vout (float, Optional): Output signal amplitude [-15 to 15 Volts]. (default: `Vout=1.0`)
+        pulse_shape (str, Optional): Pulse shape at the output, can be "rect" or "gaussian". (default: `pulse_shape="rect"`)
 
-    ### Args:
-    - `input` - secuencia binaria de entrada
-    - `Vout` [Opcional] - amplitud de la señal de salida [-15 a 15 Voltios] (default: `amplitud=5.0`)
-    - `pulse_shape` [Opcional] - forma de pulso a la salida, puede ser "rect" o "gaussian" (default: `type="rect"`)
+    Keyword Args:
+        c (float): Chirp of the Gaussian pulse. Only if `pulse_shape=gaussian`. (default: `c=0.0`)
+        m (int): Order of the super-Gaussian pulse. Only if `pulse_shape=gaussian`. (default: `m=1`)
+        T (int): Pulse width at half maximum in number of samples. Only if `pulse_shape=gaussian`. (default: `T=sps`)
 
-    ---
-    
-    ### Kargs:
-    - `c` [Opcional] - chirp del pulso gaussiano. Solo si `type=gaussian` (default: `c=0.0`)
-    - `m` [Opcional] - orden del pulso supergausiano. Solo si `type=gaussian` (default: `m=1`)
-    - `T` [Opcional] - ancho a mitad de altura del pulso gaussiano en cantidad de muestras. Solo si `type=gaussian` (default: `T=sps`)
-    ---
+    Returns:
+        electrical_signal: The converted electrical signal.
 
-    ### Returns:
-    - `electrical_signal`
+    Raises:
+        TypeError: If `input` type is not in [str, list, tuple, ndarray, binary_sequence].
+        NameError: If `pulse_shape` is not "rect" or "gaussian".
+        ValueError: If `Vout` is not between -15 and 15 Volts.
+
+    Example:
+        >>> from opticomlib.typing import global_vars
+        >>> from opticomlib.devices import DAC
+        >>> import matplotlib.pyplot as plt
+        >>> 
+        >>> global_vars(sps=8) # set samples per bit
+        >>>
+        >>> el_sig = DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).print().plot('r.-').grid()
+        signal : [-1.23381818e-16-2.22738516e-16j  6.16909091e-17-1.05272464e-16j
+        3.77856818e-16+3.15867786e-16j  1.30129261e-16-1.11127678e-16j
+        -3.13522659e-16-1.41649623e-16j -8.08177643e-17+1.58454134e-16j
+        -5.97961758e-17-2.14742015e-16j -3.46122447e-16-5.92476154e-16j
+        -2.38883560e-16-1.06387143e-16j  1.25299722e-16+1.21935938e-16j
+        3.33675895e-11-2.89289740e-17j  2.68302800e-07-7.08598803e-18j
+        1.49408434e-04-5.72763272e-18j  1.04942785e-02+9.24140715e-17j
+        1.60416483e-01+2.67463542e-16j  8.58893815e-01+1.89368799e-16j
+        2.28523831e+00+4.84925496e-16j  3.79394843e+00+4.10134298e-16j
+        4.67939835e+00+4.35662674e-16j  4.96186576e+00+2.07554360e-16j
+        5.00000000e+00+0.00000000e+00j  4.96186576e+00+5.89390367e-16j
+        4.67939835e+00+1.13658240e-16j  3.79394843e+00+4.06283585e-16j
+        2.28523831e+00+1.97133487e-16j  8.58893815e-01+2.02443479e-16j
+        1.60416483e-01+1.40898933e-16j  1.04942785e-02+1.93072645e-16j
+        1.49408434e-04+9.28272207e-17j  2.68302799e-07-2.09299736e-16j
+        3.33672991e-11+8.00938377e-17j  3.95243922e-16+2.04687306e-16j
+        1.44481597e-16+1.47792739e-17j -2.48681540e-16+1.21935938e-16j
+        -8.71750414e-17+1.84774604e-16j -1.41348280e-16+2.06617556e-16j
+        -7.73094327e-17-1.12598266e-16j -1.73505682e-17+9.10904830e-17j
+        -9.25363636e-17+3.54082838e-16j  3.08454545e-16+1.87892798e-16j]
+        noise : [0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j
+        0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j
+        0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j
+        0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]
+        len : 40
+        power : 4.0e+00 W (35.99 dBm)
+        size : 1872 bytes
+        time : 0.0
+        >>>plt.show()
+
+    .. image:: imgs/DAC_example1.png
+        :alt: Descripción de la imagen
+        :align: center
     """
     tic()
     if not isinstance(input, binary_sequence):
@@ -153,6 +195,8 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
         raise NameError('El parámetro `type` debe ser uno de los siguientes valores ("rect","gaussian").')
 
     if Vout:
+        if np.abs(Vout)>=15:
+            raise ValueError('El parámetro `Vout` debe ser un valor entre -15 y 15 Volts.')
         x = x * Vout / x.max()
 
     output = electrical_signal( x )
@@ -162,172 +206,181 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 
 
 
-def PM(input: optical_signal, v: Union[int, float, ndarray, electrical_signal], Vpi: float=5.0)-> optical_signal:
+def PM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_signal], Vpi: float=5.0) -> optical_signal:
     """
-    Modula en fase la señal óptica de entrada, a partir de una señal eléctrica de entrada.
-    
-    ---
+    Optical Phase Modulator (PM) model. Modulate de phase of the input optical signal through input electrical signal.
 
-    ### Args:
-    - `input` - señal óptica a modular
-    - `v` - voltaje del driver. Puede ser valor entero en cuyo caso la modulación de fase es constante, o una señal eléctrica de la misma longitud que la señal óptica.
-    - `Vpi` [Opcional] - voltaje para el cual el dispositivo logra un desfasaje de π (default: `Vpi=5.0` [V])
+    Args:
+        op_input (optical_signal): optical signal to be modulated
+        el_input (float | ndarray | electrical_signal): driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.
+        Vpi (float, Optional): voltage at which the device achieves a phase shift of π (default: `Vpi=5.0` [V])
 
-    ---
+    Returns:
+        optical_signal: modulated optical signal
 
-    ### Returns:
-    - `optical_signal`
+    Raises:
+        TypeError: If `input` type is not `optical_signal`.
+        TypeError: If `el_input` type is not in [float, ndarray, electrical_signal].
+        ValueError: If `el_input` is ndarray or electrical_signal but, length is not equal to `op_input` length.
+
+    Example:
+        >>> from opticomlib.typing import optical_signal, global_vars
+        >>> from opticomlib.devices import PM
+        >>> 
+        >>> import numpy as np
+        >>> import matplotlib.pyplot as plt
+        >>>
+        >>> global_vars(sps=8, R=1e9) # set samples per bit and bitrate
+        >>>
+        >>> op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
+        >>> t = op_input.t()*1e9
+        >>> w = 4*np.pi/t[-1]
+        >>>
+        >>> # Constant phase
+        >>> output = PM(op_input, el_input=2.5, Vpi=5)
+        >>>
+        >>> plt.subplot(311)
+        >>> plt.plot(t, op_input.phase()[0] - w*t, 'r', t, output.phase()[0] - w*t, 'b', lw=3)
+        >>> plt.xticks([])
+        >>> plt.ylabel('Fase [rad]')
+        >>> plt.legend(['input', 'output'], bbox_to_anchor=(1, 1), loc='upper left')
+        >>> plt.title(r'Constant phase change ($\Delta f=0$)')
+        >>>
+        >>> # Lineal phase
+        >>> output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
+        >>>
+        >>> plt.subplot(312)
+        >>> plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
+        >>> plt.xticks([])
+        >>> plt.ylabel('Fase [rad]')
+        >>> plt.title(r'Linear phase change  ($\Delta f \\rightarrow cte.$)')
+        >>>
+        >>> # Quadratic phase
+        >>> output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
+        >>> 
+        >>> plt.subplot(313)
+        >>>
+        >>> plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
+        >>> plt.xlabel('Tiempo [ns]')
+        >>> plt.ylabel('Fase [rad]')
+        >>> plt.title(r'Quadratic phase change ($\Delta f \\rightarrow linear$)')
+        >>> plt.tight_layout()
+        >>> plt.show()
+
+    .. image:: imgs/PM_example1.png
+        :alt: result of PM example 1
+        :align: center
     """
     tic()
 
-    if not isinstance(input, optical_signal):
-        raise TypeError("`input` debe ser del tipo (optical_signal).")
+    if not isinstance(op_input, optical_signal):
+        raise TypeError("`op_input` must be of type (optical_signal).")
 
-    if isinstance(v, (float, int)):
-        v = np.ones(input.len()) * v
-    elif isinstance(v, electrical_signal):
-        v = v.signal
-        if v.size != input.signal.len():
-            raise ValueError("La longitud de `v` debe ser igual a la longitud de `input`.")
-    elif isinstance(v, ndarray):
-        if len(v) != input.len():
-            raise ValueError("La longitud de `v` debe ser igual a la longitud de `input`.")
+    if isinstance(el_input, (float, int)):
+        el_input = np.ones(op_input.len()) * el_input
+    elif isinstance(el_input, electrical_signal):
+        el_input = el_input.signal
+        if el_input.size != op_input.signal.len():
+            raise ValueError("The length of `el_input` must be equal to the length of `op_input`.")
+    elif isinstance(el_input, ndarray):
+        if len(el_input) != op_input.len():
+            raise ValueError("The length of `el_input` must be equal to the length of `op_input`.")
     else:
-        raise TypeError("`v` debe ser del tipo (int ó electrical_signal).")
+        raise TypeError("`el_input` must be of type (int or electrical_signal).")
     
-    output = optical_signal( np.zeros_like(input.signal) )
+    output = optical_signal(np.zeros_like(op_input.signal))
 
-    output.signal = input.signal * np.exp(1j * v * pi / Vpi)
+    output.signal = op_input.signal * np.exp(1j * el_input * pi / Vpi)
 
-    if np.sum(input.noise):
-        output.noise = input.noise * np.exp(1j * v * pi / Vpi)
+    if np.sum(op_input.noise):
+        output.noise = op_input.noise * np.exp(1j * el_input * pi / Vpi)
     
     output.ejecution_time = toc()
     return output
 
 
 
-def MZM(input: optical_signal, V: Union[int, float, ndarray, electrical_signal], bias: float=0.0, Vpi: float=5.0, loss_dB: float=0.0, eta: float=0.1, BW: float=40e9) -> optical_signal:
+def MZM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_signal], bias: float=0.0, Vpi: float=5.0, loss_dB: float=0.0, eta: float=0.1, BW: float=40e9) -> optical_signal:
     """
     Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2 Push-Pull config). 
     
     See model theory in `Tetsuya Kawanishi - Electro-optic Modulation for Photonic Networks (Textbooks in Telecommunication Engineering)-Springer (2022)` Chapter 4.3.
     
-    ---
+    Args:
+        op_input (optical_signal): Optical signal to be modulated.
+        el_input (float | ndarray | electrical_signal): Driver voltage.
+        bias (float, Optional): Modulator bias voltage (default: 0.0 [V]).
+        Vpi (float, Optional): Voltage at which the device switches from on-state to off-state (default: 5.0 [V]).
+        loss_dB (float, Optional): Propagation or insertion losses in the modulator, value in dB (default: 0.0).
+        eta (float, Optional): Imbalance ratio of light intensity between the two arms of the modulator (default: 0.1). ER = -20*log10(eta/2) (=26 dB by default).
+        BW (float, Optional): Modulator bandwidth in [Hz] (default: 40e9).
 
-    ### Args:
-    - `input` - señal óptica a modular
-    - `V` - voltaje del driver. 
-    - `bias` [Opcional] - voltaje de polarización del modulador (default: `bias=0.0` [V])
-    - `Vpi` [Opcional] - voltaje para el cual el dispositivo pasa de on-state a off-state (default: `Vpi=5.0` [V])
-    - `loss_dB` [Opcional] - pérdidas de propagación o insersión en el modulador, valor en dB (default: `loss_dB=0.0`)
-    - `eta` [Opcional] - relación de imbalancede la intensidad de la luz entre los dos brazos del modulador (default: `eta=0.1`). ER = -20*log10(eta/2) = 26 dB
-    - `BW` [Opcional] - ancho de banda del modulador en [Hz] (default: `BW=10e9`)
+    Returns:
+        optical_signal: Modulated optical signal.
 
-    ---
-
-    ### Returns:
-    - `optical_signal`
+    Raises:
+        TypeError: If `op_input` type is not `optical_signal`.
+        TypeError: If `el_input` type is not in [float, ndarray, electrical_signal].
+        ValueError: If `el_input` is ndarray or electrical_signal but, length is not equal to `op_input` length.
     """
+
     tic()
-    if not isinstance(input, optical_signal): 
-        raise TypeError("`input` debe ser del tipo (optical_signal).")
+    if not isinstance(op_input, optical_signal): 
+        raise TypeError("`op_input` debe ser del tipo (optical_signal).")
     
-    if isinstance(V, (int, float)):
-        V = np.ones(input.len()) * V
-    elif isinstance(V, electrical_signal):
-        V = V.signal
-        if V.size != input.signal.len():
-            raise ValueError("La longitud de `V` debe ser igual a la longitud de `input`.")
-    elif isinstance(V, ndarray):
-        if len(V) != input.len():
-            raise ValueError("La longitud de `V` debe ser igual a la longitud de `input`.")
+    if isinstance(el_input, (int, float)):
+        el_input = np.ones(op_input.len()) * el_input
+    elif isinstance(el_input, electrical_signal):
+        el_input = el_input.signal
+        if el_input.size != op_input.signal.len():
+            raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
+    elif isinstance(el_input, ndarray):
+        if len(el_input) != op_input.len():
+            raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
     else:
-        raise TypeError("`V` debe ser del tipo (int, float, ndarray ó electrical_signal).")
+        raise TypeError("`el_input` debe ser del tipo (int, float, ndarray ó electrical_signal).")
     
     loss = idb(-loss_dB)
 
-    output = input.copy()
-    g_t = pi/2/Vpi * (V + bias)
-    output.signal = input.signal * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
+    output = op_input.copy()
+    g_t = pi/2/Vpi * (el_input + bias)
+    output.signal = op_input.signal * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
 
-    if np.sum(input.noise):
-        output.noise = input.noise * loss * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
+    if np.sum(op_input.noise):
+        output.noise = op_input.noise * loss * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
 
+    t_ = toc()
     output = LPF(output, BW)
 
-    output.ejecution_time = toc()
+    output.ejecution_time += t_ 
     return output
 
-
-
-def MODULATOR(input: electrical_signal, p_laser: float=0, pol: str='x') -> optical_signal:
-    """
-    Modula la señal óptica de un láser de potencia dada,79 a partir de una señal eléctrica de entrada.
-    
-    ---
-
-    ### Args:
-    - `input` - señal eléctrica moduladora
-    - `p_laser` [Opcional] - potencia del laser en [dBm] (default: `p_laser=global_vars.p_laser`)
-    - `pol` [Opcional] - eje de polarización de la señal óptica de salida (default: `x`)
-    
-    ---
-
-    ### Returns:
-    - `optical_signal`
-    """
-    tic()
-    
-    i = {'x':0, 'y':1}
-
-    if not isinstance(input, electrical_signal):
-        raise TypeError("`input` debe ser del tipo (electrical_signal).")
-    if pol not in ['x','y']:
-        raise TypeError("`pol` debe ser ('x' o 'y').")
-    
-    p_laser = idbm(p_laser)
-
-    output = optical_signal( np.zeros((2,input.len())) )
-
-    opt_signal = input.signal/(input.power('signal')**0.5) * p_laser**0.5
-    output.signal[i[pol]] = opt_signal
-    
-    if input.power('noise'):
-        opt_noise = input.noise/(input.power('noise')**0.5) * p_laser**0.5
-        output.noise[i[pol]] = opt_noise
-    
-    output.ejecution_time = toc()
-    return output
 
 
 def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_signal:
     """
-    Filtro Pasa Banda (BPF) Óptico. Filtra la señal óptica de entrada, dejando pasar la banda de frecuencias deseada. 
-    
-    ---
+    Optical Band-Pass Filter (BPF). Filters the input optical signal, allowing only the desired frequency band to pass.
+    Bessel filter.
 
-    ### Args:
-    - `input` - señal óptica a filtrar
-    - `BW` - ancho de banda del filtro en [Hz]
-    - `n` [Opcional] - orden del filtro (default: `n=4`)
-    - `fs` [Opcional] - frecuencia de muestreo de la señal de entrada (default: `fs=globals_vars.fs`)
+    Args:
+        input (optical_signal): The optical signal to be filtered.
+        BW (float): The bandwidth of the filter in Hz.
+        n (int, Optional): The order of the filter (default: n=4).
+        fs (float, Optional): The sampling frequency of the input signal (default: fs=global_vars.fs).
     
-    ---
-    
-    ### Returns:
-    - `optical_signal`
+    Returns:
+    - optical_signal: The filtered optical signal.
     """
     tic()
 
     if not isinstance(input, optical_signal):
-        raise TypeError("`input` debe ser del tipo (optical_signal).")
+        raise TypeError("`input` must be of type (optical_signal).")
     if not fs:
         fs = global_vars.fs
 
-    sos_band = sg.bessel(N = n, Wn = BW/2, btype = 'low', fs=fs, output='sos', norm='mag')
+    sos_band = sg.bessel(N=n, Wn=BW/2, btype='low', fs=fs, output='sos', norm='mag')
 
-    output = optical_signal( np.zeros((2,input.len())) )
+    output = optical_signal(np.zeros((2, input.len())))
 
     output.signal = sg.sosfiltfilt(sos_band, input.signal, axis=-1)
 
@@ -338,100 +391,132 @@ def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_s
     return output
 
 
-def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple: # modelo simplificado del EDFA (no satura)
+def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple:
     """
-    Amplificador de fibra dopada con Erbium. Amplifica la señal óptica a la entrada, agregando ruido de emisión espontánea amplificada (ASE). 
+    Erbium Doped Fiber (EDFA). Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise. 
+    Simplest model (no saturation output power).
     
-    ---
-
-    ### Args: 
-    - `input` - señal óptica a amplificar
-    - `G` - ganancia del amplificador en [dB]
-    - `NF` - figura de ruido del amplificador en [dB]
-    - `BW` - ancho de banda del amplificador en [Hz] 
+    Args:
+        input (optical_signal): The optical signal to be amplified.
+        G (float): The gain of the amplifier in dB.
+        NF (float): The noise figure of the amplifier in dB.
+        BW (float): The bandwidth of the amplifier in Hz.
     
-    ---
+    Returns:
+        optical_signal: The amplified optical signal.
 
-    ### Returns:
-    -
-    - `output` (optical_signal) - señal óptica de salida
+    Raises:
+        TypeError: if ``input`` is not an optical signal.    
     """
-
     if not isinstance(input, optical_signal):
-        raise TypeError("`input` debe ser del tipo (optical_signal).")
+        raise TypeError("`input` must be of type (optical_signal).")
      
     output = BPF( input * idb(G)**0.5, BW )
-    ase = BPF( optical_signal( np.zeros_like(input.signal), np.exp(-1j*np.random.uniform(0, 2*pi, input.noise.shape)) ), BW )
-    ejc_time = output.ejecution_time + ase.ejecution_time
+    # ase = BPF( optical_signal( np.zeros_like(input.signal), np.exp(-1j*np.random.uniform(0, 2*pi, input.noise.shape)) ), BW )
+    ase = BPF( optical_signal( noise=np.exp(-1j*np.random.uniform(0, 2*pi, input.signal.shape)) ), BW )
+    t_ = output.ejecution_time + ase.ejecution_time
     
     tic()
     P_ase = idb(NF) * h * global_vars.f0 * (idb(G)-1) * BW
 
-    norm_x, norm_y = ase.power('noise') # potencia de ruido de ASE en [W] para cada polarización
+    norm_x, norm_y = ase.power('noise') # power of ASE noise in [W] for each polarization
 
     ase.noise[0] /= norm_x**0.5 / (P_ase/2)**0.5
     ase.noise[1] /= norm_y**0.5 / (P_ase/2)**0.5
 
     output += ase
 
-    output.ejecution_time = ejc_time + toc()
+    output.ejecution_time = t_ + toc()
     return output
 
 
-def DM(input: optical_signal, beta_2: float, length: float) -> optical_signal:
+def DM(input: optical_signal, D: float) -> optical_signal:
     """
-    Medio Dispersivo. Emula un medio con solo la propiedad de dispersión, es decir solo `beta_2` diferente de cero. 
+    Dispersive Medium. Emulates a medium with only the dispersion property, i.e., only `beta_2` different from zero.
     
-    ---
+    Args:
+        input (optical_signal): The input optical signal.
+        D (float): The dispersion coefficient of the medium (β2·z) in [ps^2].
     
-    ### Args:
-    - `signal` - señal óptica de entrada
-    - `beta_2` - coeficiente de dispersión de la fibra en [ps^2/km]
-    - `length` - longitud del medio dispersivo en [km]
+    Returns:
+        optical_signal: The output optical signal.
     
-    ---
-    
-    ### Returns:
-    - `optical_signal`
+    Raises:
+        TypeError: If ``input`` is not an optical signal.
     """
     tic()
 
     if not isinstance(input, optical_signal):
-        raise TypeError("El argumento debe ser una señal óptica!") 
+        raise TypeError("The input must be an optical signal!") 
 
-    # cambio las unidades de beta_2 y length:
-    beta_2 = beta_2 * 1e-12**2/1e3
-    length = length * 1e3 
+    # Convert units of D:
+    D *= 1e-12**2
     
-    output = (input('w') * np.exp(-beta_2/2 * input.w()**2 * 1j * length))('t')
+    output = (input('w') * np.exp(- 1j * input.w()**2 * D/2 ))('t')
     
     output.ejecution_time = toc()
     return output
 
 
-def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=0.0, beta_3: float=0.0, gamma: float=0.0, phi_max:float=0.05, show_progress=False) -> optical_signal:
-    """
-    Fibra Óptica. Simula la transmisión por fibra de una señal óptica de entrada teniendo en cuenta los efectos de la atenuación, dispersión y no linealidades. 
-    
-    ---
+def FIBER(input: optical_signal, 
+          length: float, 
+          alpha: float=0.0, 
+          beta_2: float=0.0, 
+          beta_3: float=0.0, 
+          gamma: float=0.0, 
+          phi_max:float=0.05, 
+          show_progress=False):
+    """Optical Fiber.
 
-    ### Args:
-    - `input` - señal óptica de entrada
-    - `length` - longitud de la fibra en [km]
-    - `alpha` [Opcional] - coeficiente de atenuación de la fibra en [dB/km] (default: `alpha=0.0`)
-    - `beta_2` [Opcional] - coeficiente de dispersión de segundo orden de la fibra en [ps^2/km] (default: `beta_2=0.0`)
-    - `beta_3` [Opcional] - coeficiente de dispersión de tercer orden de la fibra en [ps^3/km] (default: `beta_3=0.0`)
-    - `gamma` [Opcional] - coeficiente de no linealidad de la fibra en [(W·km)^-1] (default: `gamma=0.0`)
-    - `phi_max` [Opcional] - cota superior de la fase no lineal en [rad] (default: `phi_max=0.05`)
-    - `show_progress` [Opcional] - mostrar barra de progreso (default: `show_progress=False`)
-    
-    ---
-    
-    ### Returns:
-    - `optical_signal`
+    Simulates the transmission through an optical fiber, solving Schrödinger's equation numerically,
+    by using split-step Fourier method with adaptative step (method based on limmiting the nonlilear phase rotation). 
+    Polarization mode dispersion (PMD) is not considered in this model.
+
+    paper source: https://ieeexplore.ieee.org/document/1190149
+
+    Args:
+        input (optical_signal): Input optical signal.
+        length (float): Length of the fiber, in [km].
+        alpha (float, Optional): Attenuation coefficient of the fiber, in [dB/km] (default: 0.0).
+        beta_2 (float, Optional): Second-order dispersion coefficient of the fiber, in [ps^2/km] (default: 0.0).
+        beta_3 (float, Optional): Third-order dispersion coefficient of the fiber, in [ps^3/km] (default: 0.0).
+        gamma (float, Optional): Nonlinearity coefficient of the fiber, in [(W·km)^-1] (default: 0.0).
+        phi_max (float, Optional): Upper bound of the nonlinear phase rotation, in [rad] (default: 0.05).
+        show_progress (bool, Optional): Show progress bar (default: False).
+
+    Returns:
+        optical_signal: Output optical signal.
+
+    Raises:
+        TypeError: If ``input`` is not an optical signal.
+
+    Example:
+        >>> from opticomlib.typing import optical_signal, global_vars
+        >>> from opticomlib.devices import FIBER, DAC
+        >>> from opticomlib.utils import idbm
+        >>> import matplotlib.pyplot as plt
+        >>>
+        >>> global_vars(sps=32, R=10e9)
+        >>>
+        >>> signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
+        >>> input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )
+        >>>
+        >>> output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=2, show_progress=True)
+        100%|█████████████████████████████████████████████| 100.0/100 [00:00<00:00, 12591.73it/s]
+        >>>
+        >>> input.plot('r-', label='input', lw=3)
+        >>> output.plot('b-', label='output', lw=3).grid()
+        >>> plt.show()
+
+    .. image:: imgs/FIBER_example1.png
+        :alt: result of FIBER example 1
+        :align: center
     """
 
     tic()
+    if not isinstance(input, optical_signal):
+        raise TypeError("`input` must be of type (optical_signal).")
+
     alpha  = alpha/4.343 # [1/km]
 
     w = input.w()*1e-12 # [rad/ps]
@@ -449,7 +534,7 @@ def FIBER(input: optical_signal, length: float, alpha: float=0.0, beta_2: float=
     while True:
         exp_NL = np.exp(1j * gamma * (h/2) * np.abs(A)**2)
         exp_L = np.exp(D_op * h)
-        A = exp_NL * ifft( exp_L * fft( exp_NL * A ) )
+        A = exp_NL * ifft( exp_L * fft( exp_NL * A ) ) # Symmetric Split-Step Fourier Method 
 
         if show_progress:
             barra_progreso.update( 100 * h / length )

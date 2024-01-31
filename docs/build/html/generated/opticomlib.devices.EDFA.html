@@ -105,17 +105,27 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.devices.EDFA">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">EDFA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="../_modules/opticomlib/devices.html#EDFA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.EDFA" title="Link to this definition"></a></dt>
-<dd><p>Amplificador de fibra dopada con Erbium. Amplifica la señal óptica a la entrada, agregando ruido de emisión espontánea amplificada (ASE).</p>
-<p>—</p>
-<p>### Args:
-- <cite>input</cite> - señal óptica a amplificar
-- <cite>G</cite> - ganancia del amplificador en [dB]
-- <cite>NF</cite> - figura de ruido del amplificador en [dB]
-- <cite>BW</cite> - ancho de banda del amplificador en [Hz]</p>
-<p>—</p>
-<p>### Returns:
--
-- <cite>output</cite> (optical_signal) - señal óptica de salida</p>
+<dd><p>Erbium Doped Fiber (EDFA). Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise.
+Simplest model (no saturation output power).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – The optical signal to be amplified.</p></li>
+<li><p><strong>G</strong> (<em>float</em>) – The gain of the amplifier in dB.</p></li>
+<li><p><strong>NF</strong> (<em>float</em>) – The noise figure of the amplifier in dB.</p></li>
+<li><p><strong>BW</strong> (<em>float</em>) – The bandwidth of the amplifier in Hz.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The amplified optical signal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal">optical_signal</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

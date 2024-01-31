@@ -1,7 +1,7 @@
+from opticomlib.typing import optical_signal, global_vars
 from opticomlib.devices import MZM
 from opticomlib.utils import idbm, dbm
 
-from opticomlib.typing import optical_signal, global_vars
 import numpy as np
 import matplotlib.pyplot as plt
 

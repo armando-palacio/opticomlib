@@ -66,8 +66,8 @@ def dec2bin(num: int, digits: int=8) -> np.ndarray:
 
 def str2array(string: str): 
     """
-        Esta función convierte una cadena de caracteres a un array. Usar como separadores de elementos comas o espacios en blancos.
-        los elementos pueden ser enteros o de punto flotante.
+    Esta función convierte una cadena de caracteres a un array. Usar como separadores de elementos comas o espacios en blancos.
+    los elementos pueden ser enteros o de punto flotante.
 
     Args:
     - `string` - cadena de caracteres a convertir
@@ -87,6 +87,8 @@ def str2array(string: str):
         type = int
     
     string = re.split(r'[,\s]+', string)
+    # delete empty strings
+    string = [x for x in string if x and x!=' ' and x!=',']
 
     return np.array(string).astype(type)
 

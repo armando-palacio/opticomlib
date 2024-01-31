@@ -50,7 +50,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../typing.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="opticomlib.typing.global_vars.html">opticomlib.typing.global_vars</a></li>
 <li class="toctree-l2"><a class="reference internal" href="opticomlib.typing.binary_sequence.html">opticomlib.typing.binary_sequence</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">opticomlib.typing.electrical_signal</a><ul>
@@ -67,6 +67,10 @@
 <li class="toctree-l2"><a class="reference internal" href="opticomlib.typing.eye.html">opticomlib.typing.eye</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#models-for-opto-electronic-devices-opticomlib-devices">Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#laboratory-and-practical-functions-opticomlib-lab">Laboratory and practical functions (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.lab</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#ook-devices-opticomlib-ook">OOK devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ook</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#ppm-devices-opticomlib-ppm">PPM devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ppm</span></code>)</a></li>
 </ul>
 
         </div>
@@ -83,7 +87,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../typing.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
       <li class="breadcrumb-item active">opticomlib.typing.electrical_signal</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/generated/opticomlib.typing.electrical_signal.rst.txt" rel="nofollow"> View page source</a>
@@ -171,31 +175,34 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code>()</p></td>
 <td><p>Get the length of the electrical signal data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code>([fmt, n, xlabel, ylabel])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code>()</p></td>
+<td><p>Get phase of the signal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code>([fmt, n, xlabel, ylabel])</p></td>
 <td><p>Plot real part of electrical signal.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">power</span></code>([by])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">power</span></code>([by])</p></td>
 <td><p>Get power of the electrical signal.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code>([msg])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code>([msg])</p></td>
 <td><p>Print object parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">psd</span></code>([fmt, kind, n])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">psd</span></code>([fmt, kind, n])</p></td>
 <td><p>Plot Power Spectral Density (PSD) of the electrical signal.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeof</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeof</span></code>()</p></td>
 <td><p>Get memory size of object in bytes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sps</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sps</span></code>()</p></td>
 <td><p>Get samples por slot of signal.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code>()</p></td>
 <td><p>Return time array for electrical signal.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>()</p></td>
 <td><p>Get the type of the object</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">w</span></code>([shift])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">w</span></code>([shift])</p></td>
 <td><p>Return angular frequency for spectrum representation.</p></td>
 </tr>
 </tbody>

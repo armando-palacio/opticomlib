@@ -104,16 +104,25 @@
 <h1>opticomlib.devices.DM<a class="headerlink" href="#opticomlib-devices-dm" title="Link to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.devices.DM">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">DM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="../_modules/opticomlib/devices.html#DM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.DM" title="Link to this definition"></a></dt>
-<dd><p>Medio Dispersivo. Emula un medio con solo la propiedad de dispersión, es decir solo <cite>beta_2</cite> diferente de cero.</p>
-<p>—</p>
-<p>### Args:
-- <cite>signal</cite> - señal óptica de entrada
-- <cite>beta_2</cite> - coeficiente de dispersión de la fibra en [ps^2/km]
-- <cite>length</cite> - longitud del medio dispersivo en [km]</p>
-<p>—</p>
-<p>### Returns:
-- <cite>optical_signal</cite></p>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">DM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></span><a class="reference internal" href="../_modules/opticomlib/devices.html#DM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.DM" title="Link to this definition"></a></dt>
+<dd><p>Dispersive Medium. Emulates a medium with only the dispersion property, i.e., only <cite>beta_2</cite> different from zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – The input optical signal.</p></li>
+<li><p><strong>D</strong> (<em>float</em>) – The dispersion coefficient of the medium (β2·z) in [ps^2].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output optical signal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal">optical_signal</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

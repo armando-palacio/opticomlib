@@ -20,6 +20,7 @@
       ~optical_signal.fs
       ~optical_signal.grid
       ~optical_signal.len
+      ~optical_signal.phase
       ~optical_signal.plot
       ~optical_signal.power
       ~optical_signal.print

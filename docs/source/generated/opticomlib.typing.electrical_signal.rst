@@ -20,6 +20,7 @@
       ~electrical_signal.fs
       ~electrical_signal.grid
       ~electrical_signal.len
+      ~electrical_signal.phase
       ~electrical_signal.plot
       ~electrical_signal.power
       ~electrical_signal.print

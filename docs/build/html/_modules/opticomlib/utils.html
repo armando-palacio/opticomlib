@@ -155,8 +155,8 @@
 <a class="viewcode-back" href="../../modules.html#opticomlib.utils.str2array">[docs]</a>
 <span class="k">def</span> <span class="nf">str2array</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span> 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Esta función convierte una cadena de caracteres a un array. Usar como separadores de elementos comas o espacios en blancos.</span>
-<span class="sd">        los elementos pueden ser enteros o de punto flotante.</span>
+<span class="sd">    Esta función convierte una cadena de caracteres a un array. Usar como separadores de elementos comas o espacios en blancos.</span>
+<span class="sd">    los elementos pueden ser enteros o de punto flotante.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">    - `string` - cadena de caracteres a convertir</span>
@@ -176,6 +176,8 @@
         <span class="nb">type</span> <span class="o">=</span> <span class="nb">int</span>
     
     <span class="n">string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+    <span class="c1"># delete empty strings</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">string</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">x</span><span class="o">!=</span><span class="s1">&#39; &#39;</span> <span class="ow">and</span> <span class="n">x</span><span class="o">!=</span><span class="s1">&#39;,&#39;</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span></div>
 

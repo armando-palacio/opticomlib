@@ -47,7 +47,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../typing.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html#models-for-opto-electronic-devices-opticomlib-devices">Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html#laboratory-and-practical-functions-opticomlib-lab">Laboratory and practical functions (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.lab</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html#ook-devices-opticomlib-ook">OOK devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ook</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html#ppm-devices-opticomlib-ppm">PPM devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ppm</span></code>)</a></li>
 </ul>
 
         </div>
@@ -107,7 +111,7 @@
 <span class="p">)</span>
 
 <div class="viewcode-block" id="global_variables">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.global_variables">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.global_variables">[docs]</a>
 <span class="k">class</span> <span class="nc">global_variables</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    global variables object</span>
@@ -135,12 +139,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="mf">1e9</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_opt</span> <span class="o">=</span> <span class="mf">1550e-9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_opt</span> <span class="o">=</span> <span class="mi">1550</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f0</span> <span class="o">=</span> <span class="n">c</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda_opt</span>
 
 
 <div class="viewcode-block" id="global_variables.__call__">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.global_variables.__call__">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.global_variables.__call__">[docs]</a>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lambda_opt</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1550e-9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="n">sps</span>
         
@@ -162,7 +166,7 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
     
 <div class="viewcode-block" id="global_variables.print">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.global_variables.print">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.global_variables.print">[docs]</a>
     <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> : </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
@@ -173,7 +177,7 @@
 
 
 <div class="viewcode-block" id="binary_sequence">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.binary_sequence">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.binary_sequence">[docs]</a>
 <span class="k">class</span> <span class="nc">binary_sequence</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    binary sequence object</span>
@@ -226,7 +230,7 @@
         <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="binary_sequence.len">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.binary_sequence.len">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.binary_sequence.len">[docs]</a>
     <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the length of the binary sequence data.</span>
@@ -235,7 +239,7 @@
 
     
 <div class="viewcode-block" id="binary_sequence.type">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.binary_sequence.type">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.binary_sequence.type">[docs]</a>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the type of the object</span>
@@ -243,7 +247,7 @@
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="binary_sequence.print">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.binary_sequence.print">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.binary_sequence.print">[docs]</a>
     <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print object parameters.</span>
@@ -257,7 +261,7 @@
 
     
 <div class="viewcode-block" id="binary_sequence.sizeof">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.binary_sequence.sizeof">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.binary_sequence.sizeof">[docs]</a>
     <span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get memory size of object in bytes.</span>
@@ -268,7 +272,7 @@
 
 
 <div class="viewcode-block" id="electrical_signal">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal">[docs]</a>
 <span class="k">class</span> <span class="nc">electrical_signal</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    electrical signal object</span>
@@ -345,7 +349,7 @@
             <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">&gt;</span> <span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="p">)</span>
              
 <div class="viewcode-block" id="electrical_signal.len">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.len">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.len">[docs]</a>
     <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the length of the electrical signal data.</span>
@@ -354,7 +358,7 @@
 
 
 <div class="viewcode-block" id="electrical_signal.type">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.type">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.type">[docs]</a>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the type of the object</span>
@@ -363,7 +367,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.print">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.print">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.print">[docs]</a>
     <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print object parameters.</span>
@@ -380,7 +384,7 @@
 
 
 <div class="viewcode-block" id="electrical_signal.sizeof">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.sizeof">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.sizeof">[docs]</a>
     <span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get memory size of object in bytes.</span>
@@ -389,7 +393,7 @@
 
 
 <div class="viewcode-block" id="electrical_signal.fs">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.fs">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.fs">[docs]</a>
     <span class="k">def</span> <span class="nf">fs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get sampling rate of signal.</span>
@@ -398,7 +402,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.sps">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.sps">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.sps">[docs]</a>
     <span class="k">def</span> <span class="nf">sps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get samples por slot of signal.</span>
@@ -407,7 +411,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.dt">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.dt">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.dt">[docs]</a>
     <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get time between samples.</span>
@@ -416,7 +420,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.t">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.t">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.t">[docs]</a>
     <span class="k">def</span> <span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return time array for electrical signal.</span>
@@ -425,7 +429,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.w">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.w">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.w">[docs]</a>
     <span class="k">def</span> <span class="nf">w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return angular frequency for spectrum representation.</span>
@@ -440,7 +444,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.power">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.power">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.power">[docs]</a>
     <span class="k">def</span> <span class="nf">power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="s1">&#39;noise&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get power of the electrical signal.</span>
@@ -452,10 +456,19 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`by` debe tomar los valores (&quot;signal&quot;, &quot;noise&quot;, &quot;all&quot;)&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">by</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
+    
+<div class="viewcode-block" id="electrical_signal.phase">
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.phase">[docs]</a>
+    <span class="k">def</span> <span class="nf">phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get phase of the signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">))</span></div>
+
 
     <span class="c1">## Métodos propios de esta clase</span>
 <div class="viewcode-block" id="electrical_signal.copy">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.copy">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.copy">[docs]</a>
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a copy of the object</span>
@@ -469,7 +482,7 @@
 
 
 <div class="viewcode-block" id="electrical_signal.abs">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.abs">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.abs">[docs]</a>
     <span class="k">def</span> <span class="nf">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="s1">&#39;noise&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get abs of electrical signal.</span>
@@ -489,7 +502,7 @@
     
 
 <div class="viewcode-block" id="electrical_signal.plot">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.plot">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.plot">[docs]</a>
     <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot real part of electrical signal.</span>
@@ -510,7 +523,7 @@
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">()[:</span><span class="n">n</span><span class="p">]</span><span class="o">*</span><span class="mf">1e9</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">signal</span><span class="o">+</span><span class="bp">self</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span> <span class="k">if</span> <span class="n">xlabel</span> <span class="k">else</span> <span class="s1">&#39;Tiempo [ns]&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span> <span class="k">if</span> <span class="n">ylabel</span> <span class="k">else</span> <span class="s1">&#39;Amplitud [u.a.]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span> <span class="k">if</span> <span class="n">ylabel</span> <span class="k">else</span> <span class="s1">&#39;Amplitud [V]&#39;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span>  <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -518,7 +531,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.psd">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.psd">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.psd">[docs]</a>
     <span class="k">def</span> <span class="nf">psd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot Power Spectral Density (PSD) of the electrical signal.</span>
@@ -556,7 +569,7 @@
 
     
 <div class="viewcode-block" id="electrical_signal.grid">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.electrical_signal.grid">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.electrical_signal.grid">[docs]</a>
     <span class="k">def</span> <span class="nf">grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot vertical grid each every time slot. </span>
@@ -567,7 +580,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            electrical_signal: Same object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sps</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+        <span class="n">sps</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="mf">1e9</span>
         <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[:</span><span class="n">n</span><span class="o">*</span><span class="n">sps</span><span class="o">+</span><span class="mi">1</span><span class="p">][::</span><span class="n">sps</span><span class="p">]:</span>
@@ -578,7 +591,7 @@
 
 
 <div class="viewcode-block" id="optical_signal">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.optical_signal">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.optical_signal">[docs]</a>
 <span class="k">class</span> <span class="nc">optical_signal</span><span class="p">(</span><span class="n">electrical_signal</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    optical signal object</span>
@@ -606,7 +619,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;signal : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="si">}</span><span class="se">\n</span><span class="s1">noise : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="si">}</span><span class="se">\n</span><span class="s1">len : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s1">total power : </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">())</span><span class="si">:</span><span class="s1">.1e</span><span class="si">}</span><span class="s1"> W (</span><span class="si">{</span><span class="n">dbm</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">()))</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> dBm)</span><span class="se">\n</span><span class="s1">size : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sizeof</span><span class="p">()</span><span class="si">}</span><span class="s1"> bytes</span><span class="se">\n</span><span class="s1">time : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ejecution_time</span><span class="si">}</span><span class="s1">&#39;</span>
     
 <div class="viewcode-block" id="optical_signal.len">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.optical_signal.len">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.optical_signal.len">[docs]</a>
     <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
 
@@ -635,7 +648,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;solo se aceptan los argumentos &#39;w&#39; o &#39;t&#39;&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="optical_signal.plot">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.optical_signal.plot">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.optical_signal.plot">[docs]</a>
     <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="s1">&#39;abs&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;abs&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot intensity of optical signal for selected mode.</span>
@@ -686,7 +699,7 @@
 
     
 <div class="viewcode-block" id="optical_signal.psd">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.optical_signal.psd">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.optical_signal.psd">[docs]</a>
     <span class="k">def</span> <span class="nf">psd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot Power Spectral Density (PSD) of the optical signal.</span>
@@ -733,7 +746,7 @@
 
     
 <div class="viewcode-block" id="optical_signal.grid">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.optical_signal.grid">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.optical_signal.grid">[docs]</a>
     <span class="k">def</span> <span class="nf">grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot vertical grid each every time slot. </span>
@@ -744,7 +757,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            optical_signal: Same object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sps</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+        <span class="n">sps</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="mf">1e9</span>
         <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[:</span><span class="n">n</span><span class="o">*</span><span class="n">sps</span><span class="o">+</span><span class="mi">1</span><span class="p">][::</span><span class="n">sps</span><span class="p">]:</span>
@@ -755,7 +768,7 @@
     
 
 <div class="viewcode-block" id="eye">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.eye">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.eye">[docs]</a>
 <span class="k">class</span> <span class="nc">eye</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Eye diagram parameters object.</span>
@@ -791,7 +804,7 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
     
 <div class="viewcode-block" id="eye.print">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.eye.print">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.eye.print">[docs]</a>
     <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print object parameters.</span>
@@ -808,7 +821,7 @@
 
     
 <div class="viewcode-block" id="eye.print_">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.eye.print_">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.eye.print_">[docs]</a>
     <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print object parameters as (key: value).</span>
@@ -826,7 +839,7 @@
 
     
 <div class="viewcode-block" id="eye.plot">
-<a class="viewcode-back" href="../../typing.html#opticomlib.typing.eye.plot">[docs]</a>
+<a class="viewcode-back" href="../../modules.html#opticomlib.typing.eye.plot">[docs]</a>
     <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">umbral</span><span class="p">,</span> <span class="n">medias_</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">legend_</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span> <span class="s1">&#39;light&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="p">:</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="s1">&#39;plasma&#39;</span><span class="p">,</span> <span class="s1">&#39;inferno&#39;</span><span class="p">,</span> <span class="s1">&#39;cividis&#39;</span><span class="p">,</span> <span class="s1">&#39;magma&#39;</span><span class="p">,</span> <span class="s1">&#39;winter&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;winter&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot eye diagram.</span>
