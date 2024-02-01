@@ -193,9 +193,63 @@
 
 
 
-<span class="n">db</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># función de conversión a dB</span>
+<div class="viewcode-block" id="db">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.db">[docs]</a>
+<span class="k">def</span> <span class="nf">db</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; db = 10*log10(x)</span>
 
-<span class="n">dbm</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mf">1e3</span><span class="p">)</span> <span class="c1"># función de conversión a dBm (x en Watts)</span>
+<span class="sd">    This function calculates the logarithm in base 10 of the input x and multiplies it by 10.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value (x&gt;=0)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: dB value</span>
+
+<span class="sd">    Raise:</span>
+<span class="sd">        TypeError: if x is not a number, list, tuple or ndarray</span>
+<span class="sd">        ValueError: if x or any(x) &lt; 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number, list, tuple or ndarray.&#39;</span><span class="p">)</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Some values of input array are negative.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> </div>
+
+
+
+<div class="viewcode-block" id="dbm">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.dbm">[docs]</a>
+<span class="k">def</span> <span class="nf">dbm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; dbm = 10*log10(x*1e3)</span>
+
+<span class="sd">    This function calculates dBm from Watts.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value (x&gt;=0)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: dBm value</span>
+<span class="sd">    </span>
+<span class="sd">    Raise:</span>
+<span class="sd">        TypeError: if x is not a number, list, tuple or ndarray</span>
+<span class="sd">        ValueError: if x or any(x) &lt; 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number, list, tuple or ndarray.&#39;</span><span class="p">)</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Some values of input array are negative.&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mf">1e3</span><span class="p">)</span></div>
+
+
 
 <span class="n">idb</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># función de conversión a veces</span>
 

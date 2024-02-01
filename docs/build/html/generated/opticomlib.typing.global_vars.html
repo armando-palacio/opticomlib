@@ -57,8 +57,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.R"><code class="docutils literal notranslate"><span class="pre">R</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.fs"><code class="docutils literal notranslate"><span class="pre">fs</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.dt"><code class="docutils literal notranslate"><span class="pre">dt</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.lambda_opt"><code class="docutils literal notranslate"><span class="pre">lambda_opt</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.wavelength"><code class="docutils literal notranslate"><span class="pre">wavelength</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.f0"><code class="docutils literal notranslate"><span class="pre">f0</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.N"><code class="docutils literal notranslate"><span class="pre">N</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.t"><code class="docutils literal notranslate"><span class="pre">t</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.__call__"><code class="docutils literal notranslate"><span class="pre">__call__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.print"><code class="docutils literal notranslate"><span class="pre">print()</span></code></a></li>
 </ul>
@@ -105,21 +107,23 @@
 <dl class="py data">
 <dt class="sig sig-object py" id="opticomlib.typing.global_vars">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">global_vars</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;opticomlib.typing.global_variables</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#opticomlib.typing.global_vars" title="Link to this definition"></a></dt>
-<dd><p>global variables object</p>
+<dd><p>global variables object.</p>
+<p>The slot is taken as the smallest time unit representing a binary value of the signal.
+For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a slot are the same.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sps</strong> (<em>int</em>) – muestras por slot (default: 16)</p></li>
-<li><p><strong>R</strong> (<em>float</em>) – tasa de slots en [Hz] (default: 1e9)</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – frecuencia de muestreo en [Hz] (default: R*sps)</p></li>
-<li><p><strong>lambda_opt</strong> (<em>float</em>) – longitud de onda del canal óptico en [m] (default: 1550e-9)</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) – samples per slot (default: 16)</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – slot rate in [Hz] (default: 1e9)</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – sampling frequency in [Hz] (default: R*sps)</p></li>
+<li><p><strong>lambda_opt</strong> (<em>float</em>) – optical channel wavelength in [m] (default: 1550e-9)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.sps">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">sps</span></span><a class="headerlink" href="#opticomlib.typing.sps" title="Link to this definition"></a></dt>
-<dd><p>muestras por slot</p>
+<dd><p>samples per slot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
@@ -130,7 +134,7 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.R">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#opticomlib.typing.R" title="Link to this definition"></a></dt>
-<dd><p>tasa de slots en [Hz]</p>
+<dd><p>slot rate in [Hz]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -141,7 +145,7 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.fs">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">fs</span></span><a class="headerlink" href="#opticomlib.typing.fs" title="Link to this definition"></a></dt>
-<dd><p>frecuencia de muestreo en [Hz]</p>
+<dd><p>sampling frequency in [Hz]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -152,7 +156,7 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.dt">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#opticomlib.typing.dt" title="Link to this definition"></a></dt>
-<dd><p>paso temporal en [s]</p>
+<dd><p>time step in [s]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -161,9 +165,9 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="opticomlib.typing.lambda_opt">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">lambda_opt</span></span><a class="headerlink" href="#opticomlib.typing.lambda_opt" title="Link to this definition"></a></dt>
-<dd><p>longitud de onda del canal óptico en [m]</p>
+<dt class="sig sig-object py" id="opticomlib.typing.wavelength">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#opticomlib.typing.wavelength" title="Link to this definition"></a></dt>
+<dd><p>optical channel wavelength in [m]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -174,10 +178,32 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.f0">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">f0</span></span><a class="headerlink" href="#opticomlib.typing.f0" title="Link to this definition"></a></dt>
-<dd><p>frecuencia central en [Hz]</p>
+<dd><p>central frequency in [Hz]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.N">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#opticomlib.typing.N" title="Link to this definition"></a></dt>
+<dd><p>number of slots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.t">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#opticomlib.typing.t" title="Link to this definition"></a></dt>
+<dd><p>time array for signal simulation. If <code class="docutils literal notranslate"><span class="pre">N</span></code> is defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
 </dd></dl>

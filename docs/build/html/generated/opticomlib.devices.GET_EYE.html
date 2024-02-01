@@ -104,16 +104,39 @@
 <h1>opticomlib.devices.GET_EYE<a class="headerlink" href="#opticomlib-devices-get-eye" title="Link to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.devices.GET_EYE">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">GET_EYE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nslots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps_resamplig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opticomlib/devices.html#GET_EYE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.GET_EYE" title="Link to this definition"></a></dt>
-<dd><p>Estima todos los parámetros fundamentales y métricas del diagrama de ojo de la señal eléctrica de entrada.</p>
-<p>—</p>
-<p>### Args:
-- <cite>input</cite> - señal eléctrica a partir de la cual se estimará el diagrama de ojos
-- <cite>nslots</cite> [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: <cite>nslots=4096</cite>)
-- <cite>sps_resamplig</cite> [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: <cite>global_vars.sps</cite>)</p>
-<p>—</p>
-<p>### Returns:
-- <cite>eye</cite> - objeto de la clase <cite>Eye</cite> con todos los parámetros y métricas del diagrama de ojo</p>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">GET_EYE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nslots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps_resamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opticomlib/devices.html#GET_EYE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.GET_EYE" title="Link to this definition"></a></dt>
+<dd><p>Get Eye Params.</p>
+<p>Estimates all the fundamental parameters and metrics of the eye diagram of the input electrical signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a><em> | </em><a class="reference internal" href="opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – Electrical or optical signal from which the eye diagram will be estimated.</p></li>
+<li><p><strong>nslots</strong> (<em>int</em><em>, </em><em>Optional</em>) – Number of slots to consider for eye reconstruction (default: 4096).</p></li>
+<li><p><strong>sps_resamp</strong> (<em>int</em><em>, </em><em>Optional</em>) – Number of samples per slot to interpolate de original signal (default: None).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Object of the Eye class with all the parameters and metrics of the eye diagram.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="opticomlib.typing.eye.html#opticomlib.typing.eye" title="opticomlib.typing.eye">eye</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.typing</span> <span class="kn">import</span> <span class="n">global_vars</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">PRBS</span><span class="p">,</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">GET_EYE</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_vars</span><span class="p">(</span><span class="n">N</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">sps</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span> <span class="n">PRBS</span><span class="p">(),</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GET_EYE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sps_resamp</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># without interpolation</span>
+</pre></div>
+</div>
+<img alt="result of GET_EYE example 1" class="align-center" src="../_images/GET_EYE_example1.png" />
 </dd></dl>
 
 </section>

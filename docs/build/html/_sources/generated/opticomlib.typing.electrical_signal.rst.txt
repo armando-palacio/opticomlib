@@ -15,6 +15,7 @@
    
       ~electrical_signal.__init__
       ~electrical_signal.abs
+      ~electrical_signal.apply
       ~electrical_signal.copy
       ~electrical_signal.dt
       ~electrical_signal.fs
@@ -25,6 +26,7 @@
       ~electrical_signal.power
       ~electrical_signal.print
       ~electrical_signal.psd
+      ~electrical_signal.show
       ~electrical_signal.sizeof
       ~electrical_signal.sps
       ~electrical_signal.t

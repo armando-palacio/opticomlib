@@ -15,6 +15,7 @@
    
       ~optical_signal.__init__
       ~optical_signal.abs
+      ~optical_signal.apply
       ~optical_signal.copy
       ~optical_signal.dt
       ~optical_signal.fs
@@ -25,6 +26,7 @@
       ~optical_signal.power
       ~optical_signal.print
       ~optical_signal.psd
+      ~optical_signal.show
       ~optical_signal.sizeof
       ~optical_signal.sps
       ~optical_signal.t

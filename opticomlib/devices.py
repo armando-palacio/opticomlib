@@ -360,7 +360,7 @@ def MZM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_sig
 def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_signal:
     """
     Optical Band-Pass Filter (BPF). Filters the input optical signal, allowing only the desired frequency band to pass.
-    Bessel filter.
+    Bessel filter model.
 
     Args:
         input (optical_signal): The optical signal to be filtered.
@@ -562,66 +562,111 @@ def FIBER(input: optical_signal,
 
 
 
-def LPF(input: Union[ndarray, electrical_signal], BW: float, n: int=4, fs: float=None) -> electrical_signal:
-        """
-        Filtro Pasa Bajo (LPF) Eléctrico. Filtra la señal eléctrica de entrada, dejando pasar la banda de frecuencias deseada. 
-        
-        ---
-
-        ### Args:
-        - `input` - señal eléctrica a filtrar
-        - `BW` - ancho de banda del filtro en [Hz]
-        - `n` [Opcional] - orden del filtro (default: `n=4`)
-        - `fs` [Opcional] - frecuencia de muestreo de la señal de entrada (default: `fs=globals_vars.fs`)
-        
-        ---
-        
-        ### Returns:
-        - `electrical_signal`
-        """
-        tic()
-
-        if not isinstance(input, electrical_signal):
-            if not isinstance(input, ndarray):
-                raise TypeError("`input` debe ser del tipo (ndarray ó electrical_signal).")
-            else:
-                input = electrical_signal(input)
-        if not fs:
-            fs = global_vars.fs
-
-        sos_band = sg.bessel(N = n, Wn = BW, btype = 'low', fs=fs, output='sos', norm='mag')
-
-        output = electrical_signal( np.zeros(input.len()) )
-
-        output.signal = sg.sosfiltfilt(sos_band, input.signal)
-
-        if np.sum(input.noise):
-            output.noise = sg.sosfiltfilt(sos_band, input.noise)
-        
-        output.ejecution_time = toc()
-        return output
-
-
-
-def PD(input: optical_signal, BW: float, responsivity: float=1.0, T: float=300.0, R_load: float=50.0, noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all') -> electrical_signal:
+def LPF(input: Union[ndarray, electrical_signal], 
+        BW: float, 
+        n: int=4, 
+        fs: float=None):
     """
-    Photodetector. Simula la detección de una señal óptica por un fotodetector.
+    Low Pass Filter (LPF) for electrical signals. Filters the input electrical signal, allowing only the desired frequency band to pass.
+    Bessel filter model.
     
-    ---
+    Args:
+        input (ndarray | electrical_signal): Electrical signal to be filtered.
+        BW (float): Filter bandwidth or cutoff frecuency, in [Hz].
+        n (int, optional): Filter order (default: 4).
+        fs (float, optional): Sampling frequency of the input signal (default: globals_vars.fs).
+    
+    Returns:
+        electrical_signal: Filtered electrical signal.
+    
+    Raises:
+        TypeError: If ``input`` is not of type ndarray or electrical_signal.
 
-    ### Args:
-    - `input` - señal óptica a detectar
-    - `BW` - ancho de banda del detector en [Hz]
-    - `responsivity` [Opcional] - Responsividad del detector en [A/W] (default: `R=1.0`)
-    - `T` [Opcional] - Temperatura del detector en [K] (default: `T=300.0`)
-    - `R_load` [Opcional] - Resistencia de carga del detector en [Ohm] (default: `R_load=50.0`)
+    Example:
+        >>> from opticomlib.typing import electrical_signal, global_vars
+        >>> from opticomlib.devices import LPF
+        >>>
+        >>> import numpy as np
+        >>>
+        >>> global_vars(N = 10, sps=128, R=1e9)
+        >>>
+        >>> t = global_vars.t
+        >>> c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
+        >>>
+        >>> input = electrical_signal( np.sin( np.pi*c*t**2) )
+        >>> output = LPF(input, 10e9)
+        >>>
+        >>> input.psd('r', label='input', lw=2)
+        >>> output.psd('b', label='output', lw=2).show()
     
-    ---
-    
-    ### Returns:
-    - `electrical_signal`
+    .. image:: imgs/LPF_example1.png
+        :alt: result of LPF example 1
+        :align: center
     """
     tic()
+
+    if not isinstance(input, (ndarray, electrical_signal)):
+        raise TypeError("`input` must be of type (ndarray or electrical_signal).")
+    elif isinstance(input, electrical_signal):
+            signal = input.signal
+            noise = input.noise
+    else:
+        signal = input
+        noise = np.zeros_like(input)
+
+    if not fs:
+        fs = global_vars.fs
+
+    sos_band = sg.bessel(N = n, Wn = BW, btype = 'low', fs=fs, output='sos', norm='mag')
+
+    output = electrical_signal( np.zeros_like(signal) )
+
+    output.signal = sg.sosfiltfilt(sos_band, signal)
+
+    if np.sum(noise):
+        output.noise = sg.sosfiltfilt(sos_band, noise)
+    
+    output.ejecution_time = toc()
+    return output
+
+
+
+def PD(input: optical_signal, 
+       BW: float, 
+       responsivity: float=1.0, 
+       T: float=300.0, 
+       R_load: float=50.0, 
+       noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all'):
+    """
+    Photodetector. 
+    
+    Simulates the detection of an optical signal by a photodetector.
+    
+    Args:
+        input (optical_signal): optical signal to be detected
+        BW (float): detector bandwidth in [Hz]
+        responsivity (float, Optional): detector responsivity in [A/W] (default: 1.0)
+        T (float, Optional): detector temperature in [K] (default: 300.0)
+        R_load (float, Optional): detector load resistance in [Ohm] (default: 50.0)
+        noise (str, Optional): type of noise to include in the simulation (default: 'all')
+            
+            - ``'ase-only'``: only include ASE noise
+            - ``'thermal-only'``: only include thermal noise
+            - ``'shot-only'``: only include shot noise
+            - ``'ase-thermal'``: include ASE and thermal noise
+            - ``'ase-shot'``: include ASE and shot noise
+            - ``'thermal-shot'``: include thermal and shot noise
+            - ``'all'``: include all types of noise
+    
+    Returns:
+        electrical_signal: the detected electrical signal
+    
+    Raises:
+        ValueError: if the ``noise`` argument is not one of the valid options
+    """
+    tic()
+    if not isinstance(input, optical_signal):
+        raise TypeError('')
 
     i_sig = responsivity * np.sum(input.abs('signal')**2, axis=0) # se suman las dos polarizaciones
 
@@ -655,34 +700,35 @@ def PD(input: optical_signal, BW: float, responsivity: float=1.0, T: float=300.0
     elif noise == 'all':
         noise = i_sig_sp  + i_sp_sp + i_N + i_T 
     else:
-        raise ValueError(f"El argumento `noise` debe ser uno de los siguientes: 'ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all'.")
+        raise ValueError("The argument `noise` must be one of the following: 'ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all'.")
     
-    time = toc()
+    t_ = toc()
     filt = LPF(i_sig, BW, n=4)
     output = electrical_signal(filt.signal, noise)
 
-    output.ejecution_time = filt.ejecution_time + time
+    output.ejecution_time = filt.ejecution_time + t_
     return output
 
 
 
 def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) -> binary_sequence:
     """
-    Conversor analógico a digital. Convierte una señal eléctrica analógica en una señal digital de amplitud cuantizada, muestreada a una frecuencia `fs`
-    y filtrada a un ancho de banda BW.
-
-    ---
-
-    ### Args:
-    - `input` - señal eléctrica a cuantizar
-    - `fs` [Opcional] - frecuencia de muestreo de la señal de salida (default: `global_vars.fs`)
-    - `BW` [Opcional] - ancho de banda del ADC en [Hz] (default: `inf` no se filtra la señal)
-    - `nbits` [Opcional] - cantidad de bits del ADC (default: `nbits=8`)
-
-    ---
+    Analog-to-Digital Converter. 
     
-    ### Returns:
-    - `electrical_signal`
+    Converts an analog electrical signal into a quantized digital signal, sampled at a frequency `fs`
+    and filtered with a bandwidth BW.
+
+    Args:
+        input (electrical_signal): Electrical signal to be quantized.
+        fs (float, Optional): Sampling frequency of the output signal. (default: None).
+        BW (float, Optional): ADC bandwidth in Hz. (default: None).
+        nbits (int, Optional): Vertical resolution of the ADC, in bits. (default: 8 bits).
+
+    Returns:
+        electrical_signal: Quantized digital signal.
+
+    Raises:
+        TypeError: If the ``input`` is not of type `electrical_signal`.
     """
     tic()
 
@@ -721,40 +767,50 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
     return output
 
 
-def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamplig: int=None):
-    """
-    Estima todos los parámetros fundamentales y métricas del diagrama de ojo de la señal eléctrica de entrada.
+def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamp: int=None):
+    """Get Eye Params.
     
-    ---
+    Estimates all the fundamental parameters and metrics of the eye diagram of the input electrical signal.
 
-    ### Args:
-    - `input` - señal eléctrica a partir de la cual se estimará el diagrama de ojos
-    - `nslots` [Opcional] - cantidad de slots a considerar para la estimación de los parámetros (default: `nslots=4096`)
-    - `sps_resamplig` [Opcional] - cantidad de muestras por slot a las que se desea resamplear la señal a analizar (default: `global_vars.sps`)
+    Args:
+        input (electrical_signal | optical_signal): Electrical or optical signal from which the eye diagram will be estimated.
+        nslots (int, Optional): Number of slots to consider for eye reconstruction (default: 4096).
+        sps_resamp (int, Optional): Number of samples per slot to interpolate de original signal (default: None).
     
-    ---
-    
-    ### Returns:
-    - `eye` - objeto de la clase `Eye` con todos los parámetros y métricas del diagrama de ojo
+    Returns:
+        eye: Object of the Eye class with all the parameters and metrics of the eye diagram.
+
+    Example:
+        >>> from opticomlib.typing import global_vars
+        >>> from opticomlib.devices import PRBS, DAC, GET_EYE
+        >>>
+        >>> import numpy as np
+        >>>
+        >>> global_vars(N = 10, sps=64, R=1e9)
+        >>>
+        >>> y = DAC( PRBS(), pulse_shape='gaussian')
+        >>> y.noise = np.random.normal(0, 0.05, y.len())
+        >>>
+        >>> GET_EYE(y, sps_resamp=512).plot() # without interpolation
+
+    .. image:: imgs/GET_EYE_example1.png
+        :alt: result of GET_EYE example 1
+        :align: center
     """
     tic()
 
 
     def shorth_int(data: np.ndarray) -> tuple[float, float]:
         """
-        Estimación del intervalo más corto que contiene el 50% de las muestras de 'data'.
+        Estimation of the shortest interval containing 50% of the samples in 'data'.
         
-        ---
-        
-        ### Args:
-        - `data` - array de datos
+        Args:
+            data (np.ndarray): Array of data.
 
-        ---
-
-        ### Returns:
-        - `tuple[float, float]` - intervalo más corto que contiene el 50% de las muestras de 'data'
+        Returns:
+            tuple[float, float]: The shortest interval containing 50% of the samples in 'data'.
         """
-        diff_lag = lambda data,lag: data[lag:]-data[:-lag]  # Diferencia entre dos elemento de un array separados una distancia 'lag'
+        diff_lag = lambda data,lag: data[lag:]-data[:-lag]  # Difference between two elements of an array separated by a distance 'lag'
         
         data = np.sort(data)
         lag = len(data)//2
@@ -766,16 +822,14 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
     
     def find_nearest(levels: np.ndarray, data: Union[np.ndarray, float]) -> Union[np.ndarray, float]: 
         """
-        Encuentra el elemento de 'levels' más cercano a cada valor de 'data'.
+        Find the element in 'levels' that is closest to each value in 'data'.
         
-        ---
-
-        ### Args:
-        - `levels` - niveles de referencia.
-        - `data` - valores a comparar.
-
-        ### Returns:
-        - `Union[ndarray, float]` - vector o float con los valores de 'levels' correspondientes a cada valor de 'data'
+        Args:
+            levels (np.ndarray): Reference levels.
+            data (Union[np.ndarray, float]): Values to compare.
+        
+        Returns:
+            Union[np.ndarray, float]: Vector or float with the values from 'levels' corresponding to each value in 'data'.
         """
 
         if type(data) == float or type(data) == np.float64:
@@ -801,113 +855,111 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
     elif isinstance(input, electrical_signal):
         input = (input.signal+input.noise).real
     else:
-        raise TypeError("El argumento 'input' debe ser de la clase 'optical_signal' o 'electrical_signal'.")
+        raise TypeError("The argument 'input' must be 'optical_signal' o 'electrical_signal'.")
 
-    input = np.roll(input, -sps//2+1) # Para centrar el ojo en el gráfico
+    input = np.roll(input, -sps//2+1) # To focus the eye on the chart
     y_set = np.unique(input)
 
-    # realizamos un resampling de la señal para obtener una mayor resolución en ambos ejes
-    if sps_resamplig:
-        input = sg.resample(input, nslots*sps_resamplig); eye_dict['y'] = input
-        t = np.kron(np.ones(nslots//2), np.linspace(-1, 1-dt, 2*sps_resamplig)); eye_dict['t'] = t
+    # resampled the signal to obtain a higher resolution in both axes
+    if sps_resamp:
+        input = sg.resample(input, nslots*sps_resamp); eye_dict['y'] = input
+        t = np.kron(np.ones(nslots//2), np.linspace(-1, 1-dt, 2*sps_resamp)); eye_dict['t'] = t
     else:
         eye_dict['y'] = input
         t = np.kron(np.ones((len(input)//sps)//2), np.linspace(-1, 1-dt, 2*sps)); eye_dict['t'] = t
 
-    # Obtenemos el centroide de las muestras en el eje Y
+    # We obtain the centroid of the samples on the Y axis
     vm = np.mean(sk.KMeans(n_clusters=2, n_init=10).fit(input.reshape(-1,1)).cluster_centers_)
 
-    # obtenemos el intervalo más corto de la mitad superior que contiene al 50% de las muestras
+    # we obtain the shortest interval of the upper half that contains 50% of the samples
     top_int = shorth_int(input[input>vm]) 
-    # Obtenemos el LMS del nivel 1
+    # We obtain the LMS of level 1
     state_1 = np.mean(top_int)
-    # obtenemos el intervalo más corto de la mitad inferior que contiene al 50% de las muestras
+    # we obtain the shortest interval of the lower half that contains 50% of the samples
     bot_int = shorth_int(input[input<vm])
-    # Obtenemos el LMS del nivel 0
+    # We obtain the LMS of level 0
     state_0 = np.mean(bot_int)
 
-    # Obtenemos la amplitud entre los dos niveles 0 y 1
+    # We obtain the amplitude between the two levels 0 and 1
     d01 = state_1 - state_0
 
-    # Tomamos el 75% de nivel de umbral
+    # We take 75% threshold level
     v75 = state_1 - 0.25*d01
 
-    # Tomamos el 25% de nivel de umbral
+    # We take 25% threshold level
     v25 = state_0 + 0.25*d01
 
     t_set = np.array(list(set(t)))
 
-    # El siguiente vector se utilizará solo para determinar los tiempos de cruce
+    # The following vector will be used only to determine the crossing times
     tt = t[(input>v25)&(input<v75)]
 
-    # Obtenemos el centroide de los datos de tiempo
+    # We get the centroid of the time data
     tm = np.mean(sk.KMeans(n_clusters=2, n_init=10).fit(tt.reshape(-1,1)).cluster_centers_)
 
-    # Obtenemos el tiempo de cruce por la izquierda
+    # We obtain the left crossing time
     t_left = find_nearest(t_set, np.mean(tt[tt<tm])); eye_dict['t_left'] = t_left
 
-    # Obtenemos el tiempo de cruce por la derecha
+    # We obtain the crossing time from the right
     t_right = find_nearest(t_set, np.mean(tt[tt>tm])); eye_dict['t_right'] = t_right
 
-    # Determinamos el centro del ojo
+    # Determine the center of the eye
     t_center = find_nearest(t_set, (t_left + t_right)/2); eye_dict['t_opt'] = t_center
 
-    # Para el 20% del centro del diagrama de ojo
+    # For 20% of the center of the eye diagram
     t_dist = t_right - t_left; eye_dict['t_dist'] = t_dist
     t_span0 = t_center - 0.05*t_dist; eye_dict['t_span0'] = t_span0
     t_span1 = t_center + 0.05*t_dist; eye_dict['t_span1'] = t_span1
 
-    # Dentro del 20% de los datos del centro del diagrama de ojo, separamos en dos clusters superior e inferior
+    # Within the 20% of the data in the center of the eye diagram, we separate into two clusters top and bottom
     y_center = find_nearest(y_set, (state_0 + state_1)/2)
 
-    # Obtenemos el instante óptimo para realizar el down sampling
-    if sps_resamplig:
-        instant = np.abs(t-t_center).argmin() - sps_resamplig//2 + 1
-        instant = int(instant/sps_resamplig*sps)
+    # We obtain the optimum time for down sampling
+    if sps_resamp:
+        instant = np.abs(t-t_center).argmin() - sps_resamp//2 + 1
+        instant = int(instant/sps_resamp*sps)
     else:
         instant = np.abs(t-t_center).argmin() - sps//2 + 1
     eye_dict['i'] = instant
 
-    # Obtenemos el cluster superior
+    # We obtain the upper cluster
     y_top = input[(input > y_center) & ((t_span0 < t) & (t < t_span1))]; eye_dict['y_top'] = y_top
 
-    # Obtenemos el cluster inferior
+    # We obtain the lower cluster
     y_bot = input[(input < y_center) & ((t_span0 < t) & (t < t_span1))]; eye_dict['y_bot'] = y_bot
 
-    # Para cada cluster calculamos las medias y desviaciones estándar
+    # For each cluster we calculated the means and standard deviations
     mu1 = np.mean(y_top); eye_dict['mu1'] = mu1
     s1 = np.std(y_top); eye_dict['s1'] = s1
     mu0 = np.mean(y_bot); eye_dict['mu0'] = mu0
     s0 = np.std(y_bot); eye_dict['s0'] = s0
 
-    # Obtenemos la relación de extinción
+    # We obtain the extinction ratio
     er = 10*np.log10(mu1/mu0) if mu0>0 else np.nan; eye_dict['er'] = er
 
-    # Obtenemos la apertura del ojo
+    # We obtain the eye opening
     eye_h = mu1 - 3 * s1 - mu0 - 3 * s0; eye_dict['eye_h'] = eye_h
 
     eye_dict['ejecution_time'] = toc()
     return eye(eye_dict)
 
 
-def SAMPLER(input: electrical_signal, _eye_: eye) -> electrical_signal:
+def SAMPLER(input: electrical_signal, _eye_: eye):
     """
-    Recibe una señal de tipo `electrical_signal` y un objeto de tipo `eye` y realiza el muestreo de la señal 
-    en el instante óptimo determinado por el objeto `eye`.
-    
-    ---
+    Receives an electrical signal and an eye object and performs the sampling of the signal
+    at the optimal instant determined by the eye object.
 
-    ### Args:
-    - `input` - señal eléctrica a muestrear
-    - `eye`  - objeto de tipo `eye` que contiene la información del diagrama de ojo
+    Args:
+        input: The electrical signal to be sampled.
+        _eye_: The eye object that contains the eye diagram information.
 
-    ### Returns:
-    - `electrical_signal` - señal electrica muestreada a una muestra por slot
+    Returns:
+        electrical_signal: The sampled electrical signal at one sample per slot.
     """
     tic()
     output = input[_eye_.i::_eye_.sps]
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 

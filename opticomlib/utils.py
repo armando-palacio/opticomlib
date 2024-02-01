@@ -103,9 +103,57 @@ def toc(): global __; return tm.time()-__
 
 
 
-db = lambda x: 10*np.log10(x) # función de conversión a dB
+def db(x):
+    """ db = 10*log10(x)
 
-dbm = lambda x: 10*np.log10(x*1e3) # función de conversión a dBm (x en Watts)
+    This function calculates the logarithm in base 10 of the input x and multiplies it by 10.
+
+    Args:
+        x (float | list | tuple | ndarray): input value (x>=0)
+
+    Returns:
+        float: dB value
+
+    Raise:
+        TypeError: if x is not a number, list, tuple or ndarray
+        ValueError: if x or any(x) < 0
+    """
+    if not isinstance(x, (int, float, list, ndarray)):
+        raise TypeError('The input value must be a number, list, tuple or ndarray.')
+    
+    x = np.array(x)
+    
+    if (x<0).any():
+        raise ValueError('Some values of input array are negative.')
+
+    return 10*np.log10(x) 
+
+
+def dbm(x):
+    """ dbm = 10*log10(x*1e3)
+
+    This function calculates dBm from Watts.
+
+    Args:
+        x (float | list | tuple | ndarray): input value (x>=0)
+    
+    Returns:
+        float: dBm value
+    
+    Raise:
+        TypeError: if x is not a number, list, tuple or ndarray
+        ValueError: if x or any(x) < 0
+    """
+    if not isinstance(x, (int, float, list, ndarray)):
+        raise TypeError('The input value must be a number, list, tuple or ndarray.')
+    
+    x = np.array(x)
+
+    if (x<0).any():
+        raise ValueError('Some values of input array are negative.')
+    
+    return 10*np.log10(x*1e3)
+
 
 idb = lambda x: 10**(x/10) # función de conversión a veces
 
