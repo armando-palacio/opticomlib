@@ -1,12 +1,12 @@
+from opticomlib.typing import optical_signal, gv
 from opticomlib.devices import MZM
 from opticomlib.utils import idbm, dbm
 
-from opticomlib.typing import optical_signal, global_vars
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Global variables
-global_vars(sps=100, R=10e9)
+gv(sps=100, R=10e9)
 
 Vpi = 5
 tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool)

@@ -6,7 +6,7 @@ Data types (:mod:`opticomlib.typing`)
 .. autosummary::
    :toctree: generated/
 
-   global_vars           -- Global variables instance
+   gv                    -- Global variables instance
    binary_sequence       -- Binary sequence class
    electrical_signal     -- Electrical signal class
    optical_signal        -- Optical signal class
@@ -20,7 +20,8 @@ import numpy as np
 from scipy.constants import c, pi
 
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.family'] = 'serif' 
+from matplotlib.widgets import Slider
 
 from typing import Literal, Union, Any
 
@@ -31,24 +32,30 @@ from .utils import (
 
 class global_variables():
     """
-    global variables object
+    global variables object. 
+
+    The slot is taken as the smallest time unit representing a binary value of the signal.
+    For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a slot are the same.
     
     Args:
-        sps (int): muestras por slot (default: 16) 
-        R (float): tasa de slots en [Hz] (default: 1e9)
-        fs (float): frecuencia de muestreo en [Hz] (default: R*sps)
-        lambda_opt (float): longitud de onda del canal óptico en [m] (default: 1550e-9)
+        sps (int): samples per slot (default: 16) 
+        R (float): slot rate in [Hz] (default: 1e9)
+        fs (float): sampling frequency in [Hz] (default: R*sps)
+        wavelength (float): optical wavelength in [m] (default: 1550e-9)
+        N (int): number of slots to simulate (default: None)
     
     Attributes:
-        sps (int): muestras por slot
-        R (float): tasa de slots en [Hz]
-        fs (float): frecuencia de muestreo en [Hz]
-        dt (float): paso temporal en [s]
-        lambda_opt (float): longitud de onda del canal óptico en [m]
-        f0 (float): frecuencia central en [Hz]
+        sps (int): samples per slot 
+        R (float): slot rate in [Hz]
+        fs (float): sampling frequency in [Hz]
+        dt (float): time step in [s]
+        wavelength (float): optical wavelength in [m]
+        f0 (float): central frequency in [Hz]
+        N (int): number of slots.
+        t (ndarray): time array for signal simulation. If ``N`` is defined.
 
     Methods:
-        __call__(sps, R=None, fs=None, lambda_opt=1550e-9): Updates the global variables.
+        __call__(sps, R=None, fs=None, wavelength=1550e-9, N=None): Updates the global variables.
         print(): Prints the global variables.
     """
     def __init__(self):
@@ -56,11 +63,13 @@ class global_variables():
         self.R = 1e9
         self.fs = self.R*self.sps
         self.dt = 1/self.fs
-        self.lambda_opt = 1550e-9
-        self.f0 = c/self.lambda_opt
+        self.wavelength = 1550e9
+        self.f0 = c/self.wavelength
+        self.N = None
+        self.t = None
 
 
-    def __call__(self, sps: int, R: float=None, fs: float=None, lambda_opt: float=1550e-9) -> Any:
+    def __call__(self, sps: int, R: float=None, fs: float=None, wavelength: float=1550e-9, N: int=None) -> Any:
         self.sps = sps
         
         if R: 
@@ -69,10 +78,16 @@ class global_variables():
         elif fs:
             self.fs = fs
             self.R = fs/sps
-            self.dt = 1/fs
+        else:
+            self.fs = fs = self.R*sps
+
+        if N:
+            self.N = N
+            self.t = np.linspace(0, N*sps*self.dt, N*sps, endpoint=True)
         
-        self.lambda_opt = lambda_opt
-        self.f0 = c/lambda_opt
+        self.dt = 1/fs
+        self.lambda_opt = wavelength
+        self.f0 = c/wavelength
         
         return self
         
@@ -83,7 +98,7 @@ class global_variables():
         for key, value in self.__dict__.items():
             print(f'{key} : {value}')
 
-global_vars = global_variables()
+gv = global_variables()
 
 
 class binary_sequence():
@@ -271,25 +286,25 @@ class electrical_signal():
         """
         Get sampling rate of signal.
         """
-        return global_vars.fs
+        return gv.fs
     
     def sps(self):
         """
         Get samples por slot of signal.
         """
-        return global_vars.sps
+        return gv.sps
     
     def dt(self): 
         """
         Get time between samples.
         """
-        return global_vars.dt
+        return gv.dt
     
     def t(self): 
         """
         Return time array for electrical signal.
         """
-        return np.linspace(0, self.len()*global_vars.dt, self.len(), endpoint=True)
+        return np.linspace(0, self.len()*gv.dt, self.len(), endpoint=True)
     
     def w(self, shift: bool=False): 
         """
@@ -313,6 +328,30 @@ class electrical_signal():
         if by not in ['signal', 'noise', 'all']:
             raise TypeError('`by` debe tomar los valores ("signal", "noise", "all")')
         return np.mean(self.abs(by)**2, axis=-1)
+    
+    def phase(self):
+        """
+        Get phase of the signal.
+        """
+        return np.unwrap(np.angle(self.signal))
+    
+    def apply(self, function, *args, **kargs):
+        """
+        Apply a function to signal and noise.
+
+        Args:
+            function (function): function to apply.
+            *args : arguments to pass to the function.
+            **kargs : keyword arguments to pass to the function.
+
+        Returns:
+            electrical_signal: Same object.
+        """
+        output = self.copy()
+        output.signal = function(self.signal, *args, **kargs)
+        if np.sum(self.noise):
+            output.noise = function(self.noise, *args, **kargs)
+        return output
 
     ## Métodos propios de esta clase
     def copy(self, n: int=None):
@@ -353,7 +392,6 @@ class electrical_signal():
             xlabel (str): X-axis label (default - ``'Tiempo [ns]'``).
             ylabel (str): Y-axis label (default - ``'Amplitud [u.a]'``).
             **kargs : all arguments compatible with ``matplotlib.pyplot.plot()``.
-        if ``'label'`` is in ``kargs.keys()``, legend will be show be default. 
 
         Returns:
             electrical_signal: Same object.
@@ -364,7 +402,7 @@ class electrical_signal():
             n = self.len()
         plt.plot(self.t()[:n]*1e9, (self[:n].signal+self[:n].noise).real, fmt, **kargs)
         plt.xlabel(xlabel if xlabel else 'Tiempo [ns]')
-        plt.ylabel(ylabel if ylabel else 'Amplitud [u.a.]')
+        plt.ylabel(ylabel if ylabel else 'Amplitud [V]')
         
         if 'label'  in kargs.keys():
             plt.legend()
@@ -395,12 +433,13 @@ class electrical_signal():
         
         if kind == 'linear':
             plt.plot(f, psd*1e3, fmt, **kargs)
+            plt.ylabel('Potencia [mW]')
         elif kind == 'log':
-            plt.semilogy(f, psd*1e3, fmt, **kargs)
+            plt.plot(f, dbm(psd), fmt, **kargs)
+            plt.ylabel('Potencia [dBm]')
         else:
             raise TypeError('El argumento `kind` debe ser uno de los siguientes valores ("linear", "log")')
         plt.xlabel('Frecuencia [GHz]')
-        plt.ylabel('Potencia [mW]')
         if 'label'  in kargs.keys():
             plt.legend()
         return self
@@ -415,11 +454,18 @@ class electrical_signal():
         Returns:
             electrical_signal: Same object.
         """
-        sps,t = self.sps(), self.t()
+        sps,t = self.sps(), self.t()*1e9
         if n is None: 
             n = self.len()
         for i in t[:n*sps+1][::sps]:
             plt.axvline(i, color='k', ls='--', alpha=0.3, lw=1)
+        return self
+    
+    def show(self):
+        """
+        Show figure.
+        """
+        plt.show()
         return self
 
 
@@ -513,7 +559,7 @@ class optical_signal(electrical_signal):
             s = self[:n].abs()
             plt.plot(t, (s[0]**2 + s[1]**2), fmt[0], label=label, **kargs)
         else:
-            raise TypeError('El argumento `mode` debe se uno de los siguientes valores ("x","y","xy","abs").')
+            raise TypeError('El argumento `mode` debe se uno de los siguientes valores ("x","y","both","abs").')
 
         plt.legend()
         plt.xlabel('Tiempo [ns]')
@@ -554,12 +600,13 @@ class optical_signal(electrical_signal):
         
         if kind == 'linear':
             plt.plot(f, psd*1e3, fmt, **kargs)
+            plt.ylabel('Potencia [mW]')
         elif kind == 'log':
-            plt.semilogy(f, psd*1e3, fmt, **kargs)
+            plt.plot(f, dbm(psd), fmt, **kargs)
+            plt.ylabel('Potencia [dBm]')
         else:
             raise TypeError('El argumento `kind` debe ser uno de los siguientes valores ("linear", "log")')
         plt.xlabel('Frecuencia [GHz]')
-        plt.ylabel('Potencia [mW]')
         if 'label'  in kargs.keys():
             plt.legend()
         return self
@@ -574,11 +621,18 @@ class optical_signal(electrical_signal):
         Returns:
             optical_signal: Same object.
         """
-        sps,t = global_vars.sps, self.t()
+        sps,t = gv.sps, self.t()*1e9
         if n is None: 
             n = self.len()
         for i in t[:n*sps+1][::sps]:
             plt.axvline(i,color='k', ls='--', alpha=0.3, lw=1)
+        return self
+    
+    def show(self):
+        """
+        Show figure
+        """
+        plt.show()
         return self
     
 
@@ -642,27 +696,25 @@ class eye():
             print(f'{key} : {value}')
         return self
     
-    def plot(self, umbral, medias_=True, legend_=True, show_=True, save_=False, filename=None, style: Literal['dark', 'light']='dark', cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter'):
-        """
-        Plot eye diagram.
+
+    def plot(self, medias_=True, legend_=True, show_=True, save_=False, filename=None, style: Literal['dark', 'light']='dark', cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter'):
+        """Plot eye diagram.
 
         Args:
-            umbral (float): threshold value.
-            medias_ (bool) [Optional]: if ``True`` plot mean values.
-            legend_ (bool) [Optional]: if ``True`` show legend.
-            show_ (bool) [Optional]: if ``True`` show plot.
-            save_ (bool) [Optional]: if ``True`` save plot.
-            filename (str) [Optional]: filename to save plot.
-            style (str) [Optional]: plot style. ``'dark'`` or ``'light'``.
-            cmap (str) [Optional]: colormap to plot.
+            style (str, Optional): plot style. ``'dark'`` or ``'light'``.
+            means_ (bool, Optional): if ``True`` plot mean values.
+            legend_ (bool, Optional): if ``True`` show legend.
+            show_ (bool, Optional): if ``True`` show plot.
+            save_ (bool, Optional): if ``True`` save plot.
+            filename (str, Optional): filename to save plot.
+            cmap (str, Optional): colormap to plot.
 
         Returns:
             eye: Same object.
         """
-        if not show_:
-            return self
 
-        from matplotlib.widgets import Slider
+        ## SETTINGS
+
         if style == 'dark':
             plt.style.use('dark_background')
             t_opt_color = '#60FF86'
@@ -675,60 +727,48 @@ class eye():
             means_color = '#5A5A5A'
             bgcolor='white'
         else:
-            raise TypeError("El argumento `style` debe ser uno de los siguientes valores ('dark', 'light')")
+            raise TypeError("The `style` argument must be one of the following values ('dark', 'light')")
         
-        nslots = min(nslots, self.y.size//self.sps)
-        
-        fig,ax = plt.subplots(2,2, gridspec_kw={'width_ratios': [4,1], 
-                                            'height_ratios': [2,6], 
-                                            'wspace': 0.03,
-                                            'hspace': 0.05},
-                                            figsize=(8,6))
-        
-        # suptitle('Diagrama de ojo')
         dt = self.dt
-        ax[1,0].set_xlim(-1-dt,1)
-        ax[1,0].set_ylim(self.mu0-4*self.s0, self.mu1+4*self.s1)
-        ax[1,0].set_ylabel(r'Amplitude [mV]', fontsize=12)
-        ax[1,0].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
-        ax[1,0].set_xticks([-1,-0.5,0,0.5,1])
-        ax[1,0].set_xlabel(r'Time [$t/T_{slot}$]', fontsize=12)
-        t_line1 = ax[1,0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
-        y_line1 = ax[1,0].axhline(umbral, color = r_th_color, ls = '--', alpha = 0.7)
 
-        t_line_span0 = ax[1,0].axvline(self.t_span0, color = t_opt_color, ls = '-', alpha = 0.4)
-        t_line_span1 = ax[1,0].axvline(self.t_span1, color = t_opt_color, ls = '-', alpha = 0.4)
-
+        fig, ax = plt.subplots(1,2, gridspec_kw={'width_ratios': [4,1],  
+                                                'wspace': 0.03},
+                                                figsize=(8,5))
+        plt.suptitle('Eye diagram')
+        
+        ax[0].set_xlim(-1-dt,1)
+        ax[0].set_ylim(self.mu0-4*self.s0, self.mu1+4*self.s1)
+        ax[0].set_ylabel(r'Amplitude [mV]', fontsize=12)
+        ax[0].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
+        ax[0].set_xticks([-1,-0.5,0,0.5,1])
+        ax[0].set_xlabel(r'Time [$t/T_{slot}$]', fontsize=12)
+        t_line1 = ax[0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
+        t_line_span0 = ax[0].axvline(self.t_span0, color = t_opt_color, ls = '-', alpha = 0.4)
+        t_line_span1 = ax[0].axvline(self.t_span1, color = t_opt_color, ls = '-', alpha = 0.4)
+        
         if legend_: 
-            ax[1,0].legend([r'$t_{opt}$', r'$r_{th}$'], fontsize=12, loc='upper right')
+            ax[0].legend([r'$t_{opt}$'], fontsize=12, loc='upper right')
         
         if medias_:
-            ax[1,0].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
-            ax[1,0].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
+            ax[0].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
+            ax[0].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
 
-            ax[1,1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
-            ax[1,1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
+            ax[1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
+            ax[1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
             if legend_:
-                ax[1,1].legend([r'$\mu_1$',r'$\mu_0$'])
+                ax[1].legend([r'$\mu_1$',r'$\mu_0$'])
 
-        ax[1,1].sharey(ax[1,0])
-        ax[1,1].tick_params(axis='x', which='both', length=0, labelbottom=False)
-        ax[1,1].tick_params(axis='y', which='both', length=0, labelleft=False)
-        ax[1,1].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
-        y_line2 = ax[1,1].axhline(umbral, color = r_th_color, ls = '--', alpha = 0.7)
+        ax[1].sharey(ax[0])
+        ax[1].tick_params(axis='x', which='both', length=0, labelbottom=False)
+        ax[1].tick_params(axis='y', which='both', length=0, labelleft=False)
+        ax[1].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
 
-        ax[0,0].sharex(ax[1,0])
-        ax[0,0].tick_params(axis='y', which='both', length=0, labelleft=False)
-        ax[0,0].tick_params(axis='x', which='both', length=0, labelbottom=False)
-        ax[0,0].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
-        t_line2 = ax[0,0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
 
-        ax[0,1].set_visible(False)
-
+        ## ADD PLOTS
         y_ = self.y
         t_ = self.t
 
-        ax[1,0].hexbin(
+        ax[0].hexbin( # plot eye
             x = t_, 
             y = y_, 
             gridsize=500, 
@@ -737,47 +777,19 @@ class eye():
             cmap=cmap 
         )
         
-        ax[1,1].hist(
+        ax[1].hist(  # plot vertical histogram 
             y_[(t_>self.t_opt-0.05*self.t_dist) & (t_<self.t_opt+0.05*self.t_dist)], 
             bins=200, 
             density=True, 
             orientation = 'horizontal', 
-            color = r_th_color, 
-            alpha = 0.9,
-            histtype='step',
-        )
-
-        ax[0,0].hist(
-            t_[(y_>umbral*0.95) & (y_<umbral*1.05)], 
-            bins=200, 
-            density=True, 
-            orientation = 'vertical', 
             color = t_opt_color, 
             alpha = 0.9,
             histtype='step',
         )
 
-        y_min, y_max = ax[1,0].get_ylim()
-
-        p = ax[1,1].get_position() 
-        y_slider_ax = fig.add_axes([p.x1+0.006,p.y0,0.02,p.y1-p.y0])
-        p = ax[0,0].get_position() 
+        ## ADD SLIDERS
+        p = ax[0].get_position()
         t_slider_ax = fig.add_axes([p.x0,p.y1+0.01,p.x1-p.x0,0.02])
-
-        y_slider = Slider(
-            ax=y_slider_ax,
-            label='',
-            valmin=y_min, 
-            valmax=y_max,
-            valstep=(y_max-y_min)/20,
-            valinit=umbral, 
-            initcolor=r_th_color,
-            orientation='vertical',
-            valfmt='',
-            color=bgcolor,
-            track_color=bgcolor,
-            handle_style = dict(facecolor=r_th_color, edgecolor=bgcolor, size=10)
-        )
 
         t_slider = Slider(
             ax=t_slider_ax,
@@ -793,33 +805,16 @@ class eye():
             handle_style = dict(facecolor=t_opt_color, edgecolor=bgcolor, size=10)
         )
 
-        def update_y_line(val):
-            y_line1.set_ydata(val)
-            y_line2.set_ydata(val)
-
-            ax[0,0].patches[-1].remove()
-
-            n,_,_ = ax[0,0].hist(
-                t_[(y_>val*0.95) & (y_<val*1.05)], 
-                bins=200, 
-                density=True, 
-                orientation = 'vertical', 
-                color = r_th_color, 
-                alpha = 0.9,
-                histtype='step',
-            )
-            ax[0,0].set_ylim(0,max(n))
-
+        ## PLOTS UPDATE
         def update_t_line(val):
             t_line1.set_xdata(val)
-            t_line2.set_xdata(val)
 
             t_line_span0.set_xdata(val-0.05*self.t_dist)
             t_line_span1.set_xdata(val+0.05*self.t_dist)
 
-            ax[1,1].patches[-1].remove()
+            ax[1].patches[-1].remove()
 
-            n,_,_ = ax[1,1].hist(
+            n,_,_ = ax[1].hist(
                 y_[(t_>val-0.01) & (t_<val+0.01)], 
                 bins=200, 
                 density=True, 
@@ -828,9 +823,8 @@ class eye():
                 alpha = 0.9,
                 histtype='step',
             )
-            ax[1,1].set_xlim(0,max(n))
+            ax[1].set_xlim(0,max(n))
 
-        y_slider.on_changed(update_y_line)
         t_slider.on_changed(update_t_line)
 
         if save_: 

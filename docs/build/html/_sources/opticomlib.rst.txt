@@ -1,0 +1,16 @@
+Opticomlib Python Library
+=========================
+
+Package includes:
+
+* **opticomlib.typing** - type hints for opticomlib
+* **opticomlib.utils** - utility functions
+* **opticomlib.devices** - electro-optical devices
+* **opticomlib.lab** - laboratory equipment 
+
+.. currentmodule:: opticomlib
+
+.. autosummary::
+   :toctree: _autosummary
+
+   typing

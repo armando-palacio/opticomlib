@@ -1,7 +1,7 @@
 """
-========================================================
-Laboratory and Practice funcions (:mod:`opticomlib.lab`)
-========================================================
+==========================================================
+Laboratory and practical functions (:mod:`opticomlib.lab`)
+==========================================================
 
 .. autosummary::
    :toctree: generated/
@@ -17,38 +17,42 @@ from .typing import binary_sequence, electrical_signal, eye
 from .utils import tic, toc
 
 
-## Funciones para el Laboratorio
-def SYNC(signal_rx: electrical_signal, slots_tx: binary_sequence, sps: int) -> tuple[electrical_signal, int]:
+def SYNC(signal_rx: electrical_signal, 
+         slots_tx: binary_sequence, 
+         sps: int):
     """
-    ### Descripción:
-    Se realiza una sincronización de la señal recibida con la señal transmitida para saber a 
-    partir de que posición de la señal recibida se debe comenzar a procesar. Para ello se realiza una correlación 
-    entre la señal recibida y la señal transmitida y se busca el máximo de la correlación.
-    
-    ---
+    Synchronizes the received signal with the transmitted signal to determine the starting position in the received signal for further processing. 
+    This is done by performing a correlation between the received signal and the transmitted signal and finding the maximum correlation position.
 
-    ### Args:
-    - `signal_rx` - señal digital recibida (del osciloscopio).
-    - `bits_tx` - secuencia de bits transmitida.
+    Args:
+        signal_rx (electrical_signal): The received digital signal (from the oscilloscope).
+        slots_tx (binary_sequence): The transmitted slots sequence.
+        sps (int): The number of samples per slot.
 
-    ### Returns:
-    - `signal_sync` - señal digital sincronizada.
-    - `i` - posición del vector 'signal' a partir de la cual se realiza la sincronización.  
+    Returns:
+        tuple[electrical_signal, int]: A tuple containing the synchronized digital signal and the position in the 'signal' vector from which synchronization was performed.
+
+    Raises:
+        TypeError: The ``sps`` must be an integer to perform synchronization.
+        BufferError: If the number of received slots have to be greater than the transmitted slots.
+        ValueError: If no correlation maximum is found.
     """
     
     tic()
     if not isinstance(sps, int):
-        raise TypeError('Los sps deben ser un número entero para realizar la sincronización.')
+        raise TypeError('The "sps" must be an integer to perform synchronization.')
 
     signal_tx = np.kron(slots_tx.data, np.ones(sps))
     signal_rx = signal_rx.signal
 
-    if len(signal_rx)<len(signal_tx): raise BufferError('La longitud del vector recibido debe ser mayor al vector transmitido!!')
+    if len(signal_rx)<len(signal_tx): 
+        raise BufferError('The length of the received vector must be greater than the transmitted vector!!')
 
     l = len(signal_tx)
-    corr = sg.fftconvolve(signal_rx[:2*l], signal_tx[l::-1], mode='valid') # Correlación de la señal transmitida con la señal recibida en una ventana de 2*l (suficiente para encontrar un máximo)
+    corr = sg.fftconvolve(signal_rx[:2*l], signal_tx[l::-1], mode='valid') # Correlation of the transmitted signal with the received signal in a window of 2*l (sufficient to find a maximum)
 
-    if np.max(corr) < 3*np.std(corr): raise ValueError('No se encontró un máximo de correlación!!') # falso positivo
+    if np.max(corr) < 3*np.std(corr): 
+        raise ValueError('No correlation maximum found!!') # false positive
     
     i = np.argmax(corr)
 
@@ -59,21 +63,28 @@ def SYNC(signal_rx: electrical_signal, slots_tx: binary_sequence, sps: int) -> t
 
 def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, sps:int, nslots:int=8192):
     """
-    ### Descripción:
-    Esta función obtiene las medias y desviaciones estándar de los niveles 0 y 1 de la señal recibida. Utiliza los
-    slots de la señal transmitida para determinar los instantes de tiempo en los que se encuentran los niveles 0 y 1.
-    
-    ---
+    Calculates the means and standard deviations of levels 0 and 1 in the received signal.
 
-    ### Args:
-    - `sync_signal` - señal digital sincronizada en tiempo con la señal transmitida.
-    - `bits_tx` - secuencia de bits transmitida.
-    - `sps` - muestras por slot de la señal digital (default: global_vars.sps).
-    - `nslots` [Opcional] - cantidad de slots a utilizar para la estimación (default: 8192).
+    Args:
+        sync_signal (electrical_signal): Synchronized digital signal in time with the transmitted signal.
+        slots_tx (binary_sequence): Transmitted bit sequence.
+        sps (int): Samples per slot of the digital signal.
+        nslots (int, Optional): Number of slots to use for estimation (default: 8192).
 
-    ### Returns:
-    - `signal_sync` - señal digital sincronizada.
-    - `i` - posición del vector 'signal' a partir de la cual se realiza la sincronización.  
+    Returns:
+        dict: A dictionary containing the following keys:
+            
+            - ``sps``: Samples per slot of the digital signal.
+            - ``y``: Synchronized digital signal.
+            - ``unos``: Received signal levels corresponding to transmitted level 1.
+            - ``zeros``: Received signal levels corresponding to transmitted level 0.
+            - ``t0``: Time instants for level 0.
+            - ``t1``: Time instants for level 1.
+            - ``i``: Position in the 'signal' vector from which synchronization was performed.
+            - ``mu0``: Mean of level 0.
+            - ``mu1``: Mean of level 1.
+            - ``s0``: Standard deviation of level 0.
+            - ``s1``: Standard deviation of level 1.
     """
     sps = sync_signal.sps()
 

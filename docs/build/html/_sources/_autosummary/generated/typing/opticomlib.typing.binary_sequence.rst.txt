@@ -1,0 +1,26 @@
+opticomlib.typing.binary\_sequence
+==================================
+
+.. currentmodule:: opticomlib.typing
+
+.. autoclass:: binary_sequence
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~binary_sequence.__init__
+      ~binary_sequence.len
+      ~binary_sequence.print
+      ~binary_sequence.sizeof
+      ~binary_sequence.type
+   
+   
+
+   
+   
+   

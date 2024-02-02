@@ -1,0 +1,33 @@
+﻿opticomlib.typing
+=================
+
+.. automodule:: opticomlib.typing
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      binary_sequence
+      electrical_signal
+      eye
+      global_variables
+      optical_signal
+   
+   
+
+   
+   
+   
+
+
+
