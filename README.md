@@ -1,43 +1,44 @@
-# Simulación de Comunicaciones Ópticas No Coherentes
+# opticomlib
 
-La librería `opticomlib` fue desarrollada para facilitar la simulación de comunicaciones ópticas no coherentes en $\texttt{Python}$. Está desarrollada especialmente para la modulación $M$-PPM. Este código proporciona la implementación de cada componente óptico de forma modular, lo que permite al usuario armar su propio sistema de comunicación personalizado.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/your-username/opticomlib/blob/main/LICENSE)
+[![Python Version](https://img.shields.io/badge/python-3.7%20|%203.8%20|%203.9-blue)](https://www.python.org/downloads/release/python-390/)
 
-## Características clave
+## Description
 
-- Código en Python para simular comunicaciones ópticas no coherentes.
-- Soporte para los formatos de modulación OOK y PPM
-- Implementación modular de cada componente óptico, en forma de librería.
-- Los componentes incluyen fuentes de luz, moduladores, demoduladores, filtros, etc.
-- Código fácil de leer y modificar.
+opticomlib is a Python package that provides a set of utilities for optical communication systems.
 
-## Uso
+## Features
 
-Para utilizar el código de simulación, el usuario puede importar las librerías del componente óptico requerido y configurar los parámetros de entrada para generar la señal de salida.
+- Feature 1: Description of feature 1.
+- Feature 2: Description of feature 2.
+- Feature 3: Description of feature 3.
 
-Por ejemplo:
+## Installation
 
-```
-from opticomlib.components import *
-
-global_vars.M = M = 8            # Orden de modulación PPM
-global_vars.bit_rate = Rb = 3e9  # Tasa de transmisión de bits en [Hz] 
-global_vars.sps = sps = 64       # Muestras por slot 
-global_vars.update()
-
-bits = PRBS(n=2**10)              # generamos algunos bits de forma aleatoria
-simbs_ppm = PPM_ENCODER(bits, M)  # mapeamos los bits a simbolos ppm
-
-elec_sig = DAC(simb_ppm, sps=sps, fs=fs, type='gaussian', m=3)  # Convertimos la señal digital en 'analógica'
-
-laser = LASER(...)  # Definimos una instancia del laser
-
-opt_sig = MODULATOR(elec_sig, laser)  # Realizamos la modulación electro-óptica
+You can install opticomlib using pip:
+    
+```bash
+pip install opticomlib
 ```
 
-## Contribución
+## Usage
 
-Las contribuciones a este repositorio son bienvenidas. Si desea corregir un error, mejorar la documentación o agregar una nueva función, envíe una solicitud de extracción.
+Here is an example of how to use this package.
 
-## Licencia
+```python
+import opticomlib.devices as dev
 
-Este proyecto tiene licencia MIT - vea el archivo [LICENSE.md](LICENSE.md) para detalles.
+# Example usage
+```
+
+## Contributing
+
+Contributions are welcome. Please, check the [Contribution Guidelines](CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the terms of the [MIT license](LICENSE.md).
+
+## Contact
+
+If you want to contact me you can reach me at <armandopr3009@gmail.com>.

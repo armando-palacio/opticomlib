@@ -1,6 +1,6 @@
 # FROM LOCAL FOLDER
 # python setup.py bdist_wheel 
-# pip install [--upgrade] .\dist\opticomlib-x.x-py3-none-any.whl
+# pip install .
 
 # FROM GITHUB
 # pip install [--upgrade] git+https://github.com/armando-palacio/opticomlib.git
@@ -8,27 +8,40 @@
 
 from setuptools import setup
 
+DISTNAME = "OptiComLib"
+DESCRIPTION = "Python package for optical communication systems."
+LONG_DESCRIPTION = open("readme.md", encoding="utf8").read()
+MAINTAINER = "Armando P. Romeu"
+MAINTAINER_EMAIL = "armandopr3009@gmail.com"
+URL = "https://github.com/armando-palacio/opticomlib.git"
+LICENSE = "MIT"
+VERSION = "0.4.1"
+
 setup(
-    name='opticomlib',
-    version='0.4',
-    description='Python package for optical communication systems.',
-    url='https://github.com/armando-palacio/opticomlib.git',
-    author='Armando Palacio',
-    author_email='armandopr3009@gmail.com',
-    license='MIT',
+    name=DISTNAME,
+    maintainer=MAINTAINER,
+    maintainer_email=MAINTAINER_EMAIL,
+    description=DESCRIPTION,
+    license=LICENSE,
+    url=URL,
+    version=VERSION,
     packages=['opticomlib'],
     classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Telecommunications Industry",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent"
     ],
-    zip_safe=False,
     install_requires=[
         'scipy',
         'numpy',
         'matplotlib',
         'scikit-learn',
         'tqdm',
-        'pympler'
+        'pympler',
+        'renku',
     ],
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
+    python_requires='>=3.9',
 )
