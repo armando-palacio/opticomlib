@@ -12,7 +12,7 @@ from opticomlib.devices import (
     FIBER,
     PD,
     GET_EYE,
-    global_vars
+    gv
 )
 
 import numpy as np
@@ -26,7 +26,7 @@ from scipy.constants import k as kB, e
 """
 
 # Parámetros de la simulación
-global_vars(sps=16, R=1e9)
+gv(sps=16, R=1e9)
 
 # prbs
 tx_seq = PRBS(order=15)
@@ -41,7 +41,7 @@ mod_signal = MODULATOR(dig_signal, p_laser=-21)
 fiber_signal = FIBER(mod_signal, length=50, alpha=0.1, beta_2=20, gamma=2, show_progress=True)
 
 # fotodetector
-pd_signal = PD(fiber_signal, BW=global_vars.R*0.75, responsivity=1, noise='all')
+pd_signal = PD(fiber_signal, BW=gv.R*0.75, responsivity=1, noise='all')
 
 # parámetros del diagrama de ojos
 eye_ = GET_EYE(pd_signal, sps_resamplig=128)
@@ -58,7 +58,7 @@ ber = BER_analizer('counter', Tx=tx_seq, Rx=rx_seq)
 
 responsivity = 1 # Responsividad del fotodetector
 T = 300 # Temperatura equivalente del receptor
-BW = global_vars.R*0.75 # Ancho de banda del receptor
+BW = gv.R*0.75 # Ancho de banda del receptor
 R_load = 50 # Resistencia de carga del fotodetector
 
 mu0 = 0
@@ -84,9 +84,9 @@ plt.ylim(1e-11, 1e-1)
 plt.grid()
 
 plt.figure()
-mod_signal.plot('r', n=50*global_vars.sps, label = 'Señal modulada')
-fiber_signal.plot('b', n=50*global_vars.sps, label='Señal de salida de la fibra')
-pd_signal.plot('g', n=50*global_vars.sps, label='Señal photodetectada').grid(n=50)
+mod_signal.plot('r', n=50*gv.sps, label = 'Señal modulada')
+fiber_signal.plot('b', n=50*gv.sps, label='Señal de salida de la fibra')
+pd_signal.plot('g', n=50*gv.sps, label='Señal photodetectada').grid(n=50)
 plt.axhline(THRESHOLD_EST(eye_), color='r', linestyle='--', label='Umbral de decisión')
 plt.legend(loc='upper right')
 

@@ -87,7 +87,7 @@
 <span class="sd">.. autosummary::</span>
 <span class="sd">   :toctree: generated/</span>
 
-<span class="sd">   global_vars           -- Global variables instance</span>
+<span class="sd">   gv                    -- Global variables instance</span>
 <span class="sd">   binary_sequence       -- Binary sequence class</span>
 <span class="sd">   electrical_signal     -- Electrical signal class</span>
 <span class="sd">   optical_signal        -- Optical signal class</span>
@@ -124,20 +124,21 @@
 <span class="sd">        sps (int): samples per slot (default: 16) </span>
 <span class="sd">        R (float): slot rate in [Hz] (default: 1e9)</span>
 <span class="sd">        fs (float): sampling frequency in [Hz] (default: R*sps)</span>
-<span class="sd">        lambda_opt (float): optical channel wavelength in [m] (default: 1550e-9)</span>
+<span class="sd">        wavelength (float): optical wavelength in [m] (default: 1550e-9)</span>
+<span class="sd">        N (int): number of slots to simulate (default: None)</span>
 <span class="sd">    </span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        sps (int): samples per slot </span>
 <span class="sd">        R (float): slot rate in [Hz]</span>
 <span class="sd">        fs (float): sampling frequency in [Hz]</span>
 <span class="sd">        dt (float): time step in [s]</span>
-<span class="sd">        wavelength (float): optical channel wavelength in [m]</span>
+<span class="sd">        wavelength (float): optical wavelength in [m]</span>
 <span class="sd">        f0 (float): central frequency in [Hz]</span>
 <span class="sd">        N (int): number of slots.</span>
 <span class="sd">        t (ndarray): time array for signal simulation. If ``N`` is defined.</span>
 
 <span class="sd">    Methods:</span>
-<span class="sd">        __call__(sps, R=None, fs=None, lambda_opt=1550e-9): Updates the global variables.</span>
+<span class="sd">        __call__(sps, R=None, fs=None, wavelength=1550e-9, N=None): Updates the global variables.</span>
 <span class="sd">        print(): Prints the global variables.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -187,7 +188,7 @@
 </div>
 
 
-<span class="n">global_vars</span> <span class="o">=</span> <span class="n">global_variables</span><span class="p">()</span>
+<span class="n">gv</span> <span class="o">=</span> <span class="n">global_variables</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="binary_sequence">
@@ -412,7 +413,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get sampling rate of signal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">fs</span></div>
+        <span class="k">return</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span></div>
 
     
 <div class="viewcode-block" id="electrical_signal.sps">
@@ -421,7 +422,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get samples por slot of signal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span></div>
+        <span class="k">return</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span></div>
 
     
 <div class="viewcode-block" id="electrical_signal.dt">
@@ -430,7 +431,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get time between samples.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">dt</span></div>
+        <span class="k">return</span> <span class="n">gv</span><span class="o">.</span><span class="n">dt</span></div>
 
     
 <div class="viewcode-block" id="electrical_signal.t">
@@ -439,7 +440,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return time array for electrical signal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">*</span><span class="n">global_vars</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
     
 <div class="viewcode-block" id="electrical_signal.w">
@@ -804,7 +805,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            optical_signal: Same object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sps</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="mf">1e9</span>
+        <span class="n">sps</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="mf">1e9</span>
         <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[:</span><span class="n">n</span><span class="o">*</span><span class="n">sps</span><span class="o">+</span><span class="mi">1</span><span class="p">][::</span><span class="n">sps</span><span class="p">]:</span>

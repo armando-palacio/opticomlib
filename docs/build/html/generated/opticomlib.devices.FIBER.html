@@ -134,12 +134,12 @@ Polarization mode dispersion (PMD) is not considered in this model.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.typing</span> <span class="kn">import</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">global_vars</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.typing</span> <span class="kn">import</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">gv</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">FIBER</span><span class="p">,</span> <span class="n">DAC</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.utils</span> <span class="kn">import</span> <span class="n">idbm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">global_vars</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0,0,0,1,0,0,0&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="o">/</span><span class="n">signal</span><span class="o">.</span><span class="n">power</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">idbm</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="p">)</span>

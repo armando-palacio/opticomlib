@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>opticomlib.typing.gv &mdash; opticomlib 0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7f00635f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="opticomlib.typing.binary_sequence" href="opticomlib.typing.binary_sequence.html" />
+    <link rel="prev" title="Data types (opticomlib.typing)" href="../modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            opticomlib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">opticomlib.typing.gv</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.gv"><code class="docutils literal notranslate"><span class="pre">gv</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.sps"><code class="docutils literal notranslate"><span class="pre">sps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.R"><code class="docutils literal notranslate"><span class="pre">R</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.fs"><code class="docutils literal notranslate"><span class="pre">fs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.dt"><code class="docutils literal notranslate"><span class="pre">dt</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.wavelength"><code class="docutils literal notranslate"><span class="pre">wavelength</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.f0"><code class="docutils literal notranslate"><span class="pre">f0</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.N"><code class="docutils literal notranslate"><span class="pre">N</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.t"><code class="docutils literal notranslate"><span class="pre">t</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.__call__"><code class="docutils literal notranslate"><span class="pre">__call__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.print"><code class="docutils literal notranslate"><span class="pre">print()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="opticomlib.typing.binary_sequence.html">opticomlib.typing.binary_sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opticomlib.typing.electrical_signal.html">opticomlib.typing.electrical_signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opticomlib.typing.optical_signal.html">opticomlib.typing.optical_signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opticomlib.typing.eye.html">opticomlib.typing.eye</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#models-for-opto-electronic-devices-opticomlib-devices">Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#laboratory-and-practical-functions-opticomlib-lab">Laboratory and practical functions (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.lab</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#ook-devices-opticomlib-ook">OOK devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ook</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#ppm-devices-opticomlib-ppm">PPM devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ppm</span></code>)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">opticomlib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
+      <li class="breadcrumb-item active">opticomlib.typing.gv</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/generated/opticomlib.typing.gv.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="opticomlib-typing-gv">
+<h1>opticomlib.typing.gv<a class="headerlink" href="#opticomlib-typing-gv" title="Link to this heading"></a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="opticomlib.typing.gv">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">gv</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;opticomlib.typing.global_variables</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#opticomlib.typing.gv" title="Link to this definition"></a></dt>
+<dd><p>global variables object.</p>
+<p>The slot is taken as the smallest time unit representing a binary value of the signal.
+For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a slot are the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sps</strong> (<em>int</em>) – samples per slot (default: 16)</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – slot rate in [Hz] (default: 1e9)</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – sampling frequency in [Hz] (default: R*sps)</p></li>
+<li><p><strong>wavelength</strong> (<em>float</em>) – optical wavelength in [m] (default: 1550e-9)</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – number of slots to simulate (default: None)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.sps">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">sps</span></span><a class="headerlink" href="#opticomlib.typing.sps" title="Link to this definition"></a></dt>
+<dd><p>samples per slot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.R">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#opticomlib.typing.R" title="Link to this definition"></a></dt>
+<dd><p>slot rate in [Hz]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.fs">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">fs</span></span><a class="headerlink" href="#opticomlib.typing.fs" title="Link to this definition"></a></dt>
+<dd><p>sampling frequency in [Hz]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.dt">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#opticomlib.typing.dt" title="Link to this definition"></a></dt>
+<dd><p>time step in [s]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.wavelength">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#opticomlib.typing.wavelength" title="Link to this definition"></a></dt>
+<dd><p>optical wavelength in [m]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.f0">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">f0</span></span><a class="headerlink" href="#opticomlib.typing.f0" title="Link to this definition"></a></dt>
+<dd><p>central frequency in [Hz]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.N">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#opticomlib.typing.N" title="Link to this definition"></a></dt>
+<dd><p>number of slots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opticomlib.typing.t">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#opticomlib.typing.t" title="Link to this definition"></a></dt>
+<dd><p>time array for signal simulation. If <code class="docutils literal notranslate"><span class="pre">N</span></code> is defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.typing.__call__">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1550e-9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#opticomlib.typing.__call__" title="Link to this definition"></a></dt>
+<dd><p>Updates the global variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.typing.print">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#opticomlib.typing.print" title="Link to this definition"></a></dt>
+<dd><p>Prints the global variables.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../modules.html" class="btn btn-neutral float-left" title="Data types (opticomlib.typing)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="opticomlib.typing.binary_sequence.html" class="btn btn-neutral float-right" title="opticomlib.typing.binary_sequence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ing. Armando P. Romeu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

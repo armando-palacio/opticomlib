@@ -6,7 +6,7 @@ Data types (:mod:`opticomlib.typing`)
 .. autosummary::
    :toctree: generated/
 
-   global_vars           -- Global variables instance
+   gv                    -- Global variables instance
    binary_sequence       -- Binary sequence class
    electrical_signal     -- Electrical signal class
    optical_signal        -- Optical signal class
@@ -41,20 +41,21 @@ class global_variables():
         sps (int): samples per slot (default: 16) 
         R (float): slot rate in [Hz] (default: 1e9)
         fs (float): sampling frequency in [Hz] (default: R*sps)
-        lambda_opt (float): optical channel wavelength in [m] (default: 1550e-9)
+        wavelength (float): optical wavelength in [m] (default: 1550e-9)
+        N (int): number of slots to simulate (default: None)
     
     Attributes:
         sps (int): samples per slot 
         R (float): slot rate in [Hz]
         fs (float): sampling frequency in [Hz]
         dt (float): time step in [s]
-        wavelength (float): optical channel wavelength in [m]
+        wavelength (float): optical wavelength in [m]
         f0 (float): central frequency in [Hz]
         N (int): number of slots.
         t (ndarray): time array for signal simulation. If ``N`` is defined.
 
     Methods:
-        __call__(sps, R=None, fs=None, lambda_opt=1550e-9): Updates the global variables.
+        __call__(sps, R=None, fs=None, wavelength=1550e-9, N=None): Updates the global variables.
         print(): Prints the global variables.
     """
     def __init__(self):
@@ -97,7 +98,7 @@ class global_variables():
         for key, value in self.__dict__.items():
             print(f'{key} : {value}')
 
-global_vars = global_variables()
+gv = global_variables()
 
 
 class binary_sequence():
@@ -285,25 +286,25 @@ class electrical_signal():
         """
         Get sampling rate of signal.
         """
-        return global_vars.fs
+        return gv.fs
     
     def sps(self):
         """
         Get samples por slot of signal.
         """
-        return global_vars.sps
+        return gv.sps
     
     def dt(self): 
         """
         Get time between samples.
         """
-        return global_vars.dt
+        return gv.dt
     
     def t(self): 
         """
         Return time array for electrical signal.
         """
-        return np.linspace(0, self.len()*global_vars.dt, self.len(), endpoint=True)
+        return np.linspace(0, self.len()*gv.dt, self.len(), endpoint=True)
     
     def w(self, shift: bool=False): 
         """
@@ -620,7 +621,7 @@ class optical_signal(electrical_signal):
         Returns:
             optical_signal: Same object.
         """
-        sps,t = global_vars.sps, self.t()*1e9
+        sps,t = gv.sps, self.t()*1e9
         if n is None: 
             n = self.len()
         for i in t[:n*sps+1][::sps]:

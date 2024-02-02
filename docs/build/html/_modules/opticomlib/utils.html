@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html#models-for-opto-electronic-devices-opticomlib-devices">Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html#laboratory-and-practical-functions-opticomlib-lab">Laboratory and practical functions (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.lab</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html#utility-functions-opticomlib-utils">Utility functions (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.utils</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html#ook-devices-opticomlib-ook">OOK devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ook</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html#ppm-devices-opticomlib-ppm">PPM devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ppm</span></code>)</a></li>
 </ul>
@@ -79,29 +80,65 @@
            <div itemprop="articleBody">
              
   <h1>Source code for opticomlib.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">===========================================</span>
+<span class="sd">Utility functions (:mod:`opticomlib.utils`)</span>
+<span class="sd">===========================================</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   :toctree: generated/</span>
+
+<span class="sd">    generate_prbs          -- Generate a pseudo-random binary sequence (PRBS) of desired order.</span>
+<span class="sd">    dec2bin                -- Convert a decimal number to its binary representation.</span>
+<span class="sd">    str2array              -- Convert a string to a numeric array.</span>
+<span class="sd">    get_time               -- Get the average time of execution of a line of code.</span>
+<span class="sd">    tic                    -- Start a timer.</span>
+<span class="sd">    toc                    -- Stop a timer.</span>
+<span class="sd">    db                     -- Convert a number value to dB.</span>
+<span class="sd">    dbm                    -- Convert a power value in W to dBm.</span>
+<span class="sd">    idb                    -- Convert a dB value to a number.</span>
+<span class="sd">    idbm                   -- Convert a dBm value to a power value in W.</span>
+<span class="sd">    gaus                   -- Gaussian function.</span>
+<span class="sd">    Q                      -- Q(x) = 1/2*erfc(x/sqrt(2)) function.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">timeit</span><span class="o">,</span> <span class="nn">time</span> <span class="k">as</span> <span class="nn">tm</span>
 <span class="kn">import</span> <span class="nn">scipy.special</span> <span class="k">as</span> <span class="nn">sp</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span>
 
-<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">k</span> <span class="k">as</span> <span class="n">kB</span><span class="p">,</span> <span class="n">e</span>
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">pi</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 
 <div class="viewcode-block" id="generate_prbs">
 <a class="viewcode-back" href="../../modules.html#opticomlib.utils.generate_prbs">[docs]</a>
 <span class="k">def</span> <span class="nf">generate_prbs</span><span class="p">(</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Esta función genera una secuencia pseudoaleatoria binaria (PRBS) de orden deseado.</span>
+<span class="sd">    Generates a pseudo-random binary sequence (PRBS) of desired order.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">    - `order` [Opcional] - orden del polinomio generador {7, 9, 11, 15, 20, 23, 31} (default: `order=7`)</span>
+<span class="sd">        order (int): order of the generator polynomial {7, 9, 11, 15, 20, 23, 31} (default: ``order=7``).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    - `prbs` - secuencia PRBS de orden `order` (array de 0s y 1s)</span>
+<span class="sd">        ndarray: PRBS sequence of length ``2^order-1``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if ``order`` is not in {7, 9, 11, 15, 20, 23, 31}.</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; generate_prbs(7)</span>
+<span class="sd">            array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,</span>
+<span class="sd">            0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,</span>
+<span class="sd">            0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,</span>
+<span class="sd">            0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,</span>
+<span class="sd">            0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,</span>
+<span class="sd">            0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">taps</span> <span class="o">=</span> <span class="p">{</span><span class="mi">7</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="mi">9</span><span class="p">:</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="mi">11</span><span class="p">:</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="mi">15</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="mi">14</span><span class="p">],</span> <span class="mi">20</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="mi">23</span><span class="p">:</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span><span class="mi">18</span><span class="p">],</span> <span class="mi">31</span><span class="p">:</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">28</span><span class="p">]}</span>
@@ -127,20 +164,27 @@
 
 <div class="viewcode-block" id="dec2bin">
 <a class="viewcode-back" href="../../modules.html#opticomlib.utils.dec2bin">[docs]</a>
-<span class="k">def</span> <span class="nf">dec2bin</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">dec2bin</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Esta función convierte un número entero a su representación binaria.</span>
+<span class="sd">    Converts an integer to its binary representation.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">    - `num` - número entero a convertir</span>
-<span class="sd">    - `digits` [Opcional] - cantidad de bits de la representación binaria (default: `digits=8`)</span>
+<span class="sd">        num (int): integer to convert.</span>
+<span class="sd">        digits (int, Optional): number of bits of the binary representation (default: ``digits=8``).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    - `binary` - representación binaria de `num` (array de 0s y 1s)</span>
+<span class="sd">        binary_sequence: binary representation of ``num`` of length ``digits``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if ``num`` is too large to be represented with ``digits`` bits.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; dec2bin(5, 4)</span>
+<span class="sd">        array([0, 1, 0, 1], dtype=uint8)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">binary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">**</span><span class="n">digits</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;El número es demasiado grande para ser representado con </span><span class="si">{</span><span class="n">digits</span><span class="si">}</span><span class="s1"> bits.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">**</span><span class="n">digits</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The number is too large to be represented with </span><span class="si">{</span><span class="n">digits</span><span class="si">}</span><span class="s1"> bits.&#39;</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">digits</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="k">while</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">binary</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">2</span>
@@ -155,17 +199,28 @@
 <a class="viewcode-back" href="../../modules.html#opticomlib.utils.str2array">[docs]</a>
 <span class="k">def</span> <span class="nf">str2array</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span> 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Esta función convierte una cadena de caracteres a un array. Usar como separadores de elementos comas o espacios en blancos.</span>
-<span class="sd">    los elementos pueden ser enteros o de punto flotante.</span>
+<span class="sd">    Converts a string to array of numbers. Use commas or whitespace as element separators.</span>
+<span class="sd">    Elements can be integer or floating point. If there is at least one floating point number, then all elements are converted to float.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">    - `string` - cadena de caracteres a convertir</span>
+<span class="sd">        string (str): string to convert.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    - `array` - array numérico</span>
+<span class="sd">        ndarray: numeric array</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the string contains invalid characters.</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; str2array(&#39;1 2 3 4&#39;)</span>
+<span class="sd">        array([1, 2, 3, 4])</span>
+<span class="sd">        &gt;&gt;&gt; str2array(&#39;1,2,3,4&#39;)</span>
+<span class="sd">        array([1, 2, 3, 4])</span>
+<span class="sd">        &gt;&gt;&gt; str2array(&#39;1.1 2.2 3.3 4.4&#39;)</span>
+<span class="sd">        array([1.1, 2.2, 3.3, 4.4])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="c1"># Definir el patrón regex que permite números, espacios en blanco, comas y puntos</span>
+    <span class="c1"># Define regex pattern that allows numbers, whitespace, commas and periods.</span>
     <span class="n">patron</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^[0-9, .\s]+$&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">patron</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span> 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;La cadena de caracteres contiene caracteres no permitidos.&#39;</span><span class="p">)</span>
@@ -184,31 +239,85 @@
 
 
 
-<span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="n">line_of_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span> <span class="k">return</span> <span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="n">line_of_code</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+<div class="viewcode-block" id="get_time">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.get_time">[docs]</a>
+<span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="n">line_of_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the average time of execution of a line of code.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        line_of_code (str): line of code to execute.</span>
+<span class="sd">        n (int): number of iterations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: average time of execution, in seconds.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; get_time(&#39;for i in range(1000): pass&#39;, 1000)</span>
+<span class="sd">        1.1955300000010993e-05</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="n">line_of_code</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">n</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">tic</span><span class="p">():</span> <span class="k">global</span> <span class="n">__</span><span class="p">;</span> <span class="n">__</span> <span class="o">=</span> <span class="n">tm</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="k">def</span> <span class="nf">toc</span><span class="p">():</span> <span class="k">global</span> <span class="n">__</span><span class="p">;</span> <span class="k">return</span> <span class="n">tm</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">__</span> 
+
+<div class="viewcode-block" id="tic">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.tic">[docs]</a>
+<span class="k">def</span> <span class="nf">tic</span><span class="p">():</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start a timer. Create a global variable with the current time.</span>
+<span class="sd">    Then you can use toc() to get the elapsed time.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; tic() # wait some time</span>
+<span class="sd">        &gt;&gt;&gt; toc()</span>
+<span class="sd">        2.687533378601074</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">__</span>
+    <span class="n">__</span> <span class="o">=</span> <span class="n">tm</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="toc">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.toc">[docs]</a>
+<span class="k">def</span> <span class="nf">toc</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stop a timer. Get the elapsed time since the last call to tic().</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: elapsed time, in seconds.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; tic() # wait some time</span>
+<span class="sd">        &gt;&gt;&gt; toc()</span>
+<span class="sd">        2.687533378601074</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">__</span>
+    <span class="k">return</span> <span class="n">tm</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">__</span> </div>
+
 
 
 
 <div class="viewcode-block" id="db">
 <a class="viewcode-back" href="../../modules.html#opticomlib.utils.db">[docs]</a>
 <span class="k">def</span> <span class="nf">db</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; db = 10*log10(x)</span>
-
-<span class="sd">    This function calculates the logarithm in base 10 of the input x and multiplies it by 10.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This function calculates the logarithm in base 10 of the input x and multiplies it by 10.</span>
+<span class="sd">    </span>
+<span class="sd">    .. math:: db = 10\\log_{10}{x}</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x (float | list | tuple | ndarray): input value (x&gt;=0)</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value (``x&gt;=0``).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        float: dB value</span>
 
 <span class="sd">    Raise:</span>
-<span class="sd">        TypeError: if x is not a number, list, tuple or ndarray</span>
-<span class="sd">        ValueError: if x or any(x) &lt; 0</span>
+<span class="sd">        TypeError: if ``x`` is not a `number`, `list`, `tuple` or `ndarray`.</span>
+<span class="sd">        ValueError: if ``x`` or ``any(x) &lt; 0``.</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; db(1)</span>
+<span class="sd">        0.0</span>
+<span class="sd">        &gt;&gt;&gt; db([1,2,3,4])</span>
+<span class="sd">        array([0.        , 3.01029996, 4.77121255, 6.02059991])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number, list, tuple or ndarray.&#39;</span><span class="p">)</span>
@@ -218,6 +327,7 @@
     <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Some values of input array are negative.&#39;</span><span class="p">)</span>
 
+    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span> <span class="c1"># to avoid warning when x=0</span>
     <span class="k">return</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> </div>
 
 
@@ -225,19 +335,19 @@
 <div class="viewcode-block" id="dbm">
 <a class="viewcode-back" href="../../modules.html#opticomlib.utils.dbm">[docs]</a>
 <span class="k">def</span> <span class="nf">dbm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; dbm = 10*log10(x*1e3)</span>
-
-<span class="sd">    This function calculates dBm from Watts.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This function calculates dBm from Watts.</span>
+<span class="sd">    </span>
+<span class="sd">    .. math:: \\text{dbm} = 10\\log_{10}{x}+30</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x (float | list | tuple | ndarray): input value (x&gt;=0)</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value (``x&gt;=0``).</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
-<span class="sd">        float: dBm value</span>
+<span class="sd">        float: dBm value.</span>
 <span class="sd">    </span>
 <span class="sd">    Raise:</span>
-<span class="sd">        TypeError: if x is not a number, list, tuple or ndarray</span>
-<span class="sd">        ValueError: if x or any(x) &lt; 0</span>
+<span class="sd">        TypeError: if ``x`` is not a `number`, `list`, `tuple` or `ndarray`.</span>
+<span class="sd">        ValueError: if ``x`` or ``any(x) &lt; 0``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number, list, tuple or ndarray.&#39;</span><span class="p">)</span>
@@ -251,86 +361,107 @@
 
 
 
-<span class="n">idb</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># función de conversión a veces</span>
-
-<span class="n">idbm</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># función de conversión a Watts</span>
-
-<span class="n">gaus</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">std</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">std</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">std</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># función gaussiana</span>
-
-<span class="n">Q</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">sp</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># función Q</span>
-
-
-
-<div class="viewcode-block" id="theory_BER">
-<a class="viewcode-back" href="../../modules.html#opticomlib.utils.theory_BER">[docs]</a>
-<span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">modulation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;OOK&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;soft&#39;</span><span class="p">,</span><span class="s1">&#39;hard&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Esta función calcula la probabilidad de error de bit teórica para un sistema de comunicaciones ópticas y una modulación dada.</span>
+<div class="viewcode-block" id="idb">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.idb">[docs]</a>
+<span class="k">def</span> <span class="nf">idb</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Calculates the number value from a dB value.</span>
+<span class="sd">    </span>
+<span class="sd">    .. math:: y = 10^{\\frac{x}{10}}</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">    - `mu1` - valor de corriente (o tensión) medio de la señal correspondiente a un bit 1</span>
-<span class="sd">    - `s0` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 0</span>
-<span class="sd">    - `s1` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 1</span>
-<span class="sd">    - `modulation` [Opcional] - modulación utilizada (default: `modulation=&#39;OOK&#39;`)</span>
-<span class="sd">    - `M` [Opcional] - orden de la modulación PPM (default: `M=None`). Se debe especificar si `modulation=&#39;PPM&#39;`</span>
-<span class="sd">    - `kind` [Opcional] - tipo de decodificación PPM (default: `kind=&#39;soft&#39;`). Se debe especificar si `modulation=&#39;PPM&#39;`</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: number value.</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; idb(3)</span>
+<span class="sd">        1.9952623149688795</span>
+<span class="sd">        &gt;&gt;&gt; idb([0,3,6,9])</span>
+<span class="sd">        array([1.        , 1.99526231, 3.98107171, 7.94328235])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="idbm">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.idbm">[docs]</a>
+<span class="k">def</span> <span class="nf">idbm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Calculates the power value in Watts from a dBm value.</span>
+<span class="sd">    </span>
+<span class="sd">    .. math:: y = 10^{(\\frac{x}{10}-3)}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    - `BER` - probabilidad de error de bit teórica</span>
+<span class="sd">        float: power value in Watts.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; idbm(0)</span>
+<span class="sd">        0.001</span>
+<span class="sd">        &gt;&gt;&gt; idbm([0,3,6,9])</span>
+<span class="sd">        array([0.001     , 0.00199526, 0.00398107, 0.00794328])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s1">&#39;OOK&#39;</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">mu1_</span><span class="p">,</span><span class="n">s0_</span><span class="p">,</span><span class="n">s1_</span><span class="p">):</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">mu1_</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
-            <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Q</span><span class="p">((</span><span class="n">mu1_</span><span class="o">-</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="n">s1_</span><span class="p">)</span> <span class="o">+</span> <span class="n">Q</span><span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="n">s0_</span><span class="p">))</span>
-        <span class="n">fun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span> <span class="n">fun</span> <span class="p">)</span>
-        <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s1">&#39;PPM&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`M` must be specified for PPM modulation.&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;soft&#39;</span><span class="p">:</span>
-            <span class="n">fun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">M</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">mu1</span><span class="o">+</span><span class="n">s1</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">s0</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;hard&#39;</span><span class="p">:</span>
-            <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">mu1_</span><span class="p">,</span><span class="n">s0_</span><span class="p">,</span><span class="n">s1_</span><span class="p">,</span><span class="n">M_</span><span class="p">):</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">mu1_</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Q</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">mu1_</span><span class="p">)</span><span class="o">/</span><span class="n">s1_</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="n">s0_</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">M_</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">fun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span> <span class="n">fun</span> <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`kind` must be `soft` or `hard`.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="o">*</span><span class="n">M</span><span class="o">/</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    
-    <span class="c1"># Others modulations</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`modulation` must be `OOK` or `PPM`. More modulations will be added in the future.&#39;</span><span class="p">)</span></div>
-
-    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-    <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">idbm</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
-    
-    <span class="n">B</span> <span class="o">=</span> <span class="mf">5e9</span> <span class="c1"># Hz</span>
+<div class="viewcode-block" id="gaus">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.gaus">[docs]</a>
+<span class="k">def</span> <span class="nf">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">std</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Gaussian function.</span>
+<span class="sd">    </span>
+<span class="sd">    .. math:: \\text{gaus}(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}</span>
 
-    <span class="n">mu1</span> <span class="o">=</span> <span class="n">p</span>
-    <span class="n">s0</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="mi">300</span> <span class="o">*</span> <span class="n">B</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-    <span class="n">s1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="mi">300</span> <span class="o">*</span> <span class="n">B</span> <span class="o">/</span> <span class="mi">50</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="n">mu1</span> <span class="o">*</span> <span class="n">B</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">dbm</span><span class="p">(</span><span class="n">p</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;OOK&#39;</span><span class="p">),</span> <span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;OOK&#39;</span><span class="p">)</span>
-    
-    <span class="k">for</span> <span class="n">M</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="s1">&#39;C3&#39;</span><span class="p">]):</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">dbm</span><span class="p">(</span><span class="n">p</span><span class="o">/</span><span class="n">M</span><span class="p">),</span> <span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;PPM&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="s1">&#39;soft&#39;</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;--</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">M</span><span class="si">}</span><span class="s1">-PPM - soft&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">dbm</span><span class="p">(</span><span class="n">p</span><span class="o">/</span><span class="n">M</span><span class="p">),</span> <span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;PPM&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="s1">&#39;hard&#39;</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">M</span><span class="si">}</span><span class="s1">-PPM - hard&#39;</span><span class="p">)</span>
-    
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-9</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Potencia media (dBm)&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;BER&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value.</span>
+<span class="sd">        mu (float): mean (default: 0).</span>
+<span class="sd">        std (float): standard deviation (default: 1).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Gaussian function value.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; gaus(0, 0, 1)</span>
+<span class="sd">        0.3989422804014327</span>
+<span class="sd">        &gt;&gt;&gt; gaus([0,1,2,3], 0, 1)</span>
+<span class="sd">        array([0.39894228, 0.24197072, 0.05399097, 0.00443185])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">std</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">std</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="n">std</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">std</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Q">
+<a class="viewcode-back" href="../../modules.html#opticomlib.utils.Q">[docs]</a>
+<span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Q-function.</span>
+<span class="sd">    </span>
+<span class="sd">    .. math:: Q(x) = \\frac{1}{2}\\text{erfc}\\left( \\frac{x}{\\sqrt{2}} \\right) </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (float | list | tuple | ndarray): input value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Q(x) value.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; Q(0)</span>
+<span class="sd">        0.5</span>
+<span class="sd">        &gt;&gt;&gt; Q([0,1,2,3])</span>
+<span class="sd">        array([0.5       , 0.15865525, 0.02275013, 0.0013499 ])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">sp</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> </div>
+
+
 </pre></div>
 
            </div>

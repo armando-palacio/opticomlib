@@ -22,7 +22,7 @@ from numpy import ndarray
 from scipy.integrate import quad
 from scipy.constants import pi
 
-from .typing import binary_sequence, electrical_signal, global_vars, eye
+from .typing import binary_sequence, electrical_signal, eye
 from .utils import tic, toc, str2array, dec2bin, Q
 
 

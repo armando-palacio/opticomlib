@@ -93,18 +93,31 @@
 <h1>opticomlib.lab.SYNC<a class="headerlink" href="#opticomlib-lab-sync" title="Link to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.lab.SYNC">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.lab.</span></span><span class="sig-name descname"><span class="pre">SYNC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal_rx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slots_tx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/opticomlib/lab.html#SYNC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.SYNC" title="Link to this definition"></a></dt>
-<dd><p>### Descripción:
-Se realiza una sincronización de la señal recibida con la señal transmitida para saber a
-partir de que posición de la señal recibida se debe comenzar a procesar. Para ello se realiza una correlación
-entre la señal recibida y la señal transmitida y se busca el máximo de la correlación.</p>
-<p>—</p>
-<p>### Args:
-- <cite>signal_rx</cite> - señal digital recibida (del osciloscopio).
-- <cite>bits_tx</cite> - secuencia de bits transmitida.</p>
-<p>### Returns:
-- <cite>signal_sync</cite> - señal digital sincronizada.
-- <cite>i</cite> - posición del vector ‘signal’ a partir de la cual se realiza la sincronización.</p>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.lab.</span></span><span class="sig-name descname"><span class="pre">SYNC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal_rx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slots_tx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opticomlib/lab.html#SYNC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.SYNC" title="Link to this definition"></a></dt>
+<dd><p>Synchronizes the received signal with the transmitted signal to determine the starting position in the received signal for further processing.
+This is done by performing a correlation between the received signal and the transmitted signal and finding the maximum correlation position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signal_rx</strong> (<a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) – The received digital signal (from the oscilloscope).</p></li>
+<li><p><strong>slots_tx</strong> (<a class="reference internal" href="opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) – The transmitted slots sequence.</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) – The number of samples per slot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the synchronized digital signal and the position in the ‘signal’ vector from which synchronization was performed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[<a class="reference internal" href="opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a>, int]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – The <code class="docutils literal notranslate"><span class="pre">sps</span></code> must be an integer to perform synchronization.</p></li>
+<li><p><strong>BufferError</strong> – If the number of received slots have to be greater than the transmitted slots.</p></li>
+<li><p><strong>ValueError</strong> – If no correlation maximum is found.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

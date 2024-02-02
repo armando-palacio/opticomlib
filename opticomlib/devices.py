@@ -37,7 +37,7 @@ from .typing import (
     electrical_signal,
     binary_sequence,
     optical_signal,
-    global_vars,
+    gv,
     eye,
 )
 
@@ -51,7 +51,9 @@ from .utils import (
 
 
 
-def PRBS(n=2**8, user=[], order=None):
+def PRBS(n=2**8, 
+         user=[], 
+         order=None):
     """
     Pseudorandom binary sequence generator.
 
@@ -125,11 +127,11 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
         ValueError: If `Vout` is not between -15 and 15 Volts.
 
     Example:
-        >>> from opticomlib.typing import global_vars
+        >>> from opticomlib.typing import gv
         >>> from opticomlib.devices import DAC
         >>> import matplotlib.pyplot as plt
         >>> 
-        >>> global_vars(sps=8) # set samples per bit
+        >>> gv(sps=8) # set samples per bit
         >>>
         >>> el_sig = DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).print().plot('r.-').grid()
         signal : [-1.23381818e-16-2.22738516e-16j  6.16909091e-17-1.05272464e-16j
@@ -170,7 +172,7 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
     if not isinstance(input, binary_sequence):
         input = binary_sequence(input)
     
-    sps = kargs['sps'] if 'sps' in kargs.keys() else global_vars.sps
+    sps = kargs['sps'] if 'sps' in kargs.keys() else gv.sps
 
     if pulse_shape == 'rect':
         x = np.kron(input.data, np.ones(sps))
@@ -206,31 +208,33 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 
 
 
-def PM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_signal], Vpi: float=5.0) -> optical_signal:
+def PM(op_input: optical_signal, 
+       el_input: Union[float, ndarray, electrical_signal], 
+       Vpi: float=5.0):
     """
     Optical Phase Modulator (PM) model. Modulate de phase of the input optical signal through input electrical signal.
 
     Args:
         op_input (optical_signal): optical signal to be modulated
         el_input (float | ndarray | electrical_signal): driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.
-        Vpi (float, Optional): voltage at which the device achieves a phase shift of π (default: `Vpi=5.0` [V])
+        Vpi (float, Optional): voltage at which the device achieves a phase shift of π (default: ``Vpi=5.0`` [V])
 
     Returns:
         optical_signal: modulated optical signal
 
     Raises:
-        TypeError: If `input` type is not `optical_signal`.
-        TypeError: If `el_input` type is not in [float, ndarray, electrical_signal].
-        ValueError: If `el_input` is ndarray or electrical_signal but, length is not equal to `op_input` length.
+        TypeError: If ``op_input`` type is not `optical_signal`.
+        TypeError: If ``el_input`` type is not in [`float`, `ndarray`, `electrical_signal`].
+        ValueError: If ``el_input`` is ndarray or `electrical_signal` but, length is not equal to ``op_input`` length.
 
     Example:
-        >>> from opticomlib.typing import optical_signal, global_vars
+        >>> from opticomlib.typing import optical_signal, gv
         >>> from opticomlib.devices import PM
         >>> 
         >>> import numpy as np
         >>> import matplotlib.pyplot as plt
         >>>
-        >>> global_vars(sps=8, R=1e9) # set samples per bit and bitrate
+        >>> gv(sps=8, R=1e9) # set samples per bit and bitrate
         >>>
         >>> op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
         >>> t = op_input.t()*1e9
@@ -300,7 +304,13 @@ def PM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_sign
 
 
 
-def MZM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_signal], bias: float=0.0, Vpi: float=5.0, loss_dB: float=0.0, eta: float=0.1, BW: float=40e9) -> optical_signal:
+def MZM(op_input: optical_signal, 
+        el_input: Union[float, ndarray, electrical_signal], 
+        bias: float=0.0, 
+        Vpi: float=5.0, 
+        loss_dB: float=0.0, 
+        eta: float=0.1, 
+        BW: float=40e9):
     """
     Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2 Push-Pull config). 
     
@@ -319,9 +329,9 @@ def MZM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_sig
         optical_signal: Modulated optical signal.
 
     Raises:
-        TypeError: If `op_input` type is not `optical_signal`.
-        TypeError: If `el_input` type is not in [float, ndarray, electrical_signal].
-        ValueError: If `el_input` is ndarray or electrical_signal but, length is not equal to `op_input` length.
+        TypeError: If ``op_input`` type is not `optical_signal`.
+        TypeError: If ``el_input`` type is not in [`float`, `ndarray`, `electrical_signal`].
+        ValueError: If ``el_input`` is ndarray or `electrical_signal` but, length is not equal to ``op_input`` length.
     """
 
     tic()
@@ -357,7 +367,10 @@ def MZM(op_input: optical_signal, el_input: Union[float, ndarray, electrical_sig
 
 
 
-def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_signal:
+def BPF(input: optical_signal, 
+        BW: float, 
+        n: int=4, 
+        fs: float=None):
     """
     Optical Band-Pass Filter (BPF). Filters the input optical signal, allowing only the desired frequency band to pass.
     Bessel filter model.
@@ -365,18 +378,18 @@ def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_s
     Args:
         input (optical_signal): The optical signal to be filtered.
         BW (float): The bandwidth of the filter in Hz.
-        n (int, Optional): The order of the filter (default: n=4).
-        fs (float, Optional): The sampling frequency of the input signal (default: fs=global_vars.fs).
+        n (int, Optional): The order of the filter (default: ``n=4``).
+        fs (float, Optional): The sampling frequency of the input signal (default: ``fs=gv.fs``).
     
     Returns:
-    - optical_signal: The filtered optical signal.
+        optical_signal: The filtered optical signal.
     """
     tic()
 
     if not isinstance(input, optical_signal):
         raise TypeError("`input` must be of type (optical_signal).")
     if not fs:
-        fs = global_vars.fs
+        fs = gv.fs
 
     sos_band = sg.bessel(N=n, Wn=BW/2, btype='low', fs=fs, output='sos', norm='mag')
 
@@ -391,16 +404,19 @@ def BPF(input: optical_signal, BW: float, n: int=4, fs: float=None) -> optical_s
     return output
 
 
-def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple:
+def EDFA(input: optical_signal, 
+         G: float, 
+         NF: float, 
+         BW: float):
     """
     Erbium Doped Fiber (EDFA). Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise. 
     Simplest model (no saturation output power).
     
     Args:
         input (optical_signal): The optical signal to be amplified.
-        G (float): The gain of the amplifier in dB.
-        NF (float): The noise figure of the amplifier in dB.
-        BW (float): The bandwidth of the amplifier in Hz.
+        G (float): The gain of the amplifier, in [dB].
+        NF (float): The noise figure of the amplifier, in [dB].
+        BW (float): The bandwidth of the amplifier, in [Hz].
     
     Returns:
         optical_signal: The amplified optical signal.
@@ -417,7 +433,7 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple:
     t_ = output.ejecution_time + ase.ejecution_time
     
     tic()
-    P_ase = idb(NF) * h * global_vars.f0 * (idb(G)-1) * BW
+    P_ase = idb(NF) * h * gv.f0 * (idb(G)-1) * BW
 
     norm_x, norm_y = ase.power('noise') # power of ASE noise in [W] for each polarization
 
@@ -430,13 +446,13 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float) -> tuple:
     return output
 
 
-def DM(input: optical_signal, D: float) -> optical_signal:
+def DM(input: optical_signal, D: float):
     """
     Dispersive Medium. Emulates a medium with only the dispersion property, i.e., only `beta_2` different from zero.
     
     Args:
         input (optical_signal): The input optical signal.
-        D (float): The dispersion coefficient of the medium (β2·z) in [ps^2].
+        D (float): The dispersion coefficient of the medium (β2·z), in [ps^2].
     
     Returns:
         optical_signal: The output optical signal.
@@ -491,12 +507,12 @@ def FIBER(input: optical_signal,
         TypeError: If ``input`` is not an optical signal.
 
     Example:
-        >>> from opticomlib.typing import optical_signal, global_vars
+        >>> from opticomlib.typing import optical_signal, gv
         >>> from opticomlib.devices import FIBER, DAC
         >>> from opticomlib.utils import idbm
         >>> import matplotlib.pyplot as plt
         >>>
-        >>> global_vars(sps=32, R=10e9)
+        >>> gv(sps=32, R=10e9)
         >>>
         >>> signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
         >>> input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )
@@ -574,7 +590,7 @@ def LPF(input: Union[ndarray, electrical_signal],
         input (ndarray | electrical_signal): Electrical signal to be filtered.
         BW (float): Filter bandwidth or cutoff frecuency, in [Hz].
         n (int, optional): Filter order (default: 4).
-        fs (float, optional): Sampling frequency of the input signal (default: globals_vars.fs).
+        fs (float, optional): Sampling frequency of the input signal (default: ``fs=gv.fs``).
     
     Returns:
         electrical_signal: Filtered electrical signal.
@@ -583,14 +599,14 @@ def LPF(input: Union[ndarray, electrical_signal],
         TypeError: If ``input`` is not of type ndarray or electrical_signal.
 
     Example:
-        >>> from opticomlib.typing import electrical_signal, global_vars
+        >>> from opticomlib.typing import electrical_signal, gv
         >>> from opticomlib.devices import LPF
         >>>
         >>> import numpy as np
         >>>
-        >>> global_vars(N = 10, sps=128, R=1e9)
+        >>> gv(N = 10, sps=128, R=1e9)
         >>>
-        >>> t = global_vars.t
+        >>> t = gv.t
         >>> c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
         >>>
         >>> input = electrical_signal( np.sin( np.pi*c*t**2) )
@@ -615,7 +631,7 @@ def LPF(input: Union[ndarray, electrical_signal],
         noise = np.zeros_like(input)
 
     if not fs:
-        fs = global_vars.fs
+        fs = gv.fs
 
     sos_band = sg.bessel(N = n, Wn = BW, btype = 'low', fs=fs, output='sos', norm='mag')
 
@@ -736,7 +752,7 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
         raise TypeError("`input` debe ser del tipo (electrical_signal).")
     
     if not fs:
-        fs = global_vars.fs
+        fs = gv.fs
 
     if BW:
         filt = sg.bessel(N = 4, Wn = BW, btype = 'low', fs=input.fs(), output='sos', norm='mag')
@@ -781,12 +797,12 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
         eye: Object of the Eye class with all the parameters and metrics of the eye diagram.
 
     Example:
-        >>> from opticomlib.typing import global_vars
+        >>> from opticomlib.typing import gv
         >>> from opticomlib.devices import PRBS, DAC, GET_EYE
         >>>
         >>> import numpy as np
         >>>
-        >>> global_vars(N = 10, sps=64, R=1e9)
+        >>> gv(N = 10, sps=64, R=1e9)
         >>>
         >>> y = DAC( PRBS(), pulse_shape='gaussian')
         >>> y.noise = np.random.normal(0, 0.05, y.len())
@@ -1012,7 +1028,7 @@ def animated_fiber_propagation(input: optical_signal, M :int, length_: float, al
         A_z.append(A)
         hs.append(h)
 
-    t = input.t()*global_vars.slot_rate
+    t = input.t()*gv.slot_rate
 
     fig, ax = plt.subplots()
 
@@ -1031,9 +1047,9 @@ def animated_fiber_propagation(input: optical_signal, M :int, length_: float, al
     def init():
         line.set_data([],[])
         time_text.set_text('z = 0.0 Km')
-        for i in t[::M*global_vars.sps]:
+        for i in t[::M*gv.sps]:
            plt.axvline(i, color='k', ls='--')
-        for i in t[::global_vars.sps]:
+        for i in t[::gv.sps]:
            plt.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
         return [line, time_text] 
 
@@ -1095,7 +1111,7 @@ def animated_fiber_propagation_with_psd(input: optical_signal, M :int, length_: 
         A_z_w.append(fft(A*np.exp(alpha*length/2)))
         hs.append(h)
 
-    t = input.t()*global_vars.slot_rate
+    t = input.t()*gv.slot_rate
 
     fig, (ax1,ax2) = plt.subplots(2,1, figsize=(6,6))
 
@@ -1128,9 +1144,9 @@ def animated_fiber_propagation_with_psd(input: optical_signal, M :int, length_: 
     def init():
         line1.set_data([],[])
         z_text.set_text('z = 0.0 Km')
-        for i in t[:n:M*global_vars.sps]:
+        for i in t[:n:M*gv.sps]:
             ax1.axvline(i, color='k', ls='--')
-        for i in t[:n:global_vars.sps]:
+        for i in t[:n:gv.sps]:
             ax1.axvline(i, color='k', ls='--', alpha=0.3,lw=1)
         return [line1, z_text] 
 
@@ -1159,7 +1175,7 @@ if __name__ == '__main__':
 
 
     # sps = 2048
-    # global_vars(M=8, sps=sps, R=10e9)
+    # gv(M=8, sps=sps, R=10e9)
     # y = DAC('0 1 0 1 0 0 1', pulse_shape='gaussian', T=sps, m=1, c=-50)
     # N_TL = 128
     # # g = Spectrogram(y, N_TL)

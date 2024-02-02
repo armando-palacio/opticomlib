@@ -118,7 +118,7 @@
     <span class="n">electrical_signal</span><span class="p">,</span>
     <span class="n">binary_sequence</span><span class="p">,</span>
     <span class="n">optical_signal</span><span class="p">,</span>
-    <span class="n">global_vars</span><span class="p">,</span>
+    <span class="n">gv</span><span class="p">,</span>
     <span class="n">eye</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -134,7 +134,9 @@
 
 <div class="viewcode-block" id="PRBS">
 <a class="viewcode-back" href="../../modules.html#opticomlib.devices.PRBS">[docs]</a>
-<span class="k">def</span> <span class="nf">PRBS</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="p">[],</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">PRBS</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> 
+         <span class="n">user</span><span class="o">=</span><span class="p">[],</span> 
+         <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pseudorandom binary sequence generator.</span>
 
@@ -211,11 +213,11 @@
 <span class="sd">        ValueError: If `Vout` is not between -15 and 15 Volts.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import global_vars</span>
+<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import gv</span>
 <span class="sd">        &gt;&gt;&gt; from opticomlib.devices import DAC</span>
 <span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
 <span class="sd">        &gt;&gt;&gt; </span>
-<span class="sd">        &gt;&gt;&gt; global_vars(sps=8) # set samples per bit</span>
+<span class="sd">        &gt;&gt;&gt; gv(sps=8) # set samples per bit</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; el_sig = DAC(&#39;0 0 1 0 0&#39;, Vout=5, pulse_shape=&#39;gaussian&#39;, m=2).print().plot(&#39;r.-&#39;).grid()</span>
 <span class="sd">        signal : [-1.23381818e-16-2.22738516e-16j  6.16909091e-17-1.05272464e-16j</span>
@@ -256,7 +258,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
     
-    <span class="n">sps</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;sps&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;sps&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span>
+    <span class="n">sps</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;sps&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;sps&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span>
 
     <span class="k">if</span> <span class="n">pulse_shape</span> <span class="o">==</span> <span class="s1">&#39;rect&#39;</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">sps</span><span class="p">))</span>
@@ -295,31 +297,33 @@
 
 <div class="viewcode-block" id="PM">
 <a class="viewcode-back" href="../../modules.html#opticomlib.devices.PM">[docs]</a>
-<span class="k">def</span> <span class="nf">PM</span><span class="p">(</span><span class="n">op_input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">el_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">],</span> <span class="n">Vpi</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">optical_signal</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">PM</span><span class="p">(</span><span class="n">op_input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> 
+       <span class="n">el_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">],</span> 
+       <span class="n">Vpi</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">5.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optical Phase Modulator (PM) model. Modulate de phase of the input optical signal through input electrical signal.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        op_input (optical_signal): optical signal to be modulated</span>
 <span class="sd">        el_input (float | ndarray | electrical_signal): driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.</span>
-<span class="sd">        Vpi (float, Optional): voltage at which the device achieves a phase shift of π (default: `Vpi=5.0` [V])</span>
+<span class="sd">        Vpi (float, Optional): voltage at which the device achieves a phase shift of π (default: ``Vpi=5.0`` [V])</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        optical_signal: modulated optical signal</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        TypeError: If `input` type is not `optical_signal`.</span>
-<span class="sd">        TypeError: If `el_input` type is not in [float, ndarray, electrical_signal].</span>
-<span class="sd">        ValueError: If `el_input` is ndarray or electrical_signal but, length is not equal to `op_input` length.</span>
+<span class="sd">        TypeError: If ``op_input`` type is not `optical_signal`.</span>
+<span class="sd">        TypeError: If ``el_input`` type is not in [`float`, `ndarray`, `electrical_signal`].</span>
+<span class="sd">        ValueError: If ``el_input`` is ndarray or `electrical_signal` but, length is not equal to ``op_input`` length.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import optical_signal, global_vars</span>
+<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import optical_signal, gv</span>
 <span class="sd">        &gt;&gt;&gt; from opticomlib.devices import PM</span>
 <span class="sd">        &gt;&gt;&gt; </span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; global_vars(sps=8, R=1e9) # set samples per bit and bitrate</span>
+<span class="sd">        &gt;&gt;&gt; gv(sps=8, R=1e9) # set samples per bit and bitrate</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )</span>
 <span class="sd">        &gt;&gt;&gt; t = op_input.t()*1e9</span>
@@ -392,7 +396,13 @@
 
 <div class="viewcode-block" id="MZM">
 <a class="viewcode-back" href="../../modules.html#opticomlib.devices.MZM">[docs]</a>
-<span class="k">def</span> <span class="nf">MZM</span><span class="p">(</span><span class="n">op_input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">el_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">],</span> <span class="n">bias</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Vpi</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">loss_dB</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">eta</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">40e9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">optical_signal</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">MZM</span><span class="p">(</span><span class="n">op_input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> 
+        <span class="n">el_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">],</span> 
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> 
+        <span class="n">Vpi</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> 
+        <span class="n">loss_dB</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> 
+        <span class="n">eta</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> 
+        <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">40e9</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2 Push-Pull config). </span>
 <span class="sd">    </span>
@@ -411,9 +421,9 @@
 <span class="sd">        optical_signal: Modulated optical signal.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        TypeError: If `op_input` type is not `optical_signal`.</span>
-<span class="sd">        TypeError: If `el_input` type is not in [float, ndarray, electrical_signal].</span>
-<span class="sd">        ValueError: If `el_input` is ndarray or electrical_signal but, length is not equal to `op_input` length.</span>
+<span class="sd">        TypeError: If ``op_input`` type is not `optical_signal`.</span>
+<span class="sd">        TypeError: If ``el_input`` type is not in [`float`, `ndarray`, `electrical_signal`].</span>
+<span class="sd">        ValueError: If ``el_input`` is ndarray or `electrical_signal` but, length is not equal to ``op_input`` length.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">tic</span><span class="p">()</span>
@@ -452,7 +462,10 @@
 
 <div class="viewcode-block" id="BPF">
 <a class="viewcode-back" href="../../modules.html#opticomlib.devices.BPF">[docs]</a>
-<span class="k">def</span> <span class="nf">BPF</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">optical_signal</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">BPF</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> 
+        <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> 
+        <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optical Band-Pass Filter (BPF). Filters the input optical signal, allowing only the desired frequency band to pass.</span>
 <span class="sd">    Bessel filter model.</span>
@@ -460,18 +473,18 @@
 <span class="sd">    Args:</span>
 <span class="sd">        input (optical_signal): The optical signal to be filtered.</span>
 <span class="sd">        BW (float): The bandwidth of the filter in Hz.</span>
-<span class="sd">        n (int, Optional): The order of the filter (default: n=4).</span>
-<span class="sd">        fs (float, Optional): The sampling frequency of the input signal (default: fs=global_vars.fs).</span>
+<span class="sd">        n (int, Optional): The order of the filter (default: ``n=4``).</span>
+<span class="sd">        fs (float, Optional): The sampling frequency of the input signal (default: ``fs=gv.fs``).</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
-<span class="sd">    - optical_signal: The filtered optical signal.</span>
+<span class="sd">        optical_signal: The filtered optical signal.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tic</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` must be of type (optical_signal).&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="p">:</span>
-        <span class="n">fs</span> <span class="o">=</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">fs</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span>
 
     <span class="n">sos_band</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">bessel</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">Wn</span><span class="o">=</span><span class="n">BW</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;sos&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;mag&#39;</span><span class="p">)</span>
 
@@ -489,16 +502,19 @@
 
 <div class="viewcode-block" id="EDFA">
 <a class="viewcode-back" href="../../modules.html#opticomlib.devices.EDFA">[docs]</a>
-<span class="k">def</span> <span class="nf">EDFA</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">G</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NF</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">EDFA</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> 
+         <span class="n">G</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+         <span class="n">NF</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+         <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Erbium Doped Fiber (EDFA). Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise. </span>
 <span class="sd">    Simplest model (no saturation output power).</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        input (optical_signal): The optical signal to be amplified.</span>
-<span class="sd">        G (float): The gain of the amplifier in dB.</span>
-<span class="sd">        NF (float): The noise figure of the amplifier in dB.</span>
-<span class="sd">        BW (float): The bandwidth of the amplifier in Hz.</span>
+<span class="sd">        G (float): The gain of the amplifier, in [dB].</span>
+<span class="sd">        NF (float): The noise figure of the amplifier, in [dB].</span>
+<span class="sd">        BW (float): The bandwidth of the amplifier, in [Hz].</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        optical_signal: The amplified optical signal.</span>
@@ -515,7 +531,7 @@
     <span class="n">t_</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">ejecution_time</span> <span class="o">+</span> <span class="n">ase</span><span class="o">.</span><span class="n">ejecution_time</span>
     
     <span class="n">tic</span><span class="p">()</span>
-    <span class="n">P_ase</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">NF</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">f0</span> <span class="o">*</span> <span class="p">(</span><span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">BW</span>
+    <span class="n">P_ase</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">NF</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">f0</span> <span class="o">*</span> <span class="p">(</span><span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">BW</span>
 
     <span class="n">norm_x</span><span class="p">,</span> <span class="n">norm_y</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="s1">&#39;noise&#39;</span><span class="p">)</span> <span class="c1"># power of ASE noise in [W] for each polarization</span>
 
@@ -531,13 +547,13 @@
 
 <div class="viewcode-block" id="DM">
 <a class="viewcode-back" href="../../modules.html#opticomlib.devices.DM">[docs]</a>
-<span class="k">def</span> <span class="nf">DM</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">optical_signal</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">DM</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dispersive Medium. Emulates a medium with only the dispersion property, i.e., only `beta_2` different from zero.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        input (optical_signal): The input optical signal.</span>
-<span class="sd">        D (float): The dispersion coefficient of the medium (β2·z) in [ps^2].</span>
+<span class="sd">        D (float): The dispersion coefficient of the medium (β2·z), in [ps^2].</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        optical_signal: The output optical signal.</span>
@@ -595,12 +611,12 @@
 <span class="sd">        TypeError: If ``input`` is not an optical signal.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import optical_signal, global_vars</span>
+<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import optical_signal, gv</span>
 <span class="sd">        &gt;&gt;&gt; from opticomlib.devices import FIBER, DAC</span>
 <span class="sd">        &gt;&gt;&gt; from opticomlib.utils import idbm</span>
 <span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; global_vars(sps=32, R=10e9)</span>
+<span class="sd">        &gt;&gt;&gt; gv(sps=32, R=10e9)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; signal = DAC(&#39;0,0,0,1,0,0,0&#39;, pulse_shape=&#39;gaussian&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )</span>
@@ -681,7 +697,7 @@
 <span class="sd">        input (ndarray | electrical_signal): Electrical signal to be filtered.</span>
 <span class="sd">        BW (float): Filter bandwidth or cutoff frecuency, in [Hz].</span>
 <span class="sd">        n (int, optional): Filter order (default: 4).</span>
-<span class="sd">        fs (float, optional): Sampling frequency of the input signal (default: globals_vars.fs).</span>
+<span class="sd">        fs (float, optional): Sampling frequency of the input signal (default: ``fs=gv.fs``).</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        electrical_signal: Filtered electrical signal.</span>
@@ -690,14 +706,14 @@
 <span class="sd">        TypeError: If ``input`` is not of type ndarray or electrical_signal.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import electrical_signal, global_vars</span>
+<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import electrical_signal, gv</span>
 <span class="sd">        &gt;&gt;&gt; from opticomlib.devices import LPF</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; global_vars(N = 10, sps=128, R=1e9)</span>
+<span class="sd">        &gt;&gt;&gt; gv(N = 10, sps=128, R=1e9)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; t = global_vars.t</span>
+<span class="sd">        &gt;&gt;&gt; t = gv.t</span>
 <span class="sd">        &gt;&gt;&gt; c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; input = electrical_signal( np.sin( np.pi*c*t**2) )</span>
@@ -722,7 +738,7 @@
         <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="p">:</span>
-        <span class="n">fs</span> <span class="o">=</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">fs</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span>
 
     <span class="n">sos_band</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">bessel</span><span class="p">(</span><span class="n">N</span> <span class="o">=</span> <span class="n">n</span><span class="p">,</span> <span class="n">Wn</span> <span class="o">=</span> <span class="n">BW</span><span class="p">,</span> <span class="n">btype</span> <span class="o">=</span> <span class="s1">&#39;low&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;sos&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;mag&#39;</span><span class="p">)</span>
 
@@ -849,7 +865,7 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` debe ser del tipo (electrical_signal).&quot;</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="p">:</span>
-        <span class="n">fs</span> <span class="o">=</span> <span class="n">global_vars</span><span class="o">.</span><span class="n">fs</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span>
 
     <span class="k">if</span> <span class="n">BW</span><span class="p">:</span>
         <span class="n">filt</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">bessel</span><span class="p">(</span><span class="n">N</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">Wn</span> <span class="o">=</span> <span class="n">BW</span><span class="p">,</span> <span class="n">btype</span> <span class="o">=</span> <span class="s1">&#39;low&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">fs</span><span class="p">(),</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;sos&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;mag&#39;</span><span class="p">)</span>
@@ -897,12 +913,12 @@
 <span class="sd">        eye: Object of the Eye class with all the parameters and metrics of the eye diagram.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import global_vars</span>
+<span class="sd">        &gt;&gt;&gt; from opticomlib.typing import gv</span>
 <span class="sd">        &gt;&gt;&gt; from opticomlib.devices import PRBS, DAC, GET_EYE</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; global_vars(N = 10, sps=64, R=1e9)</span>
+<span class="sd">        &gt;&gt;&gt; gv(N = 10, sps=64, R=1e9)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; y = DAC( PRBS(), pulse_shape=&#39;gaussian&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; y.noise = np.random.normal(0, 0.05, y.len())</span>
@@ -1132,7 +1148,7 @@
         <span class="n">A_z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
         <span class="n">hs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 
-    <span class="n">t</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="n">global_vars</span><span class="o">.</span><span class="n">slot_rate</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">slot_rate</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
@@ -1151,9 +1167,9 @@
     <span class="k">def</span> <span class="nf">init</span><span class="p">():</span>
         <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">([],[])</span>
         <span class="n">time_text</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;z = 0.0 Km&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[::</span><span class="n">M</span><span class="o">*</span><span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[::</span><span class="n">M</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
            <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[::</span><span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[::</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
            <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="p">,</span> <span class="n">time_text</span><span class="p">]</span> 
 
@@ -1215,7 +1231,7 @@
         <span class="n">A_z_w</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fft</span><span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">alpha</span><span class="o">*</span><span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
         <span class="n">hs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 
-    <span class="n">t</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="n">global_vars</span><span class="o">.</span><span class="n">slot_rate</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">slot_rate</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span><span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
 
@@ -1248,9 +1264,9 @@
     <span class="k">def</span> <span class="nf">init</span><span class="p">():</span>
         <span class="n">line1</span><span class="o">.</span><span class="n">set_data</span><span class="p">([],[])</span>
         <span class="n">z_text</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;z = 0.0 Km&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[:</span><span class="n">n</span><span class="p">:</span><span class="n">M</span><span class="o">*</span><span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[:</span><span class="n">n</span><span class="p">:</span><span class="n">M</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
             <span class="n">ax1</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[:</span><span class="n">n</span><span class="p">:</span><span class="n">global_vars</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[:</span><span class="n">n</span><span class="p">:</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">]:</span>
             <span class="n">ax1</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">line1</span><span class="p">,</span> <span class="n">z_text</span><span class="p">]</span> 
 
@@ -1279,7 +1295,7 @@
 
 
     <span class="c1"># sps = 2048</span>
-    <span class="c1"># global_vars(M=8, sps=sps, R=10e9)</span>
+    <span class="c1"># gv(M=8, sps=sps, R=10e9)</span>
     <span class="c1"># y = DAC(&#39;0 1 0 1 0 0 1&#39;, pulse_shape=&#39;gaussian&#39;, T=sps, m=1, c=-50)</span>
     <span class="c1"># N_TL = 128</span>
     <span class="c1"># # g = Spectrogram(y, N_TL)</span>
