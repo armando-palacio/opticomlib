@@ -1,1 +1,1 @@
-sphinx-rtd-theme>=1.2.2
+opticomlib>=0.4.0
