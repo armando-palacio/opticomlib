@@ -10,7 +10,7 @@ from setuptools import setup
 
 DISTNAME = "OptiComLib"
 DESCRIPTION = "Python package for optical communication systems."
-LONG_DESCRIPTION = open("README.md", encoding="utf8").read()
+LONG_DESCRIPTION = 'Hola'#open("README.md", encoding="utf8").read()
 MAINTAINER = "Armando P. Romeu"
 MAINTAINER_EMAIL = "armandopr3009@gmail.com"
 URL = "https://github.com/armando-palacio/opticomlib.git"
