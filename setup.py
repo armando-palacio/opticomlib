@@ -40,7 +40,7 @@ setup(
         'tqdm>=4.66.1',
         'pympler>=1.0.1',
         'sphinx>=7.2.6',
-        'renku>=2.9.1'
+        'renku>=2.9.1',
         'sphinx-rtd-theme>=1.3.0',
     ],
     long_description=LONG_DESCRIPTION,
