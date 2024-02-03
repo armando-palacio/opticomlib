@@ -39,7 +39,6 @@ setup(
         'scikit-learn',
         'tqdm',
         'pympler',
-        'renku',
     ],
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
