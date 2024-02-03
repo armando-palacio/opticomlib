@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="English" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>opticomlib.ook.BER_analizer &mdash; opticomlib 0.4 documentation</title>
+  <title>opticomlib.ook.BER_analizer &mdash; opticomlib 0.4.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=7f00635f"></script>
+        <script src="../_static/documentation_options.js?v=c7636567"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -53,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Data types (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.typing</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html#models-for-opto-electronic-devices-opticomlib-devices">Models for Opto-Electronic devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.devices</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html#laboratory-and-practical-functions-opticomlib-lab">Laboratory and practical functions (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.lab</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html#utility-functions-opticomlib-utils">Utility functions (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.utils</span></code>)</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html#ook-devices-opticomlib-ook">OOK devices (<code class="xref py py-mod docutils literal notranslate"><span class="pre">opticomlib.ook</span></code>)</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="opticomlib.ook.THRESHOLD_EST.html">opticomlib.ook.THRESHOLD_EST</a></li>
 <li class="toctree-l2"><a class="reference internal" href="opticomlib.ook.DSP.html">opticomlib.ook.DSP</a></li>
@@ -99,15 +98,15 @@
 <dd><p>### Descripción:
 Calcula la tasa de error de bits (BER), por conteo de errores (comparando la secuencia recibida con la transmitida)
 o por estimación (utilizando medias y varianzas estimadas del diagrama de ojo y sustituyendo esos valores en las expresiones teóricas)</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>mode</cite> - modo en que se determinará el Bit Error Rate (BER)</p>
-<p>—</p>
+<p>---</p>
 <p>### Kargs:
-si <cite>mode=’counter’</cite>:
+si <cite>mode='counter'</cite>:
 - <cite>Tx</cite> - secuencia binaria transmitida
 - <cite>Rx</cite> - secuencia binaria recibida</p>
-<p>si <cite>mode=’estimator’</cite>:
+<p>si <cite>mode='estimator'</cite>:
 - <cite>eye_obj</cite> - objeto <cite>eye</cite> con los parámetros estimados del diagrama de ojo</p>
 <p>### Returns:
 - <cite>float</cite> - BER</p>

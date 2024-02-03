@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="English" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data types (opticomlib.typing) &mdash; opticomlib 0.4 documentation</title>
+  <title>Data types (opticomlib.typing) &mdash; opticomlib 0.4.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-      <link rel="stylesheet" href="_static/fonts.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=7f00635f"></script>
+        <script src="_static/documentation_options.js?v=c7636567"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -167,7 +165,7 @@
 <dd><p>binary sequence object</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – The data to initialize the binary sequence. It can be a string, list, tuple, or numpy array.</p>
+<dd class="field-odd"><p><strong>data</strong> -- The data to initialize the binary sequence. It can be a string, list, tuple, or numpy array.</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -195,8 +193,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>TypeError</strong> – If the data argument is not a string, list, tuple, or numpy array.</p></li>
-<li><p><strong>ValueError</strong> – If the string data contains non-binary numbers.</p></li>
+<li><p><strong>TypeError</strong> -- If the data argument is not a string, list, tuple, or numpy array.</p></li>
+<li><p><strong>ValueError</strong> -- If the string data contains non-binary numbers.</p></li>
 </ul>
 </dd>
 </dl>
@@ -212,7 +210,7 @@
 <dd><p>Print object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) – top message to show</p>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) -- top message to show</p>
 </dd>
 </dl>
 </dd></dl>
@@ -238,8 +236,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>signal</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) – The signal values. Defaults to None.</p></li>
-<li><p><strong>noise</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) – The noise values. Defaults to None.</p></li>
+<li><p><strong>signal</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) -- The signal values. Defaults to None.</p></li>
+<li><p><strong>noise</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) -- The noise values. Defaults to None.</p></li>
 </ul>
 </dd>
 </dl>
@@ -283,7 +281,7 @@
 <dd><p>Get abs of electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>by</strong> (<em>str</em>) – defines from which attribute to obtain the abs. If <code class="docutils literal notranslate"><span class="pre">'all'</span></code>, abs of signal+noise is determinated.</p>
+<dd class="field-odd"><p><strong>by</strong> (<em>str</em>) -- defines from which attribute to obtain the abs. If <code class="docutils literal notranslate"><span class="pre">'all'</span></code>, abs of signal+noise is determinated.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -295,9 +293,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>function</strong> (<em>function</em>) – function to apply.</p></li>
-<li><p><strong>*args</strong> – arguments to pass to the function.</p></li>
-<li><p><strong>**kargs</strong> – keyword arguments to pass to the function.</p></li>
+<li><p><strong>function</strong> (<em>function</em>) -- function to apply.</p></li>
+<li><p><strong>*args</strong> -- arguments to pass to the function.</p></li>
+<li><p><strong>**kargs</strong> -- keyword arguments to pass to the function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -315,7 +313,7 @@
 <dd><p>Return a copy of the object</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – index to truncate original object.</p>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) -- index to truncate original object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -338,7 +336,7 @@
 <dd><p>Plot vertical grid each every time slot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) -- number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Same object.</p>
@@ -368,11 +366,11 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<em>str</em>) – Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
-<li><p><strong>n</strong> (<em>int</em>) – number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
-<li><p><strong>xlabel</strong> (<em>str</em>) – X-axis label (default - <code class="docutils literal notranslate"><span class="pre">'Tiempo</span> <span class="pre">[ns]'</span></code>).</p></li>
-<li><p><strong>ylabel</strong> (<em>str</em>) – Y-axis label (default - <code class="docutils literal notranslate"><span class="pre">'Amplitud</span> <span class="pre">[u.a]'</span></code>).</p></li>
-<li><p><strong>**kargs</strong> – all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
+<li><p><strong>fmt</strong> (<em>str</em>) -- Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
+<li><p><strong>n</strong> (<em>int</em>) -- number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
+<li><p><strong>xlabel</strong> (<em>str</em>) -- X-axis label (default - <code class="docutils literal notranslate"><span class="pre">'Tiempo</span> <span class="pre">[ns]'</span></code>).</p></li>
+<li><p><strong>ylabel</strong> (<em>str</em>) -- Y-axis label (default - <code class="docutils literal notranslate"><span class="pre">'Amplitud</span> <span class="pre">[u.a]'</span></code>).</p></li>
+<li><p><strong>**kargs</strong> -- all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -390,7 +388,7 @@
 <dd><p>Get power of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>by</strong> (<em>str</em>) – defines from which attribute to obtain the power. If <code class="docutils literal notranslate"><span class="pre">'all'</span></code>, power of signal+noise is determinated.</p>
+<dd class="field-odd"><p><strong>by</strong> (<em>str</em>) -- defines from which attribute to obtain the power. If <code class="docutils literal notranslate"><span class="pre">'all'</span></code>, power of signal+noise is determinated.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -401,7 +399,7 @@
 <dd><p>Print object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) – top message to show</p>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) -- top message to show</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Same object.</p>
@@ -419,10 +417,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<em>str</em>) – Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
-<li><p><strong>kind</strong> (<em>str</em>) – kind of Y-axis plot.</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
-<li><p><strong>**kargs</strong> – all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
+<li><p><strong>fmt</strong> (<em>str</em>) -- Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
+<li><p><strong>kind</strong> (<em>str</em>) -- kind of Y-axis plot.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) -- number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
+<li><p><strong>**kargs</strong> -- all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -473,7 +471,7 @@
 <dd><p>Return angular frequency for spectrum representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>shift</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> apply fftshift(), default <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+<dd class="field-odd"><p><strong>shift</strong> (<em>bool</em>) -- If <code class="docutils literal notranslate"><span class="pre">True</span></code> apply fftshift(), default <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -689,13 +687,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>style</strong> (<em>str</em><em>, </em><em>Optional</em>) – plot style. <code class="docutils literal notranslate"><span class="pre">'dark'</span></code> or <code class="docutils literal notranslate"><span class="pre">'light'</span></code>.</p></li>
-<li><p><strong>means</strong> (<em>bool</em><em>, </em><em>Optional</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> plot mean values.</p></li>
-<li><p><strong>legend</strong> (<em>bool</em><em>, </em><em>Optional</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> show legend.</p></li>
-<li><p><strong>show</strong> (<em>bool</em><em>, </em><em>Optional</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> show plot.</p></li>
-<li><p><strong>save</strong> (<em>bool</em><em>, </em><em>Optional</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> save plot.</p></li>
-<li><p><strong>filename</strong> (<em>str</em><em>, </em><em>Optional</em>) – filename to save plot.</p></li>
-<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>Optional</em>) – colormap to plot.</p></li>
+<li><p><strong>style</strong> (<em>str</em><em>, </em><em>Optional</em>) -- plot style. <code class="docutils literal notranslate"><span class="pre">'dark'</span></code> or <code class="docutils literal notranslate"><span class="pre">'light'</span></code>.</p></li>
+<li><p><strong>means</strong> (<em>bool</em><em>, </em><em>Optional</em>) -- if <code class="docutils literal notranslate"><span class="pre">True</span></code> plot mean values.</p></li>
+<li><p><strong>legend</strong> (<em>bool</em><em>, </em><em>Optional</em>) -- if <code class="docutils literal notranslate"><span class="pre">True</span></code> show legend.</p></li>
+<li><p><strong>show</strong> (<em>bool</em><em>, </em><em>Optional</em>) -- if <code class="docutils literal notranslate"><span class="pre">True</span></code> show plot.</p></li>
+<li><p><strong>save</strong> (<em>bool</em><em>, </em><em>Optional</em>) -- if <code class="docutils literal notranslate"><span class="pre">True</span></code> save plot.</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em>, </em><em>Optional</em>) -- filename to save plot.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>Optional</em>) -- colormap to plot.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -713,7 +711,7 @@
 <dd><p>Print object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) – top message to show</p>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) -- top message to show</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Same object.</p>
@@ -730,7 +728,7 @@
 <dd><p>Print object parameters as (key: value).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) – top message to show</p>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>) -- top message to show</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Same object.</p>
@@ -752,11 +750,11 @@ For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sps</strong> (<em>int</em>) – samples per slot (default: 16)</p></li>
-<li><p><strong>R</strong> (<em>float</em>) – slot rate in [Hz] (default: 1e9)</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – sampling frequency in [Hz] (default: R*sps)</p></li>
-<li><p><strong>wavelength</strong> (<em>float</em>) – optical wavelength in [m] (default: 1550e-9)</p></li>
-<li><p><strong>N</strong> (<em>int</em>) – number of slots to simulate (default: None)</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) -- samples per slot (default: 16)</p></li>
+<li><p><strong>R</strong> (<em>float</em>) -- slot rate in [Hz] (default: 1e9)</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) -- sampling frequency in [Hz] (default: R*sps)</p></li>
+<li><p><strong>wavelength</strong> (<em>float</em>) -- optical wavelength in [m] (default: 1550e-9)</p></li>
+<li><p><strong>N</strong> (<em>int</em>) -- number of slots to simulate (default: None)</p></li>
 </ul>
 </dd>
 </dl>
@@ -869,8 +867,8 @@ For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>signal</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) – The signal values. Defaults to None.</p></li>
-<li><p><strong>noise</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) – The noise values. Defaults to None.</p></li>
+<li><p><strong>signal</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) -- The signal values. Defaults to None.</p></li>
+<li><p><strong>noise</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>np.ndarray</em><em>]</em>) -- The noise values. Defaults to None.</p></li>
 </ul>
 </dd>
 </dl>
@@ -914,7 +912,7 @@ For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a
 <dd><p>Plot vertical grid each every time slot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) -- number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Same object.</p>
@@ -938,10 +936,10 @@ For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<em>str</em>) – Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Polarization mode to show. <code class="docutils literal notranslate"><span class="pre">'abs'</span></code> plot intensity of signal x+y.</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
-<li><p><strong>**kargs</strong> – all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
+<li><p><strong>fmt</strong> (<em>str</em>) -- Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
+<li><p><strong>mode</strong> (<em>str</em>) -- Polarization mode to show. <code class="docutils literal notranslate"><span class="pre">'abs'</span></code> plot intensity of signal x+y.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) -- number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
+<li><p><strong>**kargs</strong> -- all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -960,11 +958,11 @@ For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<em>str</em>) – Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
-<li><p><strong>kind</strong> (<em>str</em>) – kind of Y-axis plot.</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – polarization mode to show.</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
-<li><p><strong>**kargs</strong> – all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
+<li><p><strong>fmt</strong> (<em>str</em>) -- Format style of line. Example <code class="docutils literal notranslate"><span class="pre">'b-.'</span></code></p></li>
+<li><p><strong>kind</strong> (<em>str</em>) -- kind of Y-axis plot.</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) -- polarization mode to show.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) -- number of samples to plot (default: <code class="docutils literal notranslate"><span class="pre">self.len()</span></code>).</p></li>
+<li><p><strong>**kargs</strong> -- all arguments compatible with <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1042,10 +1040,10 @@ and filtered with a bandwidth BW.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) – Electrical signal to be quantized.</p></li>
-<li><p><strong>fs</strong> (<em>float</em><em>, </em><em>Optional</em>) – Sampling frequency of the output signal. (default: None).</p></li>
-<li><p><strong>BW</strong> (<em>float</em><em>, </em><em>Optional</em>) – ADC bandwidth in Hz. (default: None).</p></li>
-<li><p><strong>nbits</strong> (<em>int</em><em>, </em><em>Optional</em>) – Vertical resolution of the ADC, in bits. (default: 8 bits).</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) -- Electrical signal to be quantized.</p></li>
+<li><p><strong>fs</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Sampling frequency of the output signal. (default: None).</p></li>
+<li><p><strong>BW</strong> (<em>float</em><em>, </em><em>Optional</em>) -- ADC bandwidth in Hz. (default: None).</p></li>
+<li><p><strong>nbits</strong> (<em>int</em><em>, </em><em>Optional</em>) -- Vertical resolution of the ADC, in bits. (default: 8 bits).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1055,7 +1053,7 @@ and filtered with a bandwidth BW.</p>
 <dd class="field-odd"><p><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If the <code class="docutils literal notranslate"><span class="pre">input</span></code> is not of type <cite>electrical_signal</cite>.</p>
+<dd class="field-even"><p><strong>TypeError</strong> -- If the <code class="docutils literal notranslate"><span class="pre">input</span></code> is not of type <cite>electrical_signal</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1068,10 +1066,10 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – The optical signal to be filtered.</p></li>
-<li><p><strong>BW</strong> (<em>float</em>) – The bandwidth of the filter in Hz.</p></li>
-<li><p><strong>n</strong> (<em>int</em><em>, </em><em>Optional</em>) – The order of the filter (default: <code class="docutils literal notranslate"><span class="pre">n=4</span></code>).</p></li>
-<li><p><strong>fs</strong> (<em>float</em><em>, </em><em>Optional</em>) – The sampling frequency of the input signal (default: <code class="docutils literal notranslate"><span class="pre">fs=gv.fs</span></code>).</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- The optical signal to be filtered.</p></li>
+<li><p><strong>BW</strong> (<em>float</em>) -- The bandwidth of the filter in Hz.</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>Optional</em>) -- The order of the filter (default: <code class="docutils literal notranslate"><span class="pre">n=4</span></code>).</p></li>
+<li><p><strong>fs</strong> (<em>float</em><em>, </em><em>Optional</em>) -- The sampling frequency of the input signal (default: <code class="docutils literal notranslate"><span class="pre">fs=gv.fs</span></code>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1090,16 +1088,16 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>str</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) – Input binary sequence.</p></li>
-<li><p><strong>Vout</strong> (<em>float</em><em>, </em><em>Optional</em>) – Output signal amplitude [-15 to 15 Volts]. (default: <cite>Vout=1.0</cite>)</p></li>
-<li><p><strong>pulse_shape</strong> (<em>str</em><em>, </em><em>Optional</em>) – Pulse shape at the output, can be “rect” or “gaussian”. (default: <cite>pulse_shape=”rect”</cite>)</p></li>
+<li><p><strong>input</strong> (<em>str</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) -- Input binary sequence.</p></li>
+<li><p><strong>Vout</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Output signal amplitude [-15 to 15 Volts]. (default: <cite>Vout=1.0</cite>)</p></li>
+<li><p><strong>pulse_shape</strong> (<em>str</em><em>, </em><em>Optional</em>) -- Pulse shape at the output, can be &quot;rect&quot; or &quot;gaussian&quot;. (default: <cite>pulse_shape=&quot;rect&quot;</cite>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>c</strong> (<em>float</em>) – Chirp of the Gaussian pulse. Only if <cite>pulse_shape=gaussian</cite>. (default: <cite>c=0.0</cite>)</p></li>
-<li><p><strong>m</strong> (<em>int</em>) – Order of the super-Gaussian pulse. Only if <cite>pulse_shape=gaussian</cite>. (default: <cite>m=1</cite>)</p></li>
-<li><p><strong>T</strong> (<em>int</em>) – Pulse width at half maximum in number of samples. Only if <cite>pulse_shape=gaussian</cite>. (default: <cite>T=sps</cite>)</p></li>
+<li><p><strong>c</strong> (<em>float</em>) -- Chirp of the Gaussian pulse. Only if <cite>pulse_shape=gaussian</cite>. (default: <cite>c=0.0</cite>)</p></li>
+<li><p><strong>m</strong> (<em>int</em>) -- Order of the super-Gaussian pulse. Only if <cite>pulse_shape=gaussian</cite>. (default: <cite>m=1</cite>)</p></li>
+<li><p><strong>T</strong> (<em>int</em>) -- Pulse width at half maximum in number of samples. Only if <cite>pulse_shape=gaussian</cite>. (default: <cite>T=sps</cite>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1110,9 +1108,9 @@ Bessel filter model.</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>TypeError</strong> – If <cite>input</cite> type is not in [str, list, tuple, ndarray, binary_sequence].</p></li>
-<li><p><strong>NameError</strong> – If <cite>pulse_shape</cite> is not “rect” or “gaussian”.</p></li>
-<li><p><strong>ValueError</strong> – If <cite>Vout</cite> is not between -15 and 15 Volts.</p></li>
+<li><p><strong>TypeError</strong> -- If <cite>input</cite> type is not in [str, list, tuple, ndarray, binary_sequence].</p></li>
+<li><p><strong>NameError</strong> -- If <cite>pulse_shape</cite> is not &quot;rect&quot; or &quot;gaussian&quot;.</p></li>
+<li><p><strong>ValueError</strong> -- If <cite>Vout</cite> is not between -15 and 15 Volts.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1165,8 +1163,8 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – The input optical signal.</p></li>
-<li><p><strong>D</strong> (<em>float</em>) – The dispersion coefficient of the medium (β2·z), in [ps^2].</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- The input optical signal.</p></li>
+<li><p><strong>D</strong> (<em>float</em>) -- The dispersion coefficient of the medium (β2·z), in [ps^2].</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1176,7 +1174,7 @@ Bessel filter model.</p>
 <dd class="field-odd"><p><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal">optical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
+<dd class="field-even"><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1189,10 +1187,10 @@ Simplest model (no saturation output power).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – The optical signal to be amplified.</p></li>
-<li><p><strong>G</strong> (<em>float</em>) – The gain of the amplifier, in [dB].</p></li>
-<li><p><strong>NF</strong> (<em>float</em>) – The noise figure of the amplifier, in [dB].</p></li>
-<li><p><strong>BW</strong> (<em>float</em>) – The bandwidth of the amplifier, in [Hz].</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- The optical signal to be amplified.</p></li>
+<li><p><strong>G</strong> (<em>float</em>) -- The gain of the amplifier, in [dB].</p></li>
+<li><p><strong>NF</strong> (<em>float</em>) -- The noise figure of the amplifier, in [dB].</p></li>
+<li><p><strong>BW</strong> (<em>float</em>) -- The bandwidth of the amplifier, in [Hz].</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1202,7 +1200,7 @@ Simplest model (no saturation output power).</p>
 <dd class="field-odd"><p><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal">optical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
+<dd class="field-even"><p><strong>TypeError</strong> -- if <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1211,21 +1209,21 @@ Simplest model (no saturation output power).</p>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">FIBER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#FIBER"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Optical Fiber.</p>
-<p>Simulates the transmission through an optical fiber, solving Schrödinger’s equation numerically,
+<p>Simulates the transmission through an optical fiber, solving Schrödinger's equation numerically,
 by using split-step Fourier method with adaptative step (method based on limmiting the nonlilear phase rotation).
 Polarization mode dispersion (PMD) is not considered in this model.</p>
 <p>paper source: <a class="reference external" href="https://ieeexplore.ieee.org/document/1190149">https://ieeexplore.ieee.org/document/1190149</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – Input optical signal.</p></li>
-<li><p><strong>length</strong> (<em>float</em>) – Length of the fiber, in [km].</p></li>
-<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>Optional</em>) – Attenuation coefficient of the fiber, in [dB/km] (default: 0.0).</p></li>
-<li><p><strong>beta_2</strong> (<em>float</em><em>, </em><em>Optional</em>) – Second-order dispersion coefficient of the fiber, in [ps^2/km] (default: 0.0).</p></li>
-<li><p><strong>beta_3</strong> (<em>float</em><em>, </em><em>Optional</em>) – Third-order dispersion coefficient of the fiber, in [ps^3/km] (default: 0.0).</p></li>
-<li><p><strong>gamma</strong> (<em>float</em><em>, </em><em>Optional</em>) – Nonlinearity coefficient of the fiber, in [(W·km)^-1] (default: 0.0).</p></li>
-<li><p><strong>phi_max</strong> (<em>float</em><em>, </em><em>Optional</em>) – Upper bound of the nonlinear phase rotation, in [rad] (default: 0.05).</p></li>
-<li><p><strong>show_progress</strong> (<em>bool</em><em>, </em><em>Optional</em>) – Show progress bar (default: False).</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- Input optical signal.</p></li>
+<li><p><strong>length</strong> (<em>float</em>) -- Length of the fiber, in [km].</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Attenuation coefficient of the fiber, in [dB/km] (default: 0.0).</p></li>
+<li><p><strong>beta_2</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Second-order dispersion coefficient of the fiber, in [ps^2/km] (default: 0.0).</p></li>
+<li><p><strong>beta_3</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Third-order dispersion coefficient of the fiber, in [ps^3/km] (default: 0.0).</p></li>
+<li><p><strong>gamma</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Nonlinearity coefficient of the fiber, in [(W·km)^-1] (default: 0.0).</p></li>
+<li><p><strong>phi_max</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Upper bound of the nonlinear phase rotation, in [rad] (default: 0.05).</p></li>
+<li><p><strong>show_progress</strong> (<em>bool</em><em>, </em><em>Optional</em>) -- Show progress bar (default: False).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1235,7 +1233,7 @@ Polarization mode dispersion (PMD) is not considered in this model.</p>
 <dd class="field-odd"><p><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal">optical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
+<dd class="field-even"><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not an optical signal.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1268,9 +1266,9 @@ Polarization mode dispersion (PMD) is not considered in this model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a><em> | </em><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – Electrical or optical signal from which the eye diagram will be estimated.</p></li>
-<li><p><strong>nslots</strong> (<em>int</em><em>, </em><em>Optional</em>) – Number of slots to consider for eye reconstruction (default: 4096).</p></li>
-<li><p><strong>sps_resamp</strong> (<em>int</em><em>, </em><em>Optional</em>) – Number of samples per slot to interpolate de original signal (default: None).</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a><em> | </em><a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- Electrical or optical signal from which the eye diagram will be estimated.</p></li>
+<li><p><strong>nslots</strong> (<em>int</em><em>, </em><em>Optional</em>) -- Number of slots to consider for eye reconstruction (default: 4096).</p></li>
+<li><p><strong>sps_resamp</strong> (<em>int</em><em>, </em><em>Optional</em>) -- Number of samples per slot to interpolate de original signal (default: None).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1305,10 +1303,10 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) – Electrical signal to be filtered.</p></li>
-<li><p><strong>BW</strong> (<em>float</em>) – Filter bandwidth or cutoff frecuency, in [Hz].</p></li>
-<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – Filter order (default: 4).</p></li>
-<li><p><strong>fs</strong> (<em>float</em><em>, </em><em>optional</em>) – Sampling frequency of the input signal (default: <code class="docutils literal notranslate"><span class="pre">fs=gv.fs</span></code>).</p></li>
+<li><p><strong>input</strong> (<em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) -- Electrical signal to be filtered.</p></li>
+<li><p><strong>BW</strong> (<em>float</em>) -- Filter bandwidth or cutoff frecuency, in [Hz].</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) -- Filter order (default: 4).</p></li>
+<li><p><strong>fs</strong> (<em>float</em><em>, </em><em>optional</em>) -- Sampling frequency of the input signal (default: <code class="docutils literal notranslate"><span class="pre">fs=gv.fs</span></code>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1318,7 +1316,7 @@ Bessel filter model.</p>
 <dd class="field-odd"><p><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not of type ndarray or electrical_signal.</p>
+<dd class="field-even"><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not of type ndarray or electrical_signal.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1350,13 +1348,13 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>op_input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – Optical signal to be modulated.</p></li>
-<li><p><strong>el_input</strong> (<em>float</em><em> | </em><em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) – Driver voltage.</p></li>
-<li><p><strong>bias</strong> (<em>float</em><em>, </em><em>Optional</em>) – Modulator bias voltage (default: 0.0 [V]).</p></li>
-<li><p><strong>Vpi</strong> (<em>float</em><em>, </em><em>Optional</em>) – Voltage at which the device switches from on-state to off-state (default: 5.0 [V]).</p></li>
-<li><p><strong>loss_dB</strong> (<em>float</em><em>, </em><em>Optional</em>) – Propagation or insertion losses in the modulator, value in dB (default: 0.0).</p></li>
-<li><p><strong>eta</strong> (<em>float</em><em>, </em><em>Optional</em>) – Imbalance ratio of light intensity between the two arms of the modulator (default: 0.1). ER = -20*log10(eta/2) (=26 dB by default).</p></li>
-<li><p><strong>BW</strong> (<em>float</em><em>, </em><em>Optional</em>) – Modulator bandwidth in [Hz] (default: 40e9).</p></li>
+<li><p><strong>op_input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- Optical signal to be modulated.</p></li>
+<li><p><strong>el_input</strong> (<em>float</em><em> | </em><em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) -- Driver voltage.</p></li>
+<li><p><strong>bias</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Modulator bias voltage (default: 0.0 [V]).</p></li>
+<li><p><strong>Vpi</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Voltage at which the device switches from on-state to off-state (default: 5.0 [V]).</p></li>
+<li><p><strong>loss_dB</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Propagation or insertion losses in the modulator, value in dB (default: 0.0).</p></li>
+<li><p><strong>eta</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Imbalance ratio of light intensity between the two arms of the modulator (default: 0.1). ER = -20*log10(eta/2) (=26 dB by default).</p></li>
+<li><p><strong>BW</strong> (<em>float</em><em>, </em><em>Optional</em>) -- Modulator bandwidth in [Hz] (default: 40e9).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1367,9 +1365,9 @@ Bessel filter model.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">op_input</span></code> type is not <cite>optical_signal</cite>.</p></li>
-<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> type is not in [<cite>float</cite>, <cite>ndarray</cite>, <cite>electrical_signal</cite>].</p></li>
-<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> is ndarray or <cite>electrical_signal</cite> but, length is not equal to <code class="docutils literal notranslate"><span class="pre">op_input</span></code> length.</p></li>
+<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">op_input</span></code> type is not <cite>optical_signal</cite>.</p></li>
+<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> type is not in [<cite>float</cite>, <cite>ndarray</cite>, <cite>electrical_signal</cite>].</p></li>
+<li><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> is ndarray or <cite>electrical_signal</cite> but, length is not equal to <code class="docutils literal notranslate"><span class="pre">op_input</span></code> length.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1383,12 +1381,12 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – optical signal to be detected</p></li>
-<li><p><strong>BW</strong> (<em>float</em>) – detector bandwidth in [Hz]</p></li>
-<li><p><strong>responsivity</strong> (<em>float</em><em>, </em><em>Optional</em>) – detector responsivity in [A/W] (default: 1.0)</p></li>
-<li><p><strong>T</strong> (<em>float</em><em>, </em><em>Optional</em>) – detector temperature in [K] (default: 300.0)</p></li>
-<li><p><strong>R_load</strong> (<em>float</em><em>, </em><em>Optional</em>) – detector load resistance in [Ohm] (default: 50.0)</p></li>
-<li><p><strong>noise</strong> (<em>str</em><em>, </em><em>Optional</em>) – <p>type of noise to include in the simulation (default: ‘all’)</p>
+<li><p><strong>input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- optical signal to be detected</p></li>
+<li><p><strong>BW</strong> (<em>float</em>) -- detector bandwidth in [Hz]</p></li>
+<li><p><strong>responsivity</strong> (<em>float</em><em>, </em><em>Optional</em>) -- detector responsivity in [A/W] (default: 1.0)</p></li>
+<li><p><strong>T</strong> (<em>float</em><em>, </em><em>Optional</em>) -- detector temperature in [K] (default: 300.0)</p></li>
+<li><p><strong>R_load</strong> (<em>float</em><em>, </em><em>Optional</em>) -- detector load resistance in [Ohm] (default: 50.0)</p></li>
+<li><p><strong>noise</strong> (<em>str</em><em>, </em><em>Optional</em>) -- <p>type of noise to include in the simulation (default: 'all')</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'ase-only'</span></code>: only include ASE noise</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'thermal-only'</span></code>: only include thermal noise</p></li>
@@ -1408,7 +1406,7 @@ Bessel filter model.</p>
 <dd class="field-odd"><p><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if the <code class="docutils literal notranslate"><span class="pre">noise</span></code> argument is not one of the valid options</p>
+<dd class="field-even"><p><strong>ValueError</strong> -- if the <code class="docutils literal notranslate"><span class="pre">noise</span></code> argument is not one of the valid options</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1420,9 +1418,9 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>op_input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – optical signal to be modulated</p></li>
-<li><p><strong>el_input</strong> (<em>float</em><em> | </em><em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) – driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.</p></li>
-<li><p><strong>Vpi</strong> (<em>float</em><em>, </em><em>Optional</em>) – voltage at which the device achieves a phase shift of π (default: <code class="docutils literal notranslate"><span class="pre">Vpi=5.0</span></code> [V])</p></li>
+<li><p><strong>op_input</strong> (<a class="reference internal" href="generated/opticomlib.typing.optical_signal.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) -- optical signal to be modulated</p></li>
+<li><p><strong>el_input</strong> (<em>float</em><em> | </em><em>ndarray</em><em> | </em><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) -- driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.</p></li>
+<li><p><strong>Vpi</strong> (<em>float</em><em>, </em><em>Optional</em>) -- voltage at which the device achieves a phase shift of π (default: <code class="docutils literal notranslate"><span class="pre">Vpi=5.0</span></code> [V])</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1433,9 +1431,9 @@ Bessel filter model.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">op_input</span></code> type is not <cite>optical_signal</cite>.</p></li>
-<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> type is not in [<cite>float</cite>, <cite>ndarray</cite>, <cite>electrical_signal</cite>].</p></li>
-<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> is ndarray or <cite>electrical_signal</cite> but, length is not equal to <code class="docutils literal notranslate"><span class="pre">op_input</span></code> length.</p></li>
+<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">op_input</span></code> type is not <cite>optical_signal</cite>.</p></li>
+<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> type is not in [<cite>float</cite>, <cite>ndarray</cite>, <cite>electrical_signal</cite>].</p></li>
+<li><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">el_input</span></code> is ndarray or <cite>electrical_signal</cite> but, length is not equal to <code class="docutils literal notranslate"><span class="pre">op_input</span></code> length.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1494,9 +1492,9 @@ Bessel filter model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<em>int</em>) – lenght of random binary sequence (default: <cite>n=2**8</cite>)</p></li>
-<li><p><strong>user</strong> (<em>str</em><em> | </em><em>list</em><em> | </em><em>ndarray</em>) – binary sequence user pattern (default: <cite>user=[]</cite>)</p></li>
-<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – degree of the generating pseudorandom polynomial (default: <cite>order=None</cite>)</p></li>
+<li><p><strong>n</strong> (<em>int</em>) -- lenght of random binary sequence (default: <cite>n=2**8</cite>)</p></li>
+<li><p><strong>user</strong> (<em>str</em><em> | </em><em>list</em><em> | </em><em>ndarray</em>) -- binary sequence user pattern (default: <cite>user=[]</cite>)</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) -- degree of the generating pseudorandom polynomial (default: <cite>order=None</cite>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1539,8 +1537,8 @@ at the optimal instant determined by the eye object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> – The electrical signal to be sampled.</p></li>
-<li><p><strong>_eye_</strong> – The eye object that contains the eye diagram information.</p></li>
+<li><p><strong>input</strong> -- The electrical signal to be sampled.</p></li>
+<li><p><strong>_eye_</strong> -- The eye object that contains the eye diagram information.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1572,10 +1570,10 @@ at the optimal instant determined by the eye object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sync_signal</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) – Synchronized digital signal in time with the transmitted signal.</p></li>
-<li><p><strong>slots_tx</strong> (<a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) – Transmitted bit sequence.</p></li>
-<li><p><strong>sps</strong> (<em>int</em>) – Samples per slot of the digital signal.</p></li>
-<li><p><strong>nslots</strong> (<em>int</em><em>, </em><em>Optional</em>) – Number of slots to use for estimation (default: 8192).</p></li>
+<li><p><strong>sync_signal</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) -- Synchronized digital signal in time with the transmitted signal.</p></li>
+<li><p><strong>slots_tx</strong> (<a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) -- Transmitted bit sequence.</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) -- Samples per slot of the digital signal.</p></li>
+<li><p><strong>nslots</strong> (<em>int</em><em>, </em><em>Optional</em>) -- Number of slots to use for estimation (default: 8192).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1588,7 +1586,7 @@ at the optimal instant determined by the eye object.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">zeros</span></code>: Received signal levels corresponding to transmitted level 0.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">t0</span></code>: Time instants for level 0.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">t1</span></code>: Time instants for level 1.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: Position in the ‘signal’ vector from which synchronization was performed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: Position in the 'signal' vector from which synchronization was performed.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mu0</span></code>: Mean of level 0.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mu1</span></code>: Mean of level 1.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">s0</span></code>: Standard deviation of level 0.</p></li>
@@ -1611,22 +1609,22 @@ This is done by performing a correlation between the received signal and the tra
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>signal_rx</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) – The received digital signal (from the oscilloscope).</p></li>
-<li><p><strong>slots_tx</strong> (<a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) – The transmitted slots sequence.</p></li>
-<li><p><strong>sps</strong> (<em>int</em>) – The number of samples per slot.</p></li>
+<li><p><strong>signal_rx</strong> (<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><em>electrical_signal</em></a>) -- The received digital signal (from the oscilloscope).</p></li>
+<li><p><strong>slots_tx</strong> (<a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) -- The transmitted slots sequence.</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) -- The number of samples per slot.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple containing the synchronized digital signal and the position in the ‘signal’ vector from which synchronization was performed.</p>
+<dd class="field-even"><p>A tuple containing the synchronized digital signal and the position in the 'signal' vector from which synchronization was performed.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple[<a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a>, int]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – The <code class="docutils literal notranslate"><span class="pre">sps</span></code> must be an integer to perform synchronization.</p></li>
-<li><p><strong>BufferError</strong> – If the number of received slots have to be greater than the transmitted slots.</p></li>
-<li><p><strong>ValueError</strong> – If no correlation maximum is found.</p></li>
+<li><p><strong>TypeError</strong> -- The <code class="docutils literal notranslate"><span class="pre">sps</span></code> must be an integer to perform synchronization.</p></li>
+<li><p><strong>BufferError</strong> -- If the number of received slots have to be greater than the transmitted slots.</p></li>
+<li><p><strong>ValueError</strong> -- If no correlation maximum is found.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1683,7 +1681,7 @@ This is done by performing a correlation between the received signal and the tra
 \[Q(x) = \frac{1}{2}\text{erfc}\left( \frac{x}{\sqrt{2}} \right)\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) – input value.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) -- input value.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Q(x) value.</p>
@@ -1709,7 +1707,7 @@ This is done by performing a correlation between the received signal and the tra
 \[db = 10\log_{10}{x}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) – input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) -- input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>dB value</p>
@@ -1719,8 +1717,8 @@ This is done by performing a correlation between the received signal and the tra
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
-<li><p><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p><strong>TypeError</strong> -- if <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
+<li><p><strong>ValueError</strong> -- if <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1741,7 +1739,7 @@ This is done by performing a correlation between the received signal and the tra
 \[\text{dbm} = 10\log_{10}{x}+30\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) – input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) -- input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>dBm value.</p>
@@ -1751,8 +1749,8 @@ This is done by performing a correlation between the received signal and the tra
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
-<li><p><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p><strong>TypeError</strong> -- if <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
+<li><p><strong>ValueError</strong> -- if <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1765,8 +1763,8 @@ This is done by performing a correlation between the received signal and the tra
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num</strong> (<em>int</em>) – integer to convert.</p></li>
-<li><p><strong>digits</strong> (<em>int</em><em>, </em><em>Optional</em>) – number of bits of the binary representation (default: <code class="docutils literal notranslate"><span class="pre">digits=8</span></code>).</p></li>
+<li><p><strong>num</strong> (<em>int</em>) -- integer to convert.</p></li>
+<li><p><strong>digits</strong> (<em>int</em><em>, </em><em>Optional</em>) -- number of bits of the binary representation (default: <code class="docutils literal notranslate"><span class="pre">digits=8</span></code>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1776,7 +1774,7 @@ This is done by performing a correlation between the received signal and the tra
 <dd class="field-odd"><p><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence">binary_sequence</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">num</span></code> is too large to be represented with <code class="docutils literal notranslate"><span class="pre">digits</span></code> bits.</p>
+<dd class="field-even"><p><strong>ValueError</strong> -- if <code class="docutils literal notranslate"><span class="pre">num</span></code> is too large to be represented with <code class="docutils literal notranslate"><span class="pre">digits</span></code> bits.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1795,9 +1793,9 @@ This is done by performing a correlation between the received signal and the tra
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) – input value.</p></li>
-<li><p><strong>mu</strong> (<em>float</em>) – mean (default: 0).</p></li>
-<li><p><strong>std</strong> (<em>float</em>) – standard deviation (default: 1).</p></li>
+<li><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) -- input value.</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) -- mean (default: 0).</p></li>
+<li><p><strong>std</strong> (<em>float</em>) -- standard deviation (default: 1).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1822,7 +1820,7 @@ This is done by performing a correlation between the received signal and the tra
 <dd><p>Generates a pseudo-random binary sequence (PRBS) of desired order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>order</strong> (<em>int</em>) – order of the generator polynomial {7, 9, 11, 15, 20, 23, 31} (default: <code class="docutils literal notranslate"><span class="pre">order=7</span></code>).</p>
+<dd class="field-odd"><p><strong>order</strong> (<em>int</em>) -- order of the generator polynomial {7, 9, 11, 15, 20, 23, 31} (default: <code class="docutils literal notranslate"><span class="pre">order=7</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>PRBS sequence of length <code class="docutils literal notranslate"><span class="pre">2^order-1</span></code>.</p>
@@ -1831,7 +1829,7 @@ This is done by performing a correlation between the received signal and the tra
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">order</span></code> is not in {7, 9, 11, 15, 20, 23, 31}.</p>
+<dd class="field-even"><p><strong>ValueError</strong> -- if <code class="docutils literal notranslate"><span class="pre">order</span></code> is not in {7, 9, 11, 15, 20, 23, 31}.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1853,8 +1851,8 @@ This is done by performing a correlation between the received signal and the tra
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>line_of_code</strong> (<em>str</em>) – line of code to execute.</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – number of iterations.</p></li>
+<li><p><strong>line_of_code</strong> (<em>str</em>) -- line of code to execute.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) -- number of iterations.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1879,7 +1877,7 @@ This is done by performing a correlation between the received signal and the tra
 \[y = 10^{\frac{x}{10}}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) – input value.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) -- input value.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>number value.</p>
@@ -1905,7 +1903,7 @@ This is done by performing a correlation between the received signal and the tra
 \[y = 10^{(\frac{x}{10}-3)}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) – input value.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>float</em><em> | </em><em>list</em><em> | </em><em>tuple</em><em> | </em><em>ndarray</em>) -- input value.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>power value in Watts.</p>
@@ -1930,7 +1928,7 @@ This is done by performing a correlation between the received signal and the tra
 Elements can be integer or floating point. If there is at least one floating point number, then all elements are converted to float.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – string to convert.</p>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) -- string to convert.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>numeric array</p>
@@ -1939,7 +1937,7 @@ Elements can be integer or floating point. If there is at least one floating poi
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if the string contains invalid characters.</p>
+<dd class="field-even"><p><strong>ValueError</strong> -- if the string contains invalid characters.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -2005,15 +2003,15 @@ Then you can use toc() to get the elapsed time.</p>
 <dd><p>### Descripción:
 Calcula la tasa de error de bits (BER), por conteo de errores (comparando la secuencia recibida con la transmitida)
 o por estimación (utilizando medias y varianzas estimadas del diagrama de ojo y sustituyendo esos valores en las expresiones teóricas)</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>mode</cite> - modo en que se determinará el Bit Error Rate (BER)</p>
-<p>—</p>
+<p>---</p>
 <p>### Kargs:
-si <cite>mode=’counter’</cite>:
+si <cite>mode='counter'</cite>:
 - <cite>Tx</cite> - secuencia binaria transmitida
 - <cite>Rx</cite> - secuencia binaria recibida</p>
-<p>si <cite>mode=’estimator’</cite>:
+<p>si <cite>mode='estimator'</cite>:
 - <cite>eye_obj</cite> - objeto <cite>eye</cite> con los parámetros estimados del diagrama de ojo</p>
 <p>### Returns:
 - <cite>float</cite> - BER</p>
@@ -2026,11 +2024,11 @@ si <cite>mode=’counter’</cite>:
 Este componente realiza la tarea de decisión de la señal eléctrica photodetectada. Primero sub-muestrea la señal eléctrica a 1 muestra por slot
 tomando el instante de decisión óptimo estimado del diagrama de ojos <cite>eye_obj.i</cite>. Luego, compara la amplitud de la señal submuetreada con el umbral
 de decisión óptimo estimado <cite>THRESHOLD_EST(eye_obj)</cite>. Finalmente retorna la secuenci binaria recibida.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>input</cite> - objeto <cite>electrical_signal</cite> con los parámetros de la señal eléctrica de entrada.
 - <cite>eye_obj</cite> - objeto <cite>eye</cite> con los parámetros del diagrama de ojos.</p>
-<p>—</p>
+<p>---</p>
 <p>### Returns:
 - <cite>output</cite> - objeto <cite>binary_sequence</cite> con los bits recibidos.</p>
 </dd></dl>
@@ -2040,10 +2038,10 @@ de decisión óptimo estimado <cite>THRESHOLD_EST(eye_obj)</cite>. Finalmente re
 <span class="sig-prename descclassname"><span class="pre">opticomlib.ook.</span></span><span class="sig-name descname"><span class="pre">THRESHOLD_EST</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eye_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.eye.html#opticomlib.typing.eye" title="opticomlib.typing.eye"><span class="pre">eye</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ook.html#THRESHOLD_EST"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>### Descripción:
 Esta función estima el umbral de decisión para OOK a partir de las medias y desviaciones estándar del diagrama de ojos.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>eye_obj</cite> - objeto <cite>eye</cite> con los parámetros del diagrama de ojos.</p>
-<p>—</p>
+<p>---</p>
 <p>### Returns:
 - <cite>umbral</cite> - umbral de decisión para OOK.</p>
 </dd></dl>
@@ -2098,18 +2096,18 @@ Esta función estima el umbral de decisión para OOK a partir de las medias y de
 <dd><p>### Descripción:
 Calcula la tasa de error de bits (BER), por conteo de errores (comparando la secuencia recibida con la transmitida)
 o por estimación (utilizando medias y varianzas estimadas del diagrama de ojo y sustituyendo esos valores en las expresiones teóricas)</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>mode</cite> - modo en que se determinará el Bit Error Rate (BER)</p>
-<p>—</p>
+<p>---</p>
 <p>### Kargs:
-si <cite>mode=’counter’</cite>:
+si <cite>mode='counter'</cite>:
 - <cite>Tx</cite> - secuencia binaria transmitida
 - <cite>Rx</cite> - secuencia binaria recibida</p>
-<p>si <cite>mode=’estimator’</cite>:
+<p>si <cite>mode='estimator'</cite>:
 - <cite>eye_obj</cite> - objeto <cite>eye</cite> con los parámetros estimados del diagrama de ojo
 - <cite>M</cite> - orden de modulación PPM
-- <cite>decision</cite> [Opcional] - tipo de decision <cite>‘hard’</cite> o <cite>‘soft’</cite> (default: <cite>decision=’soft’</cite>)</p>
+- <cite>decision</cite> [Opcional] - tipo de decision <cite>'hard'</cite> o <cite>'soft'</cite> (default: <cite>decision='soft'</cite>)</p>
 <p>### Returns:
 - <cite>float</cite> - BER</p>
 </dd></dl>
@@ -2124,11 +2122,11 @@ determinado por el objeto <cite>eye</cite>, luego se realiza la comparación con
 símbolo PPM se transmitió y se decodifica la secuencia binaria.</p>
 <p>Si se selecciona la decisión blanda, se realiza la integración de cada slot de la señal digital, se decide que símbolo PPM tiene
 mayor verosimilitud y se decodifica la secuencia binaria.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>input</cite> - secuencia binaria codificada en PPM
 - <cite>eye_obj</cite> [Opcional] - objeto eye con los parámetros del diagrama de ojos (default: <cite>_eye_=eye()</cite>)
-- <cite>decision</cite> [Opcional] - tipo de decisión a realizar (default: <cite>decision=’hard’</cite>)</p>
+- <cite>decision</cite> [Opcional] - tipo de decisión a realizar (default: <cite>decision='hard'</cite>)</p>
 <p>### Returns:
 - <cite>binary_sequence</cite> - secuencia binaria decodificada</p>
 </dd></dl>
@@ -2138,7 +2136,7 @@ mayor verosimilitud y se decodifica la secuencia binaria.</p>
 <span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">HDD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/ppm.html#HDD"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>### Descripción:
 Estima los símbolos PPM más probables a partir de la secuencia binaria dada como entrada.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>input</cite> - secuencia binaria a estimar</p>
 <p>### Returns:
@@ -2150,7 +2148,7 @@ Estima los símbolos PPM más probables a partir de la secuencia binaria dada co
 <span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">PPM_DECODER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/ppm.html#PPM_DECODER"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>### Descripción:
 Recibe una secuencia de bits codificada en PPM y la decodifica.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>input</cite> - secuencia binaria codificada en PPM
 - <cite>M</cite> - orden de modulación PPM</p>
@@ -2163,11 +2161,11 @@ Recibe una secuencia de bits codificada en PPM y la decodifica.</p>
 <span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">PPM_ENCODER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/ppm.html#PPM_ENCODER"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>### Descripción:
 Codificador digital PPM. Convierte una secuencia binaria de entrada en una secuencia binaria codificada en PPM.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>input</cite> - secuencia binaria de entrada
 - <cite>M</cite> - cantidad de slots que contiene un símbolo</p>
-<p>—</p>
+<p>---</p>
 <p>### Returns:
 - <cite>binary_sequence</cite></p>
 </dd></dl>
@@ -2177,7 +2175,7 @@ Codificador digital PPM. Convierte una secuencia binaria de entrada en una secue
 <span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">SDD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.electrical_signal.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="generated/opticomlib.typing.binary_sequence.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/ppm.html#SDD"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>### Descripción:
 Estima los símbolos PPM más probables a partir de la señal eléctrica dada como entrada.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>input</cite> - señal eléctrica sin muestrear</p>
 <p>### Returns:
@@ -2189,7 +2187,7 @@ Estima los símbolos PPM más probables a partir de la señal eléctrica dada co
 <span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">THRESHOLD_EST</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eye_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="generated/opticomlib.typing.eye.html#opticomlib.typing.eye" title="opticomlib.typing.eye"><span class="pre">eye</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#THRESHOLD_EST"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>### Descripción:
 Esta función estima el umbral de decisión para M-PPM a partir de las medias y desviaciones estándar.</p>
-<p>—</p>
+<p>---</p>
 <p>### Args:
 - <cite>eye_obj</cite> - objeto <cite>eye</cite> con los parámetros del diagrama de ojos
 - <cite>M</cite> - orden PPM</p>
@@ -2206,7 +2204,7 @@ Esta función estima el umbral de decisión para M-PPM a partir de las medias y 
 - <cite>s0</cite> - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 0
 - <cite>s1</cite> - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 1
 - <cite>M</cite> - orden de la modulación PPM.
-- <cite>kind</cite> [Opcional] - tipo de decodificación PPM (default: <cite>kind=’soft’</cite>). Se debe especificar si <cite>modulation=’PPM’</cite></p>
+- <cite>kind</cite> [Opcional] - tipo de decodificación PPM (default: <cite>kind='soft'</cite>). Se debe especificar si <cite>modulation='PPM'</cite></p>
 <p>Returns:
 - <cite>BER</cite> - probabilidad de error de bit teórica</p>
 </dd></dl>

@@ -24,7 +24,6 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.intersphinx',
     'sphinx.ext.autosummary',
-    'sphinx_rtd_theme',
 ]
 
 
@@ -37,7 +36,7 @@ language = 'English'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'nature' # ['renku', 'sphinx_rtd_them']
+html_theme = 'renku' # ['renku', 'sphinx_rtd_theme']
 html_static_path = ['_static']
 
 source_suffix = '.rst'
