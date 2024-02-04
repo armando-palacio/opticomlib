@@ -164,7 +164,7 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
         time : 0.0
         >>>plt.show()
 
-    .. image:: ../_static/DAC_example1.png
+    .. image:: ../_images/DAC_example1.png
         :alt: Descripción de la imagen
         :align: center
     """
@@ -271,7 +271,7 @@ def PM(op_input: optical_signal,
         >>> plt.tight_layout()
         >>> plt.show()
 
-    .. image:: ../_static/PM_example1.png
+    .. image:: ../_images/PM_example1.png
         :alt: result of PM example 1
         :align: center
     """
@@ -524,7 +524,7 @@ def FIBER(input: optical_signal,
         >>> output.plot('b-', label='output', lw=3).grid()
         >>> plt.show()
 
-    .. image:: ../_static/FIBER_example1.png
+    .. image:: ../_images/FIBER_example1.png
         :alt: result of FIBER example 1
         :align: center
     """
@@ -615,7 +615,7 @@ def LPF(input: Union[ndarray, electrical_signal],
         >>> input.psd('r', label='input', lw=2)
         >>> output.psd('b', label='output', lw=2).show()
     
-    .. image:: ../_static/LPF_example1.png
+    .. image:: ../_images/LPF_example1.png
         :alt: result of LPF example 1
         :align: center
     """
@@ -809,7 +809,7 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
         >>>
         >>> GET_EYE(y, sps_resamp=512).plot() # without interpolation
 
-    .. image:: ../_static/GET_EYE_example1.png
+    .. image:: ../_images/GET_EYE_example1.png
         :alt: result of GET_EYE example 1
         :align: center
     """
