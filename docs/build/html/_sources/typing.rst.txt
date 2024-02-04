@@ -1,3 +1,0 @@
-.. automodule:: opticomlib.typing
-    :members:
-    :noindex:

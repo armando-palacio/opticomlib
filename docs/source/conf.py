@@ -49,8 +49,6 @@ exclude_patterns = ['_build']
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.abspath('../../'))
 
 python_display_short_literal_types = True

@@ -1,3 +1,0 @@
-.. automodule:: opticomlib.devices
-    :members:
-    :noindex:
