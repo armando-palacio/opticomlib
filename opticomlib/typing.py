@@ -80,12 +80,13 @@ class global_variables():
             self.R = fs/sps
         else:
             self.fs = fs = self.R*sps
+        
+        self.dt = 1/fs
 
         if N:
             self.N = N
             self.t = np.linspace(0, N*sps*self.dt, N*sps, endpoint=True)
         
-        self.dt = 1/fs
         self.lambda_opt = wavelength
         self.f0 = c/wavelength
         

@@ -15,7 +15,7 @@ MAINTAINER = "Armando P. Romeu"
 MAINTAINER_EMAIL = "armandopr3009@gmail.com"
 URL = "https://github.com/armando-palacio/opticomlib.git"
 LICENSE = "MIT"
-VERSION = "0.4.3"
+VERSION = "0.4.4"
 
 setup(
     name=DISTNAME,

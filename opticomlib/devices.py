@@ -68,6 +68,7 @@ def PRBS(n=2**8,
     Examples:
         Using parameter **n**, this function generate a random sequence of lenght `n`. Internally it use ``numpy.random.randint`` function.
         
+        >>> from opticomlib import PRBS
         >>> PRBS(10).data
         array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1], dtype=uint8)
 
@@ -127,46 +128,15 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
         ValueError: If `Vout` is not between -15 and 15 Volts.
 
     Example:
-        >>> from opticomlib.typing import gv
-        >>> from opticomlib.devices import DAC
-        >>> import matplotlib.pyplot as plt
+        >>> from opticomlib import DAC, gv
         >>> 
         >>> gv(sps=8) # set samples per bit
         >>>
-        >>> el_sig = DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).print().plot('r.-').grid()
-        signal : [-1.23381818e-16-2.22738516e-16j  6.16909091e-17-1.05272464e-16j
-        3.77856818e-16+3.15867786e-16j  1.30129261e-16-1.11127678e-16j
-        -3.13522659e-16-1.41649623e-16j -8.08177643e-17+1.58454134e-16j
-        -5.97961758e-17-2.14742015e-16j -3.46122447e-16-5.92476154e-16j
-        -2.38883560e-16-1.06387143e-16j  1.25299722e-16+1.21935938e-16j
-        3.33675895e-11-2.89289740e-17j  2.68302800e-07-7.08598803e-18j
-        1.49408434e-04-5.72763272e-18j  1.04942785e-02+9.24140715e-17j
-        1.60416483e-01+2.67463542e-16j  8.58893815e-01+1.89368799e-16j
-        2.28523831e+00+4.84925496e-16j  3.79394843e+00+4.10134298e-16j
-        4.67939835e+00+4.35662674e-16j  4.96186576e+00+2.07554360e-16j
-        5.00000000e+00+0.00000000e+00j  4.96186576e+00+5.89390367e-16j
-        4.67939835e+00+1.13658240e-16j  3.79394843e+00+4.06283585e-16j
-        2.28523831e+00+1.97133487e-16j  8.58893815e-01+2.02443479e-16j
-        1.60416483e-01+1.40898933e-16j  1.04942785e-02+1.93072645e-16j
-        1.49408434e-04+9.28272207e-17j  2.68302799e-07-2.09299736e-16j
-        3.33672991e-11+8.00938377e-17j  3.95243922e-16+2.04687306e-16j
-        1.44481597e-16+1.47792739e-17j -2.48681540e-16+1.21935938e-16j
-        -8.71750414e-17+1.84774604e-16j -1.41348280e-16+2.06617556e-16j
-        -7.73094327e-17-1.12598266e-16j -1.73505682e-17+9.10904830e-17j
-        -9.25363636e-17+3.54082838e-16j  3.08454545e-16+1.87892798e-16j]
-        noise : [0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j
-        0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j
-        0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j
-        0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]
-        len : 40
-        power : 4.0e+00 W (35.99 dBm)
-        size : 1872 bytes
-        time : 0.0
-        >>>plt.show()
+        >>> DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r.-').grid().show()
 
-    .. image:: ../_images/DAC_example1.png
-        :alt: Descripción de la imagen
-        :align: center
+        .. image:: /_images/DAC_example1.svg
+            :alt: DAC example 1
+            :align: center
     """
     tic()
     if not isinstance(input, binary_sequence):
@@ -214,6 +184,8 @@ def PM(op_input: optical_signal,
     """
     Optical Phase Modulator (PM) model. Modulate de phase of the input optical signal through input electrical signal.
 
+    .. math:: E_{out} = E_{in} \\cdot e^{j\\pi \\frac{V_{in}}{V_{\\pi}}} 
+
     Args:
         op_input (optical_signal): optical signal to be modulated
         el_input (float | ndarray | electrical_signal): driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.
@@ -228,50 +200,51 @@ def PM(op_input: optical_signal,
         ValueError: If ``el_input`` is ndarray or `electrical_signal` but, length is not equal to ``op_input`` length.
 
     Example:
-        >>> from opticomlib.typing import optical_signal, gv
-        >>> from opticomlib.devices import PM
-        >>> 
-        >>> import numpy as np
-        >>> import matplotlib.pyplot as plt
-        >>>
-        >>> gv(sps=8, R=1e9) # set samples per bit and bitrate
-        >>>
-        >>> op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
-        >>> t = op_input.t()*1e9
-        >>> w = 4*np.pi/t[-1]
-        >>>
-        >>> # Constant phase
-        >>> output = PM(op_input, el_input=2.5, Vpi=5)
-        >>>
-        >>> plt.subplot(311)
-        >>> plt.plot(t, op_input.phase()[0] - w*t, 'r', t, output.phase()[0] - w*t, 'b', lw=3)
-        >>> plt.xticks([])
-        >>> plt.ylabel('Fase [rad]')
-        >>> plt.legend(['input', 'output'], bbox_to_anchor=(1, 1), loc='upper left')
-        >>> plt.title(r'Constant phase change ($\Delta f=0$)')
-        >>>
-        >>> # Lineal phase
-        >>> output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
-        >>>
-        >>> plt.subplot(312)
-        >>> plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-        >>> plt.xticks([])
-        >>> plt.ylabel('Fase [rad]')
-        >>> plt.title(r'Linear phase change  ($\Delta f \\rightarrow cte.$)')
-        >>>
-        >>> # Quadratic phase
-        >>> output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
-        >>> 
-        >>> plt.subplot(313)
-        >>>
-        >>> plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-        >>> plt.xlabel('Tiempo [ns]')
-        >>> plt.ylabel('Fase [rad]')
-        >>> plt.title(r'Quadratic phase change ($\Delta f \\rightarrow linear$)')
-        >>> plt.tight_layout()
-        >>> plt.show()
+        .. code-block:: python
+            :linenos:
+            :emphasize-lines: 13, 23, 32
+            
+            from opticomlib import PM, optical_signal, gv
+            import matplotlib.pyplot as plt
+            import numpy as np
+           
+            gv(sps=8, R=1e9) # set samples per bit and bitrate
+           
+            op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
+            t = op_input.t()*1e9
+            w = 4*np.pi/t[-1]
+           
+            # Constant phase
+            output = PM(op_input, el_input=2.5, Vpi=5)
+           
+            plt.subplot(311)
+            plt.plot(t, op_input.phase()[0] - w*t, 'r', t, output.phase()[0] - w*t, 'b', lw=3)
+            plt.xticks([])
+            plt.ylabel('Fase [rad]')
+            plt.legend(['input', 'output'], bbox_to_anchor=(1, 1), loc='upper left')
+            plt.title(r'Constant phase change ($\Delta f=0$)')
+           
+            # Lineal phase
+            output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
+           
+            plt.subplot(312)
+            plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
+            plt.xticks([])
+            plt.ylabel('Fase [rad]')
+            plt.title(r'Linear phase change  ($\Delta f \\rightarrow cte.$)')
+           
+            # Quadratic phase
+            output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
+            
+            plt.subplot(313)
+            plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
+            plt.xlabel('Tiempo [ns]')
+            plt.ylabel('Fase [rad]')
+            plt.title(r'Quadratic phase change ($\Delta f \\rightarrow linear$)')
+            plt.tight_layout()
+            plt.show()
 
-    .. image:: ../_images/PM_example1.png
+    .. image:: /_images/PM_example1.svg
         :alt: result of PM example 1
         :align: center
     """
@@ -313,6 +286,9 @@ def MZM(op_input: optical_signal,
         BW: float=40e9):
     """
     Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2 Push-Pull config). 
+
+    .. math:: 
+        E_{out} = E_{in} \\cdot \\sqrt{l} \\cdot \\left( \\cos(\\frac{\\pi}{2V_{\\pi}}(V_{in}+V_{bias})) + j \\frac{\\eta}{2} \\sin(\\frac{\\pi}{2V_{\\pi}}(V_{in}+V_{bias})) \\right) 
     
     See model theory in `Tetsuya Kawanishi - Electro-optic Modulation for Photonic Networks (Textbooks in Telecommunication Engineering)-Springer (2022)` Chapter 4.3.
     
@@ -357,7 +333,7 @@ def MZM(op_input: optical_signal,
     output.signal = op_input.signal * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
 
     if np.sum(op_input.noise):
-        output.noise = op_input.noise * loss * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
+        output.noise = op_input.noise * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
 
     t_ = toc()
     output = LPF(output, BW)
@@ -448,8 +424,12 @@ def EDFA(input: optical_signal,
 
 def DM(input: optical_signal, D: float):
     """
-    Dispersive Medium. Emulates a medium with only the dispersion property, i.e., only `beta_2` different from zero.
-    
+    Dispersive Medium. Emulates a medium with only the dispersion property, i.e., only β2 different from zero.
+
+    .. math:: H(\\omega) = e^{-j \\frac{D}{2} \\omega^2}
+
+    .. math :: E_{out}(t) = \\mathcal{F}^{-1} \\left\\{ H(\\omega) \\cdot \\mathcal{F} \\left\\{ E_{in}(t) \\right\\} \\right\\}
+
     Args:
         input (optical_signal): The input optical signal.
         D (float): The dispersion coefficient of the medium (β2·z), in [ps^2].
@@ -459,6 +439,40 @@ def DM(input: optical_signal, D: float):
     
     Raises:
         TypeError: If ``input`` is not an optical signal.
+
+    Example:
+        .. code-block:: python
+            :linenos:
+            :emphasize-lines: 12
+
+            from opticomlib import DM, DAC, optical_signal, gv, idbm
+
+            import matplotlib.pyplot as plt
+            import numpy as np
+
+            gv(N=7, sps=32, R=10e9)
+
+            signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
+            input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5 )
+
+            output = DM(input, D=4000)
+
+            plt.subplot(211)
+            input.plot('r-', label='input', lw=3)
+            output.plot('b-', label='output', lw=3).grid()
+
+            plt.subplot(212)
+            plt.plot(gv.t[:-1]*1e9, np.diff(input.phase()[0])/gv.dt*1e-9, 'r-', lw=3)
+            plt.plot(gv.t[:-1]*1e9, np.diff(output.phase()[0])/gv.dt*1e-9, 'b-', lw=3)
+            input.grid()
+            plt.xlabel('Time (ns)')
+            plt.ylabel(r'$f_i(t)$ (GHz)')
+            plt.ylim(-150, 150)
+            plt.show()
+
+        .. image:: /_images/DM_example1.svg
+            :alt: result of DM example 1
+            :align: center
     """
     tic()
 
@@ -507,10 +521,7 @@ def FIBER(input: optical_signal,
         TypeError: If ``input`` is not an optical signal.
 
     Example:
-        >>> from opticomlib.typing import optical_signal, gv
-        >>> from opticomlib.devices import FIBER, DAC
-        >>> from opticomlib.utils import idbm
-        >>> import matplotlib.pyplot as plt
+        >>> from opticomlib import FIBER, DAC, optical_signal, gv, idbm
         >>>
         >>> gv(sps=32, R=10e9)
         >>>
@@ -521,10 +532,9 @@ def FIBER(input: optical_signal,
         100%|█████████████████████████████████████████████| 100.0/100 [00:00<00:00, 12591.73it/s]
         >>>
         >>> input.plot('r-', label='input', lw=3)
-        >>> output.plot('b-', label='output', lw=3).grid()
-        >>> plt.show()
+        >>> output.plot('b-', label='output', lw=3).grid().show()
 
-    .. image:: ../_images/FIBER_example1.png
+    .. image:: /_images/FIBER_example1.svg
         :alt: result of FIBER example 1
         :align: center
     """
@@ -599,23 +609,31 @@ def LPF(input: Union[ndarray, electrical_signal],
         TypeError: If ``input`` is not of type ndarray or electrical_signal.
 
     Example:
-        >>> from opticomlib.typing import electrical_signal, gv
-        >>> from opticomlib.devices import LPF
-        >>>
-        >>> import numpy as np
-        >>>
-        >>> gv(N = 10, sps=128, R=1e9)
-        >>>
-        >>> t = gv.t
-        >>> c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
-        >>>
-        >>> input = electrical_signal( np.sin( np.pi*c*t**2) )
-        >>> output = LPF(input, 10e9)
-        >>>
-        >>> input.psd('r', label='input', lw=2)
-        >>> output.psd('b', label='output', lw=2).show()
+        .. code-block:: python
+            :linenos:
+            :emphasize-lines: 11
+
+            from opticomlib import LPF, electrical_signal, gv
+            import matplotlib.pyplot as plt
+            import numpy as np
+           
+            gv(N = 10, sps=128, R=1e9)
+           
+            t = gv.t
+            c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
+           
+            input = electrical_signal( np.sin( np.pi*c*t**2) )
+            output = LPF(input, 10e9)
+           
+            input.psd('r', label='input', lw=2)
+            output.psd('b', label='output', lw=2)
+            
+            plt.xlim(-30,30)
+            plt.ylim(-20, 5)
+            plt.annotate('-6 dB', xy=(10, -5), xytext=(10, 2), c='r', arrowprops=dict(arrowstyle='<->'), fontsize=12, ha='center', va='center')
+            plt.show()
     
-    .. image:: ../_images/LPF_example1.png
+    .. image:: /_images/LPF_example1.svg
         :alt: result of LPF example 1
         :align: center
     """
@@ -797,21 +815,23 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
         eye: Object of the Eye class with all the parameters and metrics of the eye diagram.
 
     Example:
-        >>> from opticomlib.typing import gv
-        >>> from opticomlib.devices import PRBS, DAC, GET_EYE
-        >>>
-        >>> import numpy as np
-        >>>
-        >>> gv(N = 10, sps=64, R=1e9)
-        >>>
-        >>> y = DAC( PRBS(), pulse_shape='gaussian')
-        >>> y.noise = np.random.normal(0, 0.05, y.len())
-        >>>
-        >>> GET_EYE(y, sps_resamp=512).plot() # without interpolation
+        .. code-block:: python
+            :linenos:
+            :emphasize-lines: 9
 
-    .. image:: ../_images/GET_EYE_example1.png
-        :alt: result of GET_EYE example 1
-        :align: center
+            from opticomlib import PRBS, DAC, GET_EYE, gv
+            import numpy as np
+           
+            gv(sps=64, R=1e9)
+           
+            y = DAC( PRBS(), pulse_shape='gaussian')
+            y.noise = np.random.normal(0, 0.05, y.len())
+           
+            GET_EYE(y, sps_resamp=512).plot() # with interpolation
+
+        .. image:: /_images/GET_EYE_example1.png
+            :alt: result of GET_EYE example 1
+            :align: center
     """
     tic()
 
@@ -1163,31 +1183,7 @@ def animated_fiber_propagation_with_psd(input: optical_signal, M :int, length_: 
     plt.show()
 
 
-
 if __name__ == '__main__':
-    # def Spectrogram(signal, T_L):
-    #     N = signal.len()//T_L
-    #     y = np.zeros(N*T_L)
-    #     for i in range(N):
-    #         y[i*T_L:(i+1)*T_L] = fftshift(np.abs( fft(signal.signal[i*T_L:(i+1)*T_L]) )**2)
-    #     y = y.reshape((N, T_L)).T
-    #     return y
-
-
-    # sps = 2048
-    # gv(M=8, sps=sps, R=10e9)
-    # y = DAC('0 1 0 1 0 0 1', pulse_shape='gaussian', T=sps, m=1, c=-50)
-    # N_TL = 128
-    # # g = Spectrogram(y, N_TL)
-    # # f = y.w()/(2*np.pi)
-    # # plt.imshow(g, cmap='hot', aspect='auto', interpolation='blackman', extent=[y.t().min()*1e9, y.t().max()*1e9, f.min()*1e-9, f.max()*1e-9])
-    # # plt.ylim(-1000,1000)
-    # # y.plot(ylabel='Voltaje (V)',c='red').grid()
-    # plt.figure()
-    # plt.plot(y.t(), y.abs('signal'))
-    # # for i in range(y.len()//N_TL):
-    # #     plt.axvline(y.t()[i*N_TL], ls='--')
-    # plt.show()
     pass
 
 

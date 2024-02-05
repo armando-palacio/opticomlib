@@ -3,3 +3,4 @@ test.py
 build/*
 dist/*
 opticomlib.egg-info/*
+docs/build/*
