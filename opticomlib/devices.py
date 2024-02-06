@@ -203,7 +203,7 @@ def PM(op_input: optical_signal,
     Example:
         .. code-block:: python
             :linenos:
-            :emphasize-lines: 14, 24, 33
+            :emphasize-lines: 13, 23, 32
             
             from opticomlib.devices import PM
             from opicomlib import optical_signal, gv
@@ -445,7 +445,7 @@ def DM(input: optical_signal, D: float):
     Example:
         .. code-block:: python
             :linenos:
-            :emphasize-lines: 13
+            :emphasize-lines: 12
 
             from opticomlib.devices import DM, DAC
             from opticomlib import optical_signal, gv, idbm
@@ -615,7 +615,7 @@ def LPF(input: Union[ndarray, electrical_signal],
     Example:
         .. code-block:: python
             :linenos:
-            :emphasize-lines: 12
+            :emphasize-lines: 11
 
             from opticomlib.devices import LPF, electrical_signal
             from opticomlib import gv
