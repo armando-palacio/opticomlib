@@ -6,22 +6,6 @@ from .typing import (
     eye,
 )
 
-from .devices import (
-    PRBS,
-    DAC,
-    PM,
-    MZM,                  
-    BPF,                  
-    EDFA,                 
-    DM,                   
-    FIBER,                
-    LPF,    
-    PD,                    
-    ADC,    
-    GET_EYE,
-    SAMPLER,   
-)
-
 from .utils import (
     dec2bin,
     str2array,
@@ -35,3 +19,11 @@ from .utils import (
     gaus,
     Q,
 )
+
+import os 
+
+if os.path.isfile('../VERSION.txt'):
+    __version__ = open('../VERSION.txt').read()
+else:
+    __version__ = None
+del os

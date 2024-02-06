@@ -6,10 +6,15 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath('../../'))
+
 project = 'opticomlib'
 copyright = '2024, Ing. Armando P. Romeu'
 author = 'Ing. Armando P. Romeu'
-release = '0.4.3'
+release = open('VERSION.txt').read()
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -46,10 +51,6 @@ master_doc = 'index'
 
 exclude_patterns = ['_build']
 
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath('../../'))
 
 python_display_short_literal_types = True
 autosummary_generate = True

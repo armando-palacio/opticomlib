@@ -68,7 +68,7 @@ def PRBS(n=2**8,
     Examples:
         Using parameter **n**, this function generate a random sequence of lenght `n`. Internally it use ``numpy.random.randint`` function.
         
-        >>> from opticomlib import PRBS
+        >>> from opticomlib.devices import PRBS
         >>> PRBS(10).data
         array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1], dtype=uint8)
 
@@ -128,7 +128,8 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
         ValueError: If `Vout` is not between -15 and 15 Volts.
 
     Example:
-        >>> from opticomlib import DAC, gv
+        >>> from opticomlib.devices import DAC
+        >>> from opticomlib import gv
         >>> 
         >>> gv(sps=8) # set samples per bit
         >>>
@@ -202,9 +203,10 @@ def PM(op_input: optical_signal,
     Example:
         .. code-block:: python
             :linenos:
-            :emphasize-lines: 13, 23, 32
+            :emphasize-lines: 14, 24, 33
             
-            from opticomlib import PM, optical_signal, gv
+            from opticomlib.devices import PM
+            from opicomlib import optical_signal, gv
             import matplotlib.pyplot as plt
             import numpy as np
            
@@ -443,9 +445,10 @@ def DM(input: optical_signal, D: float):
     Example:
         .. code-block:: python
             :linenos:
-            :emphasize-lines: 12
+            :emphasize-lines: 13
 
-            from opticomlib import DM, DAC, optical_signal, gv, idbm
+            from opticomlib.devices import DM, DAC
+            from opticomlib import optical_signal, gv, idbm
 
             import matplotlib.pyplot as plt
             import numpy as np
@@ -521,7 +524,8 @@ def FIBER(input: optical_signal,
         TypeError: If ``input`` is not an optical signal.
 
     Example:
-        >>> from opticomlib import FIBER, DAC, optical_signal, gv, idbm
+        >>> from opticomlib.devices import FIBER, DAC
+        >>> from opticomlib import optical_signal, gv, idbm
         >>>
         >>> gv(sps=32, R=10e9)
         >>>
@@ -611,9 +615,10 @@ def LPF(input: Union[ndarray, electrical_signal],
     Example:
         .. code-block:: python
             :linenos:
-            :emphasize-lines: 11
+            :emphasize-lines: 12
 
-            from opticomlib import LPF, electrical_signal, gv
+            from opticomlib.devices import LPF, electrical_signal
+            from opticomlib import gv
             import matplotlib.pyplot as plt
             import numpy as np
            
@@ -817,9 +822,10 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
     Example:
         .. code-block:: python
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
-            from opticomlib import PRBS, DAC, GET_EYE, gv
+            from opticomlib.devices import PRBS, DAC, GET_EYE
+            from opticomlib import gv
             import numpy as np
            
             gv(sps=64, R=1e9)
