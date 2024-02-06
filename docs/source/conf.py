@@ -11,10 +11,12 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../../'))
 
+version_path = '/'.join([sys.path[0],'VERSION.txt'])
+
 project = 'opticomlib'
 copyright = '2024, Ing. Armando P. Romeu'
 author = 'Ing. Armando P. Romeu'
-release = open('VERSION.txt').read()
+release = open(version_path).read()
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
