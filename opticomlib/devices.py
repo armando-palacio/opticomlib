@@ -806,7 +806,7 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
     return output
 
 
-def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, sps_resamp: int=None):
+def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: int=4096, sps_resamp: int=None):
     """Get Eye Params.
     
     Estimates all the fundamental parameters and metrics of the eye diagram of the input electrical signal.
@@ -880,6 +880,14 @@ def GET_EYE(input: Union[electrical_signal, optical_signal], nslots: int=4096, s
             return levels[np.argmin( np.abs( np.repeat([levels],len(data),axis=0) - np.reshape(data,(-1,1)) ),axis=1 )]
 
     eye_dict = {}
+
+    if isinstance(input, ndarray):
+        if input.ndim == 2:
+            input = optical_signal(input)
+        elif input.ndim == 1:
+            input = electrical_signal(input)
+        else:
+            raise ValueError("The `input` must be a 1D or 2D array.")
 
     sps = input.sps(); eye_dict['sps'] = sps
     dt = input.dt(); eye_dict['dt'] = dt

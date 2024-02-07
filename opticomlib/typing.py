@@ -698,7 +698,15 @@ class eye():
         return self
     
 
-    def plot(self, medias_=True, legend_=True, show_=True, save_=False, filename=None, style: Literal['dark', 'light']='dark', cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter'):
+    def plot(self, 
+             medias_=True, 
+             legend_=True, 
+             show_=True, 
+             save_=False, 
+             filename=None, 
+             style: Literal['dark', 'light']='dark', 
+             cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter',
+             label: str = ''):
         """Plot eye diagram.
 
         Args:
@@ -709,6 +717,7 @@ class eye():
             save_ (bool, Optional): if ``True`` save plot.
             filename (str, Optional): filename to save plot.
             cmap (str, Optional): colormap to plot.
+            label (str, Optional): label to show in title.
 
         Returns:
             eye: Same object.
@@ -719,12 +728,10 @@ class eye():
         if style == 'dark':
             plt.style.use('dark_background')
             t_opt_color = '#60FF86'
-            r_th_color = '#FF345F'
             means_color = 'white'
             bgcolor='black'
         elif style == 'light':
             t_opt_color = 'green'#'#229954'
-            r_th_color = 'red'#'#B03A2E'
             means_color = '#5A5A5A'
             bgcolor='white'
         else:
@@ -735,7 +742,9 @@ class eye():
         fig, ax = plt.subplots(1,2, gridspec_kw={'width_ratios': [4,1],  
                                                 'wspace': 0.03},
                                                 figsize=(8,5))
-        plt.suptitle('Eye diagram')
+        if label:
+            label = ', '+label
+        plt.suptitle(f'Eye diagram{label}')
         
         ax[0].set_xlim(-1-dt,1)
         ax[0].set_ylim(self.mu0-4*self.s0, self.mu1+4*self.s1)
