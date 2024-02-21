@@ -19,19 +19,25 @@ Models for Opto-Electronic devices (:mod:`opticomlib.devices`)
    ADC                   -- Analog-to-digital converter (ADC) model
    GET_EYE               -- Eye diagram parameters and metrics estimator
    SAMPLER               -- Sampler device
+   FBG                   -- Fiber Bragg Grating (FBG) model
 """
 
 
 """Basic physical models for optical/electronic components."""
 import numpy as np
 import scipy.signal as sg
+from scipy.integrate import solve_ivp
 from typing import Literal, Union
 from numpy import ndarray
-from scipy.constants import pi, k as kB, e, h
-from numpy.fft import fft, ifft, fftshift
+from scipy.constants import pi, k as kB, e, h, c
+from numpy.fft import fft, ifft, fftshift, ifftshift
 import matplotlib.pyplot as plt
 import sklearn.cluster as sk
 from tqdm.auto import tqdm # barra de progreso
+from numpy.lib.scimath import sqrt as csqrt
+
+import warnings
+
 
 from .typing import (
     electrical_signal,
@@ -45,8 +51,11 @@ from .utils import (
     generate_prbs,
     idbm,
     idb,
+    db,
     tic,
     toc,
+    rcos,
+    si
 )
 
 
@@ -1011,6 +1020,366 @@ def SAMPLER(input: electrical_signal, _eye_: eye):
 
     output.execution_time = toc()
     return output
+
+
+def FBG(input: optical_signal, 
+        neff: float=1.45,
+        v: float=1.0,
+        landa_D: float=None,
+        fc: float=None,
+        kL: float=None,
+        L: float=None,
+        N: int=None,
+        dneff: float=None,
+        vdneff: float=None,
+        apodization: Literal['uniform', 'rcos', 'gaussian', 'parabolic', 'theory'] = 'uniform',
+        F: float=0,
+        print_params: bool=True,
+        filtfilt: bool=True,
+        retH: bool=False):
+    """**Fiber Bragg Grating**.
+
+    This function numerically calculates the reflection (transfer function H in reflection) of the grating.
+    We have used a method where we reduce the pair of coupled-wave equations to a single Riccati differential equation, which
+    can then be solved by tested numerical techniques such as the Runge-Kutta method.
+    
+    In order to design the grating, combination of the following parameters can be used:
+    
+        1. **neff**, **v**, **fc**, (**dneff** | **vdneff**), (**N** | **kL** | **L**)
+        2. **neff**, **v**, **lambdaD**, (**dneff** | **vdneff**), (**N** | **kL** | **L**)
+        3. **neff**, **v**, **lambdaD**, **kL**, (**N** | **L**)
+
+    Bandwidth is governed essentially by three parameters:
+
+        1. Bragg wavelength (:math:`\\lambda_D`). Bandwidth is proportional to :math:`\\lambda_D`.
+        2. Product of visibility and effective index change (:math:`v\\delta n_{eff}`). If :math:`v\\delta n_{eff}` is small, the bandwidth is small.
+        3. Length of the grating (:math:`L`). Bandwidth is inversely proportional to :math:`L`.
+
+        On the other hand, chirp parameter :math:`F` can increase the bandwidth of the grating as well.
+
+    Parameters
+    ----------
+    input : optical_signal
+        The input optical signal.
+    neff : float, optional
+        Effective refractive index of core fiber.
+    v : float, optional
+        Visibility of the grating.
+    landa_D : float, optional
+        Bragg wavelength (resonance wavelength).
+    fc : float, optional
+        Center frequency of the grating. Default is global variable f0.
+    kL : float, optional
+        Product of the coupling coefficient and the length of the grating.
+    L : float, optional
+        Length of the grating. 
+    N : int, optional
+        Number of period along grating length.
+    dneff : float, optional
+        Effective index change.
+    vdneff : float, optional
+        Effective index change multiplied by visibility (case of approximation σ->0).
+    apodization : str, optional, default: 'uniform'
+        Apodization function.
+    F : float, optional, default: 0
+        Chirp parameter. 
+    filtfilt : bool, optional, default: True
+        If True, group delay will be corrected in output signal.
+    retH : bool, optional, default: False
+        If True, the function will return the reflectivity (H(w)) of the grating.
+
+    Returns
+    -------
+    output: optical_signal
+        The reflected optical signal
+    H: ndarray, optional
+        Frequency response of grating fiber H(w), only returned if ``retH=True`` 
+
+    Raises
+    ------
+    TypeError
+        If ``input`` is not an ``optical_signal``.
+    ValueError
+        If the parameters are not correctly specified.
+
+    Warns
+    -----
+    UserWarning
+        If the apodization function is not recognized, a warning will be issued and the function will use uniform apodization.
+    UserWarning
+        If bandwith is too large, the function will issue a warning and will use a default bandwidth of `fs`.
+        
+    Notes
+    -----
+    Following coupled-wave theory, we assume a periodic, single-mode
+    waveguide with an electromagnetic field which can be represented by
+    two contradirectional coupled waves in the form [1]_:
+
+    .. math:: E(z) = R(z)e^{-j\\beta_0 z} + S(z)e^{j\\beta_0 z}
+
+    where R and S are the complex amplitudes of the forward- and backward-running mode. These amplitudes are linked by the standard
+    coupled-wave equations [2]_:
+
+    .. math::
+        \\begin{align*}
+            R' &= -j\\hat{\\sigma} R - j\\kappa S \\\\
+            S' &= j\\hat{\\sigma} S + j\\kappa R
+        \\end{align*}
+    
+    The coupling coefficient :math:`\\kappa` is related to the amplitude of the waveguide perturbation, also known as AC coupling coefficient and is given by:
+
+    .. math:: \\kappa = \\frac{\\pi}{\\lambda}v\\delta n_{eff}
+
+    :math:`\\hat{\\sigma}` is defined as:
+
+    .. math:: \\hat{\\sigma} = \\delta + \\sigma - \\frac{1}{2}\\phi'
+
+    where :math:`\\delta` indicates the frequency desviation from the Bragg condition, :math:`\\sigma` is the DC coupling coefficient and :math:`\\phi` is the phase-shift 
+    of the periodicity:
+
+    .. math::
+        \\begin{align*}
+            \\delta &= 2\\pi n_{eff} \\left( \\frac{1}{\\lambda} - \\frac{1}{\\lambda_{D}} \\right) \\\\
+            \\sigma &= \\frac{2}{v}\\kappa = \\frac{2\\pi}{\\lambda}\\delta n_{eff} \\\\
+            \\phi' &= 2Fz/L^2
+        \\end{align*}
+
+    :math:`F` parameter is the dimensionless chirp parameter, which is defined as:
+    
+    .. math:: F = 2\\pi N \\Delta L/L
+
+    We consider, now, structures in which the coupling coefficients :math:`\\sigma(z),\\: \\kappa(z)` and the grating phase :math:`\\phi(z)` are slowly varying functions of z,
+    indicating the nonuniformity in the grating parameters. We assume that the structure has a length :math:`L` and extends from :math:`z = —L/2` to
+    :math:`z = L/2`. The boundary conditions for our scattering problem are then:
+
+    .. math:: R(-L/2) = 1, \\: S(L/2) = 0
+
+    The key to the reduction of the coupled-wave equations to a single differential equation is the definition of a local reflection coefficient :math:`\\rho(z)`,
+    
+    .. math:: \\rho(z) = \\frac{S}{R}
+    
+    The z-derivative of this is
+    
+    .. math:: \\rho' = \\frac{S'}{R} - \\frac{S}{R^2}R' = \\frac{S'}{R} - \\rho R'
+
+    Combining the above expressions, we obtain a Riccati differential equation for :math:`\\rho` which is of the form
+    
+    .. math:: \\rho' = j\\hat{\\sigma}\\rho + j\\kappa(1+\\rho^2)
+
+    The boundary condition for this equation is :math:`\\rho(L/2) = 0`.  
+
+    References
+    ----------
+    .. [1] Turan Erdogan, "Fiber Grating Spectra," VOL. 15, NO. 8, AUGUST 1997. doi: https://doi.org/10.1109/50.618322
+    .. [2] H. KOGELNIK, "Filter Response of Nonuniform Almost-Periodic Structures" Vol. 55, No. 1, January 1976. doi: https://doi.org/10.1002/j.1538-7305.1976.tb02062.x 
+    
+    Example:
+        .. code-block:: python
+            :linenos:
+
+            from opticomlib import optical_signal, gv, pi, db, plt, np
+            from opticomlib.devices import FBG
+
+            gv(fs=100e9)
+
+            x = optical_signal(np.ones(2**12))
+            f = x.w(shift=True)/2/pi*1e-9
+
+            for apo in ['uniform', 'parabolic', 'rcos', 'gaussian']:
+                _,H = FBG(x, fc=gv.f0, vdneff=1e-4, kL=16, apodization=apo, retH=True)
+                plt.plot(f, db(np.abs(H)**2), lw=2, label=apo)
+
+            plt.xlabel('Frequency (Hz)')
+            plt.ylabel('Magnitude (dB)')
+            plt.legend()
+            plt.grid(alpha=0.3)
+            plt.ylim(-100,)
+            plt.xlim(-20, 20)
+            plt.show()
+    
+        .. image:: /_images/FBG_example1.svg
+            :alt: result of FBG example 1
+            :align: center
+    """
+    tic()
+
+    if not isinstance(input, optical_signal):
+        raise TypeError("`input` must be of type (optical_signal).")
+    
+    if fc:
+        if dneff:
+            if not (L or kL or N):
+                raise ValueError("If `fc` and `dneff` are specified, `L`, `kL` or `N` must be specified.")
+            
+            landa_D = 1/(1 + dneff/neff)*c/fc
+            vdneff = dneff*v
+
+            if kL:
+                L = kL / (pi*dneff*v / landa_D)
+            elif N:
+                L = N * landa_D / (2*neff) 
+        
+        if vdneff:
+            if not (L or kL or N):
+                raise ValueError("If `fc` and `vdneff` are specified, `L`, `kL` or `N` must be specified.")
+            
+            landa_D = c/fc
+            dneff = 0
+
+            if kL:
+                L = kL / (pi*vdneff / landa_D)
+            elif N:
+                L = N * landa_D / (2*neff)
+        else:
+            raise ValueError("If `fc` is specified, `dneff` or `vdneff` must be specified.")
+    
+    elif landa_D:
+        if dneff:
+            if not (L or kL or N):
+                raise ValueError("If `landa_D` and `dneff` are specified, `L`, `kL` or `N` must be specified.")
+            
+            vdneff = dneff*v
+
+            if kL:
+                L = kL / (pi*dneff*v / landa_D)
+            elif N:
+                L = N * landa_D / (2*neff) 
+
+        if vdneff:
+            if not (L or kL or N):
+                raise ValueError("If `landa_D` and `vdneff` are specified, `L`, `kL` or `N` must be specified.")
+            
+            dneff = 0
+
+            if kL:
+                L = kL / (pi*vdneff / landa_D)
+            elif N:
+                L = N * landa_D / (2*neff) 
+
+        elif kL:
+            if not (L or N):
+                raise ValueError("If `landa_D` and `kL` are specified, `L` or `N` must be specified.")
+            if N:
+                L = N * landa_D / (2*neff)
+            
+            dneff = kL*landa_D / (pi*v*L)
+            vdneff = dneff*v
+
+        else: 
+            raise ValueError("If `landa_D` is specified, `dneff`, 'vdneff' or `kL` must be specified.")
+    
+    else:
+        raise ValueError("Either `fc` or `landa_D` must be specified.")
+
+ 
+    λ_D = landa_D  # Bragg wavelength
+    Λ = λ_D / (2*neff)  # period of the grating
+    
+    λc = (1+dneff/neff)*λ_D # center wavelength of the grating
+    fc = c/λc # center frequency of the grating
+    
+    λ =  2*pi*c / (input.w(shift=True) + 2*pi*gv.f0) # wavelength vector, centered at global variable f0
+    δλ = λ[0] - λ[1] # wavelength resolution
+
+    N = int(L/Λ) # number of periods of the grating
+
+    kL = pi/λ_D*vdneff*L
+
+    δ = 2*pi*neff * (1/λ - 1/λ_D)
+    s = 2*pi*dneff / λ    # self-coupling coefficient DC
+    k = pi*vdneff / λ  # self-coupling coefficient AC
+    
+    if apodization == 'theory':
+        sigma_ = δ + s
+
+        q = csqrt(k**2 - sigma_**2)
+
+        ## reflection coefficient (frequency response H(w))
+        H = (-k * np.sinh(q*L)) / (sigma_ * np.sinh(q*L) + 1j*q* np.cosh(q*L))
+
+    else:
+        def ode_func(z, rho, delta, sigma, k, F, apodization): # ODE function, normalized to L (z/L, δL, σL, kL, φ'L)
+            if apodization == 'rcos':
+                p = rcos(z, alpha=1, T=2)
+            elif apodization == 'gaussian':
+                p = np.exp(-4*np.log(2)*z**2/(1/3)**2)
+            elif apodization == 'parabolic':
+                p = 1 - (2*z)**2
+            elif apodization == 'uniform':
+                p = 1
+            else:
+                warnings.warn("Apodization function not recognized. Using uniform apodization.")
+                p = 1
+
+            k = k*p
+            sigma = sigma*p
+            sigma_ = delta + sigma - F*z
+
+            return -2j*sigma_*rho - 1j*k*(1+rho**2)
+        
+        δ = δ[:, np.newaxis] * L
+        s = s[:, np.newaxis] * L
+        k = k[:, np.newaxis] * L
+
+        rho0 = np.zeros_like(λ, dtype=complex)  # Initial value 
+        sol = solve_ivp(ode_func, [0.5, -0.5], rho0, method='RK45', args=(δ, s, k, F, apodization), vectorized=True)
+        H = sol.y[:,-1]
+
+    
+    y = np.abs(H)
+
+    peaks,_ = sg.find_peaks(y)
+    H_max = y[peaks].max()
+    
+    if (y>0.5).all():
+        warnings.warn("Bandwidth of the grating is too large for current sampling rate (`fs`). Consider increasing `fs`.")
+        bandwith_str = f' - Δf = >{si(gv.fs,"Hz")} (Δλ = >{si(gv.fs*c/fc**2,"m")})'
+    else:
+        r = sg.peak_widths(y, peaks)
+
+        BW_λ = r[0].max()*δλ
+        BW_f = fc**2*BW_λ/c
+
+        bandwith_str = f' - Δf = {si(BW_f,"Hz")} (Δλ = {si(BW_λ,"m")})'
+
+    ## Print parameters of the grating
+    if print_params:
+        print('\n*** Fiber Bragg Grating Features ***')
+        print(f' - Λ = {si(Λ,"m")}')
+        print(f' - N = {N}')
+        print(f' - L = {si(L,"m")}')
+        print(f' - λo = {si(c/fc,"m",4)}')
+        print(bandwith_str)
+        print(f' - ρo = {y.max():.2f}')
+        print(f' - loss = {-db(H_max**2):.1f} dB')
+        print(f' - vδneff = {vdneff:.0e}')
+        print(f' - kL = {kL:.1f}')
+        if F:
+            print(f' - F = {F:.1f}')
+            print(f' - ΔΛ = {si(Λ*F/(2*pi*N),"m")}')
+        print('************************************\n')
+
+
+    if filtfilt: ## correct H(w)
+        phase = np.unwrap(np.angle(H)) # phase of H(w)
+
+        dw = 2*pi*gv.fs/input.len() # frequency resolution
+        tau_g = np.diff(phase, append=phase[-1]) / dw # group delay
+        i = np.argmin( np.abs(λ - c/fc) ) # index of the center wavelength
+
+        H = H * np.exp(-1j * input.w(shift=True) * tau_g[i]) # corrected H(w)
+
+    ## apply to input optical signal
+    output = ifft(fft(input.signal)*ifftshift(H))
+
+    output = optical_signal(output)
+    output.ejecution_time = toc()
+
+    if retH:
+        return output, H
+    return output
+
+
 
 
 

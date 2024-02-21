@@ -34,7 +34,7 @@ If you are a collaborator, you can clone the main repository directly and create
 #### Before opening a pull request, make sure that:
 
 1. Add the new feature in the appropriate module in library. For new modulations create a new module with the name of modulations and their specific functions. 
-2. If new functions are added, they must have their respective docstrings in [Google Style Format](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html). In module `opticomlib.devices` there are some examples too.
+2. If new functions are added, they must have their respective docstrings in [Numpy Style Format](https://numpydoc.readthedocs.io/en/latest/format.html). In module `opticomlib.devices` there are some examples too.
 3. Include at least one example of usage of the new feature.
 4. If new moddules are added they must have their title at the top of file in the following format:
     ```python

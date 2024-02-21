@@ -18,6 +18,9 @@ Utility functions (:mod:`opticomlib.utils`)
     idbm                   -- Convert a dBm value to a power value in W.
     gaus                   -- Gaussian function.
     Q                      -- Q(x) = 1/2*erfc(x/sqrt(2)) function.
+    bode                   -- Plot the Bode plot of a given transfer function H (magnitud, phase, group delay and dispersion).
+    rcos                   -- Raised cosine function.
+    si                     -- Unit of measure classifier.
 
 """
 
@@ -25,10 +28,15 @@ import re
 import numpy as np
 import timeit, time as tm
 import scipy.special as sp
+import scipy.signal as sg
 
 from numpy import ndarray
+from typing import Literal
 
-from scipy.constants import pi
+from scipy.constants import pi, c
+
+import matplotlib.pyplot as plt
+from numpy.fft import fft, ifft, fftfreq, fftshift
 
 import warnings
 
@@ -344,3 +352,168 @@ def Q(x):
     x = np.array(x)
     return 0.5*sp.erfc(x/2**0.5) 
 
+
+def bode(H: ndarray, 
+         fs: float, 
+         f0: float=None, 
+         xaxis: Literal['f','w','lambda']='f', 
+         disp: bool=False,
+         ret: bool=False, 
+         show_: bool=True, 
+         style: Literal['dark', 'light']='dark'):
+    """Plot the Bode plot of a given transfer function H (magnitud, phase and group delay).
+
+    Args:
+        H (ndarray): The transfer function.
+        fs (float): The sampling frequency.
+        f0 (float, Optional): The center frequency. Defaults to None. If not None, dispersion are also plotted.
+        xaxis (str, Optional): The x-axis (frequecy, angular velocity, wavelength). Defaults to ``'f'``.
+        disp (bool, Optional): Whether to plot the dispersion. Defaults to False.
+        ret (bool, Optional): Whether to return the plotted data. Defaults to False.
+        show_ (bool, Optional): Whether to display the plot. Defaults to True.
+        style (str, Optional): The plot style. Defaults to ``'dark'``.
+
+    Returns:
+        tuple[ndarray, ndarray, ndarray]: A tuple containing the frequency, magnitude, phase, and group delay if ``ret=True``.
+
+    Raises:
+        ValueError: if ``style`` is not "dark" or "light".
+
+    Example:
+        >>> from opticomlib bode
+        >>> H, phase, tau_g = bode(H, fs, ret=True, show_=False)
+    """
+    
+    f = fftshift(fftfreq(H.size, d=1/fs))
+    
+    if xaxis == 'f':
+        x = f*1e-9
+        xlabel = 'Frequency [GHz]'
+    elif xaxis == 'w':
+        x = 2*pi*f*1e-9
+        xlabel = r'$\omega$ [Grad/s]'
+    elif xaxis == 'lambda' and f0:
+        x = c/(f + f0)*1e9
+        xlabel = r'$\lambda$ [nm]'
+
+    if style == 'dark':
+        plt.style.use('dark_background')
+    elif style == 'light':
+        plt.style.use('default')
+    else:
+        raise ValueError('`style` must be "dark" or "light".')
+
+    nplots = 4 if disp and f0 else 3
+
+    _, axs = plt.subplots(nplots, 1, figsize=(8, 6), sharex=True, gridspec_kw={'hspace': 0.02})
+    plt.suptitle('Frequency Response')
+    
+    axs[0].plot(x, np.abs(H), 'r', lw=2)
+    axs[0].set_ylabel(r'$|H(\omega)|$', rotation=0, labelpad=20)
+    axs[0].grid(alpha=0.3)
+    axs[0].yaxis.set_label_position("left")
+    axs[0].yaxis.tick_right()
+    axs[0].set_ylim(-0.1,1.1)
+    
+
+    phase = np.unwrap(np.angle(H))
+    axs[1].plot(x, phase, 'b', lw=2)
+    axs[1].set_ylabel(r'$\phi$ [rad]', rotation=0, labelpad=20)
+    axs[1].grid(alpha=0.3)
+    axs[1].yaxis.set_label_position("left")
+    axs[1].yaxis.tick_right()
+
+    dw = 2*pi*fs/H.size
+    tau_g = sg.medfilt(np.diff(phase)/dw, 5)
+    axs[2].plot(x[:-1], tau_g*1e12, 'g', lw=2)
+    axs[2].set_ylabel(r'$\tau_g$ [ps]', rotation=0, labelpad=20)
+    axs[2].grid(alpha=0.3)
+    axs[2].yaxis.set_label_position("left")
+    axs[2].yaxis.tick_right()
+
+    if disp and f0: 
+        landa = c/(f + c/f0)
+        D = sg.medfilt(-2*pi*c/landa**2 * np.diff(phase, 2, append=phase[-2:])/dw**2, 5)
+        axs[3].plot(x, D*1e3, 'm', lw=2)
+        axs[3].set_ylabel(r'D [ps/nm]', rotation=0, labelpad=28)
+        axs[3].set_xlabel(xlabel)
+        axs[3].grid(alpha=0.3)
+        axs[3].yaxis.set_label_position("left")
+        axs[3].yaxis.tick_right()
+    else:
+        axs[2].set_xlabel(xlabel)
+
+    plt.style.use('default')
+
+    if show_:
+        plt.show()
+    
+    if ret:
+        return H, phase, tau_g
+
+
+def rcos(x, alpha, T):
+    """
+    Raised cosine function.
+
+    Args:
+        x (ndarray): input values.
+        alpha (float): roll-off factor.
+        T (float): symbol period.
+
+    Returns:
+        ndarray: raised cosine function.
+
+    References:
+        https://en.wikipedia.org/wiki/Raised-cosine_filter
+
+    Example:
+        >>> x = np.linspace(-1, 1, 64)
+        >>> H = rcos(x, alpha=1, T=1)
+    """
+    first_condition = np.abs(x) <= (1-alpha)/(2*T)
+    second_condition = (np.abs(x)>(1-alpha)/(2*T)) & (np.abs(x)<=(1+alpha)/(2*T))
+    third_condition = np.abs(x) > (1+alpha)/(2*T)
+
+    if not isinstance(x, ndarray):
+        return 1 if first_condition else 0 if third_condition else 0.5*(1+np.cos(pi*T/alpha*(np.abs(x)-(1-alpha)/(2*T))))
+    
+    H = np.zeros(len(x))
+
+    H[ first_condition ] = 1
+    H[ second_condition ] = 0.5*(1+np.cos(pi*T/alpha*(np.abs(x[second_condition])-(1-alpha)/(2*T))))
+
+    return H
+
+
+def si(x, unit: Literal['m','s']='s', k: int=1):
+    """ Unit of measure classifier 
+    
+    Args:
+        x (int | float): number
+
+    Return:
+        str: string with number and unit
+
+    Example:
+        >>> si(0.002, 's')
+        >>> 2.0 ms
+    """
+    if 1e12<= x:
+        return f'{x*1e-9:.{k}f} T{unit}' 
+    if 1e9<= x <1e12:
+        return f'{x*1e-9:.{k}f} G{unit}' 
+    if 1e6<= x <1e9:
+        return f'{x*1e-6:.{k}f} M{unit}' 
+    if 1e3<= x <1e6:
+        return f'{x*1e-3:.{k}f} k{unit}' 
+    if 1<= x <1e3:
+        return f'{x:.{k}f} {unit}' 
+    if 1e-3<= x <1:
+        return f'{x*1e3:.{k}f} m{unit}' 
+    if 1e-6<= x <1e-3:
+        return f'{x*1e6:.{k}f} μ{unit}'
+    if 1e-9<= x <1e-6:
+        return f'{x*1e9:.{k}f} n{unit}'
+    if 1e-12<= x <1e-9:
+        return f'{x*1e12:.{k}f} p{unit}'

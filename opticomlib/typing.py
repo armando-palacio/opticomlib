@@ -63,21 +63,24 @@ class global_variables():
         self.R = 1e9
         self.fs = self.R*self.sps
         self.dt = 1/self.fs
-        self.wavelength = 1550e9
+        self.dw = None
+        self.wavelength = 1550e-9
         self.f0 = c/self.wavelength
         self.N = None
         self.t = None
+        self.w = None
 
 
-    def __call__(self, sps: int, R: float=None, fs: float=None, wavelength: float=1550e-9, N: int=None) -> Any:
-        self.sps = sps
+    def __call__(self, sps: int=None, R: float=None, fs: float=None, wavelength: float=1550e-9, N: int=None) -> Any:
+        if sps:
+            self.sps = sps
         
         if R: 
             self.R = R
             self.fs = fs = R*sps
         elif fs:
             self.fs = fs
-            self.R = fs/sps
+            self.sps = sps = fs/R if R else fs/self.R
         else:
             self.fs = fs = self.R*sps
         
@@ -86,8 +89,10 @@ class global_variables():
         if N:
             self.N = N
             self.t = np.linspace(0, N*sps*self.dt, N*sps, endpoint=True)
+            self.dw = 2*pi/self.dt/N
+            self.w = fftshift(fftfreq(N, d=self.dt)) 
         
-        self.lambda_opt = wavelength
+        self.wavelength = wavelength
         self.f0 = c/wavelength
         
         return self
@@ -383,7 +388,13 @@ class electrical_signal():
             raise TypeError('`by` debe tomar los valores ("signal", "noise", "all")')
     
 
-    def plot(self, fmt: str=None, n: int=None, xlabel: str=None, ylabel: str=None, **kargs): 
+    def plot(self, 
+             fmt: str=None, 
+             n: int=None, 
+             xlabel: str=None, 
+             ylabel: str=None, 
+             style: Literal['dark', 'light'] = 'dark',
+             **kargs): 
         """
         Plot real part of electrical signal.
 
@@ -401,6 +412,14 @@ class electrical_signal():
             fmt = '-'  
         if n is None: 
             n = self.len()
+
+        if style == 'dark':
+            plt.style.use('dark_background')
+        elif style == 'light':
+            plt.style.use('default')
+        else:
+            raise ValueError('`style` must be "dark" or "light".')
+        
         plt.plot(self.t()[:n]*1e9, (self[:n].signal+self[:n].noise).real, fmt, **kargs)
         plt.xlabel(xlabel if xlabel else 'Tiempo [ns]')
         plt.ylabel(ylabel if ylabel else 'Amplitud [V]')
@@ -409,7 +428,12 @@ class electrical_signal():
             plt.legend()
         return self
     
-    def psd(self, fmt=None, kind: Literal['linear','log']='log', n=None, **kargs):
+    def psd(self, 
+            fmt=None, 
+            kind: Literal['linear','log']='log', 
+            n=None, 
+            style: Literal['dark', 'light'] = 'dark',
+            **kargs):
         """
         Plot Power Spectral Density (PSD) of the electrical signal.
 
@@ -431,6 +455,13 @@ class electrical_signal():
         # f = fftshift( fftfreq(n, d=self.dt())*1e-9)  # GHz
         f = self[:n].w(shift=True)/2/pi * 1e-9
         psd = fftshift(self[:n]('w').abs('signal')**2/n**2)
+
+        if style == 'dark':
+            plt.style.use('dark_background')
+        elif style == 'light':
+            plt.style.use('default')
+        else:
+            raise ValueError('`style` must be "dark" or "light".')
         
         if kind == 'linear':
             plt.plot(f, psd*1e3, fmt, **kargs)
@@ -519,7 +550,12 @@ class optical_signal(electrical_signal):
         else:
             raise TypeError("solo se aceptan los argumentos 'w' o 't'")
 
-    def plot(self, fmt=None, mode: Literal['x','y','both','abs']='abs', n=None, **kargs): 
+    def plot(self, 
+             fmt=None, 
+             mode: Literal['x','y','both','abs']='abs', 
+             n=None, 
+             style: Literal['dark', 'light'] = 'dark',
+             **kargs): 
         """
         Plot intensity of optical signal for selected mode.
 
@@ -547,6 +583,13 @@ class optical_signal(electrical_signal):
         else:
             label_flag = False
 
+        if style == 'dark':
+            plt.style.use('dark_background')
+        elif style == 'light':
+            plt.style.use('default')
+        else:
+            raise ValueError('`style` must be "dark" or "light".')
+
         if mode == 'x':
             label = label if label_flag else 'Polarización X'
             plt.plot(t, np.abs(self.signal[0,:n] + self.noise[0,:n])**2, fmt[0], label=label, **kargs)
@@ -567,7 +610,13 @@ class optical_signal(electrical_signal):
         plt.ylabel('Potencia [W]')
         return self
     
-    def psd(self, fmt=None, kind: Literal['linear', 'log']='log', mode: Literal['x','y']='x', n=None, **kargs):
+    def psd(self, 
+            fmt=None, 
+            kind: Literal['linear', 'log']='log', 
+            mode: Literal['x','y']='x', 
+            n=None, 
+            style: Literal['dark', 'light'] = 'dark',
+            **kargs):
         """
         Plot Power Spectral Density (PSD) of the optical signal.
 
@@ -576,6 +625,7 @@ class optical_signal(electrical_signal):
             kind (str): kind of Y-axis plot.
             mode (str): polarization mode to show.
             n (int) : number of samples to plot (default: ``self.len()``).
+            style (str) : plot style (default: ``'dark'``
             **kargs : all arguments compatible with ``matplotlib.pyplot.plot()``.
         if ``'label'`` is in ``kargs.keys()``, legend will be show be default. 
 
@@ -589,7 +639,6 @@ class optical_signal(electrical_signal):
         if n is None:
             n = self.len()
         
-        # f = fftshift( fftfreq(n, d=self.dt())*1e-9)  # GHz
         f = self[:n].w(shift=True)/2/pi * 1e-9
 
         if mode =='x':
@@ -600,14 +649,28 @@ class optical_signal(electrical_signal):
             raise TypeError('El argumento `mode` debe ser uno de los siguientes valores ("x" o "y")')    
         
         if kind == 'linear':
-            plt.plot(f, psd*1e3, fmt, **kargs)
-            plt.ylabel('Potencia [mW]')
+            y = psd*1e3
+            ylabel = 'Potencia [mW]'
         elif kind == 'log':
-            plt.plot(f, dbm(psd), fmt, **kargs)
-            plt.ylabel('Potencia [dBm]')
+            y = dbm(psd)
+            ylabel = 'Potencia [dBm]'
         else:
             raise TypeError('El argumento `kind` debe ser uno de los siguientes valores ("linear", "log")')
+        
+        if style == 'dark':
+            plt.style.use('dark_background')
+        elif style == 'light':
+            plt.style.use('default')
+        else:
+            raise ValueError('`style` must be "dark" or "light".')
+        
+        plt.plot(f, y, fmt, **kargs)
+        plt.ylabel(ylabel)
         plt.xlabel('Frecuencia [GHz]')
+        plt.xlim(-3.5*gv.R*1e-9, 3.5*gv.R*1e-9)
+        plt.ylim(-100, )
+        plt.grid(alpha=0.3)
+        
         if 'label'  in kargs.keys():
             plt.legend()
         return self
