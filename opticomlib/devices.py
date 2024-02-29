@@ -1,8 +1,4 @@
 """
-==============================================================
-Models for Opto-Electronic devices (:mod:`opticomlib.devices`)
-==============================================================
-
 .. autosummary::
    :toctree: generated/
 
@@ -27,11 +23,14 @@ Models for Opto-Electronic devices (:mod:`opticomlib.devices`)
 import numpy as np
 import scipy.signal as sg
 from scipy.integrate import solve_ivp
-from typing import Literal, Union
+from typing import Literal, Union, Callable
 from numpy import ndarray
 from scipy.constants import pi, k as kB, e, h, c
 from numpy.fft import fft, ifft, fftshift, ifftshift
+
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'serif' 
+
 import sklearn.cluster as sk
 from tqdm.auto import tqdm # barra de progreso
 from numpy.lib.scimath import sqrt as csqrt
@@ -55,7 +54,10 @@ from .utils import (
     tic,
     toc,
     rcos,
-    si
+    si,
+    tau_g,
+    bode,
+    dispersion,
 )
 
 
@@ -63,40 +65,46 @@ from .utils import (
 def PRBS(n=2**8, 
          user=[], 
          order=None):
-    """
-    Pseudorandom binary sequence generator.
+    r"""**Pseudorandom binary sequence generator**
 
-    Args:
-        n (int) : lenght of random binary sequence (default: `n=2**8`)
-        user (str | list | ndarray) : binary sequence user pattern (default: `user=[]`)
-        order (int, optional) : degree of the generating pseudorandom polynomial (default: `order=None`)
+    Parameters
+    ----------
+    n : int, optional, default: 2**8
+        lenght of random binary sequence
+    user : str or array_like, optional, default: []
+        binary sequence user pattern
+    order : int, optional, default: None
+        degree of the generating pseudorandom polynomial
 
-    Returns:
-        binary_sequence: generated binary sequence
+    Returns
+    -------
+    seq : binary_sequence
+        generated binary sequence
 
-    Examples:
-        Using parameter **n**, this function generate a random sequence of lenght `n`. Internally it use ``numpy.random.randint`` function.
-        
-        >>> from opticomlib.devices import PRBS
-        >>> PRBS(10).data
-        array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1], dtype=uint8)
+    Examples
+    --------
+    Using parameter **n**, this function generate a random sequence of lenght `n`. Internally it use ``numpy.random.randint`` function.
+    
+    >>> from opticomlib.devices import PRBS
+    >>> PRBS(10).data
+    array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1], dtype=uint8)  #random
 
-        On the other hand, the **user** parameter can be used for a custom sequence.
-        We can input it in *str* format separating the values by spaces ``' '`` or by commas ``','``. 
+    On the other hand, the **user** parameter can be used for a custom sequence.
+    We can input it in *str* format separating the values by spaces ``' '`` or by commas ``','``. 
 
-        >>> PRBS(user='1 0 1 0   0 1 1 1   0,1,0,0   1,1,0,1').data
-        array([1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1], dtype=uint8)
+    >>> PRBS(user='1 0 1 0   0 1 1 1   0,1,0,0   1,1,0,1').data
+    array([1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1], dtype=uint8)
 
-        The last way in which the function can be used is by passing the **order** of the generating polynomial
-        as an argument, which will return a pseudo-random binary sequence of lenght 2^order-1, using an internal algorithm.
+    The last way in which the function can be used is by passing the **order** of the generating polynomial
+    as an argument, which will return a pseudo-random binary sequence of lenght :math:`2^{order}-1`, using an internal algorithm.
 
-        >>> PRBS(order=7).data 
-        array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-            0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,
-            0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-            0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,
-            0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,
-            0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)
+    >>> PRBS(order=7).data 
+    array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+        0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,
+        0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,
+        0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,
+        0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,
+        0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)
     """
     tic()
 
@@ -115,44 +123,62 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
         Vout: float=None,
         pulse_shape: Literal['rect','gaussian']='rect', 
         **kargs):  
-    """
-    Digital-to-Analog Converter. Converts a binary sequence into an electrical signal, sampled at a frequency ``fs``.
+    r"""
+    **Digital-to-Analog Converter**
 
-    Args:
-        input (str | list | tuple | ndarray | binary_sequence): Input binary sequence.
-        Vout (float, Optional): Output signal amplitude [-15 to 15 Volts]. (default: `Vout=1.0`)
-        pulse_shape (str, Optional): Pulse shape at the output, can be "rect" or "gaussian". (default: `pulse_shape="rect"`)
+    Converts a binary sequence into an electrical signal, sampled at a frequency ``gv.fs``.
 
-    Keyword Args:
-        c (float): Chirp of the Gaussian pulse. Only if `pulse_shape=gaussian`. (default: `c=0.0`)
-        m (int): Order of the super-Gaussian pulse. Only if `pulse_shape=gaussian`. (default: `m=1`)
-        T (int): Pulse width at half maximum in number of samples. Only if `pulse_shape=gaussian`. (default: `T=sps`)
+    Parameters
+    ----------
+    input : str, list, tuple, ndarray, or binary_sequence
+        Input binary sequence.
+    Vout : float, default: 1.0
+        Output signal amplitude. Should be in the range [-15, 15] Volts.
+    pulse_shape : str, default: "rect"
+        Pulse shape at the output. Can be ``'rect'`` or ``'gaussian'``.
 
-    Returns:
-        electrical_signal: The converted electrical signal.
+    Other Parameters
+    ----------------
+    c : float, default: 0.0
+        Chirp of the Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``.
+    m : int, default: 1
+        Order of the super-Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``.
+    T : int, default: ``gv.sps``
+        Pulse width at half maximum in number of samples. Only applicable if ``pulse_shape='gaussian'``.
 
-    Raises:
-        TypeError: If `input` type is not in [str, list, tuple, ndarray, binary_sequence].
-        NameError: If `pulse_shape` is not "rect" or "gaussian".
-        ValueError: If `Vout` is not between -15 and 15 Volts.
+    Returns
+    -------
+    electrical_signal
+        The converted electrical signal.
 
-    Example:
-        >>> from opticomlib.devices import DAC
-        >>> from opticomlib import gv
-        >>> 
-        >>> gv(sps=8) # set samples per bit
-        >>>
-        >>> DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r.-').grid().show()
+    Raises
+    ------
+    TypeError
+        If ``input`` type is not in [str, list, tuple, ndarray, binary_sequence].
+    NameError
+        If ``pulse_shape`` is not 'rect' or 'gaussian'.
+    ValueError
+        If ``Vout`` is not between -15 and 15 Volts.
 
-        .. image:: /_images/DAC_example1.svg
-            :alt: DAC example 1
-            :align: center
+    Examples
+    --------
+    .. plot::
+        :include-source:
+        :alt: DAC example 1
+        :align: center
+
+        from opticomlib.devices import DAC
+        from opticomlib import gv
+
+        gv(sps=32) # set samples per bit
+
+        DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r', lw=3).show()
     """
     tic()
     if not isinstance(input, binary_sequence):
         input = binary_sequence(input)
     
-    sps = kargs['sps'] if 'sps' in kargs.keys() else gv.sps
+    sps = gv.sps
 
     if pulse_shape == 'rect':
         x = np.kron(input.data, np.ones(sps))
@@ -191,73 +217,82 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 def PM(op_input: optical_signal, 
        el_input: Union[float, ndarray, electrical_signal], 
        Vpi: float=5.0):
-    """
-    Optical Phase Modulator (PM) model. Modulate de phase of the input optical signal through input electrical signal.
+    r"""
+    **Optical Phase Modulator**
 
-    .. math:: E_{out} = E_{in} \\cdot e^{j\\pi \\frac{V_{in}}{V_{\\pi}}} 
+    Modulate the phase of the input optical signal through input electrical signal.
 
-    Args:
-        op_input (optical_signal): optical signal to be modulated
-        el_input (float | ndarray | electrical_signal): driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.
-        Vpi (float, Optional): voltage at which the device achieves a phase shift of π (default: ``Vpi=5.0`` [V])
+    .. math:: E_{out} = E_{in} \cdot e^{j\pi \frac{V_{in}}{V_{\pi}}} 
 
-    Returns:
-        optical_signal: modulated optical signal
+    Parameters
+    ----------
+    op_input : optical_signal
+        Optical signal to be modulated.
+    el_input : float, ndarray, or electrical_signal
+        Driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.
+    Vpi : float, default: 5.0
+        Voltage at which the device achieves a phase shift of :math:`\pi`.
 
-    Raises:
-        TypeError: If ``op_input`` type is not `optical_signal`.
-        TypeError: If ``el_input`` type is not in [`float`, `ndarray`, `electrical_signal`].
-        ValueError: If ``el_input`` is ndarray or `electrical_signal` but, length is not equal to ``op_input`` length.
+    Returns
+    -------
+    optical_signal
+        Modulated optical signal.
 
-    Example:
-        .. code-block:: python
-            :linenos:
-            :emphasize-lines: 13, 23, 32
-            
-            from opticomlib.devices import PM
-            from opicomlib import optical_signal, gv
-            import matplotlib.pyplot as plt
-            import numpy as np
-           
-            gv(sps=8, R=1e9) # set samples per bit and bitrate
-           
-            op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
-            t = op_input.t()*1e9
-            w = 4*np.pi/t[-1]
-           
-            # Constant phase
-            output = PM(op_input, el_input=2.5, Vpi=5)
-           
-            plt.subplot(311)
-            plt.plot(t, op_input.phase()[0] - w*t, 'r', t, output.phase()[0] - w*t, 'b', lw=3)
-            plt.xticks([])
-            plt.ylabel('Fase [rad]')
-            plt.legend(['input', 'output'], bbox_to_anchor=(1, 1), loc='upper left')
-            plt.title(r'Constant phase change ($\Delta f=0$)')
-           
-            # Lineal phase
-            output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
-           
-            plt.subplot(312)
-            plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-            plt.xticks([])
-            plt.ylabel('Fase [rad]')
-            plt.title(r'Linear phase change  ($\Delta f \\rightarrow cte.$)')
-           
-            # Quadratic phase
-            output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
-            
-            plt.subplot(313)
-            plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-            plt.xlabel('Tiempo [ns]')
-            plt.ylabel('Fase [rad]')
-            plt.title(r'Quadratic phase change ($\Delta f \\rightarrow linear$)')
-            plt.tight_layout()
-            plt.show()
+    Raises
+    ------
+    TypeError
+        If ``op_input`` type is not [optical_signal].
+        If ``el_input`` type is not in [float, ndarray, electrical_signal].
+    ValueError
+        If ``el_input`` is [ndarray] or [electrical_signal] but, length is not equal to ``op_input`` length.
 
-    .. image:: /_images/PM_example1.svg
-        :alt: result of PM example 1
+    Examples
+    --------
+    .. plot::
+        :include-source:
+        :alt: PM example 1
         :align: center
+
+        from opticomlib.devices import PM
+        from opticomlib import optical_signal, gv
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        gv(sps=8, R=1e9) # set samples per bit and bitrate
+
+        op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
+        t = op_input.t()*1e9
+        w = 4*np.pi/t[-1]
+
+        # Constant phase
+        output = PM(op_input, el_input=2.5, Vpi=5)
+
+        plt.subplot(311)
+        plt.plot(t, op_input.phase()[0] - w*t, 'r', t, output.phase()[0] - w*t, 'b', lw=3)
+        plt.xticks([])
+        plt.ylabel('Fase [rad]')
+        plt.legend(['input', 'output'], bbox_to_anchor=(1, 1), loc='upper left')
+        plt.title(r'Constant phase change ($\Delta f=0$)')
+
+        # Lineal phase
+        output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
+
+        plt.subplot(312)
+        plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
+        plt.xticks([])
+        plt.ylabel('Fase [rad]')
+        plt.title(r'Linear phase change  ($\Delta f \rightarrow cte.$)')
+
+        # Quadratic phase
+        output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
+
+        plt.subplot(313)
+        plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
+        plt.xlabel('Tiempo [ns]')
+        plt.ylabel('Fase [rad]')
+        plt.title(r'Quadratic phase change ($\Delta f \rightarrow linear$)')
+        plt.tight_layout()
+        plt.show()
     """
     tic()
 
@@ -295,30 +330,52 @@ def MZM(op_input: optical_signal,
         loss_dB: float=0.0, 
         eta: float=0.1, 
         BW: float=40e9):
-    """
-    Mach-Zehnder modulator (MZM) model. Asymmetric coupler and opposite driving voltages (V1=-V2 Push-Pull config). 
+    r"""
+    **Mach-Zehnder modulator**
+
+    Asymmetric coupler and opposite driving voltages (:math:`V_1=-V_2` Push-Pull config). 
+
+    Parameters
+    ----------
+    op_input : optical_signal
+        Optical signal to be modulated.
+    el_input : float, ndarray, or electrical_signal
+        Driver voltage.
+    bias : float, default: 0.0
+        Modulator bias voltage.
+    Vpi : float, default: 5.0
+        Voltage at which the device switches from on-state to off-state.
+    loss_dB : float, default: 0.0
+        Propagation or insertion losses in the modulator, value in dB.
+    eta : float, default: 0.1
+        Imbalance ratio of light intensity between the two arms of the modulator. :math:`ER = -20\log_{10}(\eta/2)` (:math:`=26` dB by default).
+    BW : float, default: 40e9
+        Modulator bandwidth in Hz.
+
+    Returns
+    -------
+    optical_signal
+        Modulated optical signal.
+
+    Raises
+    ------
+    TypeError
+        If ``op_input`` type is not [optical_signal].
+        If ``el_input`` type is not in [float, ndarray, electrical_signal].
+    ValueError
+        If ``el_input`` is [ndarray] or [electrical_signal] but, length is not equal to ``op_input`` length.
+    
+    Notes
+    -----
+    The output signal is given by [1]_:
 
     .. math:: 
-        E_{out} = E_{in} \\cdot \\sqrt{l} \\cdot \\left( \\cos(\\frac{\\pi}{2V_{\\pi}}(V_{in}+V_{bias})) + j \\frac{\\eta}{2} \\sin(\\frac{\\pi}{2V_{\\pi}}(V_{in}+V_{bias})) \\right) 
-    
-    See model theory in `Tetsuya Kawanishi - Electro-optic Modulation for Photonic Networks (Textbooks in Telecommunication Engineering)-Springer (2022)` Chapter 4.3.
-    
-    Args:
-        op_input (optical_signal): Optical signal to be modulated.
-        el_input (float | ndarray | electrical_signal): Driver voltage.
-        bias (float, Optional): Modulator bias voltage (default: 0.0 [V]).
-        Vpi (float, Optional): Voltage at which the device switches from on-state to off-state (default: 5.0 [V]).
-        loss_dB (float, Optional): Propagation or insertion losses in the modulator, value in dB (default: 0.0).
-        eta (float, Optional): Imbalance ratio of light intensity between the two arms of the modulator (default: 0.1). ER = -20*log10(eta/2) (=26 dB by default).
-        BW (float, Optional): Modulator bandwidth in [Hz] (default: 40e9).
+        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left( \cos(\frac{\pi}{2V_{\pi}}(V_{in}+V_{bias})) + j \frac{\eta}{2} \sin(\frac{\pi}{2V_{\pi}}(V_{in}+V_{bias})) \right) 
 
-    Returns:
-        optical_signal: Modulated optical signal.
+    References
+    ----------
+    .. [1] Tetsuya Kawanishi, "Electro-optic Modulation for Photonic Networks", Chapter 4.3 (2022). doi: https://doi.org/10.1007/978-3-030-86720-1
 
-    Raises:
-        TypeError: If ``op_input`` type is not `optical_signal`.
-        TypeError: If ``el_input`` type is not in [`float`, `ndarray`, `electrical_signal`].
-        ValueError: If ``el_input`` is ndarray or `electrical_signal` but, length is not equal to ``op_input`` length.
     """
 
     tic()
@@ -356,29 +413,33 @@ def MZM(op_input: optical_signal,
 
 def BPF(input: optical_signal, 
         BW: float, 
-        n: int=4, 
-        fs: float=None):
-    """
-    Optical Band-Pass Filter (BPF). Filters the input optical signal, allowing only the desired frequency band to pass.
+        n: int=4):
+    r"""
+    **Optical Band-Pass Filter**
+
+    Filters the input optical signal, allowing only the desired frequency band to pass.
     Bessel filter model.
 
-    Args:
-        input (optical_signal): The optical signal to be filtered.
-        BW (float): The bandwidth of the filter in Hz.
-        n (int, Optional): The order of the filter (default: ``n=4``).
-        fs (float, Optional): The sampling frequency of the input signal (default: ``fs=gv.fs``).
-    
-    Returns:
-        optical_signal: The filtered optical signal.
+    Parameters
+    ----------
+    input : optical_signal
+        The optical signal to be filtered.
+    BW : float
+        The bandwidth of the filter in Hz.
+    n : int, default: 4
+        The order of the filter.
+
+    Returns
+    -------
+    optical_signal
+        The filtered optical signal.
     """
     tic()
 
     if not isinstance(input, optical_signal):
         raise TypeError("`input` must be of type (optical_signal).")
-    if not fs:
-        fs = gv.fs
 
-    sos_band = sg.bessel(N=n, Wn=BW/2, btype='low', fs=fs, output='sos', norm='mag')
+    sos_band = sg.bessel(N=n, Wn=BW/2, btype='low', fs=gv.fs, output='sos', norm='mag')
 
     output = optical_signal(np.zeros((2, input.len())))
 
@@ -395,21 +456,33 @@ def EDFA(input: optical_signal,
          G: float, 
          NF: float, 
          BW: float):
-    """
-    Erbium Doped Fiber (EDFA). Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise. 
-    Simplest model (no saturation output power).
-    
-    Args:
-        input (optical_signal): The optical signal to be amplified.
-        G (float): The gain of the amplifier, in [dB].
-        NF (float): The noise figure of the amplifier, in [dB].
-        BW (float): The bandwidth of the amplifier, in [Hz].
-    
-    Returns:
-        optical_signal: The amplified optical signal.
+    r"""
+    **Erbium Doped Fiber**
 
-    Raises:
-        TypeError: if ``input`` is not an optical signal.    
+    Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise. 
+    Simplest model (no saturation output power).
+
+    Parameters
+    ----------
+    input : optical_signal
+        The optical signal to be amplified.
+    G : float
+        The gain of the amplifier, in dB.
+    NF : float
+        The noise figure of the amplifier, in dB.
+    BW : float
+        The bandwidth of the amplifier, in Hz.
+
+    Returns
+    -------
+    optical_signal
+        The amplified optical signal.
+
+    Raises
+    ------
+    TypeError
+        If ``input`` is not an optical_signal.    
+
     """
     if not isinstance(input, optical_signal):
         raise TypeError("`input` must be of type (optical_signal).")
@@ -433,58 +506,80 @@ def EDFA(input: optical_signal,
     return output
 
 
-def DM(input: optical_signal, D: float):
-    """
-    Dispersive Medium. Emulates a medium with only the dispersion property, i.e., only β2 different from zero.
+def DM(input: optical_signal, D: float, retH: bool=False):
+    r"""
+    **Dispersive Medium**
 
-    .. math:: H(\\omega) = e^{-j \\frac{D}{2} \\omega^2}
+    Emulates a medium with only the dispersion property, i.e., only :math:`\beta_2` different from zero.
 
-    .. math :: E_{out}(t) = \\mathcal{F}^{-1} \\left\\{ H(\\omega) \\cdot \\mathcal{F} \\left\\{ E_{in}(t) \\right\\} \\right\\}
+    Parameters
+    ----------
+    input : optical_signal
+        The input optical signal.
+    D : float
+        The dispersion coefficient of the medium (:math:`\beta_2z`), in [ps^2].
+    retH : bool, default: False
+        If True, the frequency response of the medium is also returned.
 
-    Args:
-        input (optical_signal): The input optical signal.
-        D (float): The dispersion coefficient of the medium (β2·z), in [ps^2].
-    
-    Returns:
-        optical_signal: The output optical signal.
-    
-    Raises:
-        TypeError: If ``input`` is not an optical signal.
+    Returns
+    -------
+    optical_signal
+        The output optical signal.
+    H : ndarray
+        The frequency response of the medium. If ``retH=True``.
 
-    Example:
-        .. code-block:: python
-            :linenos:
-            :emphasize-lines: 12
+    Raises
+    ------
+    TypeError
+        If ``input`` is not an optical signal.
 
-            from opticomlib.devices import DM, DAC
-            from opticomlib import optical_signal, gv, idbm
+    Notes
+    -----
+    Frequency response of the medium is given by:
 
-            import matplotlib.pyplot as plt
-            import numpy as np
+    .. math:: H(\omega) = e^{-j \frac{D}{2} \omega^2}
 
-            gv(N=7, sps=32, R=10e9)
+    The output signal is simply a fase modulation in the frequency domain of the input signal:
 
-            signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-            input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5 )
+    .. math :: E_{out}(t) = \mathcal{F}^{-1} \left\{ H(\omega) \cdot \mathcal{F} \left\{ E_{in}(t) \right\} \right\}
 
-            output = DM(input, D=4000)
+    Example
+    -------
+    .. plot::
+        :include-source:
+        :alt: DM example 1
+        :align: center
 
-            plt.subplot(211)
-            input.plot('r-', label='input', lw=3)
-            output.plot('b-', label='output', lw=3).grid()
+        from opticomlib.devices import DM, DAC
+        from opticomlib import optical_signal, gv, idbm, bode 
 
-            plt.subplot(212)
-            plt.plot(gv.t[:-1]*1e9, np.diff(input.phase()[0])/gv.dt*1e-9, 'r-', lw=3)
-            plt.plot(gv.t[:-1]*1e9, np.diff(output.phase()[0])/gv.dt*1e-9, 'b-', lw=3)
-            input.grid()
-            plt.xlabel('Time (ns)')
-            plt.ylabel(r'$f_i(t)$ (GHz)')
-            plt.ylim(-150, 150)
-            plt.show()
+        import matplotlib.pyplot as plt
+        import numpy as np
 
-        .. image:: /_images/DM_example1.svg
-            :alt: result of DM example 1
-            :align: center
+        gv(N=7, sps=32, R=10e9)
+
+        signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
+        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5 )
+
+        output, H = DM(input, D=4000, retH=True)
+
+        t = gv.t*1e9
+
+        plt.style.use('dark_background')
+        fig, ax = plt.subplots(2, 1, sharex=True, gridspec_kw={'hspace': 0.05})
+        
+        ax[0].plot(t, input.abs()[0], 'r-', lw=3, label='input')
+        ax[0].plot(t, output.abs()[0], 'b-', lw=3, label='output')
+
+        ax[0].set_ylabel(r'$|E(t)|$')
+
+        ax[1].plot(t[:-1], np.diff(input.phase()[0])/gv.dt*1e-9, 'r-', lw=3)
+        ax[1].plot(t[:-1], np.diff(output.phase()[0])/gv.dt*1e-9, 'b-', lw=3)
+
+        plt.xlabel('Time (ns)')
+        plt.ylabel(r'$f_i(t)$ (GHz)')
+        plt.ylim(-150, 150)
+        plt.show()
     """
     tic()
 
@@ -493,10 +588,16 @@ def DM(input: optical_signal, D: float):
 
     # Convert units of D:
     D *= 1e-12**2
+
+    H = np.exp(- 1j * input.w()**2 * D/2 )
     
-    output = (input('w') * np.exp(- 1j * input.w()**2 * D/2 ))('t')
+    output = (input('w') * H)('t')
     
     output.ejecution_time = toc()
+    
+    if retH:
+        H = np.exp(- 1j * input.w()**2 * D/2 )
+        return output, fftshift(H)
     return output
 
 
@@ -508,48 +609,67 @@ def FIBER(input: optical_signal,
           gamma: float=0.0, 
           phi_max:float=0.05, 
           show_progress=False):
-    """Optical Fiber.
+    r"""
+    **Optical Fiber**
 
     Simulates the transmission through an optical fiber, solving Schrödinger's equation numerically,
-    by using split-step Fourier method with adaptative step (method based on limmiting the nonlilear phase rotation). 
+    by using split-step Fourier method with adaptive step (method based on limiting the nonlinear phase rotation) [#first]_. 
     Polarization mode dispersion (PMD) is not considered in this model.
 
-    paper source: https://ieeexplore.ieee.org/document/1190149
+    Parameters
+    ----------
+    input : optical_signal
+        Input optical signal.
+    length : float
+        Length of the fiber, in [km].
+    alpha : float, default: 0.0
+        Attenuation coefficient of the fiber, in [dB/km].
+    beta_2 : float, default: 0.0
+        Second-order dispersion coefficient of the fiber, in [ps^2/km].
+    beta_3 : float, default: 0.0
+        Third-order dispersion coefficient of the fiber, in [ps^3/km].
+    gamma : float, default: 0.0
+        Nonlinearity coefficient of the fiber, in [(W·km)^-1].
+    phi_max : float, default: 0.05
+        Upper bound of the nonlinear phase rotation, in [rad].
+    show_progress : bool, default: False
+        Show algorithm progress bar.
 
-    Args:
-        input (optical_signal): Input optical signal.
-        length (float): Length of the fiber, in [km].
-        alpha (float, Optional): Attenuation coefficient of the fiber, in [dB/km] (default: 0.0).
-        beta_2 (float, Optional): Second-order dispersion coefficient of the fiber, in [ps^2/km] (default: 0.0).
-        beta_3 (float, Optional): Third-order dispersion coefficient of the fiber, in [ps^3/km] (default: 0.0).
-        gamma (float, Optional): Nonlinearity coefficient of the fiber, in [(W·km)^-1] (default: 0.0).
-        phi_max (float, Optional): Upper bound of the nonlinear phase rotation, in [rad] (default: 0.05).
-        show_progress (bool, Optional): Show progress bar (default: False).
+    Returns
+    -------
+    optical_signal
+        Output optical signal.
 
-    Returns:
-        optical_signal: Output optical signal.
+    Raises
+    ------
+    TypeError
+        If ``input`` is not an optical signal.
 
-    Raises:
-        TypeError: If ``input`` is not an optical signal.
-
-    Example:
-        >>> from opticomlib.devices import FIBER, DAC
-        >>> from opticomlib import optical_signal, gv, idbm
-        >>>
-        >>> gv(sps=32, R=10e9)
-        >>>
-        >>> signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-        >>> input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )
-        >>>
-        >>> output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=2, show_progress=True)
-        100%|█████████████████████████████████████████████| 100.0/100 [00:00<00:00, 12591.73it/s]
-        >>>
-        >>> input.plot('r-', label='input', lw=3)
-        >>> output.plot('b-', label='output', lw=3).grid().show()
-
-    .. image:: /_images/FIBER_example1.svg
-        :alt: result of FIBER example 1
+    References
+    ----------
+    .. [#] O.V. Sinkin; R. Holzlohner; J. Zweck; C.R. Menyuk, "Optimization of the split-step Fourier method in modeling optical-fiber communications systems," vol. 21, no. 1, pp. 61-68, Jan. 2003, doi: https://doi.org/10.1109/JLT.2003.808628
+    
+    Example
+    -------
+    .. plot:: 
+        :include-source:
+        :alt: FIBER example 1
         :align: center
+        :caption: The input signal is a 10 Gbps NRZ signal with 20 dBm of power. The fiber has a length of 50 km, an attenuation of 0.01 dB/km, 
+                    a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.
+
+        from opticomlib.devices import FIBER, DAC
+        from opticomlib import optical_signal, gv, idbm
+
+        gv(sps=32, R=10e9)
+
+        signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
+        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )
+
+        output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)
+
+        input.plot('r-', label='input', lw=3)
+        output.plot('b-', label='output', lw=3).show()
     """
 
     tic()
@@ -604,52 +724,64 @@ def FIBER(input: optical_signal,
 def LPF(input: Union[ndarray, electrical_signal], 
         BW: float, 
         n: int=4, 
-        fs: float=None):
-    """
-    Low Pass Filter (LPF) for electrical signals. Filters the input electrical signal, allowing only the desired frequency band to pass.
+        fs: float=None,
+        retH: bool=False):
+    r"""
+    **Low Pass Filter**
+
+    Filters the input electrical signal, allowing only the desired frequency band to pass.
     Bessel filter model.
-    
-    Args:
-        input (ndarray | electrical_signal): Electrical signal to be filtered.
-        BW (float): Filter bandwidth or cutoff frecuency, in [Hz].
-        n (int, optional): Filter order (default: 4).
-        fs (float, optional): Sampling frequency of the input signal (default: ``fs=gv.fs``).
-    
-    Returns:
-        electrical_signal: Filtered electrical signal.
-    
-    Raises:
-        TypeError: If ``input`` is not of type ndarray or electrical_signal.
 
-    Example:
-        .. code-block:: python
-            :linenos:
-            :emphasize-lines: 11
+    Parameters
+    ----------
+    input : ndarray or electrical_signal
+        Electrical signal to be filtered.
+    BW : float
+        Filter bandwidth or cutoff frequency, in [Hz].
+    n : int, default: 4
+        Filter order.
+    fs : float, default: gv.fs
+        Sampling frequency of the input signal.
+    retH : bool, default: False
+        If True, the frequency response of the filter is also returned.
 
-            from opticomlib.devices import LPF, electrical_signal
-            from opticomlib import gv
-            import matplotlib.pyplot as plt
-            import numpy as np
-           
-            gv(N = 10, sps=128, R=1e9)
-           
-            t = gv.t
-            c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
-           
-            input = electrical_signal( np.sin( np.pi*c*t**2) )
-            output = LPF(input, 10e9)
-           
-            input.psd('r', label='input', lw=2)
-            output.psd('b', label='output', lw=2)
-            
-            plt.xlim(-30,30)
-            plt.ylim(-20, 5)
-            plt.annotate('-6 dB', xy=(10, -5), xytext=(10, 2), c='r', arrowprops=dict(arrowstyle='<->'), fontsize=12, ha='center', va='center')
-            plt.show()
-    
-    .. image:: /_images/LPF_example1.svg
-        :alt: result of LPF example 1
+    Returns
+    -------
+    electrical_signal
+        Filtered electrical signal.
+
+    Raises
+    ------
+    TypeError
+        If ``input`` is not of type ndarray or electrical_signal.
+
+    Example
+    -------
+    .. plot::
+        :include-source:
+        :alt: LPF example 1
         :align: center
+        
+        from opticomlib.devices import LPF
+        from opticomlib import gv, electrical_signal
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        gv(N = 10, sps=128, R=1e9)
+
+        t = gv.t
+        c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
+
+        input = electrical_signal( np.sin( np.pi*c*t**2) )
+        output = LPF(input, 10e9)
+
+        input.psd('r', label='input', lw=2)
+        output.psd('b', label='output', lw=2)
+
+        plt.xlim(-30,30)
+        plt.ylim(-20, 5)
+        plt.annotate('-6 dB', xy=(10, -5), xytext=(10, 2), c='r', arrowprops=dict(arrowstyle='<->'), fontsize=12, ha='center', va='center')
+        plt.show()
     """
     tic()
 
@@ -675,6 +807,9 @@ def LPF(input: Union[ndarray, electrical_signal],
         output.noise = sg.sosfiltfilt(sos_band, noise)
     
     output.ejecution_time = toc()
+    if retH:
+        _,H = sg.sosfreqz(sos_band, worN=signal.size, fs=fs, whole=True)
+        return output, fftshift(H) 
     return output
 
 
@@ -685,36 +820,50 @@ def PD(input: optical_signal,
        T: float=300.0, 
        R_load: float=50.0, 
        noise: Literal['ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all']='all'):
-    """
-    Photodetector. 
-    
+    r"""
+    **Photodetector**
+
     Simulates the detection of an optical signal by a photodetector.
-    
-    Args:
-        input (optical_signal): optical signal to be detected
-        BW (float): detector bandwidth in [Hz]
-        responsivity (float, Optional): detector responsivity in [A/W] (default: 1.0)
-        T (float, Optional): detector temperature in [K] (default: 300.0)
-        R_load (float, Optional): detector load resistance in [Ohm] (default: 50.0)
-        noise (str, Optional): type of noise to include in the simulation (default: 'all')
-            
-            - ``'ase-only'``: only include ASE noise
-            - ``'thermal-only'``: only include thermal noise
-            - ``'shot-only'``: only include shot noise
-            - ``'ase-thermal'``: include ASE and thermal noise
-            - ``'ase-shot'``: include ASE and shot noise
-            - ``'thermal-shot'``: include thermal and shot noise
-            - ``'all'``: include all types of noise
-    
-    Returns:
-        electrical_signal: the detected electrical signal
-    
-    Raises:
-        ValueError: if the ``noise`` argument is not one of the valid options
+
+    Parameters
+    ----------
+    input : optical_signal
+        Optical signal to be detected.
+    BW : float
+        Detector bandwidth in [Hz].
+    responsivity : float, default: 1.0
+        Detector responsivity in [A/W].
+    T : float, default: 300.0
+        Detector temperature in [K].
+    R_load : float, default: 50.0
+        Detector load resistance in [:math:`\Omega`].
+    noise : str, default: 'all'
+        Type of noise to include in the simulation.
+        Options include:
+        
+        - ``'ase-only'``: only include ASE noise
+        - ``'thermal-only'``: only include thermal noise
+        - ``'shot-only'``: only include shot noise
+        - ``'ase-thermal'``: include ASE and thermal noise
+        - ``'ase-shot'``: include ASE and shot noise
+        - ``'thermal-shot'``: include thermal and shot noise
+        - ``'all'``: include all types of noise
+
+    Returns
+    -------
+    electrical_signal
+        The detected electrical signal.
+
+    Raises
+    ------
+    TypeError
+        If ``input`` is not of type optical_signal.
+    ValueError
+        If the ``noise`` argument is not one of the valid options.
     """
     tic()
     if not isinstance(input, optical_signal):
-        raise TypeError('')
+        raise TypeError('`input` must be of type (optical_signal).')
 
     i_sig = responsivity * np.sum(input.abs('signal')**2, axis=0) # se suman las dos polarizaciones
 
@@ -760,23 +909,32 @@ def PD(input: optical_signal,
 
 
 def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) -> binary_sequence:
-    """
-    Analog-to-Digital Converter. 
-    
+    r"""
+    **Analog-to-Digital Converter**
+
     Converts an analog electrical signal into a quantized digital signal, sampled at a frequency `fs`
     and filtered with a bandwidth BW.
 
-    Args:
-        input (electrical_signal): Electrical signal to be quantized.
-        fs (float, Optional): Sampling frequency of the output signal. (default: None).
-        BW (float, Optional): ADC bandwidth in Hz. (default: None).
-        nbits (int, Optional): Vertical resolution of the ADC, in bits. (default: 8 bits).
+    Parameters
+    ----------
+    input : electrical_signal
+        Electrical signal to be quantized.
+    fs : float, default: None
+        Sampling frequency of the output signal.
+    BW : float, default: None
+        ADC bandwidth in Hz.
+    nbits : int, default: 8
+        Vertical resolution of the ADC, in bits.
 
-    Returns:
-        electrical_signal: Quantized digital signal.
+    Returns
+    -------
+    electrical_signal
+        Quantized digital signal.
 
-    Raises:
-        TypeError: If the ``input`` is not of type `electrical_signal`.
+    Raises
+    ------
+    TypeError
+        If the ``input`` is not of type `electrical_signal`.
     """
     tic()
 
@@ -816,50 +974,66 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
 
 
 def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: int=4096, sps_resamp: int=None):
-    """Get Eye Params.
-    
+    r"""
+    **Get Eye Parameters Estimator**
+
     Estimates all the fundamental parameters and metrics of the eye diagram of the input electrical signal.
 
-    Args:
-        input (electrical_signal | optical_signal): Electrical or optical signal from which the eye diagram will be estimated.
-        nslots (int, Optional): Number of slots to consider for eye reconstruction (default: 4096).
-        sps_resamp (int, Optional): Number of samples per slot to interpolate de original signal (default: None).
-    
-    Returns:
-        eye: Object of the Eye class with all the parameters and metrics of the eye diagram.
+    Parameters
+    ----------
+    input : electrical_signal | optical_signal
+        Electrical or optical signal from which the eye diagram will be estimated.
+    nslots : int, default: 4096
+        Number of slots to consider for eye reconstruction.
+    sps_resamp : int, default: None
+        Number of samples per slot to interpolate the original signal.
 
-    Example:
-        .. code-block:: python
-            :linenos:
-            :emphasize-lines: 10
+    Returns
+    -------
+    eye
+        Object of the eye class with all the parameters and metrics of the eye diagram.
 
-            from opticomlib.devices import PRBS, DAC, GET_EYE
-            from opticomlib import gv
-            import numpy as np
-           
-            gv(sps=64, R=1e9)
-           
-            y = DAC( PRBS(), pulse_shape='gaussian')
-            y.noise = np.random.normal(0, 0.05, y.len())
-           
-            GET_EYE(y, sps_resamp=512).plot() # with interpolation
+    Raises
+    ------
+    ValueError
+        If the ``input`` is a ndarray but dimention is >2.
+    TypeError
+        If the ``input`` is not of type `electrical_signal`, `optical_signal` or `np.ndarray`.
 
-        .. image:: /_images/GET_EYE_example1.png
-            :alt: result of GET_EYE example 1
-            :align: center
+    Example
+    -------
+    .. plot::
+        :include-source:
+        :alt: GET_EYE example 1
+        :align: center
+
+        from opticomlib.devices import PRBS, DAC, GET_EYE
+        from opticomlib import gv
+        import numpy as np
+
+        gv(sps=64, R=1e9)
+
+        y = DAC( PRBS(), pulse_shape='gaussian')
+        y.noise = np.random.normal(0, 0.05, y.len())
+
+        GET_EYE(y, sps_resamp=512).plot() # with interpolation
     """
     tic()
 
 
     def shorth_int(data: np.ndarray) -> tuple[float, float]:
-        """
+        r"""
         Estimation of the shortest interval containing 50% of the samples in 'data'.
-        
-        Args:
-            data (np.ndarray): Array of data.
 
-        Returns:
-            tuple[float, float]: The shortest interval containing 50% of the samples in 'data'.
+        Parameters
+        ----------
+        data : ndarray
+            Array of data.
+
+        Returns
+        -------
+        tuple[float, float]
+            The shortest interval containing 50% of the samples in 'data'.
         """
         diff_lag = lambda data,lag: data[lag:]-data[:-lag]  # Difference between two elements of an array separated by a distance 'lag'
         
@@ -872,15 +1046,20 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
         return (data[i], data[i+lag])
     
     def find_nearest(levels: np.ndarray, data: Union[np.ndarray, float]) -> Union[np.ndarray, float]: 
-        """
+        r"""
         Find the element in 'levels' that is closest to each value in 'data'.
-        
-        Args:
-            levels (np.ndarray): Reference levels.
-            data (Union[np.ndarray, float]): Values to compare.
-        
-        Returns:
-            Union[np.ndarray, float]: Vector or float with the values from 'levels' corresponding to each value in 'data'.
+
+        Parameters
+        ----------
+        levels : np.ndarray
+            Reference levels.
+        data : Union[np.ndarray, float]
+            Values to compare.
+
+        Returns
+        -------
+        Union[np.ndarray, float]
+            Vector or float with the values from 'levels' corresponding to each value in 'data'.
         """
 
         if type(data) == float or type(data) == np.float64:
@@ -892,6 +1071,12 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
 
     if isinstance(input, ndarray):
         if input.ndim == 2:
+            if input.shape[0] != 2 and input.shape[1] == 2:
+                input = input.T
+            elif input.shape[0] == 2 and input.shape[1] != 2:
+                pass
+            else:
+                raise ValueError("2D arrays must have a shape (2,N) or (N,2).")
             input = optical_signal(input)
         elif input.ndim == 1:
             input = electrical_signal(input)
@@ -914,7 +1099,7 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
     elif isinstance(input, electrical_signal):
         input = (input.signal+input.noise).real
     else:
-        raise TypeError("The argument 'input' must be 'optical_signal' o 'electrical_signal'.")
+        raise TypeError("The argument 'input' must be 'optical_signal', 'electrical_signal' or 'np.ndarray'.")
 
     input = np.roll(input, -sps//2+1) # To focus the eye on the chart
     y_set = np.unique(input)
@@ -1004,7 +1189,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
 
 
 def SAMPLER(input: electrical_signal, _eye_: eye):
-    """
+    """**Digital sampler**
+
     Receives an electrical signal and an eye object and performs the sampling of the signal
     at the optimal instant determined by the eye object.
 
@@ -1032,73 +1218,85 @@ def FBG(input: optical_signal,
         N: int=None,
         dneff: float=None,
         vdneff: float=None,
-        apodization: Literal['uniform', 'rcos', 'gaussian', 'parabolic', 'theory'] = 'uniform',
+        apodization: Union[Literal['uniform', 'rcos', 'gaussian', 'parabolic'], Callable] = 'uniform',
         F: float=0,
         print_params: bool=True,
         filtfilt: bool=True,
         retH: bool=False):
-    """**Fiber Bragg Grating**.
+    r"""**Fiber Bragg Grating**.
 
-    This function numerically calculates the reflection (transfer function H in reflection) of the grating.
-    We have used a method where we reduce the pair of coupled-wave equations to a single Riccati differential equation, which
-    can then be solved by tested numerical techniques such as the Runge-Kutta method.
+    This function numerically calculates the reflectivity (transfer function :math:`H(f)` in reflection) of the grating by
+    solving the coupled-wave equations using `Runge-Kutta` method with help of ``signal.integrate.solve_ivp()`` function. See Notes_ 
+    section for more details.
     
     In order to design the grating, combination of the following parameters can be used:
     
-        1. **neff**, **v**, **fc**, (**dneff** | **vdneff**), (**N** | **kL** | **L**)
-        2. **neff**, **v**, **lambdaD**, (**dneff** | **vdneff**), (**N** | **kL** | **L**)
-        3. **neff**, **v**, **lambdaD**, **kL**, (**N** | **L**)
+    1. ``neff``, ``v``, ``fc``, (``dneff`` or ``vdneff``), (``N`` or ``kL`` or ``L``)
+    2. ``neff``, ``v``, ``landaD``, (``dneff`` or ``vdneff``), (``N`` or ``kL`` or ``L``)
+    3. ``neff``, ``v``, ``landaD``, ``kL``, (``N`` or ``L``)
 
     Bandwidth is governed essentially by three parameters:
 
-        1. Bragg wavelength (:math:`\\lambda_D`). Bandwidth is proportional to :math:`\\lambda_D`.
-        2. Product of visibility and effective index change (:math:`v\\delta n_{eff}`). If :math:`v\\delta n_{eff}` is small, the bandwidth is small.
-        3. Length of the grating (:math:`L`). Bandwidth is inversely proportional to :math:`L`.
+    1. Bragg wavelength (:math:`\lambda_D`). Bandwidth is proportional to :math:`\lambda_D`.
+    2. Product of visibility and effective index change (:math:`v\delta n_{eff}`). If :math:`v\delta n_{eff}` is small, the bandwidth is small.
+    3. Length of the grating (:math:`L`). Bandwidth is inversely proportional to :math:`L`.
 
-        On the other hand, chirp parameter :math:`F` can increase the bandwidth of the grating as well.
+    On the other hand, chirp parameter :math:`F` can increase the bandwidth of the grating as well.
 
     Parameters
     ----------
-    input : optical_signal
+    input : :obj:`optical_signal`
         The input optical signal.
-    neff : float, optional
-        Effective refractive index of core fiber.
-    v : float, optional
-        Visibility of the grating.
-    landa_D : float, optional
-        Bragg wavelength (resonance wavelength).
-    fc : float, optional
-        Center frequency of the grating. Default is global variable f0.
-    kL : float, optional
-        Product of the coupling coefficient and the length of the grating.
-    L : float, optional
-        Length of the grating. 
-    N : int, optional
-        Number of period along grating length.
-    dneff : float, optional
-        Effective index change.
-    vdneff : float, optional
-        Effective index change multiplied by visibility (case of approximation σ->0).
-    apodization : str, optional, default: 'uniform'
-        Apodization function.
-    F : float, optional, default: 0
-        Chirp parameter. 
-    filtfilt : bool, optional, default: True
-        If True, group delay will be corrected in output signal.
-    retH : bool, optional, default: False
-        If True, the function will return the reflectivity (H(w)) of the grating.
+    neff : :obj:`float`, optional
+        Effective refractive index of core fiber. Default is 1.45.
+    v : :obj:`float`, optional
+        Visibility of the grating. Default is 1.
+    landa_D : :obj:`float`, optional
+        Bragg wavelength (resonance wavelength). Default is None.
+    fc : :obj:`float`, optional
+        Center frequency of the grating. Default is None. 
+    kL : :obj:`float`, optional
+        Product of the coupling coefficient and the length of the grating. Default is None.
+    L : :obj:`float`, optional
+        Length of the grating.  Default is None.
+    N : :obj:`int`, optional
+        Number of period along grating length. Default is None.
+    dneff : :obj:`float`, optional
+        Effective index change. Default is None.
+    vdneff : :obj:`float`, optional 
+        Effective index change multiplied by visibility (case of approximation σ->0). Default is None.
+    apodization : :obj:`str` or :obj:`callable`
+        Apodization function. Can be an string with the name of the apodization function or a custom function. Default is ``'uniform'``.
+        
+        The following apodization functions are available:
+
+        * ``'uniform'``: Uniform apodization, ``f(z) = 1``.
+        * ``'rcos'``: Raised cosine apodization, ``f(z) = 1/2*(1 + np.cos(pi*z))``.
+        * ``'gaussian'``: Gaussian apodization, ``f(z) = np.exp(-4*np.log(2)*(3*z)**2)``.
+        * ``'parabolic'``: Parabolic apodization, ``f(z) = 1 - (2*z)**2``.
+        
+        If a custom function is used, it must be a function of the form ``f(z)`` 
+        where ``z`` is the position along the grating length normalized by ``L`` (i.e. ``z = z/L``),
+        and the function must be defined in the range ``-0.5 <= z <= 0.5``.  
+
+    F : :obj:`float`, optional
+        Chirp parameter. Default is 0.
+    filtfilt : :obj:`bool`, optional
+        If True, group delay will be corrected in output signal. Default is True.
+    retH : :obj:`bool`, optional
+        If True, the function will return the reflectivity (H(w)) of the grating. Default is False.
 
     Returns
     -------
-    output: optical_signal
+    output: :obj:`optical_signal`
         The reflected optical signal
-    H: ndarray, optional
+    H: :obj:`np.ndarray`, optional
         Frequency response of grating fiber H(w), only returned if ``retH=True`` 
 
     Raises
     ------
     TypeError
-        If ``input`` is not an ``optical_signal``.
+        If ``input`` is not an :obj:`optical_signal`.
     ValueError
         If the parameters are not correctly specified.
 
@@ -1108,98 +1306,102 @@ def FBG(input: optical_signal,
         If the apodization function is not recognized, a warning will be issued and the function will use uniform apodization.
     UserWarning
         If bandwith is too large, the function will issue a warning and will use a default bandwidth of `fs`.
-        
+
     Notes
     -----
+    .. _Notes:   
+
     Following coupled-wave theory, we assume a periodic, single-mode
     waveguide with an electromagnetic field which can be represented by
-    two contradirectional coupled waves in the form [1]_:
+    two contradirectional coupled waves in the form [#first]_:
 
-    .. math:: E(z) = R(z)e^{-j\\beta_0 z} + S(z)e^{j\\beta_0 z}
+    .. math:: E(z) = A(z)e^{-j\beta_0 z} + B(z)e^{j\beta_0 z}
 
-    where R and S are the complex amplitudes of the forward- and backward-running mode. These amplitudes are linked by the standard
-    coupled-wave equations [2]_:
-
-    .. math::
-        \\begin{align*}
-            R' &= -j\\hat{\\sigma} R - j\\kappa S \\\\
-            S' &= j\\hat{\\sigma} S + j\\kappa R
-        \\end{align*}
-    
-    The coupling coefficient :math:`\\kappa` is related to the amplitude of the waveguide perturbation, also known as AC coupling coefficient and is given by:
-
-    .. math:: \\kappa = \\frac{\\pi}{\\lambda}v\\delta n_{eff}
-
-    :math:`\\hat{\\sigma}` is defined as:
-
-    .. math:: \\hat{\\sigma} = \\delta + \\sigma - \\frac{1}{2}\\phi'
-
-    where :math:`\\delta` indicates the frequency desviation from the Bragg condition, :math:`\\sigma` is the DC coupling coefficient and :math:`\\phi` is the phase-shift 
-    of the periodicity:
+    where A and B are slowly varying amplitudes of mode traveling in :math:`+z` and math:`-z` directions, respectively
+    These amplitudes are linked by the standard coupled-wave equations:
 
     .. math::
-        \\begin{align*}
-            \\delta &= 2\\pi n_{eff} \\left( \\frac{1}{\\lambda} - \\frac{1}{\\lambda_{D}} \\right) \\\\
-            \\sigma &= \\frac{2}{v}\\kappa = \\frac{2\\pi}{\\lambda}\\delta n_{eff} \\\\
-            \\phi' &= 2Fz/L^2
-        \\end{align*}
+        R' &= j\hat{\sigma} R + j\kappa S \\
+        S' &= -j\hat{\sigma} S - j\kappa R
 
-    :math:`F` parameter is the dimensionless chirp parameter, which is defined as:
+    where :math:`R` and :math:`S` are :math:`R(z) = A(z)e^{j\delta z - \phi/2}` and :math:`S(z) = B(z)e^{-j\delta z + \phi/2}`. 
+    In these equations :math:`\kappa` is the “AC” coupling coefficient and :math:`\hat{\sigma}` is a general “dc” self-coupling coefficient defined as
     
-    .. math:: F = 2\\pi N \\Delta L/L
+    .. math:: \hat{\sigma} = \delta + \sigma - \frac{1}{2}\phi'
 
-    We consider, now, structures in which the coupling coefficients :math:`\\sigma(z),\\: \\kappa(z)` and the grating phase :math:`\\phi(z)` are slowly varying functions of z,
-    indicating the nonuniformity in the grating parameters. We assume that the structure has a length :math:`L` and extends from :math:`z = —L/2` to
-    :math:`z = L/2`. The boundary conditions for our scattering problem are then:
+    The detuning :math:`\delta`, which is independent of :math:`z` for all gratings, is defined to be
 
-    .. math:: R(-L/2) = 1, \\: S(L/2) = 0
+    .. math:: \delta = 2\pi n_{eff} \left( \frac{1}{\lambda} - \frac{1}{\lambda_{D}} \right)
 
-    The key to the reduction of the coupled-wave equations to a single differential equation is the definition of a local reflection coefficient :math:`\\rho(z)`,
+    where :math:`\lambda_D = 2n_{eff}\Lambda` is the “design wavelength” for Bragg scattering by an infinitesimally weak grating :math:`(\delta n_{eff}\rightarrow 0)` with
+    a period :math:`\Lambda`.
+
+    For a single-mode Bragg reflection grating:
+
+    .. math::
+        \sigma &= \frac{2\pi}{\lambda}\delta n_{eff} \\
+        \kappa &= \frac{v}{2}\sigma = \frac{\pi}{\lambda}v\delta n_{eff}
+        
+    If the grating is uniform along :math:`z`, then :math:`\delta n_{eff}` is a constant and :math:`\phi' = 0`, 
+    and thus :math:`\kappa`, :math:`\sigma`, and :math:`\hat{\sigma}` constants.
+
+    For apodized gratings, :math:`\delta n_{eff}` is a function of :math:`z`, and therefore :math:`\kappa`, :math:`\sigma`, and :math:`\hat{\sigma}` are also functions of :math:`z`.
+
+    If phase chirp is present, :math:`\phi` and :math:`\phi'` are also a function of :math:`z`. This implementation considers only linear chirp, so:
+
+    .. math:: \phi'(z) = 2Fz/L^2
+
+    where :math:`F` is a dimensionless "chirp parameter", given by [#second]_:
     
-    .. math:: \\rho(z) = \\frac{S}{R}
-    
-    The z-derivative of this is
-    
-    .. math:: \\rho' = \\frac{S'}{R} - \\frac{S}{R^2}R' = \\frac{S'}{R} - \\rho R'
+    .. math:: F = \pi N \Delta \Lambda/\Lambda 
 
-    Combining the above expressions, we obtain a Riccati differential equation for :math:`\\rho` which is of the form
-    
-    .. math:: \\rho' = j\\hat{\\sigma}\\rho + j\\kappa(1+\\rho^2)
+    or 
 
-    The boundary condition for this equation is :math:`\\rho(L/2) = 0`.  
+    .. math:: F = \pi N \Delta \lambda_D/\lambda_D = 2\pi n_{eff} \frac{\Delta \lambda_D}{\lambda_D^2}L
+
+    where 
+    
+    .. math:: \frac{\Delta \lambda_D}{\lambda_D} = \frac{\lambda_D(z=-L/2) - \lambda_D(z=L/2)}{\lambda_D}
+
+    ODE resolution is performed using `scipy.integrate.solve_ivp` function:
+
+    - The initial conditions are :math:`R(0) = 1` and :math:`S(0) = 0`.
+    - Dimensionless variables are used: :math:`z = z/L`, :math:`\delta = \delta L`, :math:`\kappa = \kappa L`, :math:`\sigma = \sigma L`, :math:`\phi' = \phi' L`.
+    - The integration is performed from :math:`z = -0.5` to :math:`z = 0.5`.
+    - The output is the relation :math:`\rho = S(0.5)/R(0.5)`. 
 
     References
     ----------
-    .. [1] Turan Erdogan, "Fiber Grating Spectra," VOL. 15, NO. 8, AUGUST 1997. doi: https://doi.org/10.1109/50.618322
-    .. [2] H. KOGELNIK, "Filter Response of Nonuniform Almost-Periodic Structures" Vol. 55, No. 1, January 1976. doi: https://doi.org/10.1002/j.1538-7305.1976.tb02062.x 
+    .. [#] Turan Erdogan, "Fiber Grating Spectra," VOL. 15, NO. 8, AUGUST 1997. doi: https://doi.org/10.1109/50.618322
+    .. [#] H. KOGELNIK, "Filter Response of Nonuniform Almost-Periodic Structures" Vol. 55, No. 1, January 1976. doi: https://doi.org/10.1002/j.1538-7305.1976.tb02062.x 
     
-    Example:
-        .. code-block:: python
-            :linenos:
+    Examples
+    --------
+    .. plot::
+        :include-source:
+        :caption: Frequency response of a FBG with different apodization functions.
+        :alt: Frequency response of a FBG with different apodization functions.
+        :align: center
 
-            from opticomlib import optical_signal, gv, pi, db, plt, np
-            from opticomlib.devices import FBG
+        from opticomlib import optical_signal, gv, pi, db, plt, np
+        from opticomlib.devices import FBG
 
-            gv(fs=100e9)
+        gv(fs=100e9)
 
-            x = optical_signal(np.ones(2**12))
-            f = x.w(shift=True)/2/pi*1e-9
+        x = optical_signal(np.ones(2**12))
+        f = x.w(shift=True)/2/pi*1e-9
 
-            for apo in ['uniform', 'parabolic', 'rcos', 'gaussian']:
-                _,H = FBG(x, fc=gv.f0, vdneff=1e-4, kL=16, apodization=apo, retH=True)
-                plt.plot(f, db(np.abs(H)**2), lw=2, label=apo)
+        for apo in ['uniform', 'parabolic', 'rcos', 'gaussian']:
+            _,H = FBG(x, fc=gv.f0, vdneff=1e-4, kL=16, apodization=apo, retH=True)
+            plt.plot(f, db(np.abs(H)**2), lw=2, label=apo)
 
-            plt.xlabel('Frequency (Hz)')
-            plt.ylabel('Magnitude (dB)')
-            plt.legend()
-            plt.grid(alpha=0.3)
-            plt.ylim(-100,)
-            plt.xlim(-20, 20)
-            plt.show()
-    
-        .. image:: /_images/FBG_example1.svg
-            :alt: result of FBG example 1
-            :align: center
+        plt.xlabel('Frequency (Hz)')
+        plt.ylabel('Magnitude (dB)')
+        plt.legend()
+        plt.grid(alpha=0.3)
+        plt.ylim(-100,)
+        plt.xlim(-20, 20)
+        plt.show()
     """
     tic()
 
@@ -1219,7 +1421,7 @@ def FBG(input: optical_signal,
             elif N:
                 L = N * landa_D / (2*neff) 
         
-        if vdneff:
+        elif vdneff:
             if not (L or kL or N):
                 raise ValueError("If `fc` and `vdneff` are specified, `L`, `kL` or `N` must be specified.")
             
@@ -1241,11 +1443,11 @@ def FBG(input: optical_signal,
             vdneff = dneff*v
 
             if kL:
-                L = kL / (pi*dneff*v / landa_D)
+                L = kL / (pi*vdneff / landa_D)
             elif N:
                 L = N * landa_D / (2*neff) 
 
-        if vdneff:
+        elif vdneff:
             if not (L or kL or N):
                 raise ValueError("If `landa_D` and `vdneff` are specified, `L`, `kL` or `N` must be specified.")
             
@@ -1262,8 +1464,8 @@ def FBG(input: optical_signal,
             if N:
                 L = N * landa_D / (2*neff)
             
-            dneff = kL*landa_D / (pi*v*L)
-            vdneff = dneff*v
+            vdneff = kL*landa_D / (pi*L)
+            dneff = vdneff/v
 
         else: 
             raise ValueError("If `landa_D` is specified, `dneff`, 'vdneff' or `kL` must be specified.")
@@ -1279,68 +1481,95 @@ def FBG(input: optical_signal,
     fc = c/λc # center frequency of the grating
     
     λ =  2*pi*c / (input.w(shift=True) + 2*pi*gv.f0) # wavelength vector, centered at global variable f0
-    δλ = λ[0] - λ[1] # wavelength resolution
+    δλ = λ[1] - λ[0] # wavelength resolution
 
     N = int(L/Λ) # number of periods of the grating
 
     kL = pi/λ_D*vdneff*L
 
-    δ = 2*pi*neff * (1/λ - 1/λ_D)
-    s = 2*pi*dneff / λ    # self-coupling coefficient DC
-    k = pi*vdneff / λ  # self-coupling coefficient AC
+    δ = 2*pi*neff * (1/λ - 1/λ_D) * L
+    s = 2*pi*dneff / λ * L   # self-coupling coefficient DC
+    k = pi*vdneff / λ * L # self-coupling coefficient AC
     
-    if apodization == 'theory':
-        sigma_ = δ + s
+    def ode_system(z, rho, δ, s, k, F=0, apo_func=None): # ODE function, normalized to L (z/L, δL, σL, kL)
+        R = rho[:len(rho)//2]
+        S = rho[len(rho)//2:]
 
-        q = csqrt(k**2 - sigma_**2)
+        if apo_func:
+            p = apo_func(z)
+            s = s * p
+            k = k * p 
 
-        ## reflection coefficient (frequency response H(w))
-        H = (-k * np.sinh(q*L)) / (sigma_ * np.sinh(q*L) + 1j*q* np.cosh(q*L))
+        s_ = δ + s - F*z
 
-    else:
-        def ode_func(z, rho, delta, sigma, k, F, apodization): # ODE function, normalized to L (z/L, δL, σL, kL, φ'L)
-            if apodization == 'rcos':
-                p = rcos(z, alpha=1, T=2)
-            elif apodization == 'gaussian':
-                p = np.exp(-4*np.log(2)*z**2/(1/3)**2)
-            elif apodization == 'parabolic':
-                p = 1 - (2*z)**2
-            elif apodization == 'uniform':
-                p = 1
-            else:
-                warnings.warn("Apodization function not recognized. Using uniform apodization.")
-                p = 1
-
-            k = k*p
-            sigma = sigma*p
-            sigma_ = delta + sigma - F*z
-
-            return -2j*sigma_*rho - 1j*k*(1+rho**2)
+        dRdz =  1j * (s_ * R + k * S)
+        dSdz = -1j * (s_ * S + k * R)
+        return [dRdz, dSdz]
         
-        δ = δ[:, np.newaxis] * L
-        s = s[:, np.newaxis] * L
-        k = k[:, np.newaxis] * L
+    δ = δ[:, np.newaxis]
+    s = s[:, np.newaxis]
+    k = k[:, np.newaxis]
 
-        rho0 = np.zeros_like(λ, dtype=complex)  # Initial value 
-        sol = solve_ivp(ode_func, [0.5, -0.5], rho0, method='RK45', args=(δ, s, k, F, apodization), vectorized=True)
-        H = sol.y[:,-1]
+    # initial conditions
+    S0 = np.zeros(input.len(), dtype=complex)
+    R0 = np.ones(input.len(), dtype=complex)
+    y0 = np.concatenate([R0, S0])
 
+    if apodization == 'rcos':
+        apo_func = lambda z: rcos(z, alpha=1, T=2)
+    elif apodization == 'gaussian':
+        apo_func = lambda z: np.exp(-4*np.log(2)*(3*z)**2)
+    elif apodization == 'parabolic':
+        apo_func = lambda z: 1 - (2*z)**2
+    elif apodization == 'uniform':
+        apo_func = None
+    elif callable(apodization): # custom apodization function
+        apo_func = apodization
+    elif isinstance(apodization, str):
+        warnings.warn("Apodization function not recognized. Using uniform apodization.")
+        apo_func = None
+    else:
+        raise ValueError("Apodization must be a string or a function.")
+
+    sol = solve_ivp(ode_system, 
+                    t_span = [0.5, -0.5], 
+                    y0 = y0, 
+                    method='RK45', 
+                    args=(δ, s, k, F, apo_func), 
+                    vectorized=True,
+    )
     
-    y = np.abs(H)
+    y = sol.y[:, -1]
+    R = y[:len(y)//2]
+    S = y[len(y)//2:]
+
+    H = S/R   
+
+    y = np.abs(H) # reflectivity of the grating
+
+    ic = np.argmin(np.abs(λ - c/fc))
 
     peaks,_ = sg.find_peaks(y)
-    H_max = y[peaks].max()
+    H_max = y[ic]
+
     
     if (y>0.5).all():
         warnings.warn("Bandwidth of the grating is too large for current sampling rate (`fs`). Consider increasing `fs`.")
         bandwith_str = f' - Δf = >{si(gv.fs,"Hz")} (Δλ = >{si(gv.fs*c/fc**2,"m")})'
-    else:
+    # elif (y<0.01).all():
+    #     raise ValueError("Maximum reflectivity is less than 1%.") 
+    elif len(peaks):
         r = sg.peak_widths(y, peaks)
 
         BW_λ = r[0].max()*δλ
         BW_f = fc**2*BW_λ/c
 
         bandwith_str = f' - Δf = {si(BW_f,"Hz")} (Δλ = {si(BW_λ,"m")})'
+    else:
+        warnings.warn("No peaks found in the reflectivity of the grating.")
+        bandwith_str = f' - Δf = -- GHz (Δλ = -- nm)'
+
+    D = dispersion(H, gv.fs, fc)[ic] # dispersion in ps/nm
 
     ## Print parameters of the grating
     if print_params:
@@ -1348,26 +1577,21 @@ def FBG(input: optical_signal,
         print(f' - Λ = {si(Λ,"m")}')
         print(f' - N = {N}')
         print(f' - L = {si(L,"m")}')
-        print(f' - λo = {si(c/fc,"m",4)}')
+        print(f' - λc = {si(c/fc,"m",4)}')
         print(bandwith_str)
         print(f' - ρo = {y.max():.2f}')
         print(f' - loss = {-db(H_max**2):.1f} dB')
-        print(f' - vδneff = {vdneff:.0e}')
+        print(f' - vδneff = {vdneff:.1e}')
         print(f' - kL = {kL:.1f}')
+        print(f' - D(λc) = {D:.1f} ps/nm')
         if F:
             print(f' - F = {F:.1f}')
-            print(f' - ΔΛ = {si(Λ*F/(2*pi*N),"m")}')
+            print(f' - ΔΛ = {si(np.abs(Λ*F/(2*pi*N)),"m")}')
         print('************************************\n')
 
 
     if filtfilt: ## correct H(w)
-        phase = np.unwrap(np.angle(H)) # phase of H(w)
-
-        dw = 2*pi*gv.fs/input.len() # frequency resolution
-        tau_g = np.diff(phase, append=phase[-1]) / dw # group delay
-        i = np.argmin( np.abs(λ - c/fc) ) # index of the center wavelength
-
-        H = H * np.exp(-1j * input.w(shift=True) * tau_g[i]) # corrected H(w)
+        H = H * np.exp(-1j * input.w(shift=True) * tau_g(H, gv.fs)[ic]*1e-12) # corrected H(w)
 
     ## apply to input optical signal
     output = ifft(fft(input.signal)*ifftshift(H))

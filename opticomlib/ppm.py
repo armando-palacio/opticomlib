@@ -1,8 +1,4 @@
 """
-===================================
-PPM devices (:mod:`opticomlib.ppm`)
-===================================
-
 .. autosummary::
    :toctree: generated/
 

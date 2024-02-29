@@ -1,8 +1,4 @@
 """
-===================================
-OOK devices (:mod:`opticomlib.ook`)
-===================================
-
 .. autosummary::
    :toctree: generated/
 
