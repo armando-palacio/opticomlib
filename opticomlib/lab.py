@@ -1,8 +1,4 @@
 """
-==========================================================
-Laboratory and practical functions (:mod:`opticomlib.lab`)
-==========================================================
-
 .. autosummary::
    :toctree: generated/
 
@@ -20,22 +16,34 @@ from .utils import tic, toc
 def SYNC(signal_rx: electrical_signal, 
          slots_tx: binary_sequence, 
          sps: int):
-    """
+    r"""
+    **Synchronizer**
+
     Synchronizes the received signal with the transmitted signal to determine the starting position in the received signal for further processing. 
     This is done by performing a correlation between the received signal and the transmitted signal and finding the maximum correlation position.
 
-    Args:
-        signal_rx (electrical_signal): The received digital signal (from the oscilloscope).
-        slots_tx (binary_sequence): The transmitted slots sequence.
-        sps (int): The number of samples per slot.
+    Parameters
+    ----------
+    signal_rx : electrical_signal
+        The received digital signal (from the oscilloscope or an ADC).
+    slots_tx : binary_sequence
+        The transmitted slots sequence.
+    sps : int
+        Number of samples per slot of the digitalized signal ``signal_rx``.
 
-    Returns:
-        tuple[electrical_signal, int]: A tuple containing the synchronized digital signal and the position in the 'signal' vector from which synchronization was performed.
+    Returns
+    -------
+    tuple[electrical_signal, int]
+        A tuple containing the synchronized digital signal and the position in the ``signal_rx`` array from which synchronization was performed.
 
-    Raises:
-        TypeError: The ``sps`` must be an integer to perform synchronization.
-        BufferError: If the number of received slots have to be greater than the transmitted slots.
-        ValueError: If no correlation maximum is found.
+    Raises
+    ------
+    TypeError
+        The ``sps`` must be an integer to perform synchronization.
+    BufferError
+        If the number of received slots have to be greater than the transmitted slots.
+    ValueError
+        If no correlation maximum is found.
     """
     
     tic()
@@ -62,18 +70,25 @@ def SYNC(signal_rx: electrical_signal,
 
 
 def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, sps:int, nslots:int=8192):
-    """
+    r"""
     Calculates the means and standard deviations of levels 0 and 1 in the received signal.
 
-    Args:
-        sync_signal (electrical_signal): Synchronized digital signal in time with the transmitted signal.
-        slots_tx (binary_sequence): Transmitted bit sequence.
-        sps (int): Samples per slot of the digital signal.
-        nslots (int, Optional): Number of slots to use for estimation (default: 8192).
+    Parameters
+    ----------
+    sync_signal : electrical_signal
+        Synchronized digital signal in time with the transmitted signal.
+    slots_tx : binary_sequence
+        Transmitted bit sequence.
+    sps : int
+        Number of samples per slot of the digitalized signal ``sync_signal``.
+    nslots : int, default: 8192
+        Number of slots to use for estimation.
 
-    Returns:
-        dict: A dictionary containing the following keys:
-            
+    Returns
+    -------
+    dict
+        A dictionary containing the following keys:
+
             - ``sps``: Samples per slot of the digital signal.
             - ``y``: Synchronized digital signal.
             - ``unos``: Received signal levels corresponding to transmitted level 1.

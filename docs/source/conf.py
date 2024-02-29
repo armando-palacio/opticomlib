@@ -28,6 +28,8 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode', 
     'sphinx.ext.napoleon',
+    'matplotlib.sphinxext.plot_directive',
+    # 'numpydoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.intersphinx',
     'sphinx.ext.autosummary',
@@ -43,7 +45,7 @@ language = 'English'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'renku'
+html_theme = 'renku'#'sphinx_rtd_theme'#
 html_static_path = ['_static']
 
 source_suffix = '.rst'
@@ -56,3 +58,9 @@ exclude_patterns = ['_build']
 
 python_display_short_literal_types = True
 autosummary_generate = True
+
+# Napoleon settings
+napoleon_numpy_docstring = True
+napoleon_include_special_with_doc = True
+napoleon_include_init_with_doc = True
+napoleon_google_docstring = False
