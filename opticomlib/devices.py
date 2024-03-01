@@ -1361,14 +1361,14 @@ def FBG(input: optical_signal,
 
     where 
     
-    .. math:: \frac{\Delta \lambda_D}{\lambda_D} = \frac{\lambda_D(z=-L/2) - \lambda_D(z=L/2)}{\lambda_D}
+    .. math:: \Delta \lambda_D = \lambda_D(z=-L/2) - \lambda_D(z=L/2)
 
     ODE resolution is performed using `scipy.integrate.solve_ivp` function:
 
-    - The initial conditions are :math:`R(0) = 1` and :math:`S(0) = 0`.
     - Dimensionless variables are used: :math:`z = z/L`, :math:`\delta = \delta L`, :math:`\kappa = \kappa L`, :math:`\sigma = \sigma L`, :math:`\phi' = \phi' L`.
-    - The integration is performed from :math:`z = -0.5` to :math:`z = 0.5`.
-    - The output is the relation :math:`\rho = S(0.5)/R(0.5)`. 
+    - The integration is performed from :math:`z = 1/2` to :math:`z = -1/2`.
+    - The initial conditions are :math:`R(1/2) = 1` and :math:`S(1/2) = 0`.
+    - The output is the relation :math:`\rho = S(-1/2)/R(-1/2)`. 
 
     References
     ----------
