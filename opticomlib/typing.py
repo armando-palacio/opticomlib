@@ -332,9 +332,8 @@ class binary_sequence():
         return self
     
     def __len__(self): return self.len()
+
     def __getitem__(self, key):
-        if not isinstance(key, int):
-            raise TypeError("The index must be an integer!")
         return binary_sequence(self.data[key])
     
     def __add__(self, other): 

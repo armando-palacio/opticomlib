@@ -495,13 +495,14 @@ def Q(x):
         import numpy as np
 
         x = np.linspace(-5, 5, 1000)
-        y = Q(x)
 
         plt.figure(figsize=(8, 5))
-        plt.plot(x, y, 'r', lw=2)
+        plt.plot(x, Q(x), 'r', lw=3, label='Q(x)')
+        plt.plot(x, Q(-x), 'b', lw=3, label='Q(-x)')
         plt.ylabel('y')
         plt.xlabel('x')
-        plt.grid(alpha=0.3)
+        plt.legend()
+        plt.grid()
         plt.show()
     """
     x = np.array(x)

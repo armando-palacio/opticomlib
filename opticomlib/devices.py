@@ -1204,7 +1204,7 @@ def SAMPLER(input: electrical_signal, _eye_: eye):
     tic()
     output = input[_eye_.i::_eye_.sps]
 
-    output.execution_time = toc()
+    output.ejecution_time = toc()
     return output
 
 

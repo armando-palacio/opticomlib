@@ -2,14 +2,14 @@
 .. rubric:: Functions
 .. autosummary::
 
-   PPM_ENCODER           -- Pulse position modulation encoder
-   PPM_DECODER           -- Pulse position modulation decoder
-   HDD                   -- Hard-decision decoder model 
-   SDD                   -- Soft-decision decoder model 
-   THRESHOLD_EST         -- Threshold for detection
-   DSP                   -- Digital signal processing for PPM systems
-   BER_analizer          -- Bit error rate analizer
-   theory_BER            -- Theoretical bit error rate
+   PPM_ENCODER           
+   PPM_DECODER           
+   HDD                   
+   SDD                   
+   THRESHOLD_EST         
+   DSP                   
+   BER_analizer          
+   theory_BER           
 """
 
 import numpy as np
@@ -18,46 +18,61 @@ from numpy import ndarray
 from scipy.integrate import quad
 from scipy.constants import pi
 
-from .typing import binary_sequence, electrical_signal, eye
+from .devices import GET_EYE, SAMPLER, LPF
+from .typing import binary_sequence, electrical_signal, eye, gv
 from .utils import tic, toc, str2array, dec2bin, Q
 
 
 
 def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int) -> binary_sequence:
-    """
-    ### Descripción:
-    Codificador digital PPM. Convierte una secuencia binaria de entrada en una secuencia binaria codificada en PPM. 
+    """PPM Encoder
 
-    ---
-    
-    ### Args:
-    - `input` - secuencia binaria de entrada
-    - `M` - cantidad de slots que contiene un símbolo
+    Converts an input binary sequence into a binary sequence PPM encoded.
 
-    ---
-    
-    ### Returns:
-    - `binary_sequence`
+    Parameters
+    ----------
+    input : :obj:`binary_sequence`
+        Input binary sequence.
+    M : :obj:`int`
+        Number of slots that a symbol contains.
+
+    Returns
+    -------
+    ppm_seq : :obj:`binary_sequence`
+        Encoded binary sequence in PPM.
+
+    Notes
+    -----
+    The input binary sequence is converted into a PPM sequence by grouping each :math:`\log_2{M}` bits 
+    and converting them into decimal. Then, the decimal values are the positions of ON slots into the PPM symbols of
+    length :math:`M`.
+
+    Examples
+    --------
+    >>> from opticomlib.ppm import PPM_ENCODER
+    >>> PPM_ENCODER('01111000', 4).data.astype(int)
+    array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0])
+
     """
     tic()
 
     if isinstance(input, binary_sequence):
         input = input.data
     elif isinstance(input, str):
-        input = str2array(input)
+        input = str2array(input, bool)
     elif isinstance(input, (list, tuple)):
-        input = np.array(input)
+        input = np.array(input, dtype=bool)
     else:
-        raise TypeError("El argumento `input` debe ser del tipo (str, list, tuple, ndarray, binary_sequence).")
+        raise TypeError("`input` must be of type (str, list, tuple, ndarray, binary_sequence)")
 
     k = int(np.log2(M))
 
-    input = input[:len(input)//k*k] # truncamos la secuencia de bits a un múltiplo de k
+    input = input[:len(input)//k*k] 
 
-    decimal = np.sum(input.reshape(-1,k)*2**np.arange(k)[::-1], axis=-1) # convertimos los símbolos a decimal
-    ppm_s = np.zeros(decimal.size*M, dtype=np.uint8)
+    decimal = np.sum(input.reshape(-1,k)*2**np.arange(k)[::-1], axis=-1) # convert bits to decimal
+    ppm_s = np.zeros(decimal.size*M, dtype=bool)
 
-    ppm_s[np.arange(decimal.size)*M + decimal] = 1 # codificamos los símbolos en PPM
+    ppm_s[np.arange(decimal.size)*M + decimal] = 1 # coded the symbols
    
     output = binary_sequence(ppm_s) 
     output.ejecution_time = toc()
@@ -66,35 +81,44 @@ def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int
 
 
 def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int) -> binary_sequence:
-    """
-    ### Descripción:
-    Recibe una secuencia de bits codificada en PPM y la decodifica.
-    
-    ---
+    """PPM Decoder
 
-    ### Args:
-    - `input` - secuencia binaria codificada en PPM
-    - `M` - orden de modulación PPM
+    Receives a binary sequence encoded in PPM and decodes it.
 
-    ### Returns:
-    - `binary_sequence` - secuencia binaria decodificada
+    Parameters
+    ----------
+    input : :obj:`binary_sequence`
+        Binary sequence encoded in PPM.
+    M : :obj:`int`
+        Order of PPM modulation.
+
+    Returns
+    -------
+    :obj:`binary_sequence`
+        Decoded binary sequence.
+
+    Examples
+    --------
+    >>> from opticomlib.ppm import PPM_DECODER
+    >>> PPM_DECODER('0100000100101000', 4).data.astype(int)
+    array([0, 1, 1, 1, 1, 0, 0, 0])
     """
     tic()
 
     if isinstance(input, binary_sequence):
         input = input.data
     elif isinstance(input, str):
-        input = str2array(input)
+        input = str2array(input, bool)
     elif isinstance(input, (list, tuple)):
-        input = np.array(input)
+        input = np.array(input, dtype=bool)
     else:
-        raise TypeError("El argumento `input` debe ser del tipo (str, list, tuple, ndarray, binary_sequence).")
+        raise TypeError("`input` must be of type (str, list, tuple, ndarray, binary_sequence)")
     
     k = int(np.log2(M))
 
-    decimal = np.where(input==1)[0]%M # obtenemos el decimal de cada símbolo
+    decimal = np.where(input==1)[0]%M # get decimal
 
-    output = np.array(list(map(lambda x: dec2bin(x,k), decimal))).ravel() # convertimos a binario cada decimal
+    output = np.array(list(map(lambda x: dec2bin(x,k), decimal))).ravel() # convert to binary again
     output= binary_sequence(output)
 
     output.ejecution_time = toc()
@@ -102,17 +126,30 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
 
 
 def HDD(input: binary_sequence, M: int) -> binary_sequence:
-    """
-    ### Descripción:
-    Estima los símbolos PPM más probables a partir de la secuencia binaria dada como entrada.
-    
-    ---
+    """Hard Decision Decoder
 
-    ### Args:
-    - `input` - secuencia binaria a estimar
+    Estimates the most probable PPM symbols from the given binary sequence.
 
-    ### Returns:
-    - `binary_sequence` - secuencia de símbolos estimados
+    - If there is any symbol without ON slots, then one of them is raised randomly
+    - If there is any symbol with more tan one ON slots, then one of them is selected randomly
+    - Other case algorithm do nothing.   
+
+    Parameters
+    ----------
+    input : :obj:`binary_sequence`
+        Binary sequence to estimate.
+
+    Returns
+    -------
+    :obj:`binary_sequence`
+        Sequence of estimated symbols ready to decode.
+
+    Examples
+    --------
+    >>> from opticomlib.ppm import HDD, binary_sequence
+    >>> 
+    >>> HDD(binary_sequence('0100 0111 0000'), 4).data.astype(int)
+    array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])
     """
     tic()
 
@@ -122,7 +159,7 @@ def HDD(input: binary_sequence, M: int) -> binary_sequence:
 
     output = np.array(input.data, dtype=np.uint8)
 
-    for i in np.where(s==0)[0]: # si existe algún símbolo sin ningún slot encendidos, se prende uno al azar
+    for i in np.where(s==0)[0]: # si existe algún símbolo sin ningún slot encendido, se prende uno al azar
         output[i*M + np.random.randint(M)] = 1
 
     for i in np.where(s>1)[0]: # si existe algún símbolo con más de 1 slot encendido, se elige uno de ellos al azar)
@@ -137,17 +174,29 @@ def HDD(input: binary_sequence, M: int) -> binary_sequence:
 
 
 def SDD(input: electrical_signal, M: int) -> binary_sequence:
-    """
-    ### Descripción:
-    Estima los símbolos PPM más probables a partir de la señal eléctrica dada como entrada.
-    
-    ---
+    """Soft Decision Decoder
 
-    ### Args:
-    - `input` - señal eléctrica sin muestrear
+    Estimates the most probable PPM symbols from the given electrical signal without sampling.
+    It integrate the signal in slots and then, it selects the slot with the highest energy.
 
-    ### Returns:
-    - `binary_sequence` - secuencia de símbolos estimados
+    Parameters
+    ----------
+    input : :obj`electrical_signal`
+        Unsampled electrical signal.
+
+    Returns
+    -------
+    :obj`binary_sequence`
+        Sequence of estimated symbols ready to decode.
+
+    Examples
+    --------
+    >>> from opticomlib.ppm import SDD, electrical_signal, gv
+    >>> import numpy as np
+    >>>
+    >>> x = np.kron([0.1,1.2,0.1,0.2,  0.1,0.9,1.0,1.1,  0.1,0.1,0.1,0.2], np.ones(gv.sps))
+    >>> SDD(electrical_signal(x), M=4).data.astype(int)
+    array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])
     """
     tic()
 
@@ -165,15 +214,16 @@ def SDD(input: electrical_signal, M: int) -> binary_sequence:
 
 
 def THRESHOLD_EST(eye_obj: eye, M: int):
-    """
-    ### Descripción: 
-    Esta función estima el umbral de decisión para M-PPM a partir de las medias y desviaciones estándar.
+    """Threshold Estimator
+    
+    Estimates the decision threshold for M-PPM from means and standard deviations of ``eye_obj``.
 
-    ---
-
-    ### Args:
-    - `eye_obj` - objeto `eye` con los parámetros del diagrama de ojos
-    - `M` - orden PPM
+    Parameters
+    ----------
+    eye_obj : :obj:`eye`
+        `eye` object with the parameters of the eye diagram.
+    M : :obj:`int`
+        Order of PPM.
     """
 
     mu0 = eye_obj.mu0
@@ -181,80 +231,130 @@ def THRESHOLD_EST(eye_obj: eye, M: int):
     s0 = eye_obj.s0
     s1 = eye_obj.s1
 
-    # obtenemos el umbral de decisión para PPM
     r = np.linspace(mu0, mu1, 1000)
     umbral = r[np.argmin(1 - Q((r-mu1)/s1) * (1-Q((r-mu0)/s0))**(M-1))]
     return umbral
 
 
 
-def DSP(input: electrical_signal, eye_obj: eye, M :int, decision: Literal['hard','soft']='hard') -> binary_sequence:
+def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard', BW: float=None):
+    """PPM Digital Signal Processor
+    
+    Performs the decision task of the photodetected electrical signal. 
+
+    1. If ``BW`` is provided bessel filter will be applied to the signal (:func:`opticomlib.devices.LPF`)
+    2. eye diagram parameters are estimated from the input electrical signal with function :func:`opticomlib.devices.GET_EYE`.
+    3. it subsamples the electrical signal to 1 sample per slot using function :func:`opticomlib.devices.SAMPLER`. 
+    4. if ``decision='hard'`` it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function :func:`opticomlib.ppm.THRESHOLD_EST`. 
+    5. then, it make the decision (:func:`opticomlib.ppm.HDD` if ``decision='hard'`` or :func:`opticomlib.ppm.SDD` if ``decision='soft'``).
+    6. Finally, it returns the received binary sequence, eye object and optimal threshold.
+
+    Parameters
+    ----------
+    input : :obj:`electrical_signal`
+        Photodetected electrical signal.
+    M : :obj:`int`
+        Order of PPM modulation.
+    decision : :obj:`str`, optional
+        Type of decision to make. Default is 'hard'.
+    BW : :obj:`float`, optional
+        Bandwidth of DSP filter. If not specified, signal won't be filtered.
+
+    Returns
+    -------
+    output : :obj:`binary_sequence`
+        Received bits.
+    eye_obj : :obj:`eye`, optional
+        Eye diagram parameters, only if ``decision='hard'``.
+    rth : :obj:`float`, optional
+        Decision threshold for PPM, only if ``decision='hard'``.
+    
+    Examples
+    --------
+    .. plot::
+        :include-source:
+        :alt: DSP PPM
+        :align: center
+        :width: 720
+
+        from opticomlib.devices import DAC, gv
+        from opticomlib.ppm import DSP
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+
+        gv(sps=64, R=1e9)
+
+        x = DAC('0100 1010 0000', pulse_shape='gaussian')
+        x.noise = np.random.normal(0, 0.1, x.len())
+
+        y = DSP(x, M=4, decision='soft')
+
+        DAC(y).plot(c='r', lw=3, label='Received sequence').show()
     """
-    ### Descripción:
-    Este componente realiza todas las tareas de decisión y decodificación de la señal eléctrica photodetectada. 
-    
-    Si se selecciona la decisión dura, se realiza el submuestreo de la señal digital a 1 muestra por slot en el instante óptimo 
-    determinado por el objeto `eye`, luego se realiza la comparación con un umbral de decisión estimado por `eye`, se decide que 
-    símbolo PPM se transmitió y se decodifica la secuencia binaria.
-
-    Si se selecciona la decisión blanda, se realiza la integración de cada slot de la señal digital, se decide que símbolo PPM tiene
-    mayor verosimilitud y se decodifica la secuencia binaria.
-    
-    ---
-
-    ### Args:
-    - `input` - secuencia binaria codificada en PPM
-    - `eye_obj` [Opcional] - objeto eye con los parámetros del diagrama de ojos (default: `_eye_=eye()`)
-    - `decision` [Opcional] - tipo de decisión a realizar (default: `decision='hard'`)
-
-    ### Returns:
-    - `binary_sequence` - secuencia binaria decodificada
-    """
-    
-    if decision == 'hard':
-        output = input[eye_obj.i::eye_obj.sps] > THRESHOLD_EST(eye_obj, M)
-        simbols = HDD(output, M); simbols.ejecution_time += output.ejecution_time
-    elif decision == 'soft':
-        simbols = SDD(input, M)
+    if BW is not None:
+        x = LPF(input, BW)
     else:
-        raise TypeError('No existe el tipo de decisión seleccionada!!')
+        x = input
+        x.ejecution_time = 0
 
-    output = PPM_DECODER(simbols, M) 
+    if decision == 'hard':
+        eye_obj = GET_EYE(x, nslots=8192, sps_resamp=128); time = eye_obj.ejecution_time + x.ejecution_time
+        rth = THRESHOLD_EST(eye_obj, M)
+        x = SAMPLER(x, eye_obj); time += x.ejecution_time
 
-    output.ejecution_time += simbols.ejecution_time 
-    return output
+        tic()
+        output = x > rth
+        simbols = HDD(output, M); simbols.ejecution_time += toc() + time
+
+        output = PPM_DECODER(simbols, M)
+        output.ejecution_time += simbols.ejecution_time
+
+        return output, eye_obj, rth
+    
+    elif decision == 'soft':
+        tic()
+        simbols = SDD(input, M); simbols.ejecution_time += toc() + x.ejecution_time
+        output = PPM_DECODER(simbols, M)
+        output.ejecution_time += simbols.ejecution_time
+        return output
+    
+    else:
+        raise TypeError('`decision` must be "hard" or "soft"')
 
 
 
 def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
     """
-    ### Descripción:
-    Calcula la tasa de error de bits (BER), por conteo de errores (comparando la secuencia recibida con la transmitida) 
-    o por estimación (utilizando medias y varianzas estimadas del diagrama de ojo y sustituyendo esos valores en las expresiones teóricas)
-    
-    ---
+    Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one) 
+    or by estimation (using estimated means and variances from the eye diagram and substituting those values into the theoretical expressions).
 
-    ### Args:
-    - `mode` - modo en que se determinará el Bit Error Rate (BER)
+    Parameters
+    ----------
+    mode : :obj:`str`
+        Mode in which the Bit Error Rate (BER) will be determined.
 
-    ---
+    Other Parameters
+    ----------------
+    Tx : :obj:`binary_sequence`, optional
+        Transmitted binary sequence. Required if `mode='counter'`.
+    Rx : :obj:`binary_sequence`, optional
+        Received binary sequence. Required if `mode='counter'`.
+    eye_obj : :obj:`eye`, optional
+        `eye` object with the estimated parameters of the eye diagram. Required if `mode='estimator'`.
+    M : :obj:`int`, optional
+        Order of PPM modulation. Required if `mode='estimator'`.
+    decision : :obj:`str`, optional
+        Type of decision to make, 'hard' or 'soft'. Default is 'soft'. Required if `mode='estimator'`.
 
-    ### Kargs:
-    si `mode='counter'`:
-    - `Tx` - secuencia binaria transmitida
-    - `Rx` - secuencia binaria recibida
-    
-    si `mode='estimator'`:
-    - `eye_obj` - objeto `eye` con los parámetros estimados del diagrama de ojo
-    - `M` - orden de modulación PPM
-    - `decision` [Opcional] - tipo de decision `'hard'` o `'soft'` (default: `decision='soft'`)
-
-    ### Returns:
-    - `float` - BER
+    Returns
+    -------
+    :obj:`float`
+        BER.
     """
         
     if mode == 'counter':
-        assert 'Rx' in kargs.keys() and 'Tx' in kargs.keys(), "Introduzca las secuencias binarias enviada `Tx` y recibida `Rx` como argumentos"
+        assert 'Rx' in kargs.keys() and 'Tx' in kargs.keys(), "`Tx` and `Rx` are required arguments for `mode='counter'`."
         Rx = kargs['Rx']
         Tx = kargs['Tx']
 
@@ -263,13 +363,13 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
             Tx = binary_sequence( Tx )
 
         Tx = Tx[:Rx.len()]
-        assert Tx.len() == Rx.len(), "Error: por alguna razón la secuencia recibida es más larga que la transmitida!"
+        assert Tx.len() == Rx.len(), "Error: `Tx` and `Rx` must have the same length."
 
         return np.sum(Tx.data != Rx.data)/Tx.len()
 
     elif mode == 'estimator':
-        assert 'eye_obj' in kargs.keys(), "Introduzca un objeto `eye` como argumento"
-        assert 'M' in kargs.keys(), "Introduzca el orden de modulación `M` como argumento"
+        assert 'eye_obj' in kargs.keys(), "`eye_obj` is a required argument for `mode='estimator'`."
+        assert 'M' in kargs.keys(), "`M` is a required argument for `mode='estimator'`"
 
         eye_obj = kargs['eye_obj']
         M = kargs['M']
@@ -288,39 +388,44 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
         elif decision == 'soft':
             Pe_sym = 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((I1-I0+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0]
         else:
-            raise TypeError('decision debe ser "hard" o "soft"!!') 
+            raise TypeError('`decision` must be "hard" or "soft"')
         return M/2/(M-1)*Pe_sym
 
     else:
-        raise TypeError('Elija entre `counter` o `estimator` e introduzca los argumentos correspondientes en cada caso.')
+        raise TypeError('Invalid mode. Use `counter` or `estimator`.')
 
 
-def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray], M: int, kind: Literal['soft','hard']='soft'):
+def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray], M: int, decision: Literal['soft','hard']='soft'):
     """
-        Esta función calcula la probabilidad de error de bit teórica para un sistema PPM.
+    Calculates the theoretical bit error probability for a PPM system.
 
-    Args:
-    - `mu1` - valor de corriente (o tensión) medio de la señal correspondiente a un bit 1
-    - `s0` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 0
-    - `s1` - deviación estandar de corriente (o tensión) de la señal correspondiente a un bit 1
-    - `M` - orden de la modulación PPM. 
-    - `kind` [Opcional] - tipo de decodificación PPM (default: `kind='soft'`). Se debe especificar si `modulation='PPM'`
+    Parameters
+    ----------
+    mu1 : :obj:`float`
+        Average current (or voltage) value of the signal corresponding to a bit 1.
+    s0 : :obj:`float`
+        Standard deviation of current (or voltage) of the signal corresponding to a bit 0.
+    s1 : :obj:`float`
+        Standard deviation of current (or voltage) of the signal corresponding to a bit 1.
+    M : :obj:`int`
+        Order of PPM modulation.
+    decision : :obj:`str`, optional
+        Type of PPM decoding. Default is 'soft'.
 
-    Returns:
-    - `BER` - probabilidad de error de bit teórica
+    Returns
+    -------
+    :obj:`float`
+        Theoretical bit error probability (BER).
     """
 
-    if kind == 'soft':
+    if decision == 'soft':
         fun = np.vectorize( lambda mu1,s0,s1,M: 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu1+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0] )
-    elif kind == 'hard':
+    elif decision == 'hard':
         def fun(mu1_,s0_,s1_,M_):
             r = np.linspace(0,mu1_,1000)
             return np.min(1 - Q((r-mu1_)/s1_) * (1-Q((r)/s0_))**(M_-1))
         fun = np.vectorize( fun )
     else:
-        raise ValueError('`kind` must be `soft` or `hard`.')
+        raise ValueError('`decision` must be `soft` or `hard`.')
     return fun(mu1,s0,s1,M)*0.5*M/(M-1)
 
-
-if __name__ == '__main__':
-    print(BER_analizer('counter', Tx='0 1 0 1', Rx='0,1,0,0'))
