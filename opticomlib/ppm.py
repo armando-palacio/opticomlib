@@ -325,7 +325,8 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
 
 
 def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
-    """
+    """BER Analizer
+    
     Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one) 
     or by estimation (using estimated means and variances from the eye diagram and substituting those values into the theoretical expressions).
 
@@ -396,7 +397,7 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
 
 
 def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray], M: int, decision: Literal['soft','hard']='soft'):
-    """
+    r"""
     Calculates the theoretical bit error probability for a PPM system.
 
     Parameters
@@ -416,15 +417,41 @@ def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int,
     -------
     :obj:`float`
         Theoretical bit error probability (BER).
+
+    Notes
+    -----
+    The theoretical bit error probability is calculated using the following expression:
+
+    .. math::
+        P_e = \frac{M/2}{(M-1)}P_{e_{sym}}
+
+    where :math:`P_{e_{sym}}` is the symbol error probability, and is calculated as follows for ``decision='soft'``:
+
+    .. math::
+        P_{e_{sym}} = 1 - \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \left( 1-Q\left( \frac{\mu_1+s_1x}{s_0} \right) \right) ^{M-1} e^{-x^2/2}dx
+
+    and for ``decision='hard'``:
+
+    .. math::
+        P_{e_{sym}} = 1 - Q\left( \frac{r_{th}-\mu_1}{s_1} \right) \left( 1-Q\left( \frac{r_{th}}{s_0} \right) \right)^{M-1}
+
+    Examples
+    --------
+    >>> from opticomlib.ppm import theory_BER
+    >>> theory_BER(mu1=1, s0=0.1, s1=0.1, M=8, decision='hard')
+    8.515885763544466e-07
+    >>> theory_BER(mu1=1, s0=0.1, s1=0.1, M=8, decision='soft')
+    3.074810247686141e-12
+
     """
 
     if decision == 'soft':
         fun = np.vectorize( lambda mu1,s0,s1,M: 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu1+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0] )
     elif decision == 'hard':
+        @np.vectorize
         def fun(mu1_,s0_,s1_,M_):
             r = np.linspace(0,mu1_,1000)
-            return np.min(1 - Q((r-mu1_)/s1_) * (1-Q((r)/s0_))**(M_-1))
-        fun = np.vectorize( fun )
+            return np.min(1 - Q((r-mu1_)/s1_) * (1-Q(r/s0_))**(M_-1))
     else:
         raise ValueError('`decision` must be `soft` or `hard`.')
     return fun(mu1,s0,s1,M)*0.5*M/(M-1)

@@ -219,13 +219,11 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
     
 
 
-def theory_BER(mu0: Union[int, ndarray], mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray]):
-    """Calculates the theoretical bit error probability for an OOK system.
+def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray]):
+    r"""Calculates the theoretical bit error probability for an OOK system.
 
     Parameters
     ----------
-    mu0 : :obj:`float`
-        Average current (or voltage) value of the signal corresponding to a bit 0.
     mu1 : :obj:`float`
         Average current (or voltage) value of the signal corresponding to a bit 1.
     s0 : :obj:`float`
@@ -237,11 +235,23 @@ def theory_BER(mu0: Union[int, ndarray], mu1: Union[int, ndarray], s0: Union[int
     -------
     :obj:`float`
         Theoretical bit error probability (BER).
-    """
 
+    Notes
+    -----
+    The theoretical bit error probability is calculated using the following expression:
+
+    .. math::
+        P_e = \frac{1}{2} \left[Q\left(\frac{\mu_1 - r_{th}}{\sigma_1}\right) + Q\left(\frac{r_{th}}{\sigma_0}\right)\right]
+
+    Examples
+    --------
+    >>> from opticomlib.ook import theory_BER
+    >>> theory_BER(mu1=1, s0=0.1, s1=0.1)
+    2.8674468224390994e-07
+    """
     @np.vectorize
-    def fun(mu0_,mu1_,s0_,s1_):
-        r = np.linspace(mu0_,mu1_,1000)
-        return 0.5*np.min(Q((mu1_-r)/s1_) + Q((r-mu0_)/s0_))
+    def fun(mu1_,s0_,s1_):
+        r = np.linspace(0,mu1_,1000)
+        return 0.5*np.min(Q((mu1_-r)/s1_) + Q(r/s0_))
                      
-    return fun(mu0,mu1,s0,s1)
+    return fun(mu1,s0,s1)
