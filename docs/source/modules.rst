@@ -1,53 +1,54 @@
-.. .. automodule:: opticomlib.typing
-..     :members:
-..     :noindex:
-
 Data types
 ----------
-.. autoclass:: opticomlib.typing.global_variables
-    :members:
+.. automodule:: opticomlib.typing
+   :members:
+   :member-order: bysource
 
-.. autoclass:: opticomlib.typing.binary_sequence
-    :members:
-
-.. autoclass:: opticomlib.typing.electrical_signal
-    :members:
-
-.. autoclass:: opticomlib.typing.optical_signal
-    :members:
-
-.. autoclass:: opticomlib.typing.eye
-    :members:
-
+-----------------------
 
 Electro-Optical Devices
 -----------------------
 .. automodule:: opticomlib.devices
     :members:
-    :noindex:
+    :member-order: bysource
+
+-----------
 
 OOK Devices
 -----------
 .. automodule:: opticomlib.ook
     :members:
-    :noindex:
-
+    :member-order: bysource
+    
 PPM Devices
 -----------
 .. automodule:: opticomlib.ppm
     :members:
-    :noindex:
+    :member-order: bysource
+
+----------
 
 Laboratory
 ----------
+Use this module to control the laboratory equipment.
+
+.. code-block:: python
+
+    >>> import opticomlib.lab as lab
+    >>> lab.search_inst()
+    ('ASRL3::INSTR', 'ASRL4::INSTR', 'USB::0x0699::0x3130::9211219::INSTR')
+
 .. automodule:: opticomlib.lab
     :members:
-    :noindex:
+    :member-order: bysource
+
+
+-------------------
 
 Utilities functions
 -------------------
 .. automodule:: opticomlib.utils
     :members:
-    :noindex:
+    :member-order: bysource
 
 

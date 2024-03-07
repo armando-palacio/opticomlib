@@ -26,10 +26,10 @@ Here is an example of how to use Opticomlib to generate a gaussian pulse with a 
    pulse = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian', T=8, Vout=5) # create a gaussian pulse with a width of 8 samples and an amplitude of 5V
 
    # for plotting
-   pulse.plot('r.-').grid().show()
+   pulse.plot('r.-').show()
 
 
-.. image:: /_images/usage-section-example.svg
+.. image:: _images/usage-section-example.svg
    :align: center
    :alt: Example of Opticomlib usage
 

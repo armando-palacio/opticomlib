@@ -1,9 +1,10 @@
-![image](logo/opticomlib_logo.png)
+![image](docs/source/_static/logo.svg)
 
-# Opticomlib 0.4.6 documentation
+# Opticomlib documentation
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/armando-palacio/opticomlib/blob/main/LICENSE)
-[![Python Version](https://img.shields.io/badge/python-3.7%20|%203.8%20|%203.9|%203.10-orange)](https://www.python.org/downloads/release/python-390/)
+[![PyPI](https://img.shields.io/pypi/v/opticomlib)](https://pypi.org/project/opticomlib/)
+[![Read the Docs](https://img.shields.io/badge/docs-latest-blue)](https://armando-palacio.github.io/opticomlib)
+[![GitHub](https://img.shields.io/github/stars/armando-palacio/opticomlib?style=social)](https://github.com/armando-palacio/opticomlib.git)
 
 ## Description
 

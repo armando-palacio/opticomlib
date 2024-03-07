@@ -1,6 +1,6 @@
 """
+.. rubric:: Functions
 .. autosummary::
-   :toctree: generated/
 
    PPM_ENCODER           -- Pulse position modulation encoder
    PPM_DECODER           -- Pulse position modulation decoder

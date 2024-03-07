@@ -1,12 +1,12 @@
 """
+.. rubric:: Classes
 .. autosummary::
-   :toctree: generated/
 
-   gv                    -- Global variables instance
-   binary_sequence       -- Binary sequence class
-   electrical_signal     -- Electrical signal class
-   optical_signal        -- Optical signal class
-   eye                   -- Eye diagram class
+    global_variables
+    binary_sequence
+    electrical_signal
+    optical_signal
+    eye
 """
 
 from numpy.fft import fft, ifft, fftfreq, fftshift
@@ -34,8 +34,7 @@ Array_Like = (list, tuple, np.ndarray)
 Number = (int, float)
 
 class global_variables():
-    r"""
-    **Global Variables Object**
+    r"""**Global Variables (gv)**
 
     This object is used to store global variables that are used in the simulation.
     The global variables are used mainly to define the sampling frequency, the slot rate, 
@@ -263,7 +262,7 @@ gv = global_variables()
 
 
 class binary_sequence():
-    r"""Binary sequence class.
+    r"""**Binary Sequence**
 
     This class provides methods and attributes to work with binary sequences. 
     The binary sequence can be provided as a string, list, tuple, or numpy array.
@@ -438,7 +437,7 @@ class binary_sequence():
 
 
 class electrical_signal():
-    """Electrical signal class.
+    """**Electrical Signal**
 
     Parameters
     ----------
@@ -933,7 +932,7 @@ class electrical_signal():
 
 
 class optical_signal(electrical_signal):
-    """Optical signal class.
+    """**Optical Signal**
     
     Bases: :obj:`electrical_signal`
 
@@ -1306,7 +1305,7 @@ class optical_signal(electrical_signal):
     
 
 class eye():
-    """A class to represent the parameters of an eye diagram.
+    """**Eye Diagram Parameters**.
 
     This object contains the parameters of an eye diagram and methods to plot it.
 

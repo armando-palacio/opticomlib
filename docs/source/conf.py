@@ -11,7 +11,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../../'))
 
-version_path = '/'.join([sys.path[0],'VERSION.txt'])
+version_path = '../../VERSION.txt'
 
 project = 'opticomlib'
 copyright = '2024, Ing. Armando P. Romeu'
@@ -45,8 +45,11 @@ language = 'English'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'renku'#'sphinx_rtd_theme'#
+html_theme = 'renku'
+# html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_logo = '_static/logo.svg'
+html_favicon = '_static/favicon_laser.ico'
 
 source_suffix = '.rst'
 source_encoding = 'utf-8-sig'

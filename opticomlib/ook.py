@@ -1,6 +1,6 @@
 """
+.. rubric:: Functions
 .. autosummary::
-   :toctree: generated/
 
    THRESHOLD_EST         -- Threshold for detection
    DSP                   -- Digital signal processing for PPM systems

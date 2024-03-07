@@ -1,6 +1,6 @@
 """
+.. rubric:: Devices
 .. autosummary::
-   :toctree: generated/
 
    PRBS                  -- Pseudorandom binary sequence generator
    DAC                   -- Digital-to-analog converter (DAC) model
@@ -1002,10 +1002,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
 
     Example
     -------
-    .. plot::
-        :include-source:
-        :alt: GET_EYE example 1
-        :align: center
+    .. code-block:: python
+        :linenos:
 
         from opticomlib.devices import PRBS, DAC, GET_EYE
         from opticomlib import gv
@@ -1017,6 +1015,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
         y.noise = np.random.normal(0, 0.05, y.len())
 
         GET_EYE(y, sps_resamp=512).plot() # with interpolation
+
+    .. image:: /_images/GET_EYE_example1.png
     """
     tic()
 
@@ -1377,12 +1377,10 @@ def FBG(input: optical_signal,
     
     Examples
     --------
-    .. plot::
-        :include-source:
-        :caption: Frequency response of a FBG with different apodization functions.
-        :alt: Frequency response of a FBG with different apodization functions.
-        :align: center
 
+    .. code-block:: python
+        :linenos:
+    
         from opticomlib import optical_signal, gv, pi, db, plt, np
         from opticomlib.devices import FBG
 
@@ -1402,6 +1400,9 @@ def FBG(input: optical_signal,
         plt.ylim(-100,)
         plt.xlim(-20, 20)
         plt.show()
+
+    .. image:: /_images/FBG_example1.svg
+        :align: center
     """
     tic()
 

@@ -1,6 +1,6 @@
 """
+.. rubric:: Functions
 .. autosummary::
-   :toctree: generated/
 
     generate_prbs          -- Generate a pseudo-random binary sequence (PRBS) of desired order.
     dec2bin                -- Convert a decimal number to its binary representation.
@@ -21,6 +21,7 @@
     rcos                   -- Raised cosine function.
     si                     -- Unit of measure classifier.
     norm                   -- Normalize a vector to 1.
+    nearest                -- Find the nearest value in an array.
 """
 
 import re
@@ -890,3 +891,36 @@ def norm(x):
         raise ValueError('`x` must be an array_like.')
     
     return x/x.max()
+
+
+def nearest(x, a):
+    """
+    Find the nearest value in an array.
+
+    Parameters
+    ----------
+    x : Array_Like
+        Input array.
+    a : Number
+        Value to find.
+
+    Returns
+    -------
+    out : Number
+        Nearest value in the array.
+
+    Raises
+    ------
+    ValueError
+        If ``x`` is not an `array_like`.
+        If ``a`` is not a `number`.
+    """
+    if isinstance(x, Array_Like):
+        x = np.array(x)
+    else:
+        raise ValueError('`x` must be an array_like.')
+
+    if not isinstance(a, Number):
+        raise ValueError('`a` must be a number.')
+    
+    return x[np.abs(x-a).argmin()]

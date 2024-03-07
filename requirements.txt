@@ -7,3 +7,4 @@ pympler
 sphinx
 renku-sphinx-theme
 ghp-import
+pyvisa
