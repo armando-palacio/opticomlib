@@ -222,29 +222,38 @@ def PM(op_input: optical_signal,
 
     Modulate the phase of the input optical signal through input electrical signal.
 
-    .. math:: E_{out} = E_{in} \cdot e^{j\pi \frac{V_{in}}{V_{\pi}}} 
-
     Parameters
     ----------
-    op_input : optical_signal
+    op_input : :obj:`optical_signal`
         Optical signal to be modulated.
-    el_input : float, ndarray, or electrical_signal
+    el_input : :obj:`float`, :obj:`ndarray`, or :obj:`electrical_signal`
         Driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.
-    Vpi : float, default: 5.0
-        Voltage at which the device achieves a phase shift of :math:`\pi`.
+    Vpi : :obj:`float`
+        Voltage at which the device achieves a phase shift of :math:`\pi`. Default value is 5.0.
 
     Returns
     -------
-    optical_signal
+    op_output: :obj:`optical_signal`
         Modulated optical signal.
 
     Raises
     ------
     TypeError
-        If ``op_input`` type is not [optical_signal].
-        If ``el_input`` type is not in [float, ndarray, electrical_signal].
+        If ``op_input`` type is not [:obj:`optical_signal`].
+        If ``el_input`` type is not in [:obj:`float`, :obj:`ndarray`, :obj:`electrical_signal`].
     ValueError
-        If ``el_input`` is [ndarray] or [electrical_signal] but, length is not equal to ``op_input`` length.
+        If ``el_input`` is [:obj:`ndarray`] or [:obj:`electrical_signal`] but, length is not equal to ``op_input`` length.
+
+    Notes
+    -----
+    The output signal is given by:
+
+    .. figure:: _images/PMv2.png
+        :width: 50%
+        :align: center
+        :alt: MZM
+    
+    .. math:: E_{out} = E_{in} \cdot e^{\left(j\pi \frac{u(t)}{V_{\pi}}\right)}
 
     Examples
     --------
@@ -334,44 +343,50 @@ def MZM(op_input: optical_signal,
     r"""
     **Mach-Zehnder modulator**
 
-    Asymmetric coupler and opposite driving voltages (:math:`V_1=-V_2` Push-Pull config). 
+    Asymmetric coupler and opposite driving voltages model (:math:`V_1=-V_2` Push-Pull config). 
 
     Parameters
     ----------
-    op_input : optical_signal
+    op_input : :obj:`optical_signal`
         Optical signal to be modulated.
-    el_input : float, ndarray, or electrical_signal
-        Driver voltage.
-    bias : float, default: 0.0
+    el_input : :obj:`float`, :obj:`ndarray`, or :obj:`electrical_signal`
+        Driver voltage, with zero bias. 
+    bias : :obj:`float`, default: 0.0
         Modulator bias voltage.
-    Vpi : float, default: 5.0
+    Vpi : :obj:`float`, default: 5.0
         Voltage at which the device switches from on-state to off-state.
-    loss_dB : float, default: 0.0
+    loss_dB : :obj:`float`, default: 0.0
         Propagation or insertion losses in the modulator, value in dB.
-    eta : float, default: 0.1
+    eta : :obj:`float`, default: 0.1
         Imbalance ratio of light intensity between the two arms of the modulator. :math:`ER = -20\log_{10}(\eta/2)` (:math:`=26` dB by default).
-    BW : float, default: 40e9
+    BW : :obj:`float`, default: 40e9
         Modulator bandwidth in Hz.
 
     Returns
     -------
-    optical_signal
+    :obj:`optical_signal`
         Modulated optical signal.
 
     Raises
     ------
     TypeError
-        If ``op_input`` type is not [optical_signal].
-        If ``el_input`` type is not in [float, ndarray, electrical_signal].
+        If ``op_input`` type is not [:obj:`optical_signal`].
+        If ``el_input`` type is not in [:obj:`float`, :obj:`ndarray`, :obj:`electrical_signal`].
     ValueError
-        If ``el_input`` is [ndarray] or [electrical_signal] but, length is not equal to ``op_input`` length.
+        If ``el_input`` is [:obj:`ndarray`] or [:obj:`electrical_signal`] but, length is not equal to ``op_input`` length.
     
     Notes
     -----
+    .. figure:: _images/MZMv2.png
+        :width: 50%
+        :align: center
+        :alt: MZM
+
     The output signal is given by [1]_:
 
+
     .. math:: 
-        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left( \cos(\frac{\pi}{2V_{\pi}}(V_{in}+V_{bias})) + j \frac{\eta}{2} \sin(\frac{\pi}{2V_{\pi}}(V_{in}+V_{bias})) \right) 
+        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] 
 
     References
     ----------
@@ -392,7 +407,7 @@ def MZM(op_input: optical_signal,
 
         Vpi = 5
         tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool); not_tx_seq = ~tx_seq
-        V = 2*(np.kron(not_tx_seq, np.ones(gv.sps)) - 0.5 )*Vpi/2
+        V = 2*(np.kron(not_tx_seq, np.ones(gv.sps)) - 0.5 )*Vpi/2 
 
         input = optical_signal( np.ones_like(V)*idbm(10)**0.5 )
         t = input.t()*1e9
