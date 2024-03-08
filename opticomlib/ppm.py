@@ -116,9 +116,9 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
     
     k = int(np.log2(M))
 
-    decimal = np.where(input==1)[0]%M # get decimal
+    decimal = np.where(input==1)[0]%M # get decimals
 
-    output = np.array(list(map(lambda x: dec2bin(x,k), decimal))).ravel() # convert to binary again
+    output = np.array(list(map(lambda x: dec2bin(x,k), decimal))).ravel() # convert decimals to bits
     output= binary_sequence(output)
 
     output.ejecution_time = toc()
@@ -153,19 +153,19 @@ def HDD(input: binary_sequence, M: int) -> binary_sequence:
     """
     tic()
 
-    n_simb = int(input.len()/M)
+    n_simb = int(input.len()/M) # number of symbols
 
-    s = np.sum(input.data.reshape(n_simb, M), axis=-1)
+    s = np.sum(input.data.reshape(n_simb, M), axis=-1) # number of ON slots per symbol
 
-    output = np.array(input.data, dtype=np.uint8)
+    output = input.data.copy() 
 
-    for i in np.where(s==0)[0]: # si existe algún símbolo sin ningún slot encendido, se prende uno al azar
-        output[i*M + np.random.randint(M)] = 1
+    for i in np.where(s==0)[0]: 
+        output[i*M + np.random.randint(M)] = 1  # raise one slot randomly for each symbol without ON slots
 
-    for i in np.where(s>1)[0]: # si existe algún símbolo con más de 1 slot encendido, se elige uno de ellos al azar)
+    for i in np.where(s>1)[0]: 
         j = np.where(output[i*M:(i+1)*M]==1)[0]
         output[i*M:(i+1)*M] = 0
-        output[i*M + np.random.choice(j)]=1
+        output[i*M + np.random.choice(j)]=1  # select one ON slot randomly for each symbol with more than one ON slots
 
     output = binary_sequence(output)
     output.ejecution_time = toc()
