@@ -248,51 +248,52 @@ def PM(op_input: optical_signal,
 
     Examples
     --------
-    .. plot::
-        :include-source:
-        :alt: PM example 1
-        :align: center
+    .. code-block:: python
+        :linenos:
 
         from opticomlib.devices import PM
         from opticomlib import optical_signal, gv
         import matplotlib.pyplot as plt
         import numpy as np
 
-        gv(sps=8, R=1e9) # set samples per bit and bitrate
+        gv(sps=16, R=1e9) # set samples per bit and bitrate
 
         op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
         t = op_input.t()*1e9
-        w = 4*np.pi/t[-1]
+
+        fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
 
         # Constant phase
         output = PM(op_input, el_input=2.5, Vpi=5)
 
-        plt.subplot(311)
-        plt.plot(t, op_input.phase()[0] - w*t, 'r', t, output.phase()[0] - w*t, 'b', lw=3)
-        plt.xticks([])
-        plt.ylabel('Fase [rad]')
-        plt.legend(['input', 'output'], bbox_to_anchor=(1, 1), loc='upper left')
-        plt.title(r'Constant phase change ($\Delta f=0$)')
+        axs[0].set_title(r'Constant phase change ($\Delta f=0$)')
+        axs[0].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
+        axs[0].plot(t, output.signal[0].real, 'b-', label='output', lw=3)
+        axs[0].grid()
 
         # Lineal phase
         output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
 
-        plt.subplot(312)
-        plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-        plt.xticks([])
-        plt.ylabel('Fase [rad]')
-        plt.title(r'Linear phase change  ($\Delta f \rightarrow cte.$)')
+        axs[1].set_title(r'Linear phase change  ($\Delta f \rightarrow cte.$)')
+        axs[1].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
+        axs[1].plot(t, output.signal[0].real, 'b-', label='output', lw=3)
+        axs[1].grid()
 
         # Quadratic phase
         output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
 
-        plt.subplot(313)
-        plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-        plt.xlabel('Tiempo [ns]')
-        plt.ylabel('Fase [rad]')
         plt.title(r'Quadratic phase change ($\Delta f \rightarrow linear$)')
-        plt.tight_layout()
+        axs[2].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
+        axs[2].plot(t, output.signal[0].real, 'b-', label='output', lw=3)
+        axs[2].grid()
+
+        plt.xlabel('Tiempo [ns]')
+        plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
         plt.show()
+    
+    .. image:: _images/PM_example1.svg
+        :width: 100%
+        :align: center
     """
     tic()
 
@@ -376,6 +377,65 @@ def MZM(op_input: optical_signal,
     ----------
     .. [1] Tetsuya Kawanishi, "Electro-optic Modulation for Photonic Networks", Chapter 4.3 (2022). doi: https://doi.org/10.1007/978-3-030-86720-1
 
+    Examples
+    --------
+    .. code-block:: python
+        :linenos:
+
+        from opticomlib import idbm, dbm, optical_signal, gv
+        from opticomlib.devices import MZM
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+
+        gv(sps=128, R=10e9) # set samples per bit and bitrate
+
+        Vpi = 5
+        tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool); not_tx_seq = ~tx_seq
+        V = 2*(np.kron(not_tx_seq, np.ones(gv.sps)) - 0.5 )*Vpi/2
+
+        input = optical_signal( np.ones_like(V)*idbm(10)**0.5 )
+        t = input.t()*1e9
+
+        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=3, eta=0.1, BW=2*gv.R)
+
+        fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
+
+        # Plot input and output power
+        axs[0].plot(t, dbm(input.signal[0].real**2), 'r-', label='input', lw=3)
+        axs[0].plot(t, dbm(mod_sig.abs('signal')[0]**2), 'C1-', label='output', lw=3)
+        axs[0].legend(bbox_to_anchor=(1, 1), loc='upper left')
+        axs[0].set_ylabel('Potencia [dBm]')
+        for i in t[::gv.sps]:
+            axs[0].axvline(i, color='k', linestyle='--', alpha=0.5)
+
+        # Plot fase
+        phi_in = input.phase()[0]
+        phi_out = mod_sig.phase()[0]
+
+        axs[1].plot(t, phi_in, 'b-', label='Fase in', lw=3)
+        axs[1].plot(t, phi_out, 'C0-', label='Fase out', lw=3)
+        axs[1].set_ylabel('Fase [rad]')
+        axs[1].legend(bbox_to_anchor=(1, 1), loc='upper left')
+        for i in t[::gv.sps]:
+            axs[1].axvline(i, color='k', linestyle='--', alpha=0.5)
+
+        # Frecuency chirp
+        freq_in = 1/2/np.pi*np.diff(phi_in)/np.diff(t)
+        freq_out = 1/2/np.pi*np.diff(phi_out)/np.diff(t)
+
+        axs[2].plot(t[:-1], freq_in, 'k', label='Frequency in', lw=3)
+        axs[2].plot(t[:-1], freq_out, 'C7', label='Frequency out', lw=3)
+        axs[2].set_xlabel('Tiempo [ns]')
+        axs[2].set_ylabel('Frequency Chirp [Hz]')
+        axs[2].legend(bbox_to_anchor=(1, 1), loc='upper left')
+        for i in t[::gv.sps]:
+            axs[2].axvline(i, color='k', linestyle='--', alpha=0.5)
+        plt.show()
+
+    .. image:: _images/MZM_example1.svg
+        :width: 100%
+        :align: center
     """
 
     tic()

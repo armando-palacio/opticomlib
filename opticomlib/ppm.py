@@ -19,7 +19,7 @@ from scipy.integrate import quad
 from scipy.constants import pi
 
 from .devices import GET_EYE, SAMPLER, LPF
-from .typing import binary_sequence, electrical_signal, eye, gv
+from .typing import binary_sequence, electrical_signal, eye, gv, Array_Like
 from .utils import tic, toc, str2array, dec2bin, Q
 
 
@@ -60,7 +60,7 @@ def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int
         input = input.data
     elif isinstance(input, str):
         input = str2array(input, bool)
-    elif isinstance(input, (list, tuple)):
+    elif isinstance(input, Array_Like):
         input = np.array(input, dtype=bool)
     else:
         raise TypeError("`input` must be of type (str, list, tuple, ndarray, binary_sequence)")
@@ -87,7 +87,7 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
 
     Parameters
     ----------
-    input : :obj:`binary_sequence`
+    input : binary sequence in form of a string, list, tuple, ndarray or binary_sequence
         Binary sequence encoded in PPM.
     M : :obj:`int`
         Order of PPM modulation.
@@ -109,7 +109,7 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
         input = input.data
     elif isinstance(input, str):
         input = str2array(input, bool)
-    elif isinstance(input, (list, tuple)):
+    elif isinstance(input, Array_Like):
         input = np.array(input, dtype=bool)
     else:
         raise TypeError("`input` must be of type (str, list, tuple, ndarray, binary_sequence)")
@@ -125,7 +125,7 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
     return output
 
 
-def HDD(input: binary_sequence, M: int) -> binary_sequence:
+def HDD(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int):
     """Hard Decision Decoder
 
     Estimates the most probable PPM symbols from the given binary sequence.
@@ -136,13 +136,20 @@ def HDD(input: binary_sequence, M: int) -> binary_sequence:
 
     Parameters
     ----------
-    input : :obj:`binary_sequence`
+    input : binary sequence in form of a string, list, tuple, ndarray or binary_sequence
         Binary sequence to estimate.
 
     Returns
     -------
     :obj:`binary_sequence`
         Sequence of estimated symbols ready to decode.
+
+    Raises
+    ------
+    ValueError
+        If `M` is not a power of 2.
+    ValueError
+        If the length of `input` is not a multiple of `M`.
 
     Examples
     --------
@@ -153,11 +160,26 @@ def HDD(input: binary_sequence, M: int) -> binary_sequence:
     """
     tic()
 
-    n_simb = int(input.len()/M) # number of symbols
+    if isinstance(input, binary_sequence):
+        input = input.data
+    elif isinstance(input, str):
+        input = str2array(input, bool)
+    elif isinstance(input, Array_Like):
+        input = np.array(input, dtype=bool)
+    else:
+        raise TypeError("`input` must be of type (str, list, tuple, ndarray, binary_sequence)")
 
-    s = np.sum(input.data.reshape(n_simb, M), axis=-1) # number of ON slots per symbol
+    if not M & (M-1) == 0:
+        raise ValueError("`M` must be a power of 2.")
 
-    output = input.data.copy() 
+    if input.size % M != 0:
+        raise ValueError("The length of `input` must be a multiple of `M`.")
+
+    n_simb = int(input.size/M) # number of symbols
+
+    s = np.sum(input.reshape(n_simb, M), axis=-1) # number of ON slots per symbol
+
+    output = input.copy() 
 
     for i in np.where(s==0)[0]: 
         output[i*M + np.random.randint(M)] = 1  # raise one slot randomly for each symbol without ON slots
@@ -189,6 +211,13 @@ def SDD(input: electrical_signal, M: int) -> binary_sequence:
     :obj`binary_sequence`
         Sequence of estimated symbols ready to decode.
 
+    Raises
+    ------
+    ValueError
+        If `M` is not a power of 2.
+    ValueError
+        If the length of `input` is not a multiple of `M*sps`.
+
     Examples
     --------
     >>> from opticomlib.ppm import SDD, electrical_signal, gv
@@ -200,7 +229,19 @@ def SDD(input: electrical_signal, M: int) -> binary_sequence:
     """
     tic()
 
-    signal = np.sum( (input.signal + input.noise).reshape(-1, input.sps()), axis=-1)
+    if not M & (M-1) == 0:
+        raise ValueError("`M` must be a power of 2.")
+    
+    if isinstance(input, electrical_signal):
+        input = input.signal + input.noise
+
+    elif isinstance(input, Array_Like):
+        input = np.array(input)
+    
+    if input.size % (M*gv.sps) != 0:
+        raise ValueError("The length of `input` must be a multiple of `M*sps`.")
+
+    signal = np.sum( input.reshape(-1, gv.sps), axis=-1)
 
     i = np.argmax( signal.reshape(-1, M), axis=-1)
 
@@ -224,7 +265,26 @@ def THRESHOLD_EST(eye_obj: eye, M: int):
         `eye` object with the parameters of the eye diagram.
     M : :obj:`int`
         Order of PPM.
+
+    Returns
+    -------
+    :obj:`float`
+        Estimated threshold.
+
+    Raises
+    ------
+    ValueError
+        If `M` is not a power of 2.
+    
+    Examples
+    --------
+    >>> from opticomlib.ppm import THRESHOLD_EST, eye
+    >>>
+    >>> eye_obj = eye({'mu0':0.1, 'mu1':1.1, 's0':0.1, 's1':0.1})
+    >>> THRESHOLD_EST(eye_obj, M=4)
     """
+    if not M & (M-1) == 0:
+        raise ValueError("`M` must be a power of 2.")
 
     mu0 = eye_obj.mu0
     mu1 = eye_obj.mu1
@@ -268,6 +328,13 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
         Eye diagram parameters, only if ``decision='hard'``.
     rth : :obj:`float`, optional
         Decision threshold for PPM, only if ``decision='hard'``.
+
+    Raises
+    ------
+    ValueError
+        If `M` is not a power of 2.
+    ValueError
+        If `decision` is not 'hard' or 'soft'.
     
     Examples
     --------
@@ -292,13 +359,16 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
 
         DAC(y).plot(c='r', lw=3, label='Received sequence').show()
     """
+    if not M & (M-1) == 0:
+        raise ValueError("`M` must be a power of 2.")
+
     if BW is not None:
         x = LPF(input, BW)
     else:
         x = input
         x.ejecution_time = 0
 
-    if decision == 'hard':
+    if decision.lower() == 'hard':
         eye_obj = GET_EYE(x, nslots=8192, sps_resamp=128); time = eye_obj.ejecution_time + x.ejecution_time
         rth = THRESHOLD_EST(eye_obj, M)
         x = SAMPLER(x, eye_obj); time += x.ejecution_time
@@ -312,7 +382,7 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
 
         return output, eye_obj, rth
     
-    elif decision == 'soft':
+    elif decision.lower() == 'soft':
         tic()
         simbols = SDD(input, M); simbols.ejecution_time += toc() + x.ejecution_time
         output = PPM_DECODER(simbols, M)
@@ -320,7 +390,7 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
         return output
     
     else:
-        raise TypeError('`decision` must be "hard" or "soft"')
+        raise ValueError('`decision` must be "hard" or "soft"')
 
 
 
@@ -376,6 +446,9 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
         M = kargs['M']
         decision = kargs['decision'] if 'decision' in kargs.keys() else 'soft'
 
+        if not M & (M-1) == 0:
+            raise ValueError("`M` must be a power of 2.")
+
         assert decision.lower() in ('hard', 'soft'), "Error: el argumento decision debe tomar los valores `hard` o `soft`"
 
         I1 = eye_obj.mu1
@@ -389,11 +462,11 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
         elif decision == 'soft':
             Pe_sym = 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((I1-I0+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0]
         else:
-            raise TypeError('`decision` must be "hard" or "soft"')
+            raise ValueError('`decision` must be "hard" or "soft"')
         return M/2/(M-1)*Pe_sym
 
     else:
-        raise TypeError('Invalid mode. Use `counter` or `estimator`.')
+        raise ValueError('Invalid mode. Use `counter` or `estimator`.')
 
 
 def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray], M: int, decision: Literal['soft','hard']='soft'):
