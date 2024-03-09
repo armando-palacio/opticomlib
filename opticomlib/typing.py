@@ -48,28 +48,27 @@ class global_variables():
     This class don't need to be instantiated. It is already instantiated as ``gv``.
     For update or add a variable use the :meth:`__call__` method (i.e gv(\*\*kargs)).
     
-    Attributes
-    ----------
-    sps : :obj:`int` 
-        Samples per slot. Defaults to 16
-    R : :obj:`float` 
-        Slot rate in Hz. Defaults to 1e9
-    fs : :obj:`float`
-        Sampling frequency in Hz. Defaults to sps*R = 16e9
-    dt : :obj:`float`
-        Time step in seconds. Defaults 1/fs = 62.5e-12
-    wavelength : :obj:`float`
-        Optical wavelength in meters. Defaults to 1550e-9
-    f0 : :obj:`float` 
-        Central frequency in Hz. Defaults to c/wavelength = 193.4e12
-    N : :obj:`int`
-        Number of slots. Defaults to :obj:`None`
-    t : :obj:`np.ndarray`
-        Time array for signal simulation. If ``N`` is defined. Defaults to :obj:`None`
-    dw : :obj:`float`
-        Frequency step in Hz. If ``N`` is defined. Defaults to :obj:`None`
-    w : :obj:`np.ndarray`
-        Angular frequency array for signals simulation. If ``N`` is defined. Defaults to :obj:`None`
+    .. rubric:: Attributes
+    .. autosummary::
+
+        ~global_variables.sps
+        ~global_variables.R
+        ~global_variables.fs
+        ~global_variables.dt
+        ~global_variables.wavelength
+        ~global_variables.f0
+        ~global_variables.N
+        ~global_variables.t
+        ~global_variables.dw
+        ~global_variables.w
+
+        
+    .. rubric:: Methods
+    .. autosummary::
+
+        __call__
+        __str__
+        print
 
     Examples
     --------
@@ -91,14 +90,14 @@ class global_variables():
             t   :   [0.e+00 1.e-11 3.e-11 ... 1.e-08 1.e-08 1.e-08]
             w   :   [-3.e+11 -3.e+11 -3.e+11 ...  2.e+11  3.e+11  3.e+11]
 
-    Also can be define new variables trough \*\*kwargs. If at least two of the this arguments (``sps``, ``fs`` and ``R``) are not provided
+    Also can be define new variables trough \*\*kwargs. If at least two of this arguments (``sps``, ``fs`` and ``R``) are not provided
     a warning will be raised and the default values will be used.
 
     >>> gv(alpha=0.5, beta=0.3).print()
     
     ::
     
-        UserWarning: `sps`, `R` and `fs` will be set to default values (16 samples per slot, 1e+09 Hz, 2e+10 Samples/s)
+        UserWarning: `sps`, `R` and `fs` will be set to default values (16 samples per slot, 1.00e+09 Hz, 1.60e+10 Samples/s)
         warnings.warn(msg)
 
         ------------------------------
@@ -119,15 +118,25 @@ class global_variables():
 
     def __init__(self):
         self.sps = 16
+        """Number of samples per slot, ``16`` by default."""
         self.R = 1e9
+        """Slot rate in Hz, ``1e9`` by default."""	
         self.fs = self.R*self.sps
+        """Sampling frequency in Samples/s, ``R*sps=16e9`` by default."""	
         self.dt = 1/self.fs
-        self.dw = None
+        """Time step in seconds, ``1/fs=62.5e-12`` by default."""
         self.wavelength = 1550e-9
+        """Optical communication central wavelength in meters, ``1550e-9`` by default."""
         self.f0 = c/self.wavelength
+        """Optical communication central frequency in Hz, ``c/wavelength=193.4e12`` by default."""
         self.N = None
+        """Number of slots to simulate (``None`` by default), if provided, it will set the instance's `N` attribute and calculate `t`, `dw`, and `w`."""
         self.t = None
+        """Time array in seconds, ``None`` by default."""
+        self.dw = None
+        """Frequency step in Hz, ``None`` by default."""
         self.w = None
+        """Frequency array in Hz, ``None`` by default."""
 
 
     def __call__(self, sps: int=None, R: float=None, fs: float=None, wavelength: float=1550e-9, N: int=None, **kargs) -> Any:
@@ -170,7 +179,7 @@ class global_variables():
                 self.fs = fs
                 self.R = fs/sps
             else:
-                msg = f'`R` will be set to default value ({self.R:.0e} Hz)'
+                msg = f'`R` will be set to default value ({self.R:.2e} Hz)'
                 warnings.warn(msg)
                 self.fs = self.R*sps
 
@@ -191,7 +200,7 @@ class global_variables():
             self.sps = int(fs/self.R)
 
         else:
-            msg = f'`sps`, `R` and `fs` will be set to default values ({self.sps} samples per slot, {self.R:.0e} Hz, {self.fs:.0e} Samples/s)'
+            msg = f'`sps`, `R` and `fs` will be set to default values ({self.sps} samples per slot, {self.R:.2e} Hz, {self.fs:.2e} Samples/s)'
             warnings.warn(msg)
 
         self.dt = 1/self.fs
@@ -267,20 +276,35 @@ class binary_sequence():
     This class provides methods and attributes to work with binary sequences. 
     The binary sequence can be provided as a string, list, tuple, or numpy array.
 
-    Parameters
-    ----------
-    data : :obj:`str` or Array_Like
-        The binary sequence data.
-    
-    Attributes
-    ----------
-    data : :obj:`np.ndarray`, (1D, bool)
-        The binary sequence data.
-    execution_time : :obj:`float`
-        The execution time of the last operation performed on the binary sequence.
+    .. rubric:: Attributes
+    .. autosummary::
+
+        ~binary_sequence.data
+        ~binary_sequence.execution_time
+
+    .. rubric:: Methods
+    .. autosummary::
+
+        __init__
+        __str__
+        print
+        __len__
+        __getitem__
+        __add__
+        __radd__
+        len
+        type
+        sizeof
     """
 
     def __init__(self, data: Union[str, list, tuple, np.ndarray]): 
+        """ Initialize the binary sequence object.
+
+        Parameters
+        ----------
+        data : :obj:`str` or :obj:`Array_Like(bool)`
+            The binary sequence data.
+        """
         if not isinstance(data, ((str,) + Array_Like)):
             raise TypeError("The argument must be an str or array_like!")
         
@@ -292,7 +316,9 @@ class binary_sequence():
                 raise ValueError("The array must contain only 0's and 1's!")
 
         self.data = np.array(data, dtype=bool)
-        self.ejecution_time = None
+        """The binary sequence data, a 1D numpy array of boolean values."""
+        self.execution_time = None
+        """The execution time of the last operation performed on the binary sequence."""
 
     def __str__(self, title: str=None): 
         """Return a formatted string with the binary sequence data, length, size in bytes and time if available."""
@@ -310,9 +336,9 @@ class binary_sequence():
             f'len   :  {self.len()}\n\t' + \
             f'size  :  {self.sizeof()} bytes\n'
         
-        if self.ejecution_time is not None:
+        if self.execution_time is not None:
             msg += '\t' +\
-                f'time  :  {si(self.ejecution_time, "s", 1)}\n'
+                f'time  :  {si(self.execution_time, "s", 1)}\n'
         return msg
     
     def print(self, msg: str=None): 
@@ -331,9 +357,12 @@ class binary_sequence():
         print(self.__str__(msg))
         return self
     
-    def __len__(self): return self.len()
+    def __len__(self):
+        """Get number of slots of the binary sequence."""
+        return self.len()
 
     def __getitem__(self, key):
+        """Get a slice of the binary sequence."""
         return binary_sequence(self.data[key])
     
     def __add__(self, other): 
@@ -438,44 +467,82 @@ class binary_sequence():
 class electrical_signal():
     """**Electrical Signal**
 
-    Parameters
-    ----------
-    signal : array_like, optional
-        The signal values. Defaults to `None`.
-    noise : array_like, optional
-        The noise values. Defaults to `None`.
+    This class provides methods and attributes to work with electrical signals.
 
-    Attributes
-    ----------
-    signal : array_like, (1D, complex)
-        a complex-valued signal
-    noise : array_like, (1D, complex)
-        a complex-valued noise associated with the signal
-    execution_time : float
-        the time taken for the execution of the signal
+    .. rubric:: Attributes
+    .. autosummary::
+
+        ~electrical_signal.signal
+        ~electrical_signal.noise
+        ~electrical_signal.execution_time
+
+    .. rubric:: Methods
+    .. autosummary::
+
+        __init__
+        __str__
+        print
+        __len__
+        __add__
+        __mul__
+        __getitem__
+        __call__
+        __gt__
+        len
+        type
+        sizeof
+        fs
+        sps
+        dt
+        t
+        w
+        power
+        phase
+        apply
+        copy
+        abs
+        plot
+        psd
+        grid
+        legend
+        show
     """
 
     def __init__(self, signal: Union[list, tuple, np.ndarray]=None, noise: Union[list, tuple, np.ndarray]=None) -> None:
+        """ Initialize the electrical signal object.
+
+        Parameters
+        ----------
+        signal : array_like, optional
+            The signal values. Defaults to `None`.
+        noise : array_like, optional
+            The noise values. Defaults to `None`.
+        """
         if signal is None and noise is None:
             raise KeyError("`signal` or `noise` must be provided!")
         if (signal is not None) and (noise is not None) and (len(signal)!=len(noise)):
             raise ValueError(f"The arrays `signal`{signal.shape} and `noise`{noise.shape} must have the same length!")
 
         if signal is None:
-            self.signal = np.zeros_like(noise, dtype=complex)
+            signal = np.zeros_like(noise, dtype=complex)
         elif not isinstance(signal, (list, tuple, np.ndarray)):
             raise TypeError("`signal` must be of type list, tuple or numpy array!")
         else:
-            self.signal = np.array(signal, dtype=complex) # shape (1xN)
+            signal = np.array(signal, dtype=complex) # shape (1xN)
         
         if noise is None:
-            self.noise = np.zeros_like(signal, dtype=complex)
+            noise = np.zeros_like(signal, dtype=complex)
         elif not isinstance(noise, (list, tuple, np.ndarray)):
             raise TypeError("`noise` must be of type list, tuple or numpy array!")
         else:
-            self.noise = np.array(noise, dtype=complex)
+            noise = np.array(noise, dtype=complex)
         
-        self.ejecution_time = None
+        self.signal = signal
+        """The signal values, a 1D numpy array of complex values."""
+        self.noise = noise
+        """The noise values, a 1D numpy array of complex values."""
+        self.execution_time = None
+        """The execution time of the last operation performed on the electrical signal."""
 
     def __str__(self, title: str=None): 
         """Return a formatted string with the electrical_signal data, length, size in bytes and time if available."""
@@ -500,9 +567,9 @@ class electrical_signal():
             f'len     :  {self.len()}\n\t' + \
             f'size    :  {self.sizeof()} bytes\n'
         
-        if self.ejecution_time is not None:
+        if self.execution_time is not None:
             msg += '\t' + \
-                f'time    :  {si(self.ejecution_time, "s", 1)}\n'
+                f'time    :  {si(self.execution_time, "s", 1)}\n'
         return msg
     
     def print(self, msg: str=None): 
@@ -970,24 +1037,57 @@ class optical_signal(electrical_signal):
     
     Bases: :obj:`electrical_signal`
 
-    Parameters
-    ----------
-    signal : array_like, (1D, 2D)
-        The signal values, default is `None`.
-    noise : array_like, (1D, 2D)
-        The noise values, default is `None`.  
+    This class provides methods and attributes to work with optical signals.
 
-    Attributes
-    ----------
-    signal : :obj:`np.ndarray`, (2D, complex)
-        a complex-valued signal
-    noise : :obj:`np.ndarray`, (2D, complex)
-        a complex-valued noise associated with the signal
-    execution_time : :obj:`float`
-        the time taken for the execution of the signal
+    .. rubric:: Attributes
+    .. autosummary::
+
+        ~optical_signal.signal
+        ~optical_signal.noise
+        ~optical_signal.execution_time
+
+    .. rubric:: Methods
+    .. autosummary::
+
+        __init__
+        __str__
+        print
+        __len__
+        __add__
+        __mul__
+        __getitem__
+        __call__
+        __gt__
+        len
+        type
+        sizeof
+        fs
+        sps
+        dt
+        t
+        w
+        power
+        phase
+        apply
+        copy
+        abs
+        plot
+        psd
+        grid
+        legend
+        show
     """
 
     def __init__(self, signal: Union[list, tuple, np.ndarray]=None, noise: Union[list, tuple, np.ndarray]=None) -> None:
+        """ Initialize the optical signal object.
+
+        Parameters
+        ----------
+        signal : array_like, (1D, 2D)
+            The signal values, default is `None`.
+        noise : array_like, (1D, 2D)
+            The noise values, default is `None`.
+        """
         if signal is not None:
             ndim = np.array(signal).ndim
             if ndim > 2 or ndim < 1:
@@ -1343,6 +1443,15 @@ class eye():
 
     This object contains the parameters of an eye diagram and methods to plot it.
 
+    .. rubric:: Methods
+    .. autosummary::
+
+        __init__
+        __str__
+        print
+        plot
+        show
+
     Attributes
     ----------
     t : :obj:`np.ndarray`
@@ -1384,6 +1493,14 @@ class eye():
     """
 
     def __init__(self, eye_dict={}):
+        """ Initialize the eye diagram object.
+
+        Parameters
+        ----------
+        eye_dict : :obj:`dict`, optional
+            Dictionary with the eye diagram parameters.
+        """
+
         if eye_dict:
             for key, value in eye_dict.items():
                 setattr(self, key, value)
@@ -1398,10 +1515,10 @@ class eye():
 
         np.set_printoptions(precision=1, threshold=10)
 
-        msg = f'\n{sub}\n{title}\n{sub}\n ' + '\n '.join([f'{key} : {value}' for key, value in self.__dict__.items() if key != 'ejecution_time'])
+        msg = f'\n{sub}\n{title}\n{sub}\n ' + '\n '.join([f'{key} : {value}' for key, value in self.__dict__.items() if key != 'execution_time'])
         
-        if self.ejecution_time is not None:
-            msg += f'\n time  :  {si(self.ejecution_time, "s", 1)}\n'
+        if self.execution_time is not None:
+            msg += f'\n time  :  {si(self.execution_time, "s", 1)}\n'
         return msg
     
     def print(self, msg: str=None): 
@@ -1414,8 +1531,8 @@ class eye():
 
         Returns
         -------
-        :obj:`eye`
-            same object
+        self: :obj:`eye`
+            Same object
         """
         print(self.__str__(msg))
         return self
@@ -1446,7 +1563,8 @@ class eye():
 
         Returns
         -------
-        :obj:`eye` : same object
+        self: :obj:`eye`
+            Same object
         """
 
         ## SETTINGS
@@ -1568,6 +1686,12 @@ class eye():
         return self
 
     def show(self):
-        """Show eye diagram."""
+        """Show plot
+        
+        Returns
+        -------
+        self : :obj:`eye`
+            The same object.
+        """
         plt.show()
         return self

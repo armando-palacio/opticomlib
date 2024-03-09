@@ -118,9 +118,9 @@ def DSP(input: electrical_signal, BW: float = None):
         x = LPF(input, BW)
     else:
         x = input
-        x.ejecution_time = 0
+        x.execution_time = 0
 
-    eye_obj = GET_EYE(x, nslots=8192, sps_resamp=128); time = eye_obj.ejecution_time + x.ejecution_time
+    eye_obj = GET_EYE(x, nslots=8192, sps_resamp=128); time = eye_obj.execution_time + x.execution_time
     rth = THRESHOLD_EST(eye_obj)
 
     x = SAMPLER(x, eye_obj) # one sample per bit 
@@ -128,7 +128,7 @@ def DSP(input: electrical_signal, BW: float = None):
     tic()
     output = x > rth
     
-    output.ejecution_time = toc() + time + x.ejecution_time
+    output.execution_time = toc() + time + x.execution_time
     return output, eye_obj, rth
 
 

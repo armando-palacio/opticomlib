@@ -114,7 +114,7 @@ def PRBS(n=2**8,
         output = binary_sequence( generate_prbs(order) )
     else:
         output = binary_sequence( np.random.randint(0, 2, n) )
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -209,7 +209,7 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 
     output = electrical_signal( x )
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -328,7 +328,7 @@ def PM(op_input: optical_signal,
     if np.sum(op_input.noise):
         output.noise = op_input.noise * np.exp(1j * el_input * pi / Vpi)
     
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -481,7 +481,7 @@ def MZM(op_input: optical_signal,
     t_ = toc()
     output = LPF(output, BW)
 
-    output.ejecution_time += t_ 
+    output.execution_time += t_ 
     return output
 
 
@@ -523,7 +523,7 @@ def BPF(input: optical_signal,
     if np.sum(input.noise):
         output.noise = sg.sosfiltfilt(sos_band, input.noise, axis=-1)
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -565,7 +565,7 @@ def EDFA(input: optical_signal,
     output = BPF( input * idb(G)**0.5, BW )
     # ase = BPF( optical_signal( np.zeros_like(input.signal), np.exp(-1j*np.random.uniform(0, 2*pi, input.noise.shape)) ), BW )
     ase = BPF( optical_signal( noise=np.exp(-1j*np.random.uniform(0, 2*pi, input.signal.shape)) ), BW )
-    t_ = output.ejecution_time + ase.ejecution_time
+    t_ = output.execution_time + ase.execution_time
     
     tic()
     P_ase = idb(NF) * h * gv.f0 * (idb(G)-1) * BW
@@ -577,7 +577,7 @@ def EDFA(input: optical_signal,
 
     output += ase
 
-    output.ejecution_time = t_ + toc()
+    output.execution_time = t_ + toc()
     return output
 
 
@@ -668,7 +668,7 @@ def DM(input: optical_signal, D: float, retH: bool=False):
     
     output = (input('w') * H)('t')
     
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     
     if retH:
         H = np.exp(- 1j * input.w()**2 * D/2 )
@@ -791,7 +791,7 @@ def FIBER(input: optical_signal,
             barra_progreso.update( 100 * h / length )
 
     output = optical_signal( A, input.noise )
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -881,7 +881,7 @@ def LPF(input: Union[ndarray, electrical_signal],
     if np.sum(noise):
         output.noise = sg.sosfiltfilt(sos_band, noise)
     
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     if retH:
         _,H = sg.sosfreqz(sos_band, worN=signal.size, fs=fs, whole=True)
         return output, fftshift(H) 
@@ -978,7 +978,7 @@ def PD(input: optical_signal,
     filt = LPF(i_sig, BW, n=4)
     output = electrical_signal(filt.signal, noise)
 
-    output.ejecution_time = filt.ejecution_time + t_
+    output.execution_time = filt.execution_time + t_
     return output
 
 
@@ -1044,7 +1044,7 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
     else:
         output = electrical_signal( dig_signal )
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -1259,7 +1259,7 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
     # We obtain the eye opening
     eye_h = mu1 - 3 * s1 - mu0 - 3 * s0; eye_dict['eye_h'] = eye_h
 
-    eye_dict['ejecution_time'] = toc()
+    eye_dict['execution_time'] = toc()
     return eye(eye_dict)
 
 
@@ -1279,7 +1279,7 @@ def SAMPLER(input: electrical_signal, _eye_: eye):
     tic()
     output = input[_eye_.i::_eye_.sps]
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -1673,7 +1673,7 @@ def FBG(input: optical_signal,
     output = ifft(fft(input.signal)*ifftshift(H))
 
     output = optical_signal(output)
-    output.ejecution_time = toc()
+    output.execution_time = toc()
 
     if retH:
         return output, H

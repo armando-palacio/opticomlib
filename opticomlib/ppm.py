@@ -75,7 +75,7 @@ def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int
     ppm_s[np.arange(decimal.size)*M + decimal] = 1 # coded the symbols
    
     output = binary_sequence(ppm_s) 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -121,7 +121,7 @@ def PPM_DECODER(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: 
     output = np.array(list(map(lambda x: dec2bin(x,k), decimal))).ravel() # convert decimals to bits
     output= binary_sequence(output)
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -190,7 +190,7 @@ def HDD(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int):
         output[i*M + np.random.choice(j)]=1  # select one ON slot randomly for each symbol with more than one ON slots
 
     output = binary_sequence(output)
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -249,7 +249,7 @@ def SDD(input: electrical_signal, M: int) -> binary_sequence:
     output[np.arange(i.shape[0])*M+i] = 1
 
     output = binary_sequence(output)
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -366,27 +366,27 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
         x = LPF(input, BW)
     else:
         x = input
-        x.ejecution_time = 0
+        x.execution_time = 0
 
     if decision.lower() == 'hard':
-        eye_obj = GET_EYE(x, nslots=8192, sps_resamp=128); time = eye_obj.ejecution_time + x.ejecution_time
+        eye_obj = GET_EYE(x, nslots=8192, sps_resamp=128); time = eye_obj.execution_time + x.execution_time
         rth = THRESHOLD_EST(eye_obj, M)
-        x = SAMPLER(x, eye_obj); time += x.ejecution_time
+        x = SAMPLER(x, eye_obj); time += x.execution_time
 
         tic()
         output = x > rth
-        simbols = HDD(output, M); simbols.ejecution_time += toc() + time
+        simbols = HDD(output, M); simbols.execution_time += toc() + time
 
         output = PPM_DECODER(simbols, M)
-        output.ejecution_time += simbols.ejecution_time
+        output.execution_time += simbols.execution_time
 
         return output, eye_obj, rth
     
     elif decision.lower() == 'soft':
         tic()
-        simbols = SDD(input, M); simbols.ejecution_time += toc() + x.ejecution_time
+        simbols = SDD(input, M); simbols.execution_time += toc() + x.execution_time
         output = PPM_DECODER(simbols, M)
-        output.ejecution_time += simbols.ejecution_time
+        output.execution_time += simbols.execution_time
         return output
     
     else:

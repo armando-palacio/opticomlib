@@ -84,7 +84,7 @@ def SYNC(signal_rx: electrical_signal,
     i = np.argmax(corr)
 
     signal_sync = electrical_signal(signal_rx[i:-(l-i)])
-    signal_sync.ejecution_time = toc()
+    signal_sync.execution_time = toc()
     return signal_sync, i
 
 

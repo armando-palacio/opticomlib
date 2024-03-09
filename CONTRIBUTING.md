@@ -84,7 +84,7 @@ If you are a collaborator, you can clone the main repository directly and create
         expressions like :math:`x^2 + y^2 = z^2` or block math expressions
         like:
         
-        ..math::
+        .. math::
             x^2 + y^2 = z^2
 
         Can incluye an image like this:
