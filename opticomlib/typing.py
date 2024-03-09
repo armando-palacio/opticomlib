@@ -794,7 +794,7 @@ class electrical_signal():
              xlabel: str=None, 
              ylabel: str=None, 
              style: Literal['dark', 'light'] = 'dark',
-             grid: bool=True,
+             grid: bool=False,
              **kwargs: dict): 
         """Plot real part of electrical signal.
 
@@ -811,7 +811,7 @@ class electrical_signal():
         style : :obj:`str`, optional
             Style of plot. Defaults to 'dark'.
         grid : :obj:`bool`, optional
-            If show grid. Defaults to True.
+            If show grid. Defaults to False.
         \*\*kwargs : :obj:`dict`
             Aditional keyword arguments compatible with matplotlib.pyplot.plot().
 
@@ -916,6 +916,41 @@ class electrical_signal():
 
         if 'label' in kwargs.keys():
             plt.legend()
+        return self
+    
+    def grid(self, **kwargs):
+        """Add grid to the plot.
+
+        Parameters
+        ----------
+        \*\*kwargs : :obj:`dict`
+            Arbitrary keyword arguments to pass to the function.
+
+        Returns
+        -------
+        self : :obj:`electrical_signal`
+            The same object.
+        """
+        kwargs['alpha'] = kwargs.get('alpha', 0.3)
+        plt.grid(**kwargs)
+        return self
+    
+    def legend(self, *args, **kwargs):
+        """Add a legend to the plot.
+
+        Parameters
+        ----------
+        \*args : :obj:`iterable`
+            Variable length argument list to pass to the function.
+        \*\*kwargs : :obj:`dict`
+            Arbitrary keyword arguments to pass to the function.
+
+        Returns
+        -------
+        self : :obj:`electrical_signal`
+            The same object.
+        """
+        plt.legend(*args, **kwargs)
         return self
     
     def show(self):
@@ -1113,7 +1148,7 @@ class optical_signal(electrical_signal):
              xlabel: str=None,
              ylabel: str=None,
              style: Literal['dark', 'light'] = 'dark',
-             grid: bool=True,
+             grid: bool=False,
              **kwargs): 
         r"""
         Plot intensity of optical signal for selected polarization mode.
@@ -1143,7 +1178,7 @@ class optical_signal(electrical_signal):
             - ``'light'`` use light background.
         
         grid : :obj:`bool`, optional
-            If show grid. Default is ``True``.
+            If show grid. Default is ``False``.
         \*\*kwargs: :obj:`dict`
             Aditional matplotlib arguments.
 
@@ -1178,7 +1213,7 @@ class optical_signal(electrical_signal):
         else:
             raise TypeError('argument `mode` must to be one of the following values ("x","y","both","abs").')
         
-        label = kwargs.pop('label', None)
+        label = kwargs.pop('label', None) if mode == 'both' else None
 
         plt.plot( *args, **kwargs)
         plt.xlabel(xlabel if xlabel else 'Time [ns]')
@@ -1388,12 +1423,10 @@ class eye():
     def plot(self, 
              medias_=True, 
              legend_=True, 
-             show_=True, 
-             save_=False, 
-             filename=None, 
              style: Literal['dark', 'light']='dark', 
              cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter',
-             label: str = ''):
+             label: str = '',
+             savefig=None):
         """ Plot eye diagram.
 
         Parameters
@@ -1404,20 +1437,16 @@ class eye():
             If True, plot mean values.
         legend_ : :obj:`bool`, optional
             If True, show legend.
-        show_ : :obj:`bool`, optional
-            If True, show plot.
-        save_ : :obj:`bool`, optional
-            If True, save plot.
-        filename : :obj:`str`, optional
-            Filename to save plot.
         cmap : :obj:`str`, optional
             Colormap to plot.
         label : :obj:`str`, optional
             Label to show in title.
+        savefig : :obj:`str`, optional
+            If not None, save figure with the given name.
 
         Returns
         -------
-        eye : same object
+        :obj:`eye` : same object
         """
 
         ## SETTINGS
@@ -1534,15 +1563,11 @@ class eye():
 
         t_slider.on_changed(update_t_line)
 
-        if save_: 
-            if filename is None:
-                filename = 'eyediagram.png'
-            plt.savefig(filename, dpi=300)
-        if show_: 
-            plt.show()
-        plt.style.use('default')
+        if savefig: 
+            plt.savefig(savefig, dpi=300)
         return self
 
-
-if __name__ == '__main__':
-    print('done')
+    def show(self):
+        """Show eye diagram."""
+        plt.show()
+        return self
