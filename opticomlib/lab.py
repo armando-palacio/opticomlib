@@ -19,10 +19,7 @@ from typing import Literal, Union
 from .utils import tic, toc, str2array, nearest
 
 import pyvisa as visa
-rm = visa.ResourceManager()
-
 import warnings
-
 import time
 
 
@@ -31,6 +28,7 @@ def search_inst():
     
     Search for the available instruments in the system and print the IDs.
     """
+    rm = visa.ResourceManager()
     print(rm.list_resources())
 
 
@@ -260,7 +258,7 @@ class PPG3204():
         """
 
         if addr_ID: 
-            self.inst = rm.open_resource(addr_ID)
+            self.inst = visa.ResourceManager().open_resource(addr_ID)
             """A connection (session) to the PPG."""
             print(self._query('*IDN?'))
         
