@@ -1,6 +1,6 @@
 """
+.. rubric:: Devices
 .. autosummary::
-   :toctree: generated/
 
    PRBS                  -- Pseudorandom binary sequence generator
    DAC                   -- Digital-to-analog converter (DAC) model
@@ -114,7 +114,7 @@ def PRBS(n=2**8,
         output = binary_sequence( generate_prbs(order) )
     else:
         output = binary_sequence( np.random.randint(0, 2, n) )
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -209,7 +209,7 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 
     output = electrical_signal( x )
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -222,77 +222,87 @@ def PM(op_input: optical_signal,
 
     Modulate the phase of the input optical signal through input electrical signal.
 
-    .. math:: E_{out} = E_{in} \cdot e^{j\pi \frac{V_{in}}{V_{\pi}}} 
-
     Parameters
     ----------
-    op_input : optical_signal
+    op_input : :obj:`optical_signal`
         Optical signal to be modulated.
-    el_input : float, ndarray, or electrical_signal
+    el_input : :obj:`float`, :obj:`ndarray`, or :obj:`electrical_signal`
         Driver voltage. It can be an integer value, in which case the phase modulation is constant, or an electrical signal of the same length as the optical signal.
-    Vpi : float, default: 5.0
-        Voltage at which the device achieves a phase shift of :math:`\pi`.
+    Vpi : :obj:`float`
+        Voltage at which the device achieves a phase shift of :math:`\pi`. Default value is 5.0.
 
     Returns
     -------
-    optical_signal
+    op_output: :obj:`optical_signal`
         Modulated optical signal.
 
     Raises
     ------
     TypeError
-        If ``op_input`` type is not [optical_signal].
-        If ``el_input`` type is not in [float, ndarray, electrical_signal].
+        If ``op_input`` type is not [:obj:`optical_signal`].
+        If ``el_input`` type is not in [:obj:`float`, :obj:`ndarray`, :obj:`electrical_signal`].
     ValueError
-        If ``el_input`` is [ndarray] or [electrical_signal] but, length is not equal to ``op_input`` length.
+        If ``el_input`` is [:obj:`ndarray`] or [:obj:`electrical_signal`] but, length is not equal to ``op_input`` length.
+
+    Notes
+    -----
+    The output signal is given by:
+
+    .. figure:: _images/PMv2.png
+        :width: 50%
+        :align: center
+        :alt: MZM
+    
+    .. math:: E_{out} = E_{in} \cdot e^{\left(j\pi \frac{u(t)}{V_{\pi}}\right)}
 
     Examples
     --------
-    .. plot::
-        :include-source:
-        :alt: PM example 1
-        :align: center
+    .. code-block:: python
+        :linenos:
 
         from opticomlib.devices import PM
         from opticomlib import optical_signal, gv
         import matplotlib.pyplot as plt
         import numpy as np
 
-        gv(sps=8, R=1e9) # set samples per bit and bitrate
+        gv(sps=16, R=1e9) # set samples per bit and bitrate
 
         op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
         t = op_input.t()*1e9
-        w = 4*np.pi/t[-1]
+
+        fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
 
         # Constant phase
         output = PM(op_input, el_input=2.5, Vpi=5)
 
-        plt.subplot(311)
-        plt.plot(t, op_input.phase()[0] - w*t, 'r', t, output.phase()[0] - w*t, 'b', lw=3)
-        plt.xticks([])
-        plt.ylabel('Fase [rad]')
-        plt.legend(['input', 'output'], bbox_to_anchor=(1, 1), loc='upper left')
-        plt.title(r'Constant phase change ($\Delta f=0$)')
+        axs[0].set_title(r'Constant phase change ($\Delta f=0$)')
+        axs[0].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
+        axs[0].plot(t, output.signal[0].real, 'b-', label='output', lw=3)
+        axs[0].grid()
 
         # Lineal phase
         output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
 
-        plt.subplot(312)
-        plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-        plt.xticks([])
-        plt.ylabel('Fase [rad]')
-        plt.title(r'Linear phase change  ($\Delta f \rightarrow cte.$)')
+        axs[1].set_title(r'Linear phase change  ($\Delta f \rightarrow cte.$)')
+        axs[1].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
+        axs[1].plot(t, output.signal[0].real, 'b-', label='output', lw=3)
+        axs[1].grid()
 
         # Quadratic phase
         output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
 
-        plt.subplot(313)
-        plt.plot(t, op_input.phase()[0] - w*t, 'r-', t, output.phase()[0] - w*t, 'b', lw=3)
-        plt.xlabel('Tiempo [ns]')
-        plt.ylabel('Fase [rad]')
         plt.title(r'Quadratic phase change ($\Delta f \rightarrow linear$)')
-        plt.tight_layout()
+        axs[2].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
+        axs[2].plot(t, output.signal[0].real, 'b-', label='output', lw=3)
+        axs[2].grid()
+
+        plt.xlabel('Tiempo [ns]')
+        plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
         plt.show()
+    
+    .. image:: _images/PM_example1.svg
+        :width: 100%
+        :align: center
     """
     tic()
 
@@ -318,7 +328,7 @@ def PM(op_input: optical_signal,
     if np.sum(op_input.noise):
         output.noise = op_input.noise * np.exp(1j * el_input * pi / Vpi)
     
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -333,49 +343,114 @@ def MZM(op_input: optical_signal,
     r"""
     **Mach-Zehnder modulator**
 
-    Asymmetric coupler and opposite driving voltages (:math:`V_1=-V_2` Push-Pull config). 
+    Asymmetric coupler and opposite driving voltages model (:math:`V_1=-V_2` Push-Pull config). 
 
     Parameters
     ----------
-    op_input : optical_signal
+    op_input : :obj:`optical_signal`
         Optical signal to be modulated.
-    el_input : float, ndarray, or electrical_signal
-        Driver voltage.
-    bias : float, default: 0.0
+    el_input : :obj:`float`, :obj:`ndarray`, or :obj:`electrical_signal`
+        Driver voltage, with zero bias. 
+    bias : :obj:`float`, default: 0.0
         Modulator bias voltage.
-    Vpi : float, default: 5.0
+    Vpi : :obj:`float`, default: 5.0
         Voltage at which the device switches from on-state to off-state.
-    loss_dB : float, default: 0.0
+    loss_dB : :obj:`float`, default: 0.0
         Propagation or insertion losses in the modulator, value in dB.
-    eta : float, default: 0.1
+    eta : :obj:`float`, default: 0.1
         Imbalance ratio of light intensity between the two arms of the modulator. :math:`ER = -20\log_{10}(\eta/2)` (:math:`=26` dB by default).
-    BW : float, default: 40e9
+    BW : :obj:`float`, default: 40e9
         Modulator bandwidth in Hz.
 
     Returns
     -------
-    optical_signal
+    :obj:`optical_signal`
         Modulated optical signal.
 
     Raises
     ------
     TypeError
-        If ``op_input`` type is not [optical_signal].
-        If ``el_input`` type is not in [float, ndarray, electrical_signal].
+        If ``op_input`` type is not [:obj:`optical_signal`].
+        If ``el_input`` type is not in [:obj:`float`, :obj:`ndarray`, :obj:`electrical_signal`].
     ValueError
-        If ``el_input`` is [ndarray] or [electrical_signal] but, length is not equal to ``op_input`` length.
+        If ``el_input`` is [:obj:`ndarray`] or [:obj:`electrical_signal`] but, length is not equal to ``op_input`` length.
     
     Notes
     -----
+    .. figure:: _images/MZMv2.png
+        :width: 50%
+        :align: center
+        :alt: MZM
+
     The output signal is given by [1]_:
 
+
     .. math:: 
-        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left( \cos(\frac{\pi}{2V_{\pi}}(V_{in}+V_{bias})) + j \frac{\eta}{2} \sin(\frac{\pi}{2V_{\pi}}(V_{in}+V_{bias})) \right) 
+        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] 
 
     References
     ----------
     .. [1] Tetsuya Kawanishi, "Electro-optic Modulation for Photonic Networks", Chapter 4.3 (2022). doi: https://doi.org/10.1007/978-3-030-86720-1
 
+    Examples
+    --------
+    .. code-block:: python
+        :linenos:
+
+        from opticomlib import idbm, dbm, optical_signal, gv
+        from opticomlib.devices import MZM
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+
+        gv(sps=128, R=10e9) # set samples per bit and bitrate
+
+        Vpi = 5
+        tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool); not_tx_seq = ~tx_seq
+        V = 2*(np.kron(not_tx_seq, np.ones(gv.sps)) - 0.5 )*Vpi/2 
+
+        input = optical_signal( np.ones_like(V)*idbm(10)**0.5 )
+        t = input.t()*1e9
+
+        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=3, eta=0.1, BW=2*gv.R)
+
+        fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
+
+        # Plot input and output power
+        axs[0].plot(t, dbm(input.signal[0].real**2), 'r-', label='input', lw=3)
+        axs[0].plot(t, dbm(mod_sig.abs('signal')[0]**2), 'C1-', label='output', lw=3)
+        axs[0].legend(bbox_to_anchor=(1, 1), loc='upper left')
+        axs[0].set_ylabel('Potencia [dBm]')
+        for i in t[::gv.sps]:
+            axs[0].axvline(i, color='k', linestyle='--', alpha=0.5)
+
+        # Plot fase
+        phi_in = input.phase()[0]
+        phi_out = mod_sig.phase()[0]
+
+        axs[1].plot(t, phi_in, 'b-', label='Fase in', lw=3)
+        axs[1].plot(t, phi_out, 'C0-', label='Fase out', lw=3)
+        axs[1].set_ylabel('Fase [rad]')
+        axs[1].legend(bbox_to_anchor=(1, 1), loc='upper left')
+        for i in t[::gv.sps]:
+            axs[1].axvline(i, color='k', linestyle='--', alpha=0.5)
+
+        # Frecuency chirp
+        freq_in = 1/2/np.pi*np.diff(phi_in)/np.diff(t)
+        freq_out = 1/2/np.pi*np.diff(phi_out)/np.diff(t)
+
+        axs[2].plot(t[:-1], freq_in, 'k', label='Frequency in', lw=3)
+        axs[2].plot(t[:-1], freq_out, 'C7', label='Frequency out', lw=3)
+        axs[2].set_xlabel('Tiempo [ns]')
+        axs[2].set_ylabel('Frequency Chirp [Hz]')
+        axs[2].legend(bbox_to_anchor=(1, 1), loc='upper left')
+        for i in t[::gv.sps]:
+            axs[2].axvline(i, color='k', linestyle='--', alpha=0.5)
+        plt.show()
+
+    .. image:: _images/MZM_example1.svg
+        :width: 100%
+        :align: center
     """
 
     tic()
@@ -406,7 +481,7 @@ def MZM(op_input: optical_signal,
     t_ = toc()
     output = LPF(output, BW)
 
-    output.ejecution_time += t_ 
+    output.execution_time += t_ 
     return output
 
 
@@ -448,7 +523,7 @@ def BPF(input: optical_signal,
     if np.sum(input.noise):
         output.noise = sg.sosfiltfilt(sos_band, input.noise, axis=-1)
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -490,7 +565,7 @@ def EDFA(input: optical_signal,
     output = BPF( input * idb(G)**0.5, BW )
     # ase = BPF( optical_signal( np.zeros_like(input.signal), np.exp(-1j*np.random.uniform(0, 2*pi, input.noise.shape)) ), BW )
     ase = BPF( optical_signal( noise=np.exp(-1j*np.random.uniform(0, 2*pi, input.signal.shape)) ), BW )
-    t_ = output.ejecution_time + ase.ejecution_time
+    t_ = output.execution_time + ase.execution_time
     
     tic()
     P_ase = idb(NF) * h * gv.f0 * (idb(G)-1) * BW
@@ -502,7 +577,7 @@ def EDFA(input: optical_signal,
 
     output += ase
 
-    output.ejecution_time = t_ + toc()
+    output.execution_time = t_ + toc()
     return output
 
 
@@ -593,7 +668,7 @@ def DM(input: optical_signal, D: float, retH: bool=False):
     
     output = (input('w') * H)('t')
     
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     
     if retH:
         H = np.exp(- 1j * input.w()**2 * D/2 )
@@ -716,7 +791,7 @@ def FIBER(input: optical_signal,
             barra_progreso.update( 100 * h / length )
 
     output = optical_signal( A, input.noise )
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -806,7 +881,7 @@ def LPF(input: Union[ndarray, electrical_signal],
     if np.sum(noise):
         output.noise = sg.sosfiltfilt(sos_band, noise)
     
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     if retH:
         _,H = sg.sosfreqz(sos_band, worN=signal.size, fs=fs, whole=True)
         return output, fftshift(H) 
@@ -903,7 +978,7 @@ def PD(input: optical_signal,
     filt = LPF(i_sig, BW, n=4)
     output = electrical_signal(filt.signal, noise)
 
-    output.ejecution_time = filt.ejecution_time + t_
+    output.execution_time = filt.execution_time + t_
     return output
 
 
@@ -969,7 +1044,7 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
     else:
         output = electrical_signal( dig_signal )
 
-    output.ejecution_time = toc()
+    output.execution_time = toc()
     return output
 
 
@@ -1002,10 +1077,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
 
     Example
     -------
-    .. plot::
-        :include-source:
-        :alt: GET_EYE example 1
-        :align: center
+    .. code-block:: python
+        :linenos:
 
         from opticomlib.devices import PRBS, DAC, GET_EYE
         from opticomlib import gv
@@ -1017,6 +1090,8 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
         y.noise = np.random.normal(0, 0.05, y.len())
 
         GET_EYE(y, sps_resamp=512).plot() # with interpolation
+
+    .. image:: /_images/GET_EYE_example1.png
     """
     tic()
 
@@ -1184,7 +1259,7 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
     # We obtain the eye opening
     eye_h = mu1 - 3 * s1 - mu0 - 3 * s0; eye_dict['eye_h'] = eye_h
 
-    eye_dict['ejecution_time'] = toc()
+    eye_dict['execution_time'] = toc()
     return eye(eye_dict)
 
 
@@ -1377,12 +1452,10 @@ def FBG(input: optical_signal,
     
     Examples
     --------
-    .. plot::
-        :include-source:
-        :caption: Frequency response of a FBG with different apodization functions.
-        :alt: Frequency response of a FBG with different apodization functions.
-        :align: center
 
+    .. code-block:: python
+        :linenos:
+    
         from opticomlib import optical_signal, gv, pi, db, plt, np
         from opticomlib.devices import FBG
 
@@ -1402,6 +1475,9 @@ def FBG(input: optical_signal,
         plt.ylim(-100,)
         plt.xlim(-20, 20)
         plt.show()
+
+    .. image:: /_images/FBG_example1.svg
+        :align: center
     """
     tic()
 
@@ -1597,7 +1673,7 @@ def FBG(input: optical_signal,
     output = ifft(fft(input.signal)*ifftshift(H))
 
     output = optical_signal(output)
-    output.ejecution_time = toc()
+    output.execution_time = toc()
 
     if retH:
         return output, H

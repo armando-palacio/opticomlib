@@ -1,6 +1,6 @@
 """
+.. rubric:: Functions
 .. autosummary::
-   :toctree: generated/
 
     generate_prbs          -- Generate a pseudo-random binary sequence (PRBS) of desired order.
     dec2bin                -- Convert a decimal number to its binary representation.
@@ -21,6 +21,7 @@
     rcos                   -- Raised cosine function.
     si                     -- Unit of measure classifier.
     norm                   -- Normalize a vector to 1.
+    nearest                -- Find the nearest value in an array.
 """
 
 import re
@@ -494,13 +495,14 @@ def Q(x):
         import numpy as np
 
         x = np.linspace(-5, 5, 1000)
-        y = Q(x)
 
         plt.figure(figsize=(8, 5))
-        plt.plot(x, y, 'r', lw=2)
+        plt.plot(x, Q(x), 'r', lw=3, label='Q(x)')
+        plt.plot(x, Q(-x), 'b', lw=3, label='Q(-x)')
         plt.ylabel('y')
         plt.xlabel('x')
-        plt.grid(alpha=0.3)
+        plt.legend()
+        plt.grid()
         plt.show()
     """
     x = np.array(x)
@@ -890,3 +892,36 @@ def norm(x):
         raise ValueError('`x` must be an array_like.')
     
     return x/x.max()
+
+
+def nearest(x, a):
+    """
+    Find the nearest value in an array.
+
+    Parameters
+    ----------
+    x : Array_Like
+        Input array.
+    a : Number
+        Value to find.
+
+    Returns
+    -------
+    out : Number
+        Nearest value in the array.
+
+    Raises
+    ------
+    ValueError
+        If ``x`` is not an `array_like`.
+        If ``a`` is not a `number`.
+    """
+    if isinstance(x, Array_Like):
+        x = np.array(x)
+    else:
+        raise ValueError('`x` must be an array_like.')
+
+    if not isinstance(a, Number):
+        raise ValueError('`a` must be a number.')
+    
+    return x[np.abs(x-a).argmin()]

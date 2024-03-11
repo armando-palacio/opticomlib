@@ -25,9 +25,12 @@ The project is hosted on `GitHub <https://github.com/armando-palacio/opticomlib.
    :maxdepth: 2
    :caption: OptiComLib Documentation
 
-   modules
-
-
+   types
+   devices
+   ook
+   ppm
+   lab
+   utils
 
 Indices and tables
 ==================
