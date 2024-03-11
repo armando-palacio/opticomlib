@@ -22,6 +22,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: List files in current directory
+      run: ls -la
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
