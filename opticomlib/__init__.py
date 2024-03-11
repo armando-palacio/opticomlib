@@ -2,9 +2,7 @@ from .typing import *
 
 from .utils import *
 
-import os
+from importlib.metadata import version
+__version__ = version(__name__)
+del version
 
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'VERSION.txt')) as version_file:
-    __version__ = version_file.read().strip()
-
-del os
