@@ -10,12 +10,9 @@ from setuptools import setup
 import os
 
 try:
-    with open('README.md', 'r') as f:
-        os.environ['README'] = f.read()
-    with open('requirements.txt', 'r') as f:
-        os.environ['REQUIREMENTS'] = f.read()
-    with open('VERSION.txt', 'r') as f:
-        os.environ['VERSION'] = f.read()
+    os.environ['README'] = open('README.md', encoding='utf-8').read()
+    os.environ['REQUIREMENTS'] = open('requirements.txt').read()
+    os.environ['VERSION'] = open('VERSION.txt').read()
 except:
     pass
 
