@@ -26,6 +26,12 @@ a new environment and install ``Opticomlib`` using the following commands:
       (base)$ conda activate optic_env
       (optic_env)$ pip install opticomlib
 
+If you want to install an specific branch of the git repository, you can use the following command:
+
+.. code-block:: console
+
+   (optic_env)$ pip install git+https://github.com/armando-palacio/opticomlib.git@branch_name
+
 Usage
 -----
 
