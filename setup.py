@@ -7,6 +7,7 @@
 
 
 from setuptools import setup
+import os
 
 DISTNAME = "opticomlib"
 DESCRIPTION = "Python package for optical communication systems."
@@ -15,8 +16,10 @@ MAINTAINER = "Armando P. Romeu"
 MAINTAINER_EMAIL = "armandopr3009@gmail.com"
 URL = "https://github.com/armando-palacio/opticomlib.git"
 LICENSE = "MIT"
-VERSION = open('VERSION.txt').read()
-REQUIREMENTS = open('requirements.txt').read().splitlines()
+# VERSION = open('VERSION.txt').read()
+# REQUIREMENTS = open('requirements.txt').read().splitlines()
+VERSION = os.getenv('VERSION')
+REQUIREMENTS = os.getenv('REQUIREMENTS').splitlines()
 
 
 setup(
