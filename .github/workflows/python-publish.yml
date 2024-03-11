@@ -29,14 +29,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install build
     - name: Read VERSION and REQUIREMENTS
-      id: vars
       run: |
-        echo "::set-output name=version::$(cat VERSION.txt)"
-        echo "::set-output name=requirements::$(cat requirements.txt)"
+        echo "VERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
+        echo "REQUIREMENTS=$(cat requirements.txt)" >> $GITHUB_ENV
+        echo "README=$(cat README.md)" >> $GITHUB_ENV
     - name: Build package
-      env:
-        VERSION: ${{ steps.vars.outputs.version }}
-        REQUIREMENTS: ${{ steps.vars.outputs.requirements }}
       run: python -m build
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29

@@ -9,16 +9,24 @@
 from setuptools import setup
 import os
 
+try:
+    with open('README.md', 'r') as f:
+        os.environ['README'] = f.read()
+    with open('requirements.txt', 'r') as f:
+        os.environ['REQUIREMENTS'] = f.read()
+    with open('VERSION.txt', 'r') as f:
+        os.environ['VERSION'] = f.read()
+except:
+    pass
+
 DISTNAME = "opticomlib"
 DESCRIPTION = "Python package for optical communication systems."
-LONG_DESCRIPTION = open("README.md", encoding="utf8").read()
+LONG_DESCRIPTION = os.getenv('README')
 MAINTAINER = "Armando P. Romeu"
 MAINTAINER_EMAIL = "armandopr3009@gmail.com"
 URL = "https://github.com/armando-palacio/opticomlib.git"
 LICENSE = "MIT"
-# VERSION = open('VERSION.txt').read()
-# REQUIREMENTS = open('requirements.txt').read().splitlines()
-VERSION = os.getenv('VERSION')
+VERSION = os.getenv('VERSION').strip()
 REQUIREMENTS = os.getenv('REQUIREMENTS').splitlines()
 
 
