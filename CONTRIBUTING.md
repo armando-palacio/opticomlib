@@ -13,13 +13,38 @@ Thank you for your interest in contributing to this project! This guide will hel
 To contribute to this project, you will need to follow these steps:
 
 1. Fork the repository.
-2. Clone the forked repository to your local machine.
+2. Clone the forked repository to your local machine (If you are a collaborator first step is not required).
+
+    ```bash
+    git clone https://github.com/armando-palacio/opticomlib.git
+    cd opticomlib
+    ```
+
 3. Create a new branch for your changes.
+
+    ```bash
+    git checkout -b new-branch-name
+    ```
+
 4. Make your changes and commit them.
-5. Push your changes to your forked repository.
+
+    ```bash
+    git add .
+    git commit -m "A short description of the changes made"
+    ```
+
+5. Push your changes to your forked (project) repository.
+
+    ```bash
+    git push origin new-branch-name
+    ```
+
 6. Open a pull request to the main repository.
 
-If you are a collaborator, you can clone the main repository directly and create a new branch for your changes.
+    - Go to the main repository and click on the "New pull request" button.
+    - Select your forked repository and the branch with your changes.
+    - Add a title and description to your pull request.
+    - Click on the "Create pull request" button.
 
 ## Contributing Code
 
@@ -34,8 +59,55 @@ If you are a collaborator, you can clone the main repository directly and create
 
 ### Before opening a pull request, make sure that
 
-1. Add the new feature in the appropriate module in library. For new modulations create a new module with the name of modulations and their specific functions.
-2. If new functions are added, they must have their respective docstrings in [Numpy Style Format](https://numpydoc.readthedocs.io/en/latest/format.html). Example is provided below.
+1. Add the new feature in the appropriate module in library. Be sure to include the new feature in autosummary directive (module doctring at the top of the file) in order to be included in the documentation.
+
+2. For new modulation create a new module with the name of modulation and their specific functions. Be sure to include module docstring at the top of the file with following format:
+
+    ```python
+    """
+    .. rubric:: Functions
+    .. autosummary::
+
+        func_1
+        func_2
+        .
+        .
+        .
+
+    .. rubric:: Classes
+    .. autosummary::
+
+        class_1
+        class_2
+        .
+        .
+        .
+    """
+    ```
+
+    If there are no classes, then the classes section can be omitted. If there are no functions, then the functions section can be omitted.
+
+    Then, you have to create a new file `module_name.rst` within `docs/source/` with the name of new module and the follow code inside:
+
+    ```rst
+    Title of the module
+    -------------------
+    Use this module to (do that it does).
+
+    .. code-block:: python
+
+        >>> import opticomlib.module_name as abbreviation
+
+    Some another description of the module if it is necessary.
+
+    .. automodule:: opticomlib.module_name
+        :members:
+        :member-order: bysource
+    ```
+
+    Finally, open `docs/source/index.rst` and include the new module in the toctree directive. This step is required to include the new feature in the sphinx documentation.
+
+3. If new functions are added, they must have their respective docstrings in [Numpy Style Format](https://numpydoc.readthedocs.io/en/latest/format.html). Example is provided below.
 
    ```python
     def function_name(arg1, arg2, *args, **kwargs):
@@ -120,36 +192,72 @@ If you are a collaborator, you can clone the main repository directly and create
         return arg1 + arg2
     ```
 
-3. Include at least one example of usage of the new feature.
-4. If new moddules are added they must include the autosummary directive with all implemented functions and a short description of each one in docstring on the top of the module in order to be included in the documentation. Example is provided below.
+4. If new class is added it should have its respective docstring in the top of the class and for each attribute and method of it. It must be in [Numpy Style Format](https://numpydoc.readthedocs.io/en/latest/format.html). Example is provided below.
 
     ```python
-    """
-    .. autosummary::
-    :toctree: generated/
+    class ClassName:
+        """ A short description of the class.
 
-        __new_function_name__               -- Description of the function.
-        __new_function_name__               -- Description of the function.
-        __new_function_name__               -- Description of the function.
-    """
+        A longer description of the class. In contrast to the functions
+        you can include the implementation details of the class here.
+
+        .. image:: _images/_filename_.png  # can include some images
+            :align: center
+            :width: 100%
+
+        Also can include math equations. For example:
+
+        .. math::
+            x^2 + y^2 = z^2
+        
+        .. rubric:: Attributes
+        .. autosummary::
+
+            ~ClassName.attr_1
+            ~ClassName.attr_2
+            .
+            .
+            .
+
+        .. rubric:: Methods
+        .. autosummary::
+
+            method_name_1
+            method_name_2
+            .
+            .
+            .
+        """
+        def __init__(self, arg1, arg2):
+            """ A short description of the method.
+
+            A longer description of init method.
+
+            Parameters
+            ----------
+            arg1 : :obj:`type`
+                Description of the argument. Include allways :obj:`` for the 
+                type of the argument, in order to correctly generate the documentation then.
+            arg2 : :obj:`type`
+                Description of the argument.
+            """
+            self.arg1 = arg1
+            """A description of attribute arg1"""
+            self.arg2 = arg2
+            """A description of attribute arg2"""
+        
+        def method_name(self, arg1, arg2):
+            """ docstring like a function """       
     ```
 
-    then the following code must be included within `docs/source/modules.rst` file
+5. Include at least one example of usage of the new feature.
 
-    ```rst
-    Title of the module
-    -------------------
-
-    .. automodule:: opticomlib.__new_module_name__
-        :members:
-        :noindex:
-    ```
-
-5. Images used in docstrings must be in the `docs/source/_images` folder and the following code must be added in the docstring to be included in the documentation:
+6. Images used in docstrings must be in the `docs/source/_images` folder and the following code must be added in the docstring to be included in the documentation:
 
     ```rst
     .. image:: /_images/_filename_.png
-        :align: center 
+        :align: center
+        :width: 80%
     ```
 
 ## Reporting Issues

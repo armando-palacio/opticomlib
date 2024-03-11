@@ -157,19 +157,12 @@ class PPG3204():
     """**Tektronix Programmable Pattern Generator PPG3204**
     
     The `PPG3204 <https://download.tek.com/manual/PPG1600-PPG3000-PPG3200-Pattern-Generator-User-Manual-077109001.pdf>`_ 
-    is a Programmable Pattern Generator. It is a 4-channel pattern generator with 32 Gb/s maximum data rate.
-
+    is a Programmable Pattern Generator. It is a 4-channel pattern generator with 32 Gb/s maximum data rate. 
     This class provides a set of methods to control the PPG3204.
-    
-    Parameters
-    ----------
-    addr_ID : :obj:`str`, optional
-        VISA resource of the PPG (e.g. 'USB::0x0699::0x3130::9211219::INSTR'). Default is None.
-
-    Notes
-    -----
 
     .. image:: _images/lab/PPG3204.png 
+        :width: 80%
+        :align: center
 
     The PPG3204 has the following features:
         
@@ -220,7 +213,6 @@ class PPG3204():
         get_offset
         __call__
     """
-
     CHANNELS = 4 
     """Number of channels of the PPG3204, 4 channels."""
     PATT_LEN_MIN = 2
@@ -253,10 +245,16 @@ class PPG3204():
     """Maximum skew, 25 ps"""
 
     def __init__(self, addr_ID: str = None):
-        """If addr_ID is not passed as argument, methods will print the commands 
+        """ Initialize the PPG3204.
+        
+        If ``addr_ID`` is not passed as argument, methods will print the commands 
         instead of sending them to the PPG. This is useful for debugging. 
-        """
 
+        Parameters
+        ----------
+        addr_ID : :obj:`str`, optional
+            VISA resource of the PPG (e.g. 'USB::0x0699::0x3130::9211219::INSTR'). Default is None.
+        """
         if addr_ID: 
             self.inst = visa.ResourceManager().open_resource(addr_ID)
             """A connection (session) to the PPG."""
