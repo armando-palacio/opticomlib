@@ -23,8 +23,7 @@ MAINTAINER_EMAIL = "armandopr3009@gmail.com"
 URL = "https://github.com/armando-palacio/opticomlib.git"
 LICENSE = "MIT"
 VERSION = os.getenv('VERSION').strip()
-REQUIREMENTS = os.getenv('REQUIREMENTS').splitlines()
-
+REQUIREMENTS = os.getenv('REQUIREMENTS').split()
 
 setup(
     name=DISTNAME,
