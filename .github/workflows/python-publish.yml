@@ -34,16 +34,13 @@ jobs:
 
     - name: Read VERSION and REQUIREMENTS
       run: |
-        {
-          echo "VERSION<<EOF"
-          cat VERSION.txt
-          echo EOF
-        } >> "$GITHUB_ENV"
-        {
-          echo "REQUIREMENTS<<EOF"
-          cat requirements.txt
-          echo EOF
-        } >> "$GITHUB_ENV"
+        echo 'VERSION<<EOF' >> $GITHUB_ENV
+        echo $(cat VERSION.txt) >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+        
+        echo 'REQUIREMENTS<<EOF' >> $GITHUB_ENV
+        echo $(cat REQUIREMENTS.txt) >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
 
     - name: Build package
       run: python -m build
