@@ -35,10 +35,6 @@ jobs:
         echo "REQUIREMENTS=$(cat requirements.txt)" >> $GITHUB_OUTPUT
         echo "README=$(cat README.md)" >> $GITHUB_OUTPUT
     - name: Build package
-      env:
-        VERSION: ${{ steps.vars.outputs.VERSION }}
-        REQUIREMENTS: ${{ steps.vars.outputs.REQUIREMENTS }}
-        README: ${{ steps.vars.outputs.README }}
       run: python -m build
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
