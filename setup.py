@@ -10,7 +10,6 @@ from setuptools import setup
 import os
 
 try:
-    os.environ['README'] = open('README.md', encoding='utf-8').read()
     os.environ['REQUIREMENTS'] = open('requirements.txt').read()
     os.environ['VERSION'] = open('VERSION.txt').read()
 except:
@@ -18,7 +17,7 @@ except:
 
 DISTNAME = "opticomlib"
 DESCRIPTION = "Python package for optical communication systems."
-LONG_DESCRIPTION = os.getenv('README')
+LONG_DESCRIPTION = open('README.md', encoding='utf-8').read()
 MAINTAINER = "Armando P. Romeu"
 MAINTAINER_EMAIL = "armandopr3009@gmail.com"
 URL = "https://github.com/armando-palacio/opticomlib.git"
