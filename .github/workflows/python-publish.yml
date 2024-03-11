@@ -39,7 +39,7 @@ jobs:
         echo 'EOF' >> $GITHUB_ENV
         
         echo 'REQUIREMENTS<<EOF' >> $GITHUB_ENV
-        echo $(cat REQUIREMENTS.txt) >> $GITHUB_ENV
+        echo $(cat requirements.txt) >> $GITHUB_ENV
         echo 'EOF' >> $GITHUB_ENV
 
     - name: Build package
