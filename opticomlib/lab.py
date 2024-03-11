@@ -218,7 +218,7 @@ class PPG3204():
         get_output_voltage
         set_offset
         get_offset
-        setup
+        __call__
     """
 
     CHANNELS = 4 
@@ -259,11 +259,13 @@ class PPG3204():
 
         if addr_ID: 
             self.inst = visa.ResourceManager().open_resource(addr_ID)
+            self.inst.timeout = 10000 # timeout in milliseconds
             """A connection (session) to the PPG."""
             print(self._query('*IDN?'))
         
     def __del__(self):
         try:
+            self.inst.clear()
             self.inst.close()
         except AttributeError:
             pass
@@ -901,7 +903,7 @@ class PPG3204():
         return np.array([float(self._query(f':VOLT{ch}:OFFS?')) for ch in CHs])
 
 
-    def setup(self, 
+    def __call__(self, 
                freq: float = None, 
                patt_len: Union[int, list[int]] = None, 
                Vout: Union[float, list[float]] = None,
@@ -946,7 +948,7 @@ class PPG3204():
             >>> from opticomlib.lab import PPG3204
             >>> 
             >>> ppg = PPG3204()
-            >>> ppg.setup(freq=10e9, patt_len=1000, Vout=1.5, offset=0.5, bsh=10, skew=0.5e-12, mode='PRBS', order=7, CHs=2)
+            >>> ppg(freq=10e9, patt_len=1000, Vout=1.5, offset=0.5, bsh=10, skew=0.5e-12, mode='PRBS', order=7, CHs=2)
             :FREQ 1.0e+10
             :DIG2:PATT:LENG 1000
             :VOLT2:POS 1.5v
@@ -982,3 +984,4 @@ class PPG3204():
         
         if data is not None and mode == 'DATA':
             self.set_data(data, CHs=CHs)
+        return 'Done'
