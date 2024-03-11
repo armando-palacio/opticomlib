@@ -259,8 +259,8 @@ class PPG3204():
 
         if addr_ID: 
             self.inst = visa.ResourceManager().open_resource(addr_ID)
-            self.inst.timeout = 10000 # timeout in milliseconds
             """A connection (session) to the PPG."""
+            self.inst.timeout = 10000 # timeout in milliseconds
             print(self._query('*IDN?'))
         
     def __del__(self):
