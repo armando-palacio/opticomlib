@@ -35,19 +35,19 @@ jobs:
     - name: Read VERSION and REQUIREMENTS
       run: |
         {
-          echo "VERSION<<\n"
-          cat VERSION
-          echo "\n"
+          echo "VERSION<<EOF"
+          cat VERSION.txt
+          echo EOF
         } >> "$GITHUB_ENV"
         {
-          echo "REQUIREMENTS<<\n"
+          echo "REQUIREMENTS<<EOF"
           cat requirements.txt
-          echo "\n"
+          echo EOF
         } >> "$GITHUB_ENV"
 
     - name: Build package
       run: python -m build
-      
+
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
