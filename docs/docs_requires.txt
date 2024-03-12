@@ -1,3 +1,4 @@
 sphinx
 renku-sphinx-theme
 ghp-import
+matplotlib
