@@ -36,8 +36,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        cd docs
-        python -m pip install -r docs_requires.txt
+        python -m pip install -r docs/docs_requires.txt
     - name: Build docs
       run: |
+        cd docs
         make html
