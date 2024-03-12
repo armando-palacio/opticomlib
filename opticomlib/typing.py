@@ -302,11 +302,11 @@ class binary_sequence():
 
         Parameters
         ----------
-        data : :obj:`str` or :obj:`Array_Like(bool)`
+        data : :obj:`str`, :obj:`Array_Like(bool)`
             The binary sequence data.
         """
         if not isinstance(data, ((str,) + Array_Like)):
-            raise TypeError("The argument must be an str or array_like!")
+            raise TypeError("The argument must be an str or array_like, passed {}!".format(type(data)) )
         
         if isinstance(data, str):
             data = str2array(data, dtype=bool)
@@ -793,7 +793,7 @@ class electrical_signal():
         return np.unwrap(np.angle(self.signal))
     
     def apply(self, function, *args, **kargs):
-        """Apply a function to signal and noise.
+        r"""Apply a function to signal and noise.
         
         Parameters
         ----------
@@ -863,7 +863,7 @@ class electrical_signal():
              style: Literal['dark', 'light'] = 'dark',
              grid: bool=False,
              **kwargs: dict): 
-        """Plot real part of electrical signal.
+        r"""Plot real part of electrical signal.
 
         Parameters
         ----------
@@ -986,7 +986,7 @@ class electrical_signal():
         return self
     
     def grid(self, **kwargs):
-        """Add grid to the plot.
+        r"""Add grid to the plot.
 
         Parameters
         ----------
@@ -1003,7 +1003,7 @@ class electrical_signal():
         return self
     
     def legend(self, *args, **kwargs):
-        """Add a legend to the plot.
+        r"""Add a legend to the plot.
 
         Parameters
         ----------

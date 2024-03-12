@@ -1,8 +1,22 @@
 import unittest
 import numpy as np
 
-from opticomlib.ppm import *
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
+from opticomlib.ppm import (
+    binary_sequence, 
+    PPM_ENCODER, 
+    PPM_DECODER, 
+    HDD, 
+    SDD, 
+    THRESHOLD_EST, 
+    DSP, 
+    BER_analizer,
+    theory_BER,
+    eye, 
+    gv,
+)
 class TestPPM(unittest.TestCase):
     def test_ppm_encoder(self):
         inputs = [
@@ -90,28 +104,72 @@ class TestPPM(unittest.TestCase):
 
         self.assertRaises(ValueError, THRESHOLD_EST, inputs[0], 5) # check that M is a power of 2
 
-    def test_dsp(self):
-        from opticomlib.devices import DAC
-        inputs = DAC(binary_sequence('0100 0010 1000 0001'), pulse_shape='gaussian')
-        inputs.noise = np.random.normal(0, 0.1, inputs.len())
-
+    def test_ber_analizer(self):
+        bits = np.random.randint(0, 2, 2**11) # binary sequence of 2^11 bits
+        eye_obj = eye({'mu0':0.0, 'mu1':1.0, 's0':0.1, 's1':0.1})
         M = 4
 
-        out = [0,1, 1,0, 0,0, 1,1]
+        # First, test raises conditions work properly
+        with self.subTest(mode='hi'):
+            self.assertRaises(ValueError, BER_analizer, mode='hi') # check that mode is either 'counter' or 'estimator'
+        with self.subTest(Tx=None, Rx=None):
+            self.assertRaises(KeyError, BER_analizer, 'counter') # check that a key error is raised when mode='counter', and 'Tx' and 'Rx' are not provided
+        with self.subTest(eye_obj=None, M=None):
+            self.assertRaises(KeyError, BER_analizer, 'estimator') # check that a key error is raised when mode='estimator', and 'eye_obj' and 'M' are not provided
+        with self.subTest(M=5):
+            self.assertRaises(ValueError, BER_analizer, 'estimator', eye_obj=eye(), M=5) # check that M is a power of 2
+        with self.subTest(decision='hi'):
+            self.assertRaises(ValueError, BER_analizer, 'estimator', eye_obj=eye(), M=M, decision='hi') # check that decision is either 'hard' or 'soft'
 
-        with self.subTest(decision='hard', BW=None):
-            self.assertTrue(np.array_equal(DSP(inputs, M, decision='hard')[0].data, out)) # check hard decision is working properly
-        with self.subTest(decision='hard', BW=gv.R):
-            self.assertTrue(np.array_equal(DSP(inputs, M, decision='hard', BW=gv.R)[0].data, out)) # check hard decision is working properly
+        # Second, test that BER is 0.0 when the input and output are the same
+        with self.subTest(mode='counter', Tx=bits, Rx=bits):
+            self.assertTrue(BER_analizer('counter', Tx=bits, Rx=bits) == 0.0) # check that BER is 0.0
+        with self.subTest(mode='estimator', eye_obj=eye_obj, M=M):
+            self.assertTrue(BER_analizer('estimator', eye_obj=eye_obj, M=M) < 1e-11)
+        
 
-        with self.subTest(decision='soft', BW=None):
-            self.assertTrue(np.array_equal(DSP(inputs, M, decision='soft').data, out)) # check soft decision is working properly
-        with self.subTest(decision='soft', BW=gv.R):
-            self.assertTrue(np.array_equal(DSP(inputs, M, decision='soft', BW=gv.R).data, out)) # check soft decision is working properly
+    def test_dsp(self):
+        from opticomlib.devices import DAC, PRBS
+        
+        M = 4
+        bits = PRBS(order=11)[:-1] # decoded sequence
+        
+        ppm_seq = PPM_ENCODER(bits, M)
+        inputs = DAC(ppm_seq, pulse_shape='gaussian')
+        inputs.noise = np.random.normal(0, 0.1, inputs.len())
 
-        self.assertRaises(ValueError, DSP, inputs, 5) # check that M is a power of 2
-        self.assertRaises(ValueError, DSP, inputs, 8, decision='hola') # check that decision is either 'hard' or 'soft'
+        rx_soft = DSP(inputs, M, decision='soft')
+        rx_hard, eye_1, rth_1 = DSP(inputs, M, decision='hard')
 
+        rx_soft_BW = DSP(inputs, M, decision='soft', BW=gv.R)
+        rx_hard_BW, eye_2, rth_2 = DSP(inputs, M, decision='hard', BW=gv.R)
+
+        # First test raises conditions work properly
+
+        ## DSP
+        with self.subTest(input=2):
+            self.assertRaises(TypeError, DSP, input=2, M=5) # check that input is an Array_Like or electrical_signal
+        with self.subTest(input=[1,2,3]):
+            self.assertRaises(ValueError, DSP, input=[1,2,3], M=5) # check that input have at least gv.sps samples
+        with self.subTest(M=5):
+            self.assertRaises(ValueError, DSP, inputs, M=5) # check that M is a power of 2
+        with self.subTest(decision='hi'):
+            self.assertRaises(ValueError, DSP, inputs, M=8, decision='hi') # check that decision is either 'hard' or 'soft'
+
+        for bw, rx in zip([None, gv.R],[rx_hard, rx_hard_BW]):
+            with self.subTest(decision='hard', BW=bw):
+                self.assertTrue(np.array_equal(rx.data, bits.data)) # check hard decision is working properly
+        
+        for bw, rx in zip([None, gv.R],[rx_soft, rx_soft_BW]):
+            with self.subTest(decision='soft', BW=bw):
+                self.assertTrue(np.array_equal(rx.data, bits.data)) # check soft decision is working properly
+
+    def test_theory_ber(self):
+        self.assertTrue(theory_BER(1, 0.1, 0.1, 4, 'hard') < 1e-6) # check that BER is 0.0
+        self.assertTrue(theory_BER(1, 0.1, 0.1, 4, 'soft') < 1e-11) # check that BER is 0.0
+        self.assertRaises(ValueError, theory_BER, 1, 0.1, 0.1, 5, 'hard') # check that M is a power of 2
+        self.assertTrue(theory_BER(1, 0.1, 0.1, 4, 'hard') > theory_BER(1, 0.1, 0.1, 4, 'soft')) # check that BER is lower when decision is 'soft' than when it is 'hard'
+        self.assertTrue((theory_BER([1,1], [0.1,0.1], [0.1,0.1], 4, 'hard') < 1e-6).all()) # check that BER is 0.0
 
 if __name__ == '__main__':
     unittest.main()

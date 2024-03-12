@@ -25,7 +25,7 @@ from .utils import tic, toc, str2array, dec2bin, Q
 
 
 def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int) -> binary_sequence:
-    """PPM Encoder
+    r"""PPM Encoder
 
     Converts an input binary sequence into a binary sequence PPM encoded.
 
@@ -275,6 +275,8 @@ def THRESHOLD_EST(eye_obj: eye, M: int):
     ------
     ValueError
         If `M` is not a power of 2.
+    TypeError
+        If `eye_obj` is not of type `eye`.
     
     Examples
     --------
@@ -285,6 +287,9 @@ def THRESHOLD_EST(eye_obj: eye, M: int):
     """
     if not M & (M-1) == 0:
         raise ValueError("`M` must be a power of 2.")
+    
+    if not isinstance(eye_obj, eye):
+        raise TypeError("`eye_obj` must be of type `eye`.")
 
     mu0 = eye_obj.mu0
     mu1 = eye_obj.mu1
@@ -331,6 +336,10 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
 
     Raises
     ------
+    TypeError
+        If `input` is not of type `electrical_signal` or `Array_Like`.
+    ValueError
+        If `input` has less samples than `sps`.
     ValueError
         If `M` is not a power of 2.
     ValueError
@@ -359,6 +368,15 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
 
         DAC(y).plot(c='r', lw=3, label='Received sequence').show()
     """
+    if not isinstance(input, (electrical_signal,) + Array_Like):
+        raise TypeError("`input` must be of type `electrical_signal` or `Array_Like`.")
+    
+    if not isinstance(input, electrical_signal):
+        input = electrical_signal(input)
+    
+    if input.len() < gv.sps:
+        raise ValueError("`input` must have at least `sps` samples.")
+    
     if not M & (M-1) == 0:
         raise ValueError("`M` must be a power of 2.")
 
@@ -394,7 +412,7 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
 
 
 
-def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
+def BER_analizer(mode: Literal['counter', 'estimator'], **kwargs):
     """BER Analizer
     
     Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one) 
@@ -422,15 +440,31 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
     -------
     :obj:`float`
         BER.
+
+    Raises
+    ------
+    ValueError
+        If `mode` is not 'counter' or 'estimator'.
+    ValueError
+        If `decision` is not 'hard' or 'soft'.
+    KeyError
+        If `Tx` or `Rx` are not provided when `mode='counter'`.
+    KeyError
+        If `eye_obj` or `M` are not provided when `mode='estimator'`.
+    ValueError
+        If `M` is not a power of 2.
     """
         
-    if mode == 'counter':
-        assert 'Rx' in kargs.keys() and 'Tx' in kargs.keys(), "`Tx` and `Rx` are required arguments for `mode='counter'`."
-        Rx = kargs['Rx']
-        Tx = kargs['Tx']
+    if mode.lower() == 'counter':
+        Tx = kwargs.get('Tx', None)
+        Rx = kwargs.get('Rx', None)
 
-        if not isinstance(Rx, binary_sequence) and not isinstance(Tx, binary_sequence):
+        if Tx is None or Rx is None:
+            raise KeyError("`Tx` and `Rx` are required arguments for `mode='counter'`.")
+
+        if not isinstance(Rx, binary_sequence):
             Rx = binary_sequence( Rx )
+        if not isinstance(Tx, binary_sequence):
             Tx = binary_sequence( Tx )
 
         Tx = Tx[:Rx.len()]
@@ -438,18 +472,19 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
 
         return np.sum(Tx.data != Rx.data)/Tx.len()
 
-    elif mode == 'estimator':
-        assert 'eye_obj' in kargs.keys(), "`eye_obj` is a required argument for `mode='estimator'`."
-        assert 'M' in kargs.keys(), "`M` is a required argument for `mode='estimator'`"
+    elif mode.lower() == 'estimator':
+        eye_obj = kwargs.get('eye_obj', None)
+        M = kwargs.get('M', None)
+        decision = kwargs.get('decision', 'soft')
 
-        eye_obj = kargs['eye_obj']
-        M = kargs['M']
-        decision = kargs['decision'] if 'decision' in kargs.keys() else 'soft'
+        if eye_obj is None or M is None:
+            raise KeyError("`eye_obj` and `M` are required arguments for `mode='estimator'`.")
 
         if not M & (M-1) == 0:
             raise ValueError("`M` must be a power of 2.")
 
-        assert decision.lower() in ('hard', 'soft'), "Error: el argumento decision debe tomar los valores `hard` o `soft`"
+        if decision.lower() not in ['hard', 'soft']:
+            raise ValueError("`decision` must be 'hard' or 'soft'.")
 
         I1 = eye_obj.mu1
         I0 = eye_obj.mu0
@@ -461,25 +496,23 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
             Pe_sym = 1 - Q((um-I1)/s1) * (1-Q((um-I0)/s0))**(M-1)
         elif decision == 'soft':
             Pe_sym = 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((I1-I0+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0]
-        else:
-            raise ValueError('`decision` must be "hard" or "soft"')
         return M/2/(M-1)*Pe_sym
 
     else:
         raise ValueError('Invalid mode. Use `counter` or `estimator`.')
 
 
-def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int, ndarray], M: int, decision: Literal['soft','hard']='soft'):
+def theory_BER(mu1: Union[float, ndarray], s0: Union[float, ndarray], s1: Union[float, ndarray], M: int, decision: Literal['soft','hard']='soft'):
     r"""
     Calculates the theoretical bit error probability for a PPM system.
 
     Parameters
     ----------
-    mu1 : :obj:`float`
+    mu1 : :obj:`float` or :obj:`ndarray`
         Average current (or voltage) value of the signal corresponding to a bit 1.
-    s0 : :obj:`float`
+    s0 : :obj:`float` or :obj:`ndarray`
         Standard deviation of current (or voltage) of the signal corresponding to a bit 0.
-    s1 : :obj:`float`
+    s1 : :obj:`float` or :obj:`ndarray`
         Standard deviation of current (or voltage) of the signal corresponding to a bit 1.
     M : :obj:`int`
         Order of PPM modulation.
@@ -490,6 +523,13 @@ def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int,
     -------
     :obj:`float`
         Theoretical bit error probability (BER).
+
+    Raises
+    ------
+    ValueError
+        If `M` is not a power of 2.
+    ValueError
+        If `decision` is not 'hard' or 'soft'.
 
     Notes
     -----
@@ -517,6 +557,8 @@ def theory_BER(mu1: Union[int, ndarray], s0: Union[int, ndarray], s1: Union[int,
     3.074810247686141e-12
 
     """
+    if not M & (M-1) == 0:
+        raise ValueError("`M` must be a power of 2.")
 
     if decision == 'soft':
         fun = np.vectorize( lambda mu1,s0,s1,M: 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu1+s1*x)/s0))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0] )
