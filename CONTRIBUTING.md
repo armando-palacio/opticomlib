@@ -1,12 +1,14 @@
-# Contributor Guide
+# Contributing to Opticomlib
 
 Thank you for your interest in contributing to this project! This guide will help you get started with the contribution process.
 
-## Table of Contents
-
-- [Getting Started](#getting-started)
-- [Contributing Code](#contributing-code)
-- [Reporting Issues](#reporting-issues)
+- [Contributing to Opticomlib](#contributing-to-opticomlib)
+  - [Getting Started](#getting-started)
+  - [Contributing Code](#contributing-code)
+    - [When contributing code, please follow these guidelines](#when-contributing-code-please-follow-these-guidelines)
+    - [Before opening a pull request, make sure that](#before-opening-a-pull-request-make-sure-that)
+  - [Branches Architecture](#branches-architecture)
+  - [Reporting Issues](#reporting-issues)
 
 ## Getting Started
 
@@ -259,6 +261,40 @@ To contribute to this project, you will need to follow these steps:
         :align: center
         :width: 80%
     ```
+
+## Branches Architecture
+
+Let's take a closer look at using branches in a Python project on GitHub. Here's a detailed guide to structuring and working with branches in this project:
+
+1. Main branch (`main`):
+
+    This branch should only contain stable and tested code that is ready to be deployed into production.
+    It is recommended that this branch be protected, to avoid direct changes and the need for revisions via pull requests.
+    Development branches:
+
+2. Development Branch (`dev`):
+
+    This branch is used to integrate and test new features before merging them into the main branch. Feature branches may be created from this branch for the development of new features.
+
+3. Feature branches (`feature/*`):
+
+    Separate branches are created to develop specific features or solve specific problems.
+    Each feature branch should be descriptive, representing the functionality being developed.
+    When implementation is complete and the functionality has been tested, the feature branch is merged with the development branch.
+
+4. Release branches (`release/tage_name`):
+
+    Release branches are created when a new version of the software is being prepared for production deployment.
+    These branches are used for final testing, last-minute bug fixes, and documentation preparation prior to deployment.
+    Once testing is complete, the release branch is merged with both the main and development branches.
+
+5. Hotfix branches (`hotfix/*`):
+
+    Hotfix branches are created to address critical issues that require an immediate fix in production.
+    These branches are derived directly from the main branch.
+    Once the problem is fixed, the hotfix branch is merged with both the main branch and the development branch.
+
+This branching strategy promotes an orderly and controlled workflow, facilitates collaboration between team members, and ensures code stability in production. Proper use of branches helps maintain a clear and organized change history in the repository.
 
 ## Reporting Issues
 
