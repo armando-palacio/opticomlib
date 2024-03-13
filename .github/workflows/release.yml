@@ -28,6 +28,10 @@ jobs:
           pip install pytest
           pytest
 
+      - name: Get the version
+        id: get_version
+        run: echo "VERSION=$(python setup.py --version)" >> $GITHUB_ENV
+
       - name: Generate changelog
         id: changelog
         uses: metcalfc/changelog-generator@v0.4.4
@@ -40,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
           body: ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
