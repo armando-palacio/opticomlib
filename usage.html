@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; opticomlib 0.4.9 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="_static/fonts.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon_laser.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=9ce76fde"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data types" href="types.html" />
+    <link rel="prev" title="Welcome to opticomlib&#39;s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            opticomlib
+              <img src="_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Data types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devices.html">Electro-Optical Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ook.html">OOK Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ppm.html">PPM Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">opticomlib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>To use <code class="docutils literal notranslate"><span class="pre">Opticomlib</span></code>, python <code class="docutils literal notranslate"><span class="pre">&lt;=3.10</span></code> is required.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you don't have python installed, it's strongly recommended to install it using <a class="reference external" href="https://docs.anaconda.com/free/miniconda/index.html">Miniconda</a>
+for simplicity in managing packages and environments.</p>
+<p>Here is an example for installing Miniconda on Windows (for other OS, please refer to the <a class="reference external" href="https://docs.anaconda.com/free/miniconda/index.html">official documentation</a>),</p>
+<p>Open a terminal and run the following commands:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl<span class="w"> </span>https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe<span class="w"> </span>-o<span class="w"> </span>miniconda3.exe
+<span class="gp">$ </span>start<span class="w"> </span>/wait<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span>miniconda3.exe
+<span class="gp">$ </span>del<span class="w"> </span>miniconda3.exe
+</pre></div>
+</div>
+</div>
+<p>After installing, open the “Anaconda Prompt (miniconda3)” program to use Miniconda3. Then you can create
+a new environment and install <code class="docutils literal notranslate"><span class="pre">Opticomlib</span></code> using the following commands:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(base)</span><span class="gp">$ </span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>optic_env<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10
+<span class="gp gp-VirtualEnv">(base)</span><span class="gp">$ </span>conda<span class="w"> </span>activate<span class="w"> </span>optic_env
+<span class="gp gp-VirtualEnv">(optic_env)</span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>opticomlib
+</pre></div>
+</div>
+<p>If you want to install an specific branch of the git repository, you can use the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(optic_env)</span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/armando-palacio/opticomlib.git@branch_name
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
+<p>To use library, you have to import the modules you need (as <cite>devices</cite>, <cite>ook</cite>, <cite>ppm</cite>, etc) and use them in your code.
+Also, you need to import <code class="docutils literal notranslate"><span class="pre">gv</span></code> variable from any module or <code class="docutils literal notranslate"><span class="pre">opticomlib</span></code> directly, in order to set global variables for simulation.</p>
+<p>Here there are some examples of how to use <code class="docutils literal notranslate"><span class="pre">Opticomlib</span></code>.</p>
+<hr class="docutils" />
+<ol class="arabic simple">
+<li><p>Generate a gaussian pulse with a given width and amplitude is so easy using <code class="xref py py-func docutils literal notranslate"><span class="pre">DAC()</span></code> device.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">gv</span>
+
+<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e9</span><span class="p">)</span> <span class="c1"># set samples per slot and slot rate, it automatically will set de sampling frequency (fs),</span>
+                  <span class="c1"># see &quot;Data Types/global_variables&quot; documentation page for more details</span>
+
+<span class="n">pulse</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0001000&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">Vout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># create a gaussian pulse with 16 samples width and 1V of amplitude</span>
+                                                             <span class="c1"># see &quot;Devices/DAC&quot; documentation page for more details of the DAC device</span>
+
+<span class="n">pulse</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;r.-&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># plot, grid and show the pulse,</span>
+                                               <span class="c1"># see &quot;Data Types/electrical_signal.plot&quot; documentation page for more details of the plot method</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/gaussian_pulse.svg"><img alt="_images/gaussian_pulse.svg" class="align-center" src="_images/gaussian_pulse.svg" width="100%" /></a>
+<hr class="docutils" />
+<ol class="arabic simple" start="2">
+<li><p>See the response of an optical fiber for a given input optical signal is very simple using <code class="xref py py-func docutils literal notranslate"><span class="pre">FIBER()</span></code> device:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">FIBER</span>
+<span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">gv</span>
+
+<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span> <span class="c1"># set again samples per slot and slot rate</span>
+
+<span class="n">P</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="c1"># 1 mW of peak power</span>
+
+<span class="n">pulse_i</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0001000&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">Vout</span><span class="o">=</span><span class="n">P</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span> <span class="c1"># create a gaussian pulse as before with (1 mW) of peak power and convert it as an optical_signal,</span>
+                                                                                           <span class="c1"># because of the FIBER device only accepts optical_signal as input</span>
+
+<span class="n">pulse_o</span> <span class="o">=</span> <span class="n">FIBER</span><span class="p">(</span><span class="n">pulse_i</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_2</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">beta_3</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span> <span class="c1"># propagate the pulse through a fiber of 100km length,</span>
+                                                                               <span class="c1"># with alpha=0.2 dB/km, beta_2=-20 ps^2/km, beta_3=0 ps^3/km and gamma=1.5 1/W/km</span>
+                                                                               <span class="c1"># see &quot;Devices/FIBER&quot; documentation page for more details of the FIBER device</span>
+<span class="n">pulse_i</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;r.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Input&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">)</span>
+<span class="n">pulse_o</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;b.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># plot, grid, legend and show the input and output pulses</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/fiber_in_out.svg"><img alt="_images/fiber_in_out.svg" class="align-center" src="_images/fiber_in_out.svg" width="100%" /></a>
+<hr class="docutils" />
+<ol class="arabic simple" start="3">
+<li><p>Estimate the eye diagram parameters and plot the eye of an arbitrary signal is very simple too, using <code class="xref py py-func docutils literal notranslate"><span class="pre">GET_EYE()</span></code> device:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">PRBS</span><span class="p">,</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">GET_EYE</span><span class="p">,</span> <span class="n">gv</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span> <span class="c1"># set again samples per slot and slot rate</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">Vout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># create a PRBS signal and pass it through a gaussian pulse shaping filter with 1V output</span>
+<span class="n">x</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="c1"># add gaussian noise to the signal</span>
+
+<span class="n">eye</span> <span class="o">=</span> <span class="n">GET_EYE</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sps_resamp</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="c1"># get the eye diagram of x with 128 samples per slot</span>
+                                 <span class="c1"># see &quot;Devices/GET_EYE&quot; documentation page for more details of the GET_EYE device</span>
+
+<span class="n">eye</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>       <span class="c1"># print the eye diagram parameters</span>
+<span class="n">eye</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># plot and show the eye diagram</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-----------------</span>
+<span class="o">***</span>    <span class="n">eye</span>    <span class="o">***</span>
+<span class="o">-----------------</span>
+<span class="n">sps</span> <span class="p">:</span> <span class="mi">32</span>
+<span class="n">dt</span> <span class="p">:</span> <span class="mf">3.125e-12</span>
+<span class="n">y</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span> <span class="mf">0.8</span> <span class="mf">0.8</span> <span class="o">...</span> <span class="mf">0.9</span> <span class="mf">0.8</span> <span class="mf">0.8</span><span class="p">]</span>
+<span class="n">t</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">...</span>  <span class="mf">1.</span>  <span class="mf">1.</span>  <span class="mf">1.</span><span class="p">]</span>
+<span class="n">t_left</span> <span class="p">:</span> <span class="o">-</span><span class="mf">0.4666666666675001</span>
+<span class="n">t_right</span> <span class="p">:</span> <span class="mf">0.5372549019583821</span>
+<span class="n">t_opt</span> <span class="p">:</span> <span class="mf">0.0352941176454411</span>
+<span class="n">t_dist</span> <span class="p">:</span> <span class="mf">1.0039215686258822</span>
+<span class="n">t_span0</span> <span class="p">:</span> <span class="o">-</span><span class="mf">0.014901960785853013</span>
+<span class="n">t_span1</span> <span class="p">:</span> <span class="mf">0.08549019607673522</span>
+<span class="n">i</span> <span class="p">:</span> <span class="mi">17</span>
+<span class="n">y_top</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.9</span> <span class="mf">0.9</span> <span class="mf">1.</span>  <span class="o">...</span> <span class="mf">0.9</span> <span class="mf">0.8</span> <span class="mf">0.8</span><span class="p">]</span>
+<span class="n">y_bot</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.</span>  <span class="o">-</span><span class="mf">0.</span>  <span class="o">-</span><span class="mf">0.</span>  <span class="o">...</span>  <span class="mf">0.</span>   <span class="mf">0.1</span>  <span class="mf">0.1</span><span class="p">]</span>
+<span class="n">mu1</span> <span class="p">:</span> <span class="mf">0.9442477130214517</span>
+<span class="n">s1</span> <span class="p">:</span> <span class="mf">0.06336202689582064</span>
+<span class="n">mu0</span> <span class="p">:</span> <span class="mf">0.04657654834827988</span>
+<span class="n">s0</span> <span class="p">:</span> <span class="mf">0.06488856548646174</span>
+<span class="n">er</span> <span class="p">:</span> <span class="mf">13.069186405369418</span>
+<span class="n">eye_h</span> <span class="p">:</span> <span class="mf">0.5129193875263247</span>
+<span class="n">time</span>  <span class="p">:</span>  <span class="mf">699.1</span> <span class="n">ms</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/eye_diagram.png"><img alt="_images/eye_diagram.png" class="align-center" src="_images/eye_diagram.png" style="width: 100%;" /></a>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to opticomlib&#39;s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="types.html" class="btn btn-neutral float-right" title="Data types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ing. Armando P. Romeu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
