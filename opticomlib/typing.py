@@ -449,6 +449,26 @@ class binary_sequence():
         """
         return self.data.size
     
+    def ones(self):
+        """Return the number of ones in the binary sequence.
+        
+        Returns
+        -------
+        :obj:`int`
+            The number of ones in the binary sequence.
+        """
+        return np.sum(self.data)
+    
+    def zeros(self):
+        """Return the number of zeros in the binary sequence.
+        
+        Returns
+        -------
+        :obj:`int`
+            The number of zeros in the binary sequence.
+        """
+        return self.len() - self.ones()
+    
     def type(self): 
         """Return de object type.
         
