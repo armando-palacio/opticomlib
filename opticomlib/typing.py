@@ -293,6 +293,8 @@ class binary_sequence():
         __add__
         __radd__
         len
+        ones
+        zeros
         type
         sizeof
     """
