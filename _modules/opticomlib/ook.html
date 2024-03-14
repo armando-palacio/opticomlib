@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>opticomlib.ook &mdash; opticomlib 0.4.10 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/fonts.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon_laser.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=084909a4"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            opticomlib
+              <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#usage">Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../types.html">Data types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devices.html">Electro-Optical Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ook.html">OOK Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ppm.html">PPM Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lab.html">Laboratory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utilities functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">opticomlib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">opticomlib.ook</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for opticomlib.ook</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. rubric:: Functions</span>
+<span class="sd">.. autosummary::</span>
+
+<span class="sd">   THRESHOLD_EST       </span>
+<span class="sd">   DSP                  </span>
+<span class="sd">   BER_analizer          </span>
+<span class="sd">   theory_BER           </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.devices</span> <span class="kn">import</span> <span class="n">GET_EYE</span><span class="p">,</span> <span class="n">SAMPLER</span><span class="p">,</span> <span class="n">LPF</span>
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">binary_sequence</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">eye</span><span class="p">,</span> <span class="n">gv</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">Q</span><span class="p">,</span> <span class="n">tic</span><span class="p">,</span> <span class="n">toc</span>
+
+
+
+<div class="viewcode-block" id="THRESHOLD_EST">
+<a class="viewcode-back" href="../../ook.html#opticomlib.ook.THRESHOLD_EST">[docs]</a>
+<span class="k">def</span> <span class="nf">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">:</span> <span class="n">eye</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Threshold estimator</span>
+
+<span class="sd">    Estimates the decision threshold for OOK from the means and standard deviations of the eye diagram.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    eye_obj : :obj:`eye`</span>
+<span class="sd">        Object with the parameters of the eye diagram.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`float`</span>
+<span class="sd">        Decision threshold for OOK.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The decision threshold is estimated as the value of amplitud that minimizes the probability of error</span>
+<span class="sd">    given the means and standard deviations of the eye diagram. This is done by minimizing the probability function [th]_:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        f(r) = \\frac{1}{2} Q\\left(\\frac{\\mu_1 - r}{\\sigma_1}\\right) + \\frac{1}{2} Q\\left(\\frac{r - \\mu_0}{\\sigma_0}\\right)</span>
+
+<span class="sd">    where :math:`\\mu_0` and :math:`\\mu_1` are the means of the eye diagram, :math:`\\sigma_0` and :math:`\\sigma_1` are the standard deviations</span>
+<span class="sd">    and :func:`~opticomlib.utils.Q` is the Q-function.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [th] Armando Palacio Romeu, &quot;Comunicaciones ópticas entre satélites LEO y GEO&quot;, chapter 2.4. link: https://ricabib.cab.cnea.gov.ar/1143/1/1Palacio_Romeu.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mu0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu0</span>
+    <span class="n">mu1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu1</span>
+    <span class="n">s0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s0</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s1</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu0</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">umbral</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">Q</span><span class="p">((</span><span class="n">mu1</span><span class="o">-</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="n">Q</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">mu0</span><span class="p">)</span><span class="o">/</span><span class="n">s0</span><span class="p">))</span> <span class="p">)]</span>
+    <span class="k">return</span> <span class="n">umbral</span></div>
+
+
+
+<div class="viewcode-block" id="DSP">
+<a class="viewcode-back" href="../../ook.html#opticomlib.ook.DSP">[docs]</a>
+<span class="k">def</span> <span class="nf">DSP</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;On-Off Keying Digital Signal Processing</span>
+<span class="sd">    </span>
+<span class="sd">    Performs the decision task of the photodetected electrical signal. </span>
+
+<span class="sd">    1. If ``BW`` is provided bessel filter will be applied to the signal (:func:`opticomlib.devices.LPF`)</span>
+<span class="sd">    2. eye diagram parameters are estimated from the input electrical signal with function :func:`opticomlib.devices.GET_EYE`.</span>
+<span class="sd">    3. it subsamples the electrical signal to 1 sample per bit using function :func:`opticomlib.devices.SAMPLER`. </span>
+<span class="sd">    4. Then, it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function :func:`opticomlib.ook.THRESHOLD_EST`. </span>
+<span class="sd">    5. Finally, it returns the received binary sequence, eye object and optimal threshold.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : :obj:`electrical_signal`</span>
+<span class="sd">        Photodetected electrical signal.</span>
+<span class="sd">    BW : :obj:`float`, optional</span>
+<span class="sd">        Bandwidth of DSP filter. If not specified, signal won&#39;t be filtered.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output : :obj:`binary_sequence`</span>
+<span class="sd">        Received bits.</span>
+<span class="sd">    eye_obj : :obj:`eye`</span>
+<span class="sd">        Eye diagram parameters.</span>
+<span class="sd">    rth : :obj:`float`</span>
+<span class="sd">        Decision threshold for OOK.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. plot::</span>
+<span class="sd">        :include-source:</span>
+<span class="sd">        :alt: DSP OOK</span>
+<span class="sd">        :align: center</span>
+<span class="sd">        :width: 720</span>
+
+<span class="sd">        from opticomlib.devices import DAC, gv</span>
+<span class="sd">        from opticomlib.ook import DSP</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import matplotlib.pyplot as plt</span>
+
+<span class="sd">        gv(sps=64, R=1e9)</span>
+
+<span class="sd">        x = DAC(&#39;01000100100000&#39;, 1, pulse_shape=&#39;gaussian&#39;)</span>
+<span class="sd">        x.noise = np.random.normal(0, 0.1, x.len())</span>
+
+<span class="sd">        y, eye_, xth = DSP(x)</span>
+
+<span class="sd">        x.plot(&#39;y&#39;, label=&#39;Photodetected signal&#39;)</span>
+<span class="sd">        DAC(y).plot(c=&#39;r&#39;, lw=2, label=&#39;Received sequence&#39;)</span>
+<span class="sd">        plt.axhline(xth, color=&#39;b&#39;, linestyle=&#39;--&#39;, label=&#39;Threshold&#39;)</span>
+<span class="sd">        plt.legend(loc=&#39;upper right&#39;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">BW</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">LPF</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">eye_obj</span> <span class="o">=</span> <span class="n">GET_EYE</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nslots</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">sps_resamp</span><span class="o">=</span><span class="mi">128</span><span class="p">);</span> <span class="n">time</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span>
+    <span class="n">rth</span> <span class="o">=</span> <span class="n">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">SAMPLER</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">eye_obj</span><span class="p">)</span> <span class="c1"># one sample per bit </span>
+    
+    <span class="n">tic</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">rth</span>
+    
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span> <span class="o">+</span> <span class="n">time</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span>
+    <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">eye_obj</span><span class="p">,</span> <span class="n">rth</span></div>
+
+
+
+<div class="viewcode-block" id="BER_analizer">
+<a class="viewcode-back" href="../../ook.html#opticomlib.ook.BER_analizer">[docs]</a>
+<span class="k">def</span> <span class="nf">BER_analizer</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">,</span> <span class="s1">&#39;estimator&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;BER Analizer</span>
+<span class="sd">    </span>
+<span class="sd">    Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one) </span>
+<span class="sd">    or by estimation (using estimated means and variances from the eye diagram and substituting those values into the theoretical expressions).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mode : :obj:`str`</span>
+<span class="sd">        Mode in which the Bit Error Rate (BER) will be determined.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    Tx : :obj:`binary_sequence`, optional</span>
+<span class="sd">        Transmitted binary sequence. Required if `mode=&#39;counter&#39;`.</span>
+<span class="sd">    Rx : :obj:`binary_sequence`, optional</span>
+<span class="sd">        Received binary sequence. Required if `mode=&#39;counter&#39;`.</span>
+<span class="sd">    eye_obj : :obj:`eye`, optional</span>
+<span class="sd">        `eye` object with the estimated parameters of the eye diagram. Required if `mode=&#39;estimator&#39;`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`float`</span>
+<span class="sd">        BER.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">        </span>
+<span class="sd">        from opticomlib.devices import DAC, gv, binary_sequence</span>
+<span class="sd">        from opticomlib.ook import DSP, BER_analizer</span>
+
+<span class="sd">        import numpy as np</span>
+
+<span class="sd">        gv(sps=64, R=1e9)</span>
+
+<span class="sd">        tx = binary_sequence(&#39;01000100100000&#39;)</span>
+<span class="sd">        x = DAC(tx, pulse_shape=&#39;gaussian&#39;)</span>
+<span class="sd">        x.noise = np.random.normal(0, 0.1, x.len())</span>
+
+<span class="sd">        rx, eye_, xth = DSP(x)</span>
+<span class="sd">        BER_count = BER_analizer(&#39;counter&#39;, Tx=tx, Rx=rx)</span>
+<span class="sd">        BER_est = BER_analizer(&#39;estimator&#39;, eye_obj=eye_)</span>
+
+<span class="sd">        print(f&#39;BER by counting: {BER_count:.1e}&#39;)</span>
+<span class="sd">        print(f&#39;BER by estimation: {BER_est:.1e}&#39;)</span>
+<span class="sd">    </span>
+<span class="sd">    Output:</span>
+<span class="sd">        </span>
+<span class="sd">    ::</span>
+<span class="sd">        </span>
+<span class="sd">        BER by counting: 0.0e+00</span>
+<span class="sd">        BER by estimation: 3.7e-07</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;counter&#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s1">&#39;Rx&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;Tx&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s2">&quot;`Tx` and `Rx` are required arguments for `mode=&#39;counter&#39;`.&quot;</span>
+        <span class="n">Rx</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;Rx&#39;</span><span class="p">]</span>
+        <span class="n">Tx</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;Tx&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Rx</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Tx</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+            <span class="n">Rx</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="n">Rx</span> <span class="p">)</span>
+            <span class="n">Tx</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="n">Tx</span> <span class="p">)</span>
+
+        <span class="n">Tx</span> <span class="o">=</span> <span class="n">Tx</span><span class="p">[:</span><span class="n">Rx</span><span class="o">.</span><span class="n">len</span><span class="p">()]</span>
+        <span class="k">assert</span> <span class="n">Tx</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">==</span> <span class="n">Rx</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="s2">&quot;Error: `Tx` and `Rx` must have the same length.&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Tx</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">Rx</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">/</span><span class="n">Tx</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;estimator&#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s1">&#39;eye_obj&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s2">&quot;`eye_obj` is a required argument for `mode=&#39;estimator&#39;`.&quot;</span>
+
+        <span class="n">eye_obj</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;eye_obj&#39;</span><span class="p">]</span>
+
+        <span class="n">I1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu1</span>
+        <span class="n">I0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu0</span>
+        <span class="n">s1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s1</span>
+        <span class="n">s0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s0</span>
+        <span class="n">um</span> <span class="o">=</span> <span class="n">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">Q</span><span class="p">((</span><span class="n">I1</span><span class="o">-</span><span class="n">um</span><span class="p">)</span><span class="o">/</span><span class="n">s1</span><span class="p">)</span> <span class="o">+</span> <span class="n">Q</span><span class="p">((</span><span class="n">um</span><span class="o">-</span><span class="n">I0</span><span class="p">)</span><span class="o">/</span><span class="n">s0</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Invalid mode. Use `counter` or `estimator`.&#39;</span><span class="p">)</span></div>
+
+    
+
+
+<div class="viewcode-block" id="theory_BER">
+<a class="viewcode-back" href="../../ook.html#opticomlib.ook.theory_BER">[docs]</a>
+<span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">]):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculates the theoretical bit error probability for an OOK system.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mu1 : :obj:`float`</span>
+<span class="sd">        Average current (or voltage) value of the signal corresponding to a bit 1.</span>
+<span class="sd">    s0 : :obj:`float`</span>
+<span class="sd">        Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</span>
+<span class="sd">    s1 : :obj:`float`</span>
+<span class="sd">        Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`float`</span>
+<span class="sd">        Theoretical bit error probability (BER).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The theoretical bit error probability is calculated using the following expression:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        P_e = \frac{1}{2} \left[Q\left(\frac{\mu_1 - r_{th}}{\sigma_1}\right) + Q\left(\frac{r_{th}}{\sigma_0}\right)\right]</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.ook import theory_BER</span>
+<span class="sd">    &gt;&gt;&gt; theory_BER(mu1=1, s0=0.1, s1=0.1)</span>
+<span class="sd">    2.8674468224390994e-07</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@np</span><span class="o">.</span><span class="n">vectorize</span>
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">mu1_</span><span class="p">,</span><span class="n">s0_</span><span class="p">,</span><span class="n">s1_</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">mu1_</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Q</span><span class="p">((</span><span class="n">mu1_</span><span class="o">-</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="n">s1_</span><span class="p">)</span> <span class="o">+</span> <span class="n">Q</span><span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="n">s0_</span><span class="p">))</span>
+                     
+    <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ing. Armando P. Romeu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

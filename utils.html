@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Utilities functions &mdash; opticomlib 0.4.9 documentation</title>
+  <title>Utilities functions &mdash; opticomlib 0.4.10 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,9 +17,10 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9ce76fde"></script>
+        <script src="_static/documentation_options.js?v=084909a4"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -58,7 +59,29 @@
 <li class="toctree-l1"><a class="reference internal" href="ook.html">OOK Devices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ppm.html">PPM Devices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Utilities functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utilities functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.generate_prbs"><code class="docutils literal notranslate"><span class="pre">generate_prbs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.dec2bin"><code class="docutils literal notranslate"><span class="pre">dec2bin()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.str2array"><code class="docutils literal notranslate"><span class="pre">str2array()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.get_time"><code class="docutils literal notranslate"><span class="pre">get_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.tic"><code class="docutils literal notranslate"><span class="pre">tic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.toc"><code class="docutils literal notranslate"><span class="pre">toc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.db"><code class="docutils literal notranslate"><span class="pre">db()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.dbm"><code class="docutils literal notranslate"><span class="pre">dbm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.idb"><code class="docutils literal notranslate"><span class="pre">idb()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.idbm"><code class="docutils literal notranslate"><span class="pre">idbm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.gaus"><code class="docutils literal notranslate"><span class="pre">gaus()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.Q"><code class="docutils literal notranslate"><span class="pre">Q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.phase"><code class="docutils literal notranslate"><span class="pre">phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.tau_g"><code class="docutils literal notranslate"><span class="pre">tau_g()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.dispersion"><code class="docutils literal notranslate"><span class="pre">dispersion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.bode"><code class="docutils literal notranslate"><span class="pre">bode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.rcos"><code class="docutils literal notranslate"><span class="pre">rcos()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.si"><code class="docutils literal notranslate"><span class="pre">si()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.norm"><code class="docutils literal notranslate"><span class="pre">norm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.nearest"><code class="docutils literal notranslate"><span class="pre">nearest()</span></code></a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -91,6 +114,687 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">opticomlib.utils</span> <span class="k">as</span> <span class="nn">ut</span>
 </pre></div>
 </div>
+<p class="rubric" id="module-opticomlib.utils">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.generate_prbs" title="opticomlib.utils.generate_prbs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_prbs</span></code></a>([order])</p></td>
+<td><p>Generates a pseudo-random binary sequence (PRBS) of desired order.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.dec2bin" title="opticomlib.utils.dec2bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dec2bin</span></code></a>(num[, digits])</p></td>
+<td><p>Converts an integer to its binary representation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.str2array" title="opticomlib.utils.str2array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str2array</span></code></a>(string[, dtype])</p></td>
+<td><p>Converts a string to array of numbers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.get_time" title="opticomlib.utils.get_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_time</span></code></a>(line_of_code, n)</p></td>
+<td><p>Get the average time of execution of a line of code.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.tic" title="opticomlib.utils.tic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tic</span></code></a>()</p></td>
+<td><p>Start a timer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.toc" title="opticomlib.utils.toc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toc</span></code></a>()</p></td>
+<td><p>Stop a timer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.db" title="opticomlib.utils.db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db</span></code></a>(x)</p></td>
+<td><p>Calculates the logarithm in base 10 of the input x and multiplies it by 10.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.dbm" title="opticomlib.utils.dbm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dbm</span></code></a>(x)</p></td>
+<td><p>Calculates dBm from Watts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.idb" title="opticomlib.utils.idb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idb</span></code></a>(x)</p></td>
+<td><p>Calculates the number value from a dB value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.idbm" title="opticomlib.utils.idbm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idbm</span></code></a>(x)</p></td>
+<td><p>Calculates the power value in Watts from a dBm value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.gaus" title="opticomlib.utils.gaus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaus</span></code></a>(x[, mu, std])</p></td>
+<td><p>Gaussian function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.Q" title="opticomlib.utils.Q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Q</span></code></a>(x)</p></td>
+<td><p>Q-function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.phase" title="opticomlib.utils.phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code></a>(H)</p></td>
+<td><p>Calculate the unwrapped phase of a frequency response.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.tau_g" title="opticomlib.utils.tau_g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tau_g</span></code></a>(H, fs)</p></td>
+<td><p>Calculate the group delay of a frequency response.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.dispersion" title="opticomlib.utils.dispersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispersion</span></code></a>(H, fs, f0)</p></td>
+<td><p>Calculate the dispersion of a frequency response.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.bode" title="opticomlib.utils.bode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bode</span></code></a>(H, fs[, f0, xaxis, disp, yscale, ret, ...])</p></td>
+<td><p>Plot the Bode plot of a given transfer function H (magnitude, phase and group delay).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.rcos" title="opticomlib.utils.rcos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcos</span></code></a>(x, alpha, T)</p></td>
+<td><p>Raised cosine spectrum function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.si" title="opticomlib.utils.si"><code class="xref py py-obj docutils literal notranslate"><span class="pre">si</span></code></a>(x[, unit, k])</p></td>
+<td><p>Unit of measure classifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.norm" title="opticomlib.utils.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(x)</p></td>
+<td><p>Normalize an array by dividing each element by the maximum value in the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.nearest" title="opticomlib.utils.nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nearest</span></code></a>(x, a)</p></td>
+<td><p>Find the nearest value in an array.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.generate_prbs">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">generate_prbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#generate_prbs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.generate_prbs" title="Link to this definition"></a></dt>
+<dd><p>Generates a pseudo-random binary sequence (PRBS) of desired order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>order</strong> (<em>int</em><em>, </em><em>default: 7</em>) -- Order of the generator polynomial. Valid options are {7, 9, 11, 15, 20, 23, 31}.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>PRBS sequence of length <code class="docutils literal notranslate"><span class="pre">2^order-1</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">order</span></code> is not in {7, 9, 11, 15, 20, 23, 31}.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">generate_prbs</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,</span>
+<span class="go">       0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,</span>
+<span class="go">       0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,</span>
+<span class="go">       0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,</span>
+<span class="go">       0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,</span>
+<span class="go">       0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.dec2bin">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">dec2bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#dec2bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.dec2bin" title="Link to this definition"></a></dt>
+<dd><p>Converts an integer to its binary representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num</strong> (<em>int</em>) -- Integer to convert.</p></li>
+<li><p><strong>digits</strong> (<em>int</em><em>, </em><em>default: 8</em>) -- Number of bits of the binary representation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Binary representation of <code class="docutils literal notranslate"><span class="pre">num</span></code> of length <code class="docutils literal notranslate"><span class="pre">digits</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence">binary_sequence</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">num</span></code> is too large to be represented with <code class="docutils literal notranslate"><span class="pre">digits</span></code> bits.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dec2bin</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">array([0, 1, 0, 1], dtype=uint8)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.str2array">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">str2array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#str2array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.str2array" title="Link to this definition"></a></dt>
+<dd><p>Converts a string to array of numbers. Use commas or whitespace as element separators.
+Elements can be integer or floating point. If there is at least one floating point number, then all elements are converted to float.</p>
+<p>If the string contains only 0 and 1, then the output is a binary array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- String to convert.</p></li>
+<li><p><strong>dtype</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>, optional) -- Data type of the output array. Default is <cite>float</cite>.
+Allowed types are <cite>int</cite>, <cite>float</cite> and <cite>bool</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>arr</strong> -- Numeric array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If the string contains invalid characters.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;1 2 3 4&#39;</span><span class="p">)</span>
+<span class="go">array([1, 2, 3, 4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;1,2,3,4&#39;</span><span class="p">)</span>
+<span class="go">array([1, 2, 3, 4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;1.1 2.2 3.3 4.4&#39;</span><span class="p">)</span>
+<span class="go">array([1.1, 2.2, 3.3, 4.4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;101010&#39;</span><span class="p">)</span>
+<span class="go">array([1, 0, 1, 0, 1, 0], dtype=uint8)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.get_time">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">get_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line_of_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#get_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.get_time" title="Link to this definition"></a></dt>
+<dd><p>Get the average time of execution of a line of code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>line_of_code</strong> (<em>str</em>) -- Line of code to execute.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) -- Number of iterations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>time</strong> -- Average time of execution, in seconds.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_time</span><span class="p">(</span><span class="s1">&#39;for i in range(1000): pass&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="go">1.1955300000010993e-05</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.tic">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">tic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#tic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.tic" title="Link to this definition"></a></dt>
+<dd><p>Start a timer. Create a global variable with the current time.
+Then you can use toc() to get the elapsed time.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tic</span><span class="p">()</span> <span class="c1"># wait some time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">toc</span><span class="p">()</span>
+<span class="go">2.687533378601074</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.toc">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">toc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#toc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.toc" title="Link to this definition"></a></dt>
+<dd><p>Stop a timer. Get the elapsed time since the last call to tic().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time</strong> -- Elapsed time, in seconds.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tic</span><span class="p">()</span> <span class="c1"># wait some time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">toc</span><span class="p">()</span>
+<span class="go">2.687533378601074</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.db">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.db" title="Link to this definition"></a></dt>
+<dd><p>Calculates the logarithm in base 10 of the input x and multiplies it by 10.</p>
+<div class="math notranslate nohighlight">
+\[\text{db} = 10\log_{10}{x}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- dB value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
+<li><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">array([0.        , 3.01029996, 4.77121255, 6.02059991])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.dbm">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">dbm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#dbm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.dbm" title="Link to this definition"></a></dt>
+<dd><p>Calculates dBm from Watts.</p>
+<div class="math notranslate nohighlight">
+\[\text{dbm} = 10\log_{10}{x}+30\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- dBm value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
+<li><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dbm</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">30.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dbm</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">array([30.        , 33.01029996, 34.77121255, 36.02059991])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.idb">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">idb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#idb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.idb" title="Link to this definition"></a></dt>
+<dd><p>Calculates the number value from a dB value.</p>
+<div class="math notranslate nohighlight">
+\[y = 10^{\frac{x}{10}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- Number value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">idb</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">1.9952623149688795</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idb</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">9</span><span class="p">])</span>
+<span class="go">array([1.        , 1.99526231, 3.98107171, 7.94328235])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.idbm">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">idbm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#idbm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.idbm" title="Link to this definition"></a></dt>
+<dd><p>Calculates the power value in Watts from a dBm value.</p>
+<div class="math notranslate nohighlight">
+\[y = 10^{(\frac{x}{10}-3)}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- Power value in Watts. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">idbm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">0.001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idbm</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">9</span><span class="p">])</span>
+<span class="go">array([0.001     , 0.00199526, 0.00398107, 0.00794328])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.gaus">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">gaus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#gaus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.gaus" title="Link to this definition"></a></dt>
+<dd><p>Gaussian function.</p>
+<div class="math notranslate nohighlight">
+\[\text{gaus}(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value.</p></li>
+<li><p><strong>mu</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: 0) -- Mean.</p></li>
+<li><p><strong>std</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: 1) -- Standard deviation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- Gaussian function value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gaus</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">0.3989422804014327</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gaus</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">array([0.39894228, 0.24197072, 0.05399097, 0.00443185])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">gaus</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/ca9468a9c19123d59ecd366dc74cfb94/utils-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/4e8c26ed0c4302d4563de26e606f7962/utils-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/e2546b8adcf84fdec84e36f1c42bb4f9/utils-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/3fee2b7626f255e0ee1142c9c5ec7ab2/utils-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="Gaussian function" class="plot-directive" src="_images/utils-1.png" />
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.Q">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">Q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#Q"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.Q" title="Link to this definition"></a></dt>
+<dd><p>Q-function.</p>
+<div class="math notranslate nohighlight">
+\[Q(x) = \frac{1}{2}\text{erfc}\left( \frac{x}{\sqrt{2}} \right)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Numper</em><em> or </em><em>Array_Like</em>) -- Input value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- Q(x) values. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">array([0.5       , 0.15865525, 0.02275013, 0.0013499 ])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">Q</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Q</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Q(x)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Q</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Q(-x)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/52534f7d328eb0d51c5a4a2030dbe90c/utils-2.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/1efe154fbd817c9ce9268ee1c85a9804/utils-2.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/0caab95066ff3b628741863e16967b68/utils-2.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/5bc90c3e2bf20cac086e3a36fd802e53/utils-2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="Gaussian function" class="plot-directive" src="_images/utils-2.png" />
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.phase">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.phase" title="Link to this definition"></a></dt>
+<dd><p>Calculate the unwrapped phase of a frequency response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- Frequency response of a system.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>phase</strong> -- Unwrapped phase in radians.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">phase</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;phase [rad]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/4c0b7c59ce2e74da16f72b6eae47dceb/utils-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/189b1e409deaccd2c08297cfaf7f949a/utils-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/1b970061df09525495f9568fb6e0309d/utils-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/89e51c3b1b3edb62a06935a2d9213439/utils-3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="Gaussian function" class="plot-directive" src="_images/utils-3.png" />
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.tau_g">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">tau_g</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#tau_g"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.tau_g" title="Link to this definition"></a></dt>
+<dd><p>Calculate the group delay of a frequency response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- Frequency response of a system.</p></li>
+<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Sampling frequency of the system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tau</strong> -- Group delay of the system, in [ps].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">tau_g</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">tau_g</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mf">1e2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">phi</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\tau_g$ [ps]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/75eb4093f5a8eafdb1226489982930f6/utils-4.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/1a93babe17d5e4be05e1f2dc9aca5c57/utils-4.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/0a8d6ed70883e93cbd78083ce9ffb7af/utils-4.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/a1b7edc22994ed0bbdda457d1f14449d/utils-4.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="Gaussian function" class="plot-directive" src="_images/utils-4.png" />
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.dispersion">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">dispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#dispersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.dispersion" title="Link to this definition"></a></dt>
+<dd><p>Calculate the dispersion of a frequency response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- Frequency response of a system.</p></li>
+<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Sampling frequency of the system.</p></li>
+<li><p><strong>f0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Center frequency of the system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>D</strong> -- Cumulative dispersion of the system, in [ps/nm].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.bode">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">bode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'lambda'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'db'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retAxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#bode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.bode" title="Link to this definition"></a></dt>
+<dd><p>Plot the Bode plot of a given transfer function H (magnitude, phase and group delay).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- The transfer function.</p></li>
+<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The sampling frequency.</p></li>
+<li><p><strong>f0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: None) -- The center frequency. If not None, dispersion are also plotted.</p></li>
+<li><p><strong>xaxis</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, default: 'f') -- The x-axis (frequency, angular velocity, wavelength).</p></li>
+<li><p><strong>disp</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: False) -- Whether to plot the dispersion.</p></li>
+<li><p><strong>ret</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: False) -- Whether to return the plotted data.</p></li>
+<li><p><strong>show</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: True) -- Whether to display the plot.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, default: 'dark') -- The plot style.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>(f, H, phase, tau_g)</strong> -- A tuple containing the frequency, magnitude, phase, and group delay if <code class="docutils literal notranslate"><span class="pre">ret=True</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If style is not &quot;dark&quot; or &quot;light&quot;.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">bode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">tau_g</span> <span class="o">=</span> <span class="n">bode</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">ret</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.rcos">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">rcos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#rcos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.rcos" title="Link to this definition"></a></dt>
+<dd><p>Raised cosine spectrum function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input values.</p></li>
+<li><p><strong>alpha</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Roll-off factor.</p></li>
+<li><p><strong>T</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Symbol period.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Raised cosine function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Raised-cosine_filter">https://en.wikipedia.org/wiki/Raised-cosine_filter</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">rcos</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="o">/</span><span class="n">T</span><span class="p">,</span> <span class="mf">1.5</span><span class="o">/</span><span class="n">T</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rcos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\alpha$ = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/f67ebb8287749d5fb54124b3c6c9c4bf/utils-5.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/9f22148f733d479c6bb0d9a72d2cabbd/utils-5.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/085511149da78a34100486ab2f03599f/utils-5.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/f717ba697506c1fa3349baa12d01af04/utils-5.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="Raised cosine function" class="plot-directive" src="_images/utils-5.png" />
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.si">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">si</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'m'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'s'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#si"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.si" title="Link to this definition"></a></dt>
+<dd><p>Unit of measure classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em><em> | </em><em>float</em>) -- Number to classify.</p></li>
+<li><p><strong>unit</strong> (<em>str</em><em>, </em><em>default: 's'</em>) -- Unit of measure. Valid options are {'s', 'm', 'Hz', 'rad', 'bit', 'byte', 'W', 'V', 'A', 'F', 'H', 'Ohm'}.</p></li>
+<li><p><strong>k</strong> (<em>int</em><em>, </em><em>default: 1</em>) -- Precision of the output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>String with number and unit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">si</span><span class="p">(</span><span class="mf">0.002</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="go">&#39;2.0 ms&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">si</span><span class="p">(</span><span class="mf">1e9</span><span class="p">,</span> <span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+<span class="go">&#39;1.0 GHz&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.norm">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.norm" title="Link to this definition"></a></dt>
+<dd><p>Normalize an array by dividing each element by the maximum value in the array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>Array_Like</em>) -- Input array to be normalized.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- Normalized array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not an <cite>array_like</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.nearest">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">nearest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#nearest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.nearest" title="Link to this definition"></a></dt>
+<dd><p>Find the nearest value in an array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Array_Like</em>) -- Input array.</p></li>
+<li><p><strong>a</strong> (<em>Number</em>) -- Value to find.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> -- Nearest value in the array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not an <cite>array_like</cite>.
+    If <code class="docutils literal notranslate"><span class="pre">a</span></code> is not a <cite>number</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 

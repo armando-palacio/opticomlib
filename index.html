@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to opticomlib&#39;s documentation! &mdash; opticomlib 0.4.9 documentation</title>
+  <title>Welcome to opticomlib&#39;s documentation! &mdash; opticomlib 0.4.10 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9ce76fde"></script>
+        <script src="_static/documentation_options.js?v=084909a4"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -105,12 +105,79 @@ The project is hosted on <a class="reference external" href="https://github.com/
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="types.html">Data types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="devices.html">Electro-Optical Devices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ook.html">OOK Devices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ppm.html">PPM Devices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Data types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="types.html#opticomlib.typing.global_variables"><code class="docutils literal notranslate"><span class="pre">global_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence"><code class="docutils literal notranslate"><span class="pre">binary_sequence</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal"><code class="docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#opticomlib.typing.optical_signal"><code class="docutils literal notranslate"><span class="pre">optical_signal</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#opticomlib.typing.eye"><code class="docutils literal notranslate"><span class="pre">eye</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="devices.html">Electro-Optical Devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.PRBS"><code class="docutils literal notranslate"><span class="pre">PRBS()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.DAC"><code class="docutils literal notranslate"><span class="pre">DAC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.PM"><code class="docutils literal notranslate"><span class="pre">PM()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.MZM"><code class="docutils literal notranslate"><span class="pre">MZM()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.BPF"><code class="docutils literal notranslate"><span class="pre">BPF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.EDFA"><code class="docutils literal notranslate"><span class="pre">EDFA()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.DM"><code class="docutils literal notranslate"><span class="pre">DM()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.FIBER"><code class="docutils literal notranslate"><span class="pre">FIBER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.LPF"><code class="docutils literal notranslate"><span class="pre">LPF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.PD"><code class="docutils literal notranslate"><span class="pre">PD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.ADC"><code class="docutils literal notranslate"><span class="pre">ADC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.GET_EYE"><code class="docutils literal notranslate"><span class="pre">GET_EYE()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.SAMPLER"><code class="docutils literal notranslate"><span class="pre">SAMPLER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.FBG"><code class="docutils literal notranslate"><span class="pre">FBG()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ook.html">OOK Devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ook.html#opticomlib.ook.THRESHOLD_EST"><code class="docutils literal notranslate"><span class="pre">THRESHOLD_EST()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ook.html#opticomlib.ook.DSP"><code class="docutils literal notranslate"><span class="pre">DSP()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ook.html#opticomlib.ook.BER_analizer"><code class="docutils literal notranslate"><span class="pre">BER_analizer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ook.html#opticomlib.ook.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ppm.html">PPM Devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.PPM_ENCODER"><code class="docutils literal notranslate"><span class="pre">PPM_ENCODER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.PPM_DECODER"><code class="docutils literal notranslate"><span class="pre">PPM_DECODER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.HDD"><code class="docutils literal notranslate"><span class="pre">HDD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.SDD"><code class="docutils literal notranslate"><span class="pre">SDD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.THRESHOLD_EST"><code class="docutils literal notranslate"><span class="pre">THRESHOLD_EST()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.DSP"><code class="docutils literal notranslate"><span class="pre">DSP()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.BER_analizer"><code class="docutils literal notranslate"><span class="pre">BER_analizer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.search_inst"><code class="docutils literal notranslate"><span class="pre">search_inst()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.SYNC"><code class="docutils literal notranslate"><span class="pre">SYNC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.GET_EYE_v2"><code class="docutils literal notranslate"><span class="pre">GET_EYE_v2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.PPG3204"><code class="docutils literal notranslate"><span class="pre">PPG3204</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.generate_prbs"><code class="docutils literal notranslate"><span class="pre">generate_prbs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.dec2bin"><code class="docutils literal notranslate"><span class="pre">dec2bin()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.str2array"><code class="docutils literal notranslate"><span class="pre">str2array()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.get_time"><code class="docutils literal notranslate"><span class="pre">get_time()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.tic"><code class="docutils literal notranslate"><span class="pre">tic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.toc"><code class="docutils literal notranslate"><span class="pre">toc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.db"><code class="docutils literal notranslate"><span class="pre">db()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.dbm"><code class="docutils literal notranslate"><span class="pre">dbm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.idb"><code class="docutils literal notranslate"><span class="pre">idb()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.idbm"><code class="docutils literal notranslate"><span class="pre">idbm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.gaus"><code class="docutils literal notranslate"><span class="pre">gaus()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.Q"><code class="docutils literal notranslate"><span class="pre">Q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.phase"><code class="docutils literal notranslate"><span class="pre">phase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.tau_g"><code class="docutils literal notranslate"><span class="pre">tau_g()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.dispersion"><code class="docutils literal notranslate"><span class="pre">dispersion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.bode"><code class="docutils literal notranslate"><span class="pre">bode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.rcos"><code class="docutils literal notranslate"><span class="pre">rcos()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.si"><code class="docutils literal notranslate"><span class="pre">si()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.norm"><code class="docutils literal notranslate"><span class="pre">norm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.nearest"><code class="docutils literal notranslate"><span class="pre">nearest()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>

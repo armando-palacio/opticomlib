@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PPM Devices &mdash; opticomlib 0.4.9 documentation</title>
+  <title>PPM Devices &mdash; opticomlib 0.4.10 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,9 +17,10 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9ce76fde"></script>
+        <script src="_static/documentation_options.js?v=084909a4"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -57,7 +58,17 @@
 <li class="toctree-l1"><a class="reference internal" href="types.html">Data types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="devices.html">Electro-Optical Devices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ook.html">OOK Devices</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">PPM Devices</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PPM Devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.PPM_ENCODER"><code class="docutils literal notranslate"><span class="pre">PPM_ENCODER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.PPM_DECODER"><code class="docutils literal notranslate"><span class="pre">PPM_DECODER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.HDD"><code class="docutils literal notranslate"><span class="pre">HDD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.SDD"><code class="docutils literal notranslate"><span class="pre">SDD()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.THRESHOLD_EST"><code class="docutils literal notranslate"><span class="pre">THRESHOLD_EST()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.DSP"><code class="docutils literal notranslate"><span class="pre">DSP()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.BER_analizer"><code class="docutils literal notranslate"><span class="pre">BER_analizer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ppm.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities functions</a></li>
 </ul>
@@ -92,6 +103,341 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">opticomlib.ppm</span> <span class="k">as</span> <span class="nn">ppm</span>
 </pre></div>
 </div>
+<p class="rubric" id="module-opticomlib.ppm">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ppm.PPM_ENCODER" title="opticomlib.ppm.PPM_ENCODER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPM_ENCODER</span></code></a>(input, M)</p></td>
+<td><p>PPM Encoder</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ppm.PPM_DECODER" title="opticomlib.ppm.PPM_DECODER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PPM_DECODER</span></code></a>(input, M)</p></td>
+<td><p>PPM Decoder</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ppm.HDD" title="opticomlib.ppm.HDD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDD</span></code></a>(input, M)</p></td>
+<td><p>Hard Decision Decoder</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ppm.SDD" title="opticomlib.ppm.SDD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SDD</span></code></a>(input, M)</p></td>
+<td><p>Soft Decision Decoder</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ppm.THRESHOLD_EST" title="opticomlib.ppm.THRESHOLD_EST"><code class="xref py py-obj docutils literal notranslate"><span class="pre">THRESHOLD_EST</span></code></a>(eye_obj, M)</p></td>
+<td><p>Threshold Estimator</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ppm.DSP" title="opticomlib.ppm.DSP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DSP</span></code></a>(input, M[, decision, BW])</p></td>
+<td><p>PPM Digital Signal Processor</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ppm.BER_analizer" title="opticomlib.ppm.BER_analizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BER_analizer</span></code></a>(mode, **kwargs)</p></td>
+<td><p>BER Analizer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ppm.theory_BER" title="opticomlib.ppm.theory_BER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">theory_BER</span></code></a>(mu1, s0, s1, M[, decision])</p></td>
+<td><p>Calculates the theoretical bit error probability for a PPM system.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.PPM_ENCODER">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">PPM_ENCODER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/ppm.html#PPM_ENCODER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.PPM_ENCODER" title="Link to this definition"></a></dt>
+<dd><p>PPM Encoder</p>
+<p>Converts an input binary sequence into a binary sequence PPM encoded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) -- Input binary sequence.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Number of slots that a symbol contains.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ppm_seq</strong> -- Encoded binary sequence in PPM.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The input binary sequence is converted into a PPM sequence by grouping each <span class="math notranslate nohighlight">\(\log_2{M}\)</span> bits
+and converting them into decimal. Then, the decimal values are the positions of ON slots into the PPM symbols of
+length <span class="math notranslate nohighlight">\(M\)</span>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">PPM_ENCODER</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PPM_ENCODER</span><span class="p">(</span><span class="s1">&#39;01111000&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="go">array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.PPM_DECODER">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">PPM_DECODER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/ppm.html#PPM_DECODER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.PPM_DECODER" title="Link to this definition"></a></dt>
+<dd><p>PPM Decoder</p>
+<p>Receives a binary sequence encoded in PPM and decodes it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>binary sequence in form</em><em> of </em><em>a string</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>ndarray</em><em> or </em><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) -- Binary sequence encoded in PPM.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM modulation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decoded binary sequence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">PPM_DECODER</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PPM_DECODER</span><span class="p">(</span><span class="s1">&#39;0100000100101000&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="go">array([0, 1, 1, 1, 1, 0, 0, 0])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.HDD">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">HDD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#HDD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.HDD" title="Link to this definition"></a></dt>
+<dd><p>Hard Decision Decoder</p>
+<p>Estimates the most probable PPM symbols from the given binary sequence.</p>
+<ul class="simple">
+<li><p>If there is any symbol without ON slots, then one of them is raised randomly</p></li>
+<li><p>If there is any symbol with more tan one ON slots, then one of them is selected randomly</p></li>
+<li><p>Other case algorithm do nothing.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>binary sequence in form</em><em> of </em><em>a string</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>ndarray</em><em> or </em><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) -- Binary sequence to estimate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sequence of estimated symbols ready to decode.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> -- If the length of <cite>input</cite> is not a multiple of <cite>M</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">HDD</span><span class="p">,</span> <span class="n">binary_sequence</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">HDD</span><span class="p">(</span><span class="n">binary_sequence</span><span class="p">(</span><span class="s1">&#39;0100 0111 0000&#39;</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="go">array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.SDD">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">SDD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><span class="pre">binary_sequence</span></a></span></span><a class="reference internal" href="_modules/opticomlib/ppm.html#SDD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.SDD" title="Link to this definition"></a></dt>
+<dd><p>Soft Decision Decoder</p>
+<p>Estimates the most probable PPM symbols from the given electrical signal without sampling.
+It integrate the signal in slots and then, it selects the slot with the highest energy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<em>:obj`electrical_signal`</em>) -- Unsampled electrical signal.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sequence of estimated symbols ready to decode.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>obj`binary_sequence`</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> -- If the length of <cite>input</cite> is not a multiple of <cite>M*sps</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">SDD</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">gv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">1.2</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.1</span><span class="p">,</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.1</span><span class="p">,</span>  <span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SDD</span><span class="p">(</span><span class="n">electrical_signal</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">M</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="go">array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.THRESHOLD_EST">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">THRESHOLD_EST</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eye_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.eye" title="opticomlib.typing.eye"><span class="pre">eye</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#THRESHOLD_EST"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.THRESHOLD_EST" title="Link to this definition"></a></dt>
+<dd><p>Threshold Estimator</p>
+<p>Estimates the decision threshold for M-PPM from means and standard deviations of <code class="docutils literal notranslate"><span class="pre">eye_obj</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) -- <cite>eye</cite> object with the parameters of the eye diagram.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated threshold.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>TypeError</strong> -- If <cite>eye_obj</cite> is not of type <cite>eye</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">THRESHOLD_EST</span><span class="p">,</span> <span class="n">eye</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eye_obj</span> <span class="o">=</span> <span class="n">eye</span><span class="p">({</span><span class="s1">&#39;mu0&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;mu1&#39;</span><span class="p">:</span><span class="mf">1.1</span><span class="p">,</span> <span class="s1">&#39;s0&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;s1&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.DSP">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.DSP" title="Link to this definition"></a></dt>
+<dd><p>PPM Digital Signal Processor</p>
+<p>Performs the decision task of the photodetected electrical signal.</p>
+<ol class="arabic simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">BW</span></code> is provided bessel filter will be applied to the signal (<a class="reference internal" href="devices.html#opticomlib.devices.LPF" title="opticomlib.devices.LPF"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.LPF()</span></code></a>)</p></li>
+<li><p>eye diagram parameters are estimated from the input electrical signal with function <a class="reference internal" href="devices.html#opticomlib.devices.GET_EYE" title="opticomlib.devices.GET_EYE"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.GET_EYE()</span></code></a>.</p></li>
+<li><p>it subsamples the electrical signal to 1 sample per slot using function <a class="reference internal" href="devices.html#opticomlib.devices.SAMPLER" title="opticomlib.devices.SAMPLER"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.SAMPLER()</span></code></a>.</p></li>
+<li><p>if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code> it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function <a class="reference internal" href="#opticomlib.ppm.THRESHOLD_EST" title="opticomlib.ppm.THRESHOLD_EST"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.ppm.THRESHOLD_EST()</span></code></a>.</p></li>
+<li><p>then, it make the decision (<a class="reference internal" href="#opticomlib.ppm.HDD" title="opticomlib.ppm.HDD"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.ppm.HDD()</span></code></a> if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code> or <a class="reference internal" href="#opticomlib.ppm.SDD" title="opticomlib.ppm.SDD"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.ppm.SDD()</span></code></a> if <code class="docutils literal notranslate"><span class="pre">decision='soft'</span></code>).</p></li>
+<li><p>Finally, it returns the received binary sequence, eye object and optimal threshold.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) -- Photodetected electrical signal.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM modulation.</p></li>
+<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Type of decision to make. Default is 'hard'.</p></li>
+<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Bandwidth of DSP filter. If not specified, signal won't be filtered.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>output</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) -- Received bits.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) -- Eye diagram parameters, only if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code>.</p></li>
+<li><p><strong>rth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Decision threshold for PPM, only if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code>.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TypeError</strong> -- If <cite>input</cite> is not of type <cite>electrical_signal</cite> or <cite>Array_Like</cite>.</p></li>
+<li><p><strong>ValueError</strong> -- If <cite>input</cite> has less samples than <cite>sps</cite>.</p></li>
+<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> -- If <cite>decision</cite> is not 'hard' or 'soft'.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">gv</span>
+<span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">DSP</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e9</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0100 1010 0000&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">DSP</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">decision</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">)</span>
+
+<span class="n">DAC</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Received sequence&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/a6caf3ab8d2e2c31d5efe2c87fddd8d4/ppm-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/c6c7ef0f8e34171ec54c08058b49a4bf/ppm-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/981133d0d0c60c283ed344234c8848df/ppm-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/0fac5cd104a9ed8f2fe19bbd99729e51/ppm-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<a class="plot-directive reference internal image-reference" href="_images/ppm-1.png"><img alt="DSP PPM" class="plot-directive" src="_images/ppm-1.png" style="width: 720px;" /></a>
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.BER_analizer">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">BER_analizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'counter'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'estimator'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#BER_analizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.BER_analizer" title="Link to this definition"></a></dt>
+<dd><p>BER Analizer</p>
+<p>Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one)
+or by estimation (using estimated means and variances from the eye diagram and substituting those values into the theoretical expressions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- Mode in which the Bit Error Rate (BER) will be determined.</p></li>
+<li><p><strong>Tx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Transmitted binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
+<li><p><strong>Rx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Received binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) -- <cite>eye</cite> object with the estimated parameters of the eye diagram. Required if <cite>mode='estimator'</cite>.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Order of PPM modulation. Required if <cite>mode='estimator'</cite>.</p></li>
+<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Type of decision to make, 'hard' or 'soft'. Default is 'soft'. Required if <cite>mode='estimator'</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>BER.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- If <cite>mode</cite> is not 'counter' or 'estimator'.</p></li>
+<li><p><strong>ValueError</strong> -- If <cite>decision</cite> is not 'hard' or 'soft'.</p></li>
+<li><p><strong>KeyError</strong> -- If <cite>Tx</cite> or <cite>Rx</cite> are not provided when <cite>mode='counter'</cite>.</p></li>
+<li><p><strong>KeyError</strong> -- If <cite>eye_obj</cite> or <cite>M</cite> are not provided when <cite>mode='estimator'</cite>.</p></li>
+<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ppm.theory_BER">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">theory_BER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'soft'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#theory_BER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.theory_BER" title="Link to this definition"></a></dt>
+<dd><p>Calculates the theoretical bit error probability for a PPM system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) -- Average current (or voltage) value of the signal corresponding to a bit 1.</p></li>
+<li><p><strong>s0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</p></li>
+<li><p><strong>s1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM modulation.</p></li>
+<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Type of PPM decoding. Default is 'soft'.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Theoretical bit error probability (BER).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> -- If <cite>decision</cite> is not 'hard' or 'soft'.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The theoretical bit error probability is calculated using the following expression:</p>
+<div class="math notranslate nohighlight">
+\[P_e = \frac{M/2}{(M-1)}P_{e_{sym}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(P_{e_{sym}}\)</span> is the symbol error probability, and is calculated as follows for <code class="docutils literal notranslate"><span class="pre">decision='soft'</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[P_{e_{sym}} = 1 - \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \left( 1-Q\left( \frac{\mu_1+s_1x}{s_0} \right) \right) ^{M-1} e^{-x^2/2}dx\]</div>
+<p>and for <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[P_{e_{sym}} = 1 - Q\left( \frac{r_{th}-\mu_1}{s_1} \right) \left( 1-Q\left( \frac{r_{th}}{s_0} \right) \right)^{M-1}\]</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">theory_BER</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">decision</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">)</span>
+<span class="go">8.515885763544466e-07</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">decision</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">)</span>
+<span class="go">3.074810247686141e-12</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 

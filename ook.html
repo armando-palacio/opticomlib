@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OOK Devices &mdash; opticomlib 0.4.9 documentation</title>
+  <title>OOK Devices &mdash; opticomlib 0.4.10 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,9 +17,10 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9ce76fde"></script>
+        <script src="_static/documentation_options.js?v=084909a4"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -56,7 +57,13 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="types.html">Data types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="devices.html">Electro-Optical Devices</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">OOK Devices</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">OOK Devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ook.THRESHOLD_EST"><code class="docutils literal notranslate"><span class="pre">THRESHOLD_EST()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ook.DSP"><code class="docutils literal notranslate"><span class="pre">DSP()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ook.BER_analizer"><code class="docutils literal notranslate"><span class="pre">BER_analizer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.ook.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="ppm.html">PPM Devices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities functions</a></li>
@@ -92,6 +99,190 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">opticomlib.ook</span> <span class="k">as</span> <span class="nn">ook</span>
 </pre></div>
 </div>
+<p class="rubric" id="module-opticomlib.ook">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ook.THRESHOLD_EST" title="opticomlib.ook.THRESHOLD_EST"><code class="xref py py-obj docutils literal notranslate"><span class="pre">THRESHOLD_EST</span></code></a>(eye_obj)</p></td>
+<td><p>Threshold estimator</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ook.DSP" title="opticomlib.ook.DSP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DSP</span></code></a>(input[, BW])</p></td>
+<td><p>On-Off Keying Digital Signal Processing</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ook.BER_analizer" title="opticomlib.ook.BER_analizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BER_analizer</span></code></a>(mode, **kargs)</p></td>
+<td><p>BER Analizer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ook.theory_BER" title="opticomlib.ook.theory_BER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">theory_BER</span></code></a>(mu1, s0, s1)</p></td>
+<td><p>Calculates the theoretical bit error probability for an OOK system.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ook.THRESHOLD_EST">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ook.</span></span><span class="sig-name descname"><span class="pre">THRESHOLD_EST</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eye_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.eye" title="opticomlib.typing.eye"><span class="pre">eye</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ook.html#THRESHOLD_EST"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ook.THRESHOLD_EST" title="Link to this definition"></a></dt>
+<dd><p>Threshold estimator</p>
+<p>Estimates the decision threshold for OOK from the means and standard deviations of the eye diagram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) -- Object with the parameters of the eye diagram.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decision threshold for OOK.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The decision threshold is estimated as the value of amplitud that minimizes the probability of error
+given the means and standard deviations of the eye diagram. This is done by minimizing the probability function <a class="reference internal" href="#th" id="id1"><span>[th]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[f(r) = \frac{1}{2} Q\left(\frac{\mu_1 - r}{\sigma_1}\right) + \frac{1}{2} Q\left(\frac{r - \mu_0}{\sigma_0}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu_0\)</span> and <span class="math notranslate nohighlight">\(\mu_1\)</span> are the means of the eye diagram, <span class="math notranslate nohighlight">\(\sigma_0\)</span> and <span class="math notranslate nohighlight">\(\sigma_1\)</span> are the standard deviations
+and <a class="reference internal" href="utils.html#opticomlib.utils.Q" title="opticomlib.utils.Q"><code class="xref py py-func docutils literal notranslate"><span class="pre">Q()</span></code></a> is the Q-function.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="th" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">th</a><span class="fn-bracket">]</span></span>
+<p>Armando Palacio Romeu, &quot;Comunicaciones ópticas entre satélites LEO y GEO&quot;, chapter 2.4. link: <a class="reference external" href="https://ricabib.cab.cnea.gov.ar/1143/1/1Palacio_Romeu.pdf">https://ricabib.cab.cnea.gov.ar/1143/1/1Palacio_Romeu.pdf</a></p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ook.DSP">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ook.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ook.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ook.DSP" title="Link to this definition"></a></dt>
+<dd><p>On-Off Keying Digital Signal Processing</p>
+<p>Performs the decision task of the photodetected electrical signal.</p>
+<ol class="arabic simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">BW</span></code> is provided bessel filter will be applied to the signal (<a class="reference internal" href="devices.html#opticomlib.devices.LPF" title="opticomlib.devices.LPF"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.LPF()</span></code></a>)</p></li>
+<li><p>eye diagram parameters are estimated from the input electrical signal with function <a class="reference internal" href="devices.html#opticomlib.devices.GET_EYE" title="opticomlib.devices.GET_EYE"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.GET_EYE()</span></code></a>.</p></li>
+<li><p>it subsamples the electrical signal to 1 sample per bit using function <a class="reference internal" href="devices.html#opticomlib.devices.SAMPLER" title="opticomlib.devices.SAMPLER"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.SAMPLER()</span></code></a>.</p></li>
+<li><p>Then, it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function <a class="reference internal" href="#opticomlib.ook.THRESHOLD_EST" title="opticomlib.ook.THRESHOLD_EST"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.ook.THRESHOLD_EST()</span></code></a>.</p></li>
+<li><p>Finally, it returns the received binary sequence, eye object and optimal threshold.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) -- Photodetected electrical signal.</p></li>
+<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Bandwidth of DSP filter. If not specified, signal won't be filtered.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>output</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) -- Received bits.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) -- Eye diagram parameters.</p></li>
+<li><p><strong>rth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Decision threshold for OOK.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">gv</span>
+<span class="kn">from</span> <span class="nn">opticomlib.ook</span> <span class="kn">import</span> <span class="n">DSP</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e9</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;01000100100000&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>
+
+<span class="n">y</span><span class="p">,</span> <span class="n">eye_</span><span class="p">,</span> <span class="n">xth</span> <span class="o">=</span> <span class="n">DSP</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Photodetected signal&#39;</span><span class="p">)</span>
+<span class="n">DAC</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Received sequence&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">xth</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Threshold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/cf120a84f21da26fccd0e90f21f32dd2/ook-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/4f2070381855893254dc8a692a826a82/ook-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/0d30a78e007e7372bd74612b16ec73cd/ook-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/4efd0ef7b85108f58c4370ec14cd4bdd/ook-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<a class="plot-directive reference internal image-reference" href="_images/ook-1.png"><img alt="DSP OOK" class="plot-directive" src="_images/ook-1.png" style="width: 720px;" /></a>
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ook.BER_analizer">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ook.</span></span><span class="sig-name descname"><span class="pre">BER_analizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'counter'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'estimator'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ook.html#BER_analizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ook.BER_analizer" title="Link to this definition"></a></dt>
+<dd><p>BER Analizer</p>
+<p>Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one)
+or by estimation (using estimated means and variances from the eye diagram and substituting those values into the theoretical expressions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- Mode in which the Bit Error Rate (BER) will be determined.</p></li>
+<li><p><strong>Tx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Transmitted binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
+<li><p><strong>Rx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Received binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) -- <cite>eye</cite> object with the estimated parameters of the eye diagram. Required if <cite>mode='estimator'</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>BER.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">gv</span><span class="p">,</span> <span class="n">binary_sequence</span>
+<span class="kn">from</span> <span class="nn">opticomlib.ook</span> <span class="kn">import</span> <span class="n">DSP</span><span class="p">,</span> <span class="n">BER_analizer</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e9</span><span class="p">)</span>
+
+<span class="n">tx</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="s1">&#39;01000100100000&#39;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>
+
+<span class="n">rx</span><span class="p">,</span> <span class="n">eye_</span><span class="p">,</span> <span class="n">xth</span> <span class="o">=</span> <span class="n">DSP</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">BER_count</span> <span class="o">=</span> <span class="n">BER_analizer</span><span class="p">(</span><span class="s1">&#39;counter&#39;</span><span class="p">,</span> <span class="n">Tx</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">Rx</span><span class="o">=</span><span class="n">rx</span><span class="p">)</span>
+<span class="n">BER_est</span> <span class="o">=</span> <span class="n">BER_analizer</span><span class="p">(</span><span class="s1">&#39;estimator&#39;</span><span class="p">,</span> <span class="n">eye_obj</span><span class="o">=</span><span class="n">eye_</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;BER by counting: </span><span class="si">{</span><span class="n">BER_count</span><span class="si">:</span><span class="s1">.1e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;BER by estimation: </span><span class="si">{</span><span class="n">BER_est</span><span class="si">:</span><span class="s1">.1e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">BER</span> <span class="n">by</span> <span class="n">counting</span><span class="p">:</span> <span class="mf">0.0e+00</span>
+<span class="n">BER</span> <span class="n">by</span> <span class="n">estimation</span><span class="p">:</span> <span class="mf">3.7e-07</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.ook.theory_BER">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ook.</span></span><span class="sig-name descname"><span class="pre">theory_BER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ook.html#theory_BER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ook.theory_BER" title="Link to this definition"></a></dt>
+<dd><p>Calculates the theoretical bit error probability for an OOK system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Average current (or voltage) value of the signal corresponding to a bit 1.</p></li>
+<li><p><strong>s0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</p></li>
+<li><p><strong>s1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Theoretical bit error probability (BER).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The theoretical bit error probability is calculated using the following expression:</p>
+<div class="math notranslate nohighlight">
+\[P_e = \frac{1}{2} \left[Q\left(\frac{\mu_1 - r_{th}}{\sigma_1}\right) + Q\left(\frac{r_{th}}{\sigma_0}\right)\right]\]</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ook</span> <span class="kn">import</span> <span class="n">theory_BER</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="go">2.8674468224390994e-07</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 

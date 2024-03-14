@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>opticomlib.ppm &mdash; opticomlib 0.4.10 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/fonts.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon_laser.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=084909a4"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            opticomlib
+              <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#usage">Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">OptiComLib Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../types.html">Data types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devices.html">Electro-Optical Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ook.html">OOK Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ppm.html">PPM Devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lab.html">Laboratory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utilities functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">opticomlib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">opticomlib.ppm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for opticomlib.ppm</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. rubric:: Functions</span>
+<span class="sd">.. autosummary::</span>
+
+<span class="sd">   PPM_ENCODER           </span>
+<span class="sd">   PPM_DECODER           </span>
+<span class="sd">   HDD                   </span>
+<span class="sd">   SDD                   </span>
+<span class="sd">   THRESHOLD_EST         </span>
+<span class="sd">   DSP                   </span>
+<span class="sd">   BER_analizer          </span>
+<span class="sd">   theory_BER           </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">pi</span>
+
+<span class="kn">from</span> <span class="nn">.devices</span> <span class="kn">import</span> <span class="n">GET_EYE</span><span class="p">,</span> <span class="n">SAMPLER</span><span class="p">,</span> <span class="n">LPF</span>
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">binary_sequence</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">eye</span><span class="p">,</span> <span class="n">gv</span><span class="p">,</span> <span class="n">Array_Like</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">tic</span><span class="p">,</span> <span class="n">toc</span><span class="p">,</span> <span class="n">str2array</span><span class="p">,</span> <span class="n">dec2bin</span><span class="p">,</span> <span class="n">Q</span>
+
+
+
+<div class="viewcode-block" id="PPM_ENCODER">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.PPM_ENCODER">[docs]</a>
+<span class="k">def</span> <span class="nf">PPM_ENCODER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;PPM Encoder</span>
+
+<span class="sd">    Converts an input binary sequence into a binary sequence PPM encoded.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : :obj:`binary_sequence`</span>
+<span class="sd">        Input binary sequence.</span>
+<span class="sd">    M : :obj:`int`</span>
+<span class="sd">        Number of slots that a symbol contains.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ppm_seq : :obj:`binary_sequence`</span>
+<span class="sd">        Encoded binary sequence in PPM.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The input binary sequence is converted into a PPM sequence by grouping each :math:`\log_2{M}` bits </span>
+<span class="sd">    and converting them into decimal. Then, the decimal values are the positions of ON slots into the PPM symbols of</span>
+<span class="sd">    length :math:`M`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.ppm import PPM_ENCODER</span>
+<span class="sd">    &gt;&gt;&gt; PPM_ENCODER(&#39;01111000&#39;, 4).data.astype(int)</span>
+<span class="sd">    array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tic</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` must be of type (str, list, tuple, ndarray, binary_sequence)&quot;</span><span class="p">)</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">M</span><span class="p">))</span>
+
+    <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span><span class="o">//</span><span class="n">k</span><span class="o">*</span><span class="n">k</span><span class="p">]</span> 
+
+    <span class="n">decimal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># convert bits to decimal</span>
+    <span class="n">ppm_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">decimal</span><span class="o">.</span><span class="n">size</span><span class="o">*</span><span class="n">M</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">ppm_s</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">decimal</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">decimal</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># coded the symbols</span>
+   
+    <span class="n">output</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">ppm_s</span><span class="p">)</span> 
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+
+<div class="viewcode-block" id="PPM_DECODER">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.PPM_DECODER">[docs]</a>
+<span class="k">def</span> <span class="nf">PPM_DECODER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;PPM Decoder</span>
+
+<span class="sd">    Receives a binary sequence encoded in PPM and decodes it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : binary sequence in form of a string, list, tuple, ndarray or binary_sequence</span>
+<span class="sd">        Binary sequence encoded in PPM.</span>
+<span class="sd">    M : :obj:`int`</span>
+<span class="sd">        Order of PPM modulation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`binary_sequence`</span>
+<span class="sd">        Decoded binary sequence.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.ppm import PPM_DECODER</span>
+<span class="sd">    &gt;&gt;&gt; PPM_DECODER(&#39;0100000100101000&#39;, 4).data.astype(int)</span>
+<span class="sd">    array([0, 1, 1, 1, 1, 0, 0, 0])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tic</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` must be of type (str, list, tuple, ndarray, binary_sequence)&quot;</span><span class="p">)</span>
+    
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">M</span><span class="p">))</span>
+
+    <span class="n">decimal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">input</span><span class="o">==</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">%</span><span class="n">M</span> <span class="c1"># get decimals</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">dec2bin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">k</span><span class="p">),</span> <span class="n">decimal</span><span class="p">)))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="c1"># convert decimals to bits</span>
+    <span class="n">output</span><span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+<div class="viewcode-block" id="HDD">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.HDD">[docs]</a>
+<span class="k">def</span> <span class="nf">HDD</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hard Decision Decoder</span>
+
+<span class="sd">    Estimates the most probable PPM symbols from the given binary sequence.</span>
+
+<span class="sd">    - If there is any symbol without ON slots, then one of them is raised randomly</span>
+<span class="sd">    - If there is any symbol with more tan one ON slots, then one of them is selected randomly</span>
+<span class="sd">    - Other case algorithm do nothing.   </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : binary sequence in form of a string, list, tuple, ndarray or binary_sequence</span>
+<span class="sd">        Binary sequence to estimate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`binary_sequence`</span>
+<span class="sd">        Sequence of estimated symbols ready to decode.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `M` is not a power of 2.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the length of `input` is not a multiple of `M`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.ppm import HDD, binary_sequence</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; HDD(binary_sequence(&#39;0100 0111 0000&#39;), 4).data.astype(int)</span>
+<span class="sd">    array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tic</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` must be of type (str, list, tuple, ndarray, binary_sequence)&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`M` must be a power of 2.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span> <span class="o">%</span> <span class="n">M</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of `input` must be a multiple of `M`.&quot;</span><span class="p">)</span>
+
+    <span class="n">n_simb</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="n">M</span><span class="p">)</span> <span class="c1"># number of symbols</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_simb</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># number of ON slots per symbol</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span> 
+        <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">M</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># raise one slot randomly for each symbol without ON slots</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">s</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span> 
+        <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">M</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">M</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">M</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">M</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">j</span><span class="p">)]</span><span class="o">=</span><span class="mi">1</span>  <span class="c1"># select one ON slot randomly for each symbol with more than one ON slots</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+
+<div class="viewcode-block" id="SDD">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.SDD">[docs]</a>
+<span class="k">def</span> <span class="nf">SDD</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Soft Decision Decoder</span>
+
+<span class="sd">    Estimates the most probable PPM symbols from the given electrical signal without sampling.</span>
+<span class="sd">    It integrate the signal in slots and then, it selects the slot with the highest energy.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : :obj`electrical_signal`</span>
+<span class="sd">        Unsampled electrical signal.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj`binary_sequence`</span>
+<span class="sd">        Sequence of estimated symbols ready to decode.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `M` is not a power of 2.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the length of `input` is not a multiple of `M*sps`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.ppm import SDD, electrical_signal, gv</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; x = np.kron([0.1,1.2,0.1,0.2,  0.1,0.9,1.0,1.1,  0.1,0.1,0.1,0.2], np.ones(gv.sps))</span>
+<span class="sd">    &gt;&gt;&gt; SDD(electrical_signal(x), M=4).data.astype(int)</span>
+<span class="sd">    array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tic</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`M` must be a power of 2.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span> <span class="o">%</span> <span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of `input` must be a multiple of `M*sps`.&quot;</span><span class="p">)</span>
+
+    <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="nb">input</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span> <span class="n">signal</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">output</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">M</span><span class="o">+</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+
+<div class="viewcode-block" id="THRESHOLD_EST">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.THRESHOLD_EST">[docs]</a>
+<span class="k">def</span> <span class="nf">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">:</span> <span class="n">eye</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Threshold Estimator</span>
+<span class="sd">    </span>
+<span class="sd">    Estimates the decision threshold for M-PPM from means and standard deviations of ``eye_obj``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    eye_obj : :obj:`eye`</span>
+<span class="sd">        `eye` object with the parameters of the eye diagram.</span>
+<span class="sd">    M : :obj:`int`</span>
+<span class="sd">        Order of PPM.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`float`</span>
+<span class="sd">        Estimated threshold.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `M` is not a power of 2.</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If `eye_obj` is not of type `eye`.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.ppm import THRESHOLD_EST, eye</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; eye_obj = eye({&#39;mu0&#39;:0.1, &#39;mu1&#39;:1.1, &#39;s0&#39;:0.1, &#39;s1&#39;:0.1})</span>
+<span class="sd">    &gt;&gt;&gt; THRESHOLD_EST(eye_obj, M=4)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`M` must be a power of 2.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">,</span> <span class="n">eye</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`eye_obj` must be of type `eye`.&quot;</span><span class="p">)</span>
+
+    <span class="n">mu0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu0</span>
+    <span class="n">mu1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu1</span>
+    <span class="n">s0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s0</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s1</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu0</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">umbral</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Q</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">mu1</span><span class="p">)</span><span class="o">/</span><span class="n">s1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">mu0</span><span class="p">)</span><span class="o">/</span><span class="n">s0</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">))]</span>
+    <span class="k">return</span> <span class="n">umbral</span></div>
+
+
+
+
+<div class="viewcode-block" id="DSP">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.DSP">[docs]</a>
+<span class="k">def</span> <span class="nf">DSP</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">M</span> <span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">decision</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span><span class="s1">&#39;soft&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;PPM Digital Signal Processor</span>
+<span class="sd">    </span>
+<span class="sd">    Performs the decision task of the photodetected electrical signal. </span>
+
+<span class="sd">    1. If ``BW`` is provided bessel filter will be applied to the signal (:func:`opticomlib.devices.LPF`)</span>
+<span class="sd">    2. eye diagram parameters are estimated from the input electrical signal with function :func:`opticomlib.devices.GET_EYE`.</span>
+<span class="sd">    3. it subsamples the electrical signal to 1 sample per slot using function :func:`opticomlib.devices.SAMPLER`. </span>
+<span class="sd">    4. if ``decision=&#39;hard&#39;`` it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function :func:`opticomlib.ppm.THRESHOLD_EST`. </span>
+<span class="sd">    5. then, it make the decision (:func:`opticomlib.ppm.HDD` if ``decision=&#39;hard&#39;`` or :func:`opticomlib.ppm.SDD` if ``decision=&#39;soft&#39;``).</span>
+<span class="sd">    6. Finally, it returns the received binary sequence, eye object and optimal threshold.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : :obj:`electrical_signal`</span>
+<span class="sd">        Photodetected electrical signal.</span>
+<span class="sd">    M : :obj:`int`</span>
+<span class="sd">        Order of PPM modulation.</span>
+<span class="sd">    decision : :obj:`str`, optional</span>
+<span class="sd">        Type of decision to make. Default is &#39;hard&#39;.</span>
+<span class="sd">    BW : :obj:`float`, optional</span>
+<span class="sd">        Bandwidth of DSP filter. If not specified, signal won&#39;t be filtered.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output : :obj:`binary_sequence`</span>
+<span class="sd">        Received bits.</span>
+<span class="sd">    eye_obj : :obj:`eye`, optional</span>
+<span class="sd">        Eye diagram parameters, only if ``decision=&#39;hard&#39;``.</span>
+<span class="sd">    rth : :obj:`float`, optional</span>
+<span class="sd">        Decision threshold for PPM, only if ``decision=&#39;hard&#39;``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If `input` is not of type `electrical_signal` or `Array_Like`.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `input` has less samples than `sps`.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `M` is not a power of 2.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `decision` is not &#39;hard&#39; or &#39;soft&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. plot::</span>
+<span class="sd">        :include-source:</span>
+<span class="sd">        :alt: DSP PPM</span>
+<span class="sd">        :align: center</span>
+<span class="sd">        :width: 720</span>
+
+<span class="sd">        from opticomlib.devices import DAC, gv</span>
+<span class="sd">        from opticomlib.ppm import DSP</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import matplotlib.pyplot as plt</span>
+
+<span class="sd">        gv(sps=64, R=1e9)</span>
+
+<span class="sd">        x = DAC(&#39;0100 1010 0000&#39;, pulse_shape=&#39;gaussian&#39;)</span>
+<span class="sd">        x.noise = np.random.normal(0, 0.1, x.len())</span>
+
+<span class="sd">        y = DSP(x, M=4, decision=&#39;soft&#39;)</span>
+
+<span class="sd">        DAC(y).plot(c=&#39;r&#39;, lw=3, label=&#39;Received sequence&#39;).show()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="p">(</span><span class="n">electrical_signal</span><span class="p">,)</span> <span class="o">+</span> <span class="n">Array_Like</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` must be of type `electrical_signal` or `Array_Like`.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`input` must have at least `sps` samples.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`M` must be a power of 2.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">BW</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">LPF</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">decision</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;hard&#39;</span><span class="p">:</span>
+        <span class="n">eye_obj</span> <span class="o">=</span> <span class="n">GET_EYE</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nslots</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">sps_resamp</span><span class="o">=</span><span class="mi">128</span><span class="p">);</span> <span class="n">time</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span>
+        <span class="n">rth</span> <span class="o">=</span> <span class="n">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">SAMPLER</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">eye_obj</span><span class="p">);</span> <span class="n">time</span> <span class="o">+=</span> <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span>
+
+        <span class="n">tic</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">rth</span>
+        <span class="n">simbols</span> <span class="o">=</span> <span class="n">HDD</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">M</span><span class="p">);</span> <span class="n">simbols</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">toc</span><span class="p">()</span> <span class="o">+</span> <span class="n">time</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">PPM_DECODER</span><span class="p">(</span><span class="n">simbols</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">simbols</span><span class="o">.</span><span class="n">execution_time</span>
+
+        <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">eye_obj</span><span class="p">,</span> <span class="n">rth</span>
+    
+    <span class="k">elif</span> <span class="n">decision</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;soft&#39;</span><span class="p">:</span>
+        <span class="n">tic</span><span class="p">()</span>
+        <span class="n">simbols</span> <span class="o">=</span> <span class="n">SDD</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">M</span><span class="p">);</span> <span class="n">simbols</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">toc</span><span class="p">()</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">PPM_DECODER</span><span class="p">(</span><span class="n">simbols</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">simbols</span><span class="o">.</span><span class="n">execution_time</span>
+        <span class="k">return</span> <span class="n">output</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`decision` must be &quot;hard&quot; or &quot;soft&quot;&#39;</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="BER_analizer">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.BER_analizer">[docs]</a>
+<span class="k">def</span> <span class="nf">BER_analizer</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">,</span> <span class="s1">&#39;estimator&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;BER Analizer</span>
+<span class="sd">    </span>
+<span class="sd">    Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one) </span>
+<span class="sd">    or by estimation (using estimated means and variances from the eye diagram and substituting those values into the theoretical expressions).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mode : :obj:`str`</span>
+<span class="sd">        Mode in which the Bit Error Rate (BER) will be determined.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    Tx : :obj:`binary_sequence`, optional</span>
+<span class="sd">        Transmitted binary sequence. Required if `mode=&#39;counter&#39;`.</span>
+<span class="sd">    Rx : :obj:`binary_sequence`, optional</span>
+<span class="sd">        Received binary sequence. Required if `mode=&#39;counter&#39;`.</span>
+<span class="sd">    eye_obj : :obj:`eye`, optional</span>
+<span class="sd">        `eye` object with the estimated parameters of the eye diagram. Required if `mode=&#39;estimator&#39;`.</span>
+<span class="sd">    M : :obj:`int`, optional</span>
+<span class="sd">        Order of PPM modulation. Required if `mode=&#39;estimator&#39;`.</span>
+<span class="sd">    decision : :obj:`str`, optional</span>
+<span class="sd">        Type of decision to make, &#39;hard&#39; or &#39;soft&#39;. Default is &#39;soft&#39;. Required if `mode=&#39;estimator&#39;`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`float`</span>
+<span class="sd">        BER.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `mode` is not &#39;counter&#39; or &#39;estimator&#39;.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `decision` is not &#39;hard&#39; or &#39;soft&#39;.</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        If `Tx` or `Rx` are not provided when `mode=&#39;counter&#39;`.</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        If `eye_obj` or `M` are not provided when `mode=&#39;estimator&#39;`.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `M` is not a power of 2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+    <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;counter&#39;</span><span class="p">:</span>
+        <span class="n">Tx</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Tx&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">Rx</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Rx&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Tx</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">Rx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;`Tx` and `Rx` are required arguments for `mode=&#39;counter&#39;`.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Rx</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+            <span class="n">Rx</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="n">Rx</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Tx</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+            <span class="n">Tx</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="n">Tx</span> <span class="p">)</span>
+
+        <span class="n">Tx</span> <span class="o">=</span> <span class="n">Tx</span><span class="p">[:</span><span class="n">Rx</span><span class="o">.</span><span class="n">len</span><span class="p">()]</span>
+        <span class="k">assert</span> <span class="n">Tx</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">==</span> <span class="n">Rx</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="s2">&quot;Error: `Tx` and `Rx` must have the same length.&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Tx</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">Rx</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">/</span><span class="n">Tx</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;estimator&#39;</span><span class="p">:</span>
+        <span class="n">eye_obj</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;eye_obj&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">decision</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;decision&#39;</span><span class="p">,</span> <span class="s1">&#39;soft&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">eye_obj</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;`eye_obj` and `M` are required arguments for `mode=&#39;estimator&#39;`.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`M` must be a power of 2.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">decision</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="s1">&#39;soft&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`decision` must be &#39;hard&#39; or &#39;soft&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="n">I1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu1</span>
+        <span class="n">I0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">mu0</span>
+        <span class="n">s1</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s1</span>
+        <span class="n">s0</span> <span class="o">=</span> <span class="n">eye_obj</span><span class="o">.</span><span class="n">s0</span>
+        <span class="n">um</span> <span class="o">=</span> <span class="n">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">decision</span> <span class="o">==</span> <span class="s1">&#39;hard&#39;</span><span class="p">:</span>
+            <span class="n">Pe_sym</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">Q</span><span class="p">((</span><span class="n">um</span><span class="o">-</span><span class="n">I1</span><span class="p">)</span><span class="o">/</span><span class="n">s1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">um</span><span class="o">-</span><span class="n">I0</span><span class="p">)</span><span class="o">/</span><span class="n">s0</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">decision</span> <span class="o">==</span> <span class="s1">&#39;soft&#39;</span><span class="p">:</span>
+            <span class="n">Pe_sym</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">I1</span><span class="o">-</span><span class="n">I0</span><span class="o">+</span><span class="n">s1</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">s0</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">M</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Pe_sym</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid mode. Use `counter` or `estimator`.&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="theory_BER">
+<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.theory_BER">[docs]</a>
+<span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">decision</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;soft&#39;</span><span class="p">,</span><span class="s1">&#39;hard&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the theoretical bit error probability for a PPM system.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mu1 : :obj:`float` or :obj:`ndarray`</span>
+<span class="sd">        Average current (or voltage) value of the signal corresponding to a bit 1.</span>
+<span class="sd">    s0 : :obj:`float` or :obj:`ndarray`</span>
+<span class="sd">        Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</span>
+<span class="sd">    s1 : :obj:`float` or :obj:`ndarray`</span>
+<span class="sd">        Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</span>
+<span class="sd">    M : :obj:`int`</span>
+<span class="sd">        Order of PPM modulation.</span>
+<span class="sd">    decision : :obj:`str`, optional</span>
+<span class="sd">        Type of PPM decoding. Default is &#39;soft&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :obj:`float`</span>
+<span class="sd">        Theoretical bit error probability (BER).</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `M` is not a power of 2.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `decision` is not &#39;hard&#39; or &#39;soft&#39;.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The theoretical bit error probability is calculated using the following expression:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        P_e = \frac{M/2}{(M-1)}P_{e_{sym}}</span>
+
+<span class="sd">    where :math:`P_{e_{sym}}` is the symbol error probability, and is calculated as follows for ``decision=&#39;soft&#39;``:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        P_{e_{sym}} = 1 - \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \left( 1-Q\left( \frac{\mu_1+s_1x}{s_0} \right) \right) ^{M-1} e^{-x^2/2}dx</span>
+
+<span class="sd">    and for ``decision=&#39;hard&#39;``:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        P_{e_{sym}} = 1 - Q\left( \frac{r_{th}-\mu_1}{s_1} \right) \left( 1-Q\left( \frac{r_{th}}{s_0} \right) \right)^{M-1}</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.ppm import theory_BER</span>
+<span class="sd">    &gt;&gt;&gt; theory_BER(mu1=1, s0=0.1, s1=0.1, M=8, decision=&#39;hard&#39;)</span>
+<span class="sd">    8.515885763544466e-07</span>
+<span class="sd">    &gt;&gt;&gt; theory_BER(mu1=1, s0=0.1, s1=0.1, M=8, decision=&#39;soft&#39;)</span>
+<span class="sd">    3.074810247686141e-12</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`M` must be a power of 2.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">decision</span> <span class="o">==</span> <span class="s1">&#39;soft&#39;</span><span class="p">:</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">M</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">mu1</span><span class="o">+</span><span class="n">s1</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">s0</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">decision</span> <span class="o">==</span> <span class="s1">&#39;hard&#39;</span><span class="p">:</span>
+        <span class="nd">@np</span><span class="o">.</span><span class="n">vectorize</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">mu1_</span><span class="p">,</span><span class="n">s0_</span><span class="p">,</span><span class="n">s1_</span><span class="p">,</span><span class="n">M_</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">mu1_</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Q</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">mu1_</span><span class="p">)</span><span class="o">/</span><span class="n">s1_</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="n">s0_</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">M_</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`decision` must be `soft` or `hard`.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="o">*</span><span class="n">M</span><span class="o">/</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ing. Armando P. Romeu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
