@@ -1,9 +1,6 @@
-name: CI
+name: Release
 
 on:
-  push:
-    branches:
-      - dev
   workflow_dispatch:
 
 jobs:
@@ -11,12 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: 3.9
 
       - name: Install dependencies
         run: |
