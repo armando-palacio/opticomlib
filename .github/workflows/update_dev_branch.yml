@@ -1,0 +1,20 @@
+name: Sync Main to Dev
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Merge Main into Dev
+        run: |
+          git checkout dev
+          git pull origin main --no-edit --no-ff -m "up-to-date dev branch"
+          git push origin dev
