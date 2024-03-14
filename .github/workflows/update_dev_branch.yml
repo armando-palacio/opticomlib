@@ -11,10 +11,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Merge Main into Dev
         run: |
-          git checkout dev
-          git pull origin main --no-edit --no-ff -m "up-to-date dev branch"
-          git push origin dev
+          git checkout dev  
+          git merge main --no-ff -m "Sync Main to Dev"
