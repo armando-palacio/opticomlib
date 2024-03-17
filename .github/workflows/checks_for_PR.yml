@@ -2,7 +2,7 @@ name: Test Library and Build Docs
 
 on: 
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main ]
  
 jobs:
   check-unittests:
@@ -14,10 +14,10 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.9
-    - name: Install dependencies
+    - name: Install Opticomlib
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install .[opticomlib]
     - name: Run tests
       run: |
         pip install pytest
@@ -32,10 +32,10 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.9
-    - name: Install dependencies
+    - name: Install Opticomlib
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install .[opticomlib]
         pip install sphinx
         pip install renku-sphinx-theme
 

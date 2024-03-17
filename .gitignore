@@ -1,5 +1,5 @@
 **/__pycache__/*
-test*
+test*.py
 build/*
 dist/*
 opticomlib.egg-info/*
