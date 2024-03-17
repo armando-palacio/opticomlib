@@ -9,21 +9,41 @@
 from setuptools import setup
 import os
 
-try:
-    os.environ['REQUIREMENTS'] = open('requirements.txt').read()
-    os.environ['VERSION'] = open('VERSION.txt').read()
-except:
-    pass
+def get_version():
+    """
+    Find the value assigned to __version__ in opticomlib/__init__.py.
+
+    This function assumes that there is a line of the form
+
+        __version__ = "version-string"
+
+    in that file.  It returns the string version-string, or None if such a
+    line is not found.
+    """
+    with open("opticomlib/__init__.py", "r") as f:
+        for line in f:
+            s = [w.strip() for w in line.split("=", 1)]
+            if len(s) == 2 and s[0] == "__version__":
+                return s[1][1:-1]
+            
+def get_long_description():
+    with open('README.md', encoding='utf-8') as f:
+        content = f.read()
+        return content[content.find("\n\n") + 2:]
+
+def get_requirements():
+    with open('requirements.txt', encoding='utf-8') as f:
+        return f.read().split()
 
 DISTNAME = "opticomlib"
 DESCRIPTION = "Python package for optical communication systems."
-LONG_DESCRIPTION = open('README.md', encoding='utf-8').read()
+LONG_DESCRIPTION = get_long_description()
 MAINTAINER = "Armando P. Romeu"
 MAINTAINER_EMAIL = "armandopr3009@gmail.com"
 URL = "https://github.com/armando-palacio/opticomlib.git"
 LICENSE = "MIT"
-VERSION = os.getenv('VERSION').strip()
-REQUIREMENTS = os.getenv('REQUIREMENTS').split()
+VERSION = get_version()
+REQUIREMENTS = get_requirements()
 
 setup(
     name=DISTNAME,
@@ -43,5 +63,5 @@ setup(
     install_requires=REQUIREMENTS,
     long_description=LONG_DESCRIPTION[LONG_DESCRIPTION.find("#"):],
     long_description_content_type="text/markdown",
-    python_requires='<=3.10',
+    python_requires='>3.8',
 )
