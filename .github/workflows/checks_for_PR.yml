@@ -2,7 +2,7 @@ name: Test Library and Build Docs
 
 on: 
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main ]
  
 jobs:
   check-unittests:
