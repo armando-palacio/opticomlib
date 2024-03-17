@@ -9,14 +9,16 @@ build:
   os: ubuntu-22.04
   tools:
     python: "3.9"
-  commands:
-    - pip install .[opticomlib]
-    - pip install sphinx-rtd-theme
+  jobs:
+    pre_build:
+      - python -m pip install --upgrade pip
+      - pip install .[opticomlib]
+      - pip install renku-sphinx-theme
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
   builder: html
-  configuration: docs/conf.py
+  configuration: docs/source/conf.py
 
 # Optionally build your docs in additional formats such as PDF and ePub
 # formats:
