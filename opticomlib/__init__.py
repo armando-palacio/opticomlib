@@ -1,4 +1,8 @@
 from .typing import *
+
 from .utils import *
 
-__version__ = "0.4.10"
+# from importlib.metadata import version
+# __version__ = version(__name__)
+# del version
+
