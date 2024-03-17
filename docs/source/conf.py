@@ -9,14 +9,12 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../../'))
-
-version_path = '../../VERSION.txt'
+import opticomlib
 
 project = 'opticomlib'
 copyright = '2024, Ing. Armando P. Romeu'
 author = 'Ing. Armando P. Romeu'
-release = open(version_path).read()
+release = opticomlib.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -38,8 +36,6 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = []
-
-language = 'English'
 
 
 # -- Options for HTML output -------------------------------------------------
