@@ -1,27 +1,26 @@
 """
 .. rubric:: Functions
 .. autosummary::
-
-    generate_prbs          -- Generate a pseudo-random binary sequence (PRBS) of desired order.
-    dec2bin                -- Convert a decimal number to its binary representation.
-    str2array              -- Convert a string to a numeric array.
-    get_time               -- Get the average time of execution of a line of code.
-    tic                    -- Start a timer.
-    toc                    -- Stop a timer.
-    db                     -- Convert a number value to dB.
-    dbm                    -- Convert a power value in W to dBm.
-    idb                    -- Convert a dB value to a number.
-    idbm                   -- Convert a dBm value to a power value in W.
-    gaus                   -- Gaussian function.
-    Q                      -- Q(x) = 1/2*erfc(x/sqrt(2)) function.
-    phase                  -- Calculate the unwrapped phase of a frequency response.
-    tau_g                  -- Calculate the group delay of a frequency response.
-    dispersion             -- Calculate the dispersion of a frequency response.
-    bode                   -- Plot the Bode plot of a given transfer function H (magnitud, phase, group delay and dispersion).
-    rcos                   -- Raised cosine function.
-    si                     -- Unit of measure classifier.
-    norm                   -- Normalize a vector to 1.
-    nearest                -- Find the nearest value in an array.
+     
+    dec2bin                
+    str2array              
+    get_time              
+    tic                    
+    toc                    
+    db                     
+    dbm                    
+    idb                    
+    idbm                   
+    gaus                   
+    Q                      
+    phase                  
+    tau_g                  
+    dispersion             
+    bode                   
+    rcos                   
+    si                     
+    norm                   
+    nearest                
 """
 
 import re
@@ -30,7 +29,6 @@ import timeit, time as tm
 import scipy.special as sp
 import scipy.signal as sg
 
-from numpy import ndarray
 from typing import Literal, Union
 
 from scipy.constants import pi, c
@@ -42,58 +40,6 @@ import warnings
 
 Array_Like = (list, tuple, np.ndarray)
 Number = (int, float)
-
-
-
-def generate_prbs(order: int=None):
-    r"""
-    Generates a pseudo-random binary sequence (PRBS) of desired order.
-
-    Parameters
-    ----------
-    order : int, default: 7
-        Order of the generator polynomial. Valid options are {7, 9, 11, 15, 20, 23, 31}.
-
-    Returns
-    -------
-    np.ndarray
-        PRBS sequence of length ``2^order-1``.
-
-    Raises
-    ------
-    ValueError
-        If ``order`` is not in {7, 9, 11, 15, 20, 23, 31}.
-
-    Example
-    -------
-    .. code-block:: python
-
-        >>> generate_prbs(7)
-        array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-               0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,
-               0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-               0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,
-               0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,
-               0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8) 
-    """
-    
-    taps = {7: [7,6], 9: [9,5], 11: [11,9], 15: [15,14], 20: [20,3], 23: [23,18], 31: [31,28]}
-    if order is None: 
-        order = 7
-    elif order not in taps.keys():
-        raise ValueError(f'`order` must be in {list(taps.keys())}')
-
-    prbs = []
-    lfsr = (1<<order)-1
-    tap1, tap2 = np.array(taps[order])-1
-
-    while True:
-        prbs.append(lfsr&1)
-        new = ((lfsr>>tap1)^(lfsr>>tap2))&1
-        lfsr = ((lfsr<<1) | new) & (1<<order)-1
-        if lfsr == (1<<order)-1:
-            break
-    return np.array(prbs, np.uint8)
 
 
 
@@ -509,7 +455,7 @@ def Q(x):
     return 0.5*sp.erfc(x/2**0.5) 
 
 
-def phase(H: ndarray):
+def phase(H: np.ndarray):
     r"""
     Calculate the unwrapped phase of a frequency response.
 
@@ -547,7 +493,7 @@ def phase(H: ndarray):
     """
     return np.unwrap(np.angle(H))
 
-def tau_g(H: ndarray, fs: float):
+def tau_g(H: np.ndarray, fs: float):
     r"""
     Calculate the group delay of a frequency response.
 
@@ -588,7 +534,7 @@ def tau_g(H: ndarray, fs: float):
     dw = 2*pi*fs/H.size
     return np.diff(phase(H))/dw * 1e12
 
-def dispersion(H: ndarray, fs: float, f0: float):
+def dispersion(H: np.ndarray, fs: float, f0: float):
     """
     Calculate the dispersion of a frequency response.
 
@@ -613,7 +559,7 @@ def dispersion(H: ndarray, fs: float, f0: float):
 
 
 
-def bode(H: ndarray, 
+def bode(H: np.ndarray, 
          fs: float, 
          f0: float=None, 
          xaxis: Literal['f','w','lambda']='f', 
@@ -663,7 +609,7 @@ def bode(H: ndarray,
         >>> from opticomlib import bode
         >>> H, phase, tau_g = bode(H, fs, ret=True, show_=False)
     """
-    if not isinstance(H, ndarray):
+    if not isinstance(H, np.ndarray):
         raise ValueError('`H` must be a numpy.ndarray.')
     
     f = fftshift(fftfreq(H.size, d=1/fs))
