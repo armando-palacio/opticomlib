@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Utilities functions &mdash; opticomlib 0.4.10 documentation</title>
+  <title>Utilities functions &mdash; opticomlib 0.4.11 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=084909a4"></script>
+        <script src="_static/documentation_options.js?v=475c965b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -181,11 +181,11 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.generate_prbs">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">generate_prbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#generate_prbs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.generate_prbs" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">generate_prbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#generate_prbs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.generate_prbs" title="Link to this definition"></a></dt>
 <dd><p>Generates a pseudo-random binary sequence (PRBS) of desired order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>order</strong> (<em>int</em><em>, </em><em>default: 7</em>) -- Order of the generator polynomial. Valid options are {7, 9, 11, 15, 20, 23, 31}.</p>
+<dd class="field-odd"><p><strong>order</strong> (<em>int</em><em>, </em><em>default: 7</em>) – Order of the generator polynomial. Valid options are {7, 9, 11, 15, 20, 23, 31}.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>PRBS sequence of length <code class="docutils literal notranslate"><span class="pre">2^order-1</span></code>.</p>
@@ -194,7 +194,7 @@
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">order</span></code> is not in {7, 9, 11, 15, 20, 23, 31}.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">order</span></code> is not in {7, 9, 11, 15, 20, 23, 31}.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -216,8 +216,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num</strong> (<em>int</em>) -- Integer to convert.</p></li>
-<li><p><strong>digits</strong> (<em>int</em><em>, </em><em>default: 8</em>) -- Number of bits of the binary representation.</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – Integer to convert.</p></li>
+<li><p><strong>digits</strong> (<em>int</em><em>, </em><em>default: 8</em>) – Number of bits of the binary representation.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -227,7 +227,7 @@
 <dd class="field-odd"><p><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence">binary_sequence</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">num</span></code> is too large to be represented with <code class="docutils literal notranslate"><span class="pre">digits</span></code> bits.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">num</span></code> is too large to be represented with <code class="docutils literal notranslate"><span class="pre">digits</span></code> bits.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -246,19 +246,19 @@ Elements can be integer or floating point. If there is at least one floating poi
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>string</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- String to convert.</p></li>
-<li><p><strong>dtype</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>, optional) -- Data type of the output array. Default is <cite>float</cite>.
+<li><p><strong>string</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – String to convert.</p></li>
+<li><p><strong>dtype</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>, optional) – Data type of the output array. Default is <cite>float</cite>.
 Allowed types are <cite>int</cite>, <cite>float</cite> and <cite>bool</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>arr</strong> -- Numeric array.</p>
+<dd class="field-even"><p><strong>arr</strong> – Numeric array.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> -- If the string contains invalid characters.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If the string contains invalid characters.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -281,12 +281,12 @@ Allowed types are <cite>int</cite>, <cite>float</cite> and <cite>bool</cite>.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>line_of_code</strong> (<em>str</em>) -- Line of code to execute.</p></li>
-<li><p><strong>n</strong> (<em>int</em>) -- Number of iterations.</p></li>
+<li><p><strong>line_of_code</strong> (<em>str</em>) – Line of code to execute.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of iterations.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>time</strong> -- Average time of execution, in seconds.</p>
+<dd class="field-even"><p><strong>time</strong> – Average time of execution, in seconds.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
@@ -318,7 +318,7 @@ Then you can use toc() to get the elapsed time.</p>
 <dd><p>Stop a timer. Get the elapsed time since the last call to tic().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>time</strong> -- Elapsed time, in seconds.</p>
+<dd class="field-odd"><p><strong>time</strong> – Elapsed time, in seconds.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
@@ -340,18 +340,18 @@ Then you can use toc() to get the elapsed time.</p>
 \[\text{db} = 10\log_{10}{x}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- dB value.</p>
+<dd class="field-even"><p><strong>out</strong> – dB value.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
-<li><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -372,18 +372,18 @@ Then you can use toc() to get the elapsed time.</p>
 \[\text{dbm} = 10\log_{10}{x}+30\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Input value (<code class="docutils literal notranslate"><span class="pre">x&gt;=0</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- dBm value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+<dd class="field-even"><p><strong>out</strong> – dBm value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
-<li><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not a <cite>number</cite>, <cite>list</cite>, <cite>tuple</cite> or <cite>ndarray</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">any(x)</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -404,10 +404,10 @@ Then you can use toc() to get the elapsed time.</p>
 \[y = 10^{\frac{x}{10}}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Input value.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- Number value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+<dd class="field-even"><p><strong>out</strong> – Number value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
@@ -430,10 +430,10 @@ Then you can use toc() to get the elapsed time.</p>
 \[y = 10^{(\frac{x}{10}-3)}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Input value.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- Power value in Watts. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+<dd class="field-even"><p><strong>out</strong> – Power value in Watts. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
@@ -450,20 +450,20 @@ Then you can use toc() to get the elapsed time.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.gaus">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">gaus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#gaus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.gaus" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">gaus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#gaus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.gaus" title="Link to this definition"></a></dt>
 <dd><p>Gaussian function.</p>
 <div class="math notranslate nohighlight">
 \[\text{gaus}(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input value.</p></li>
-<li><p><strong>mu</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: 0) -- Mean.</p></li>
-<li><p><strong>std</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: 1) -- Standard deviation.</p></li>
+<li><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Input value.</p></li>
+<li><p><strong>mu</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: 0) – Mean.</p></li>
+<li><p><strong>std</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: 1) – Standard deviation.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- Gaussian function value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+<dd class="field-even"><p><strong>out</strong> – Gaussian function value. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
@@ -505,10 +505,10 @@ Then you can use toc() to get the elapsed time.</p>
 \[Q(x) = \frac{1}{2}\text{erfc}\left( \frac{x}{\sqrt{2}} \right)\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>Numper</em><em> or </em><em>Array_Like</em>) -- Input value.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>Numper</em><em> or </em><em>Array_Like</em>) – Input value.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- Q(x) values. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
+<dd class="field-even"><p><strong>out</strong> – Q(x) values. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a number, then the output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>. If <code class="docutils literal notranslate"><span class="pre">x</span></code> is an array_like, then the output is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
@@ -549,10 +549,10 @@ Then you can use toc() to get the elapsed time.</p>
 <dd><p>Calculate the unwrapped phase of a frequency response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- Frequency response of a system.</p>
+<dd class="field-odd"><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>phase</strong> -- Unwrapped phase in radians.</p>
+<dd class="field-even"><p><strong>phase</strong> – Unwrapped phase in radians.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
@@ -588,12 +588,12 @@ Then you can use toc() to get the elapsed time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- Frequency response of a system.</p></li>
-<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Sampling frequency of the system.</p></li>
+<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p></li>
+<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Sampling frequency of the system.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>tau</strong> -- Group delay of the system, in [ps].</p>
+<dd class="field-even"><p><strong>tau</strong> – Group delay of the system, in [ps].</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
@@ -629,13 +629,13 @@ Then you can use toc() to get the elapsed time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- Frequency response of a system.</p></li>
-<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Sampling frequency of the system.</p></li>
-<li><p><strong>f0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Center frequency of the system.</p></li>
+<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p></li>
+<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Sampling frequency of the system.</p></li>
+<li><p><strong>f0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Center frequency of the system.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>D</strong> -- Cumulative dispersion of the system, in [ps/nm].</p>
+<dd class="field-even"><p><strong>D</strong> – Cumulative dispersion of the system, in [ps/nm].</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
@@ -645,29 +645,29 @@ Then you can use toc() to get the elapsed time.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.bode">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">bode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'lambda'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'db'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retAxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#bode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.bode" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">bode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'lambda'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'db'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retAxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#bode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.bode" title="Link to this definition"></a></dt>
 <dd><p>Plot the Bode plot of a given transfer function H (magnitude, phase and group delay).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) -- The transfer function.</p></li>
-<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The sampling frequency.</p></li>
-<li><p><strong>f0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: None) -- The center frequency. If not None, dispersion are also plotted.</p></li>
-<li><p><strong>xaxis</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, default: 'f') -- The x-axis (frequency, angular velocity, wavelength).</p></li>
-<li><p><strong>disp</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: False) -- Whether to plot the dispersion.</p></li>
-<li><p><strong>ret</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: False) -- Whether to return the plotted data.</p></li>
-<li><p><strong>show</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: True) -- Whether to display the plot.</p></li>
-<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, default: 'dark') -- The plot style.</p></li>
+<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – The transfer function.</p></li>
+<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The sampling frequency.</p></li>
+<li><p><strong>f0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, default: None) – The center frequency. If not None, dispersion are also plotted.</p></li>
+<li><p><strong>xaxis</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, default: ‘f’) – The x-axis (frequency, angular velocity, wavelength).</p></li>
+<li><p><strong>disp</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: False) – Whether to plot the dispersion.</p></li>
+<li><p><strong>ret</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: False) – Whether to return the plotted data.</p></li>
+<li><p><strong>show</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, default: True) – Whether to display the plot.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, default: ‘dark’) – The plot style.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>(f, H, phase, tau_g)</strong> -- A tuple containing the frequency, magnitude, phase, and group delay if <code class="docutils literal notranslate"><span class="pre">ret=True</span></code>.</p>
+<dd class="field-even"><p><strong>(f, H, phase, tau_g)</strong> – A tuple containing the frequency, magnitude, phase, and group delay if <code class="docutils literal notranslate"><span class="pre">ret=True</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> -- If style is not &quot;dark&quot; or &quot;light&quot;.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If style is not “dark” or “light”.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -684,9 +684,9 @@ Then you can use toc() to get the elapsed time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) -- Input values.</p></li>
-<li><p><strong>alpha</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Roll-off factor.</p></li>
-<li><p><strong>T</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Symbol period.</p></li>
+<li><p><strong>x</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Input values.</p></li>
+<li><p><strong>alpha</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Roll-off factor.</p></li>
+<li><p><strong>T</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Symbol period.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -730,9 +730,9 @@ Then you can use toc() to get the elapsed time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>int</em><em> | </em><em>float</em>) -- Number to classify.</p></li>
-<li><p><strong>unit</strong> (<em>str</em><em>, </em><em>default: 's'</em>) -- Unit of measure. Valid options are {'s', 'm', 'Hz', 'rad', 'bit', 'byte', 'W', 'V', 'A', 'F', 'H', 'Ohm'}.</p></li>
-<li><p><strong>k</strong> (<em>int</em><em>, </em><em>default: 1</em>) -- Precision of the output.</p></li>
+<li><p><strong>x</strong> (<em>int</em><em> | </em><em>float</em>) – Number to classify.</p></li>
+<li><p><strong>unit</strong> (<em>str</em><em>, </em><em>default: 's'</em>) – Unit of measure. Valid options are {‘s’, ‘m’, ‘Hz’, ‘rad’, ‘bit’, ‘byte’, ‘W’, ‘V’, ‘A’, ‘F’, ‘H’, ‘Ohm’}.</p></li>
+<li><p><strong>k</strong> (<em>int</em><em>, </em><em>default: 1</em>) – Precision of the output.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -757,16 +757,16 @@ Then you can use toc() to get the elapsed time.</p>
 <dd><p>Normalize an array by dividing each element by the maximum value in the array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>Array_Like</em>) -- Input array to be normalized.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>Array_Like</em>) – Input array to be normalized.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- Normalized array.</p>
+<dd class="field-even"><p><strong>out</strong> – Normalized array.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not an <cite>array_like</cite>.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not an <cite>array_like</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -778,18 +778,18 @@ Then you can use toc() to get the elapsed time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Array_Like</em>) -- Input array.</p></li>
-<li><p><strong>a</strong> (<em>Number</em>) -- Value to find.</p></li>
+<li><p><strong>x</strong> (<em>Array_Like</em>) – Input array.</p></li>
+<li><p><strong>a</strong> (<em>Number</em>) – Value to find.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- Nearest value in the array.</p>
+<dd class="field-even"><p><strong>out</strong> – Nearest value in the array.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Number</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> -- If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not an <cite>array_like</cite>.
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not an <cite>array_like</cite>.
     If <code class="docutils literal notranslate"><span class="pre">a</span></code> is not a <cite>number</cite>.</p>
 </dd>
 </dl>

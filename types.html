@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data types &mdash; opticomlib 0.4.10 documentation</title>
+  <title>Data types &mdash; opticomlib 0.4.11 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=084909a4"></script>
+        <script src="_static/documentation_options.js?v=475c965b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -227,7 +227,7 @@ the number of samples per slot and the optical wavelength or frequency.</p>
 <p>A slot is taken as the smallest time unit representing a binary value of the signal.
 For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a slot are the same.</p>
 </div>
-<p>This class don't need to be instantiated. It is already instantiated as <code class="docutils literal notranslate"><span class="pre">gv</span></code>.
+<p>This class don’t need to be instantiated. It is already instantiated as <code class="docutils literal notranslate"><span class="pre">gv</span></code>.
 For update or add a variable use the <a class="reference internal" href="#opticomlib.typing.global_variables.__call__" title="opticomlib.typing.global_variables.__call__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__call__()</span></code></a> method (i.e gv(**kargs)).</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
@@ -359,7 +359,7 @@ Custom
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.N">
 <span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.N" title="Link to this definition"></a></dt>
-<dd><p>Number of slots to simulate (<code class="docutils literal notranslate"><span class="pre">None</span></code> by default), if provided, it will set the instance's <cite>N</cite> attribute and calculate <cite>t</cite>, <cite>dw</cite>, and <cite>w</cite>.</p>
+<dd><p>Number of slots to simulate (<code class="docutils literal notranslate"><span class="pre">None</span></code> by default), if provided, it will set the instance’s <cite>N</cite> attribute and calculate <cite>t</cite>, <cite>dw</cite>, and <cite>w</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -382,17 +382,17 @@ Custom
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.55e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.__call__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.55e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.__call__" title="Link to this definition"></a></dt>
 <dd><p>Configures the instance with the provided parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Samples per slot. If provided, it will set the instance's <cite>sps</cite> attribute.</p></li>
-<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Rate in Hz. If provided, it will set the instance's <cite>R</cite> attribute.</p></li>
-<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Sampling frequency in Samples/s. If provided, it will set the instance's <cite>fs</cite> attribute.</p></li>
-<li><p><strong>wavelength</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Wavelength in meters. Default is 1550e-9.</p></li>
-<li><p><strong>N</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Number of samples. If provided, it will set the instance's <cite>N</cite> attribute and calculate <cite>t</cite>, <cite>dw</cite>, and <cite>w</cite>.</p></li>
-<li><p><strong>**kargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Additional attributes to set on the instance.</p></li>
+<li><p><strong>sps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Samples per slot. If provided, it will set the instance’s <cite>sps</cite> attribute.</p></li>
+<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Rate in Hz. If provided, it will set the instance’s <cite>R</cite> attribute.</p></li>
+<li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Sampling frequency in Samples/s. If provided, it will set the instance’s <cite>fs</cite> attribute.</p></li>
+<li><p><strong>wavelength</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Wavelength in meters. Default is 1550e-9.</p></li>
+<li><p><strong>N</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of samples. If provided, it will set the instance’s <cite>N</cite> attribute and calculate <cite>t</cite>, <cite>dw</cite>, and <cite>w</cite>.</p></li>
+<li><p><strong>**kargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Additional attributes to set on the instance.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -405,8 +405,8 @@ Custom
 <p class="rubric">Notes</p>
 <p>If <cite>sps</cite> is provided and either <cite>R</cite> or <cite>fs</cite> is provided, it will calculate the missing one.
 If <cite>R</cite> is provided and <cite>fs</cite> is provided, it will calculate <cite>sps</cite>.
-If only <cite>fs</cite> is provided, it will calculate <cite>sps</cite> using the instance's <cite>R</cite> attribute.
-If none of <cite>sps</cite>, <cite>R</cite>, or <cite>fs</cite> is provided, it will use the instance's default values.</p>
+If only <cite>fs</cite> is provided, it will calculate <cite>sps</cite> using the instance’s <cite>R</cite> attribute.
+If none of <cite>sps</cite>, <cite>R</cite>, or <cite>fs</cite> is provided, it will use the instance’s default values.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -420,7 +420,7 @@ If none of <cite>sps</cite>, <cite>R</cite>, or <cite>fs</cite> is provided, it 
 <span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.print" title="Link to this definition"></a></dt>
 <dd><p>Prints the global variables of the instance in a formatted manner.</p>
 <p>Prints the global variables including <cite>sps</cite>, <cite>R</cite>, <cite>fs</cite>, <cite>wavelength</cite>, <cite>f0</cite>, <cite>N</cite>, <cite>dt</cite>, <cite>dw</cite>, <cite>t</cite>, and <cite>w</cite>.
-If there are other attributes defined, they will be printed under the &quot;Custom&quot; section.</p>
+If there are other attributes defined, they will be printed under the “Custom” section.</p>
 <p class="rubric">Notes</p>
 <p>The variables are printed with a precision of 2 in scientific notation, except for <cite>sps</cite> and <cite>N</cite> which are integers.</p>
 </dd></dl>
@@ -491,7 +491,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Initialize the binary sequence object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like(bool)</span></code>) -- The binary sequence data.</p>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like(bool)</span></code>) – The binary sequence data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -510,17 +510,17 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__str__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__str__" title="Link to this definition"></a></dt>
 <dd><p>Return a formatted string with the binary sequence data, length, size in bytes and time if available.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.print" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.print" title="Link to this definition"></a></dt>
 <dd><p>Print object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>msg</strong> (<em>str</em><em>, </em><em>opcional</em>) -- top message to show</p>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str</em><em>, </em><em>opcional</em>) – top message to show</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The same object.</p>
@@ -549,7 +549,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Concatenate two binary sequences, adding to the end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or Array_Like) -- The binary sequence to concatenate.</p>
+<dd class="field-odd"><p><strong>other</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or Array_Like) – The binary sequence to concatenate.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new binary sequence object with the result of the concatenation.</p>
@@ -559,8 +559,8 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If the sequence to concatenate it's not in an apropiate format.</p></li>
-<li><p><strong>TypeError</strong> -- If the binary sequence to concatenate is not of type <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – If the sequence to concatenate it’s not in an apropiate format.</p></li>
+<li><p><strong>TypeError</strong> – If the binary sequence to concatenate is not of type <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -579,7 +579,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Concatenate two binary sequences, adding to the beginning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or Array_Like) -- The binary sequence to concatenate.</p>
+<dd class="field-odd"><p><strong>other</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or Array_Like) – The binary sequence to concatenate.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new binary sequence object with the result of the concatenation.</p>
@@ -589,8 +589,8 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If the sequence to concatenate it's not in an apropiate format.</p></li>
-<li><p><strong>TypeError</strong> -- If the binary sequence to concatenate is not of type <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – If the sequence to concatenate it’s not in an apropiate format.</p></li>
+<li><p><strong>TypeError</strong> – If the binary sequence to concatenate is not of type <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -669,7 +669,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">electrical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">electrical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal" title="Link to this definition"></a></dt>
 <dd><p><strong>Electrical Signal</strong></p>
 <p>This class provides methods and attributes to work with electrical signals.</p>
 <p class="rubric">Attributes</p>
@@ -774,13 +774,13 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the electrical signal object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>signal</strong> (<em>array_like</em><em>, </em><em>optional</em>) -- The signal values. Defaults to <cite>None</cite>.</p></li>
-<li><p><strong>noise</strong> (<em>array_like</em><em>, </em><em>optional</em>) -- The noise values. Defaults to <cite>None</cite>.</p></li>
+<li><p><strong>signal</strong> (<em>array_like</em><em>, </em><em>optional</em>) – The signal values. Defaults to <cite>None</cite>.</p></li>
+<li><p><strong>noise</strong> (<em>array_like</em><em>, </em><em>optional</em>) – The noise values. Defaults to <cite>None</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -806,20 +806,20 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__str__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__str__" title="Link to this definition"></a></dt>
 <dd><p>Return a formatted string with the electrical_signal data, length, size in bytes and time if available.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.print" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.print" title="Link to this definition"></a></dt>
 <dd><p>Prints object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>msg</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, opcional) -- top message to show</p>
+<dd class="field-odd"><p><strong>msg</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, opcional) – top message to show</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-even"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a></p>
@@ -834,18 +834,18 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<em>{'t'</em><em>, </em><em>'w'</em><em>, </em><em>'f'}</em>) -- Domain to transform. 't' for time domain (ifft is applied), 'w' and 'f' for frequency domain (fft is applied).</p></li>
-<li><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If True, apply <code class="docutils literal notranslate"><span class="pre">np.fft.fftshift()</span></code> function.</p></li>
+<li><p><strong>domain</strong> (<em>{'t'</em><em>, </em><em>'w'</em><em>, </em><em>'f'}</em>) – Domain to transform. ‘t’ for time domain (ifft is applied), ‘w’ and ‘f’ for frequency domain (fft is applied).</p></li>
+<li><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, apply <code class="docutils literal notranslate"><span class="pre">np.fft.fftshift()</span></code> function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>new_obj</strong> -- A new electrical signal object with the result of the transformation.</p>
+<dd class="field-even"><p><strong>new_obj</strong> – A new electrical signal object with the result of the transformation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">domain</span></code> is not one of the following values ('t', 'w', 'f').</p>
+<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">domain</span></code> is not one of the following values (‘t’, ‘w’, ‘f’).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -856,18 +856,18 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Compare the signal+noise with a threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (array_like or <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The threshold to compare with. If other is an array, the comparison is element-wise.</p>
+<dd class="field-odd"><p><strong>other</strong> (array_like or <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The threshold to compare with. If other is an array, the comparison is element-wise.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- A new binary sequence object with the result of the comparison.</p>
+<dd class="field-even"><p><strong>out</strong> – A new binary sequence object with the result of the comparison.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence">binary_sequence</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If the arrays must have the same length.</p></li>
-<li><p><strong>TypeError</strong> -- If <cite>other</cite> is not of type <a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – If the arrays must have the same length.</p></li>
+<li><p><strong>TypeError</strong> – If <cite>other</cite> is not of type <a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -977,7 +977,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Return angular frequency for spectrum representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If True, apply fftshift().</p>
+<dd class="field-odd"><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, apply fftshift().</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The angular frequency array for signals simulation.</p>
@@ -994,7 +994,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Get power of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>by</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Defines from which attribute to obtain the power. If 'all', power of signal+noise is determined.</p>
+<dd class="field-odd"><p><strong>by</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Defines from which attribute to obtain the power. If ‘all’, power of signal+noise is determined.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The power of the electrical signal.</p>
@@ -1026,13 +1026,13 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>function</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">callable</span></code>) -- The function to apply.</p></li>
-<li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">iterable</span></code>) -- Variable length argument list to pass to the function.</p></li>
-<li><p><strong>**kargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Arbitrary keyword arguments to pass to the function.</p></li>
+<li><p><strong>function</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">callable</span></code>) – The function to apply.</p></li>
+<li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">iterable</span></code>) – Variable length argument list to pass to the function.</p></li>
+<li><p><strong>**kargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Arbitrary keyword arguments to pass to the function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- A new electrical signal object with the result of the function applied to the signal and noise.</p>
+<dd class="field-even"><p><strong>out</strong> – A new electrical signal object with the result of the function applied to the signal and noise.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
@@ -1042,14 +1042,14 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.copy" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.copy" title="Link to this definition"></a></dt>
 <dd><p>Return a copy of the object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Index to truncate original object. If None, the whole object is copied.</p>
+<dd class="field-odd"><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Index to truncate original object. If None, the whole object is copied.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>cp</strong> -- A copy of the object.</p>
+<dd class="field-even"><p><strong>cp</strong> – A copy of the object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
@@ -1063,10 +1063,10 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Get absolute value of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>by</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Defines from which attribute to obtain the absolute value. If 'all', absolute value of signal+noise is determined.</p>
+<dd class="field-odd"><p><strong>by</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Defines from which attribute to obtain the absolute value. If ‘all’, absolute value of signal+noise is determined.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- The absolute value of the electrical signal.</p>
+<dd class="field-even"><p><strong>out</strong> – The absolute value of the electrical signal.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>, (1D, float)</p>
@@ -1076,22 +1076,22 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.plot" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.plot" title="Link to this definition"></a></dt>
 <dd><p>Plot real part of electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- Format style of line. Example 'b-.', Defaults to '-'.</p></li>
-<li><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Number of samples to plot. Defaults to the length of the signal.</p></li>
-<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- X-axis label. Defaults to 'Time [ns]'.</p></li>
-<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Y-axis label. Defaults to 'Amplitude [V]'.</p></li>
-<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Style of plot. Defaults to 'dark'.</p></li>
-<li><p><strong>grid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If show grid. Defaults to False.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Aditional keyword arguments compatible with matplotlib.pyplot.plot().</p></li>
+<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Format style of line. Example ‘b-.’, Defaults to ‘-‘.</p></li>
+<li><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of samples to plot. Defaults to the length of the signal.</p></li>
+<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – X-axis label. Defaults to ‘Time [ns]’.</p></li>
+<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Y-axis label. Defaults to ‘Amplitude [V]’.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Style of plot. Defaults to ‘dark’.</p></li>
+<li><p><strong>grid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If show grid. Defaults to False.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Aditional keyword arguments compatible with matplotlib.pyplot.plot().</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-even"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
@@ -1101,23 +1101,23 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.psd">
-<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.psd" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.psd" title="Link to this definition"></a></dt>
 <dd><p>Plot Power Spectral Density (PSD) of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- Format style of line. Example 'b-.'. Defaults to '-'.</p></li>
-<li><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Number of samples to plot. Defaults to the length of the signal.</p></li>
-<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- X-axis label. Defaults to 'Frequency [GHz]'.</p></li>
-<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Y-axis label. Defaults to 'Power [dBm]' if <code class="docutils literal notranslate"><span class="pre">yscale='dbm'</span></code> or 'Power [W]' if <code class="docutils literal notranslate"><span class="pre">yscale='linear'</span></code>.</p></li>
-<li><p><strong>yscale</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, {'linear', 'dbm'}, optional) -- Kind of Y-axis plot. Defaults to 'dbm'.</p></li>
-<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, {'dark', 'light'}, optional) -- Style of plot. Defaults to 'dark'.</p></li>
-<li><p><strong>grid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If show grid. Defaults to True.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Aditional matplotlib arguments.</p></li>
+<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Format style of line. Example ‘b-.’. Defaults to ‘-‘.</p></li>
+<li><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of samples to plot. Defaults to the length of the signal.</p></li>
+<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – X-axis label. Defaults to ‘Frequency [GHz]’.</p></li>
+<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Y-axis label. Defaults to ‘Power [dBm]’ if <code class="docutils literal notranslate"><span class="pre">yscale='dbm'</span></code> or ‘Power [W]’ if <code class="docutils literal notranslate"><span class="pre">yscale='linear'</span></code>.</p></li>
+<li><p><strong>yscale</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, {‘linear’, ‘dbm’}, optional) – Kind of Y-axis plot. Defaults to ‘dbm’.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, {‘dark’, ‘light’}, optional) – Style of plot. Defaults to ‘dark’.</p></li>
+<li><p><strong>grid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If show grid. Defaults to True.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Aditional matplotlib arguments.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-even"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
@@ -1131,10 +1131,10 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Add grid to the plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Arbitrary keyword arguments to pass to the function.</p>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Arbitrary keyword arguments to pass to the function.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-even"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
@@ -1149,12 +1149,12 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">iterable</span></code>) -- Variable length argument list to pass to the function.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Arbitrary keyword arguments to pass to the function.</p></li>
+<li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">iterable</span></code>) – Variable length argument list to pass to the function.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Arbitrary keyword arguments to pass to the function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-even"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
@@ -1168,7 +1168,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Show plots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-odd"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
@@ -1180,7 +1180,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">optical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">optical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal" title="Link to this definition"></a></dt>
 <dd><p><strong>Optical Signal</strong></p>
 <p>Bases: <a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
 <p>This class provides methods and attributes to work with optical signals.</p>
@@ -1286,13 +1286,13 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the optical signal object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>signal</strong> (<em>array_like</em><em>, </em><em>(</em><em>1D</em><em>, </em><em>2D</em><em>)</em>) -- The signal values, default is <cite>None</cite>.</p></li>
-<li><p><strong>noise</strong> (<em>array_like</em><em>, </em><em>(</em><em>1D</em><em>, </em><em>2D</em><em>)</em>) -- The noise values, default is <cite>None</cite>.</p></li>
+<li><p><strong>signal</strong> (<em>array_like</em><em>, </em><em>(</em><em>1D</em><em>, </em><em>2D</em><em>)</em>) – The signal values, default is <cite>None</cite>.</p></li>
+<li><p><strong>noise</strong> (<em>array_like</em><em>, </em><em>(</em><em>1D</em><em>, </em><em>2D</em><em>)</em>) – The noise values, default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1318,11 +1318,11 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dd><p>Sum two optical signals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">array_like</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code>) -- Optical_signal or value to sum. If <cite>other</cite> is an array_like or a Number it will be added to the signal only.
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">array_like</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code>) – Optical_signal or value to sum. If <cite>other</cite> is an array_like or a Number it will be added to the signal only.
 If <cite>other</cite> is an optical_signal, it will be added the corresponding signal and noise.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- A new optical signal object with the result of the sum.</p>
+<dd class="field-even"><p><strong>out</strong> – A new optical signal object with the result of the sum.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
@@ -1342,11 +1342,11 @@ If <cite>other</cite> is an optical_signal, it will be added the corresponding s
 <dd><p>Multiply two optical signals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">array_like</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code>) -- Optical_signal or value to multiply. If <cite>other</cite> is an array_like or a Number it will be multiply to the signal only.
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">array_like</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code>) – Optical_signal or value to multiply. If <cite>other</cite> is an array_like or a Number it will be multiply to the signal only.
 If <cite>other</cite> is an optical_signal, it will be multiply the corresponding signal and noise.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- A new optical signal object with the result of the multiply.</p>
+<dd class="field-even"><p><strong>out</strong> – A new optical signal object with the result of the multiply.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
@@ -1366,10 +1366,10 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 <dd><p>Slice the optical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code>) -- Index or slice to get the new optical signal.</p>
+<dd class="field-odd"><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code>) – Index or slice to get the new optical signal.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> -- A new optical signal object with the result of the slicing.</p>
+<dd class="field-even"><p><strong>out</strong> – A new optical signal object with the result of the slicing.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
@@ -1384,32 +1384,32 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<em>{'t'</em><em>, </em><em>'w'</em><em>, </em><em>'f'}</em>) -- Domain to transform. 't' for time domain (ifft is applied), 'w' or 'f' for frequency domain (fft is applied).</p></li>
-<li><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If True, apply <code class="docutils literal notranslate"><span class="pre">np.fft.fftshift()</span></code> function.</p></li>
+<li><p><strong>domain</strong> (<em>{'t'</em><em>, </em><em>'w'</em><em>, </em><em>'f'}</em>) – Domain to transform. ‘t’ for time domain (ifft is applied), ‘w’ or ‘f’ for frequency domain (fft is applied).</p></li>
+<li><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, apply <code class="docutils literal notranslate"><span class="pre">np.fft.fftshift()</span></code> function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>new_obj</strong> -- A new optical signal object with the result of the transformation.</p>
+<dd class="field-even"><p><strong>new_obj</strong> – A new optical signal object with the result of the transformation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal">optical_signal</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> -- If <code class="docutils literal notranslate"><span class="pre">domain</span></code> is not one of the following values ('t', 'w', 'f').</p>
+<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">domain</span></code> is not one of the following values (‘t’, ‘w’, ‘f’).</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'abs'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'abs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.plot" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'abs'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'abs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.plot" title="Link to this definition"></a></dt>
 <dd><p>Plot intensity of optical signal for selected polarization mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Format style of line. Example 'b-.'. Default is '-'.</p></li>
-<li><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Number of samples to plot. Default is the length of the signal.</p></li>
-<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- <p>Polarization mode to show. Default is 'abs'.</p>
+<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Format style of line. Example ‘b-.’. Default is ‘-‘.</p></li>
+<li><p><strong>n</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of samples to plot. Default is the length of the signal.</p></li>
+<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – <p>Polarization mode to show. Default is ‘abs’.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'x'</span></code> plot polarization x.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'y'</span></code> plot polarization y.</p></li>
@@ -1417,20 +1417,20 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 <li><p><code class="docutils literal notranslate"><span class="pre">'abs'</span></code> plot intensity sum of both polarizations I(x) + I(y).</p></li>
 </ul>
 </p></li>
-<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- X-axis label. Default is 'Time [ns]'.</p></li>
-<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Y-axis label. Default is 'Power [mW]'.</p></li>
-<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- <p>Style of plot. Default is 'dark'.</p>
+<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – X-axis label. Default is ‘Time [ns]’.</p></li>
+<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Y-axis label. Default is ‘Power [mW]’.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – <p>Style of plot. Default is ‘dark’.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'dark'</span></code> use dark background.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'light'</span></code> use light background.</p></li>
 </ul>
 </p></li>
-<li><p><strong>grid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If show grid. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Aditional matplotlib arguments.</p></li>
+<li><p><strong>grid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If show grid. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Aditional matplotlib arguments.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-even"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
@@ -1440,40 +1440,40 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.psd">
-<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.psd" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.psd" title="Link to this definition"></a></dt>
 <dd><p>Plot Power Spectral Density (PSD) of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- Format style of line. Example 'b-.'. Default is '-'.</p></li>
-<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- <p>Polarization mode to show. Default is 'x'.</p>
+<li><p><strong>fmt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Format style of line. Example ‘b-.’. Default is ‘-‘.</p></li>
+<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – <p>Polarization mode to show. Default is ‘x’.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'x'</span></code> plot polarization x.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'y'</span></code> plot polarization y.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'both'</span></code> plot both polarizations x and y in the same figure.</p></li>
 </ul>
 </p></li>
-<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) -- Number of samples to plot. Default is the length of the signal.</p></li>
-<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- X-axis label. Default is 'Frequency [GHz]'.</p></li>
-<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Y-axis label.</p></li>
-<li><p><strong>yscale</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- <p>Kind of Y-axis plot. Default is 'dbm'.</p>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples to plot. Default is the length of the signal.</p></li>
+<li><p><strong>xlabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – X-axis label. Default is ‘Frequency [GHz]’.</p></li>
+<li><p><strong>ylabel</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Y-axis label.</p></li>
+<li><p><strong>yscale</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – <p>Kind of Y-axis plot. Default is ‘dbm’.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code> plot linear scale.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'dbm'</span></code> plot dBm scale.</p></li>
 </ul>
 </p></li>
-<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- <p>Style of plot. Default is 'dark'.</p>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – <p>Style of plot. Default is ‘dark’.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'dark'</span></code> use dark background.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'light'</span></code> use light background.</p></li>
 </ul>
 </p></li>
-<li><p><strong>grid</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If show grid. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- Aditional matplotlib arguments.</p></li>
+<li><p><strong>grid</strong> (<em>bool</em><em>, </em><em>optional</em>) – If show grid. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Aditional matplotlib arguments.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-even"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
@@ -1712,27 +1712,27 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 <dd><p>Initialize the eye diagram object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>eye_dict</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>, optional) -- Dictionary with the eye diagram parameters.</p>
+<dd class="field-odd"><p><strong>eye_dict</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>, optional) – Dictionary with the eye diagram parameters.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.__str__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.__str__" title="Link to this definition"></a></dt>
 <dd><p>Return a formatted string with the eye diagram data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.print" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.print" title="Link to this definition"></a></dt>
 <dd><p>Print object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>msg</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Top message to show.</p>
+<dd class="field-odd"><p><strong>msg</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Top message to show.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- Same object</p>
+<dd class="field-even"><p><strong>self</strong> – Same object</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.eye" title="opticomlib.typing.eye"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code></a></p>
@@ -1747,16 +1747,16 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Plot style. 'dark' or 'light'.</p></li>
-<li><p><strong>means</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If True, plot mean values.</p></li>
-<li><p><strong>legend</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) -- If True, show legend.</p></li>
-<li><p><strong>cmap</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Colormap to plot.</p></li>
-<li><p><strong>label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Label to show in title.</p></li>
-<li><p><strong>savefig</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- If not None, save figure with the given name.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Plot style. ‘dark’ or ‘light’.</p></li>
+<li><p><strong>means</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, plot mean values.</p></li>
+<li><p><strong>legend</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, show legend.</p></li>
+<li><p><strong>cmap</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Colormap to plot.</p></li>
+<li><p><strong>label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Label to show in title.</p></li>
+<li><p><strong>savefig</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – If not None, save figure with the given name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> -- Same object</p>
+<dd class="field-even"><p><strong>self</strong> – Same object</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.eye" title="opticomlib.typing.eye"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code></a></p>
@@ -1770,7 +1770,7 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 <dd><p>Show plot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>self</strong> -- The same object.</p>
+<dd class="field-odd"><p><strong>self</strong> – The same object.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#opticomlib.typing.eye" title="opticomlib.typing.eye"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code></a></p>

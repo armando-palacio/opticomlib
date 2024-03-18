@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OOK Devices &mdash; opticomlib 0.4.10 documentation</title>
+  <title>OOK Devices &mdash; opticomlib 0.4.11 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=084909a4"></script>
+        <script src="_static/documentation_options.js?v=475c965b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -123,7 +123,7 @@
 <p>Estimates the decision threshold for OOK from the means and standard deviations of the eye diagram.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) -- Object with the parameters of the eye diagram.</p>
+<dd class="field-odd"><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) – Object with the parameters of the eye diagram.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Decision threshold for OOK.</p>
@@ -143,14 +143,14 @@ and <a class="reference internal" href="utils.html#opticomlib.utils.Q" title="op
 <div role="list" class="citation-list">
 <div class="citation" id="th" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">th</a><span class="fn-bracket">]</span></span>
-<p>Armando Palacio Romeu, &quot;Comunicaciones ópticas entre satélites LEO y GEO&quot;, chapter 2.4. link: <a class="reference external" href="https://ricabib.cab.cnea.gov.ar/1143/1/1Palacio_Romeu.pdf">https://ricabib.cab.cnea.gov.ar/1143/1/1Palacio_Romeu.pdf</a></p>
+<p>Armando Palacio Romeu, “Comunicaciones ópticas entre satélites LEO y GEO”, chapter 2.4. link: <a class="reference external" href="https://ricabib.cab.cnea.gov.ar/1143/1/1Palacio_Romeu.pdf">https://ricabib.cab.cnea.gov.ar/1143/1/1Palacio_Romeu.pdf</a></p>
 </div>
 </div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.ook.DSP">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.ook.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ook.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ook.DSP" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ook.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ook.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ook.DSP" title="Link to this definition"></a></dt>
 <dd><p>On-Off Keying Digital Signal Processing</p>
 <p>Performs the decision task of the photodetected electrical signal.</p>
 <ol class="arabic simple">
@@ -163,15 +163,15 @@ and <a class="reference internal" href="utils.html#opticomlib.utils.Q" title="op
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) -- Photodetected electrical signal.</p></li>
-<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Bandwidth of DSP filter. If not specified, signal won't be filtered.</p></li>
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) – Photodetected electrical signal.</p></li>
+<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Bandwidth of DSP filter. If not specified, signal won’t be filtered.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>output</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) -- Received bits.</p></li>
-<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) -- Eye diagram parameters.</p></li>
-<li><p><strong>rth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Decision threshold for OOK.</p></li>
+<li><p><strong>output</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) – Received bits.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) – Eye diagram parameters.</p></li>
+<li><p><strong>rth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Decision threshold for OOK.</p></li>
 </ul>
 </p>
 </dd>
@@ -212,10 +212,10 @@ or by estimation (using estimated means and variances from the eye diagram and s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- Mode in which the Bit Error Rate (BER) will be determined.</p></li>
-<li><p><strong>Tx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Transmitted binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
-<li><p><strong>Rx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Received binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
-<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) -- <cite>eye</cite> object with the estimated parameters of the eye diagram. Required if <cite>mode='estimator'</cite>.</p></li>
+<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Mode in which the Bit Error Rate (BER) will be determined.</p></li>
+<li><p><strong>Tx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) – Transmitted binary sequence. Required if <cite>mode=’counter’</cite>.</p></li>
+<li><p><strong>Rx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) – Received binary sequence. Required if <cite>mode=’counter’</cite>.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) – <cite>eye</cite> object with the estimated parameters of the eye diagram. Required if <cite>mode=’estimator’</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -259,9 +259,9 @@ or by estimation (using estimated means and variances from the eye diagram and s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mu1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Average current (or voltage) value of the signal corresponding to a bit 1.</p></li>
-<li><p><strong>s0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</p></li>
-<li><p><strong>s1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</p></li>
+<li><p><strong>mu1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Average current (or voltage) value of the signal corresponding to a bit 1.</p></li>
+<li><p><strong>s0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</p></li>
+<li><p><strong>s1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

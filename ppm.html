@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PPM Devices &mdash; opticomlib 0.4.10 documentation</title>
+  <title>PPM Devices &mdash; opticomlib 0.4.11 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=084909a4"></script>
+        <script src="_static/documentation_options.js?v=475c965b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -140,12 +140,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) -- Input binary sequence.</p></li>
-<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Number of slots that a symbol contains.</p></li>
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) – Input binary sequence.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Number of slots that a symbol contains.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ppm_seq</strong> -- Encoded binary sequence in PPM.</p>
+<dd class="field-even"><p><strong>ppm_seq</strong> – Encoded binary sequence in PPM.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></p>
@@ -171,8 +171,8 @@ length <span class="math notranslate nohighlight">\(M\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>binary sequence in form</em><em> of </em><em>a string</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>ndarray</em><em> or </em><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) -- Binary sequence encoded in PPM.</p></li>
-<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM modulation.</p></li>
+<li><p><strong>input</strong> (<em>binary sequence in form</em><em> of </em><em>a string</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>ndarray</em><em> or </em><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) – Binary sequence encoded in PPM.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Order of PPM modulation.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -202,7 +202,7 @@ length <span class="math notranslate nohighlight">\(M\)</span>.</p>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input</strong> (<em>binary sequence in form</em><em> of </em><em>a string</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>ndarray</em><em> or </em><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) -- Binary sequence to estimate.</p>
+<dd class="field-odd"><p><strong>input</strong> (<em>binary sequence in form</em><em> of </em><em>a string</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>ndarray</em><em> or </em><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><em>binary_sequence</em></a>) – Binary sequence to estimate.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Sequence of estimated symbols ready to decode.</p>
@@ -212,8 +212,8 @@ length <span class="math notranslate nohighlight">\(M\)</span>.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
-<li><p><strong>ValueError</strong> -- If the length of <cite>input</cite> is not a multiple of <cite>M</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> – If the length of <cite>input</cite> is not a multiple of <cite>M</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -234,7 +234,7 @@ length <span class="math notranslate nohighlight">\(M\)</span>.</p>
 It integrate the signal in slots and then, it selects the slot with the highest energy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input</strong> (<em>:obj`electrical_signal`</em>) -- Unsampled electrical signal.</p>
+<dd class="field-odd"><p><strong>input</strong> (<em>:obj`electrical_signal`</em>) – Unsampled electrical signal.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Sequence of estimated symbols ready to decode.</p>
@@ -244,8 +244,8 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
-<li><p><strong>ValueError</strong> -- If the length of <cite>input</cite> is not a multiple of <cite>M*sps</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> – If the length of <cite>input</cite> is not a multiple of <cite>M*sps</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -268,8 +268,8 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) -- <cite>eye</cite> object with the parameters of the eye diagram.</p></li>
-<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>) – <cite>eye</cite> object with the parameters of the eye diagram.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Order of PPM.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -280,8 +280,8 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
-<li><p><strong>TypeError</strong> -- If <cite>eye_obj</cite> is not of type <cite>eye</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>TypeError</strong> – If <cite>eye_obj</cite> is not of type <cite>eye</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -296,7 +296,7 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.ppm.DSP">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.DSP" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.DSP" title="Link to this definition"></a></dt>
 <dd><p>PPM Digital Signal Processor</p>
 <p>Performs the decision task of the photodetected electrical signal.</p>
 <ol class="arabic simple">
@@ -310,26 +310,26 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) -- Photodetected electrical signal.</p></li>
-<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM modulation.</p></li>
-<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Type of decision to make. Default is 'hard'.</p></li>
-<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Bandwidth of DSP filter. If not specified, signal won't be filtered.</p></li>
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) – Photodetected electrical signal.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Order of PPM modulation.</p></li>
+<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Type of decision to make. Default is ‘hard’.</p></li>
+<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Bandwidth of DSP filter. If not specified, signal won’t be filtered.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>output</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) -- Received bits.</p></li>
-<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) -- Eye diagram parameters, only if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code>.</p></li>
-<li><p><strong>rth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) -- Decision threshold for PPM, only if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code>.</p></li>
+<li><p><strong>output</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>) – Received bits.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) – Eye diagram parameters, only if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code>.</p></li>
+<li><p><strong>rth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Decision threshold for PPM, only if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code>.</p></li>
 </ul>
 </p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>TypeError</strong> -- If <cite>input</cite> is not of type <cite>electrical_signal</cite> or <cite>Array_Like</cite>.</p></li>
-<li><p><strong>ValueError</strong> -- If <cite>input</cite> has less samples than <cite>sps</cite>.</p></li>
-<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
-<li><p><strong>ValueError</strong> -- If <cite>decision</cite> is not 'hard' or 'soft'.</p></li>
+<li><p><strong>TypeError</strong> – If <cite>input</cite> is not of type <cite>electrical_signal</cite> or <cite>Array_Like</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>input</cite> has less samples than <cite>sps</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>decision</cite> is not ‘hard’ or ‘soft’.</p></li>
 </ul>
 </dd>
 </dl>
@@ -365,12 +365,12 @@ or by estimation (using estimated means and variances from the eye diagram and s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) -- Mode in which the Bit Error Rate (BER) will be determined.</p></li>
-<li><p><strong>Tx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Transmitted binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
-<li><p><strong>Rx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) -- Received binary sequence. Required if <cite>mode='counter'</cite>.</p></li>
-<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) -- <cite>eye</cite> object with the estimated parameters of the eye diagram. Required if <cite>mode='estimator'</cite>.</p></li>
-<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) -- Order of PPM modulation. Required if <cite>mode='estimator'</cite>.</p></li>
-<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Type of decision to make, 'hard' or 'soft'. Default is 'soft'. Required if <cite>mode='estimator'</cite>.</p></li>
+<li><p><strong>mode</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Mode in which the Bit Error Rate (BER) will be determined.</p></li>
+<li><p><strong>Tx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) – Transmitted binary sequence. Required if <cite>mode=’counter’</cite>.</p></li>
+<li><p><strong>Rx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code>, optional) – Received binary sequence. Required if <cite>mode=’counter’</cite>.</p></li>
+<li><p><strong>eye_obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code>, optional) – <cite>eye</cite> object with the estimated parameters of the eye diagram. Required if <cite>mode=’estimator’</cite>.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Order of PPM modulation. Required if <cite>mode=’estimator’</cite>.</p></li>
+<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Type of decision to make, ‘hard’ or ‘soft’. Default is ‘soft’. Required if <cite>mode=’estimator’</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -381,11 +381,11 @@ or by estimation (using estimated means and variances from the eye diagram and s
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If <cite>mode</cite> is not 'counter' or 'estimator'.</p></li>
-<li><p><strong>ValueError</strong> -- If <cite>decision</cite> is not 'hard' or 'soft'.</p></li>
-<li><p><strong>KeyError</strong> -- If <cite>Tx</cite> or <cite>Rx</cite> are not provided when <cite>mode='counter'</cite>.</p></li>
-<li><p><strong>KeyError</strong> -- If <cite>eye_obj</cite> or <cite>M</cite> are not provided when <cite>mode='estimator'</cite>.</p></li>
-<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>mode</cite> is not ‘counter’ or ‘estimator’.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>decision</cite> is not ‘hard’ or ‘soft’.</p></li>
+<li><p><strong>KeyError</strong> – If <cite>Tx</cite> or <cite>Rx</cite> are not provided when <cite>mode=’counter’</cite>.</p></li>
+<li><p><strong>KeyError</strong> – If <cite>eye_obj</cite> or <cite>M</cite> are not provided when <cite>mode=’estimator’</cite>.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>M</cite> is not a power of 2.</p></li>
 </ul>
 </dd>
 </dl>
@@ -398,11 +398,11 @@ or by estimation (using estimated means and variances from the eye diagram and s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mu1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) -- Average current (or voltage) value of the signal corresponding to a bit 1.</p></li>
-<li><p><strong>s0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</p></li>
-<li><p><strong>s1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) -- Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</p></li>
-<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- Order of PPM modulation.</p></li>
-<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) -- Type of PPM decoding. Default is 'soft'.</p></li>
+<li><p><strong>mu1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Average current (or voltage) value of the signal corresponding to a bit 1.</p></li>
+<li><p><strong>s0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Standard deviation of current (or voltage) of the signal corresponding to a bit 0.</p></li>
+<li><p><strong>s1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Standard deviation of current (or voltage) of the signal corresponding to a bit 1.</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Order of PPM modulation.</p></li>
+<li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Type of PPM decoding. Default is ‘soft’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -413,8 +413,8 @@ or by estimation (using estimated means and variances from the eye diagram and s
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- If <cite>M</cite> is not a power of 2.</p></li>
-<li><p><strong>ValueError</strong> -- If <cite>decision</cite> is not 'hard' or 'soft'.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>M</cite> is not a power of 2.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>decision</cite> is not ‘hard’ or ‘soft’.</p></li>
 </ul>
 </dd>
 </dl>
