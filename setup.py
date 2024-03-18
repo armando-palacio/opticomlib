@@ -26,11 +26,17 @@ def get_version():
                 return s[1][1:-1]
             
 def get_long_description():
+    """
+    Return the README.md file content skipping the first two lines.
+    """
     with open('README.md', encoding='utf-8') as f:
         content = f.read()
         return content[content.find("\n\n") + 2:]
 
 def get_requirements():
+    """
+    Return the content of the requirements.txt file as a list of strings.
+    """
     with open('requirements.txt', encoding='utf-8') as f:
         return f.read().split()
 
