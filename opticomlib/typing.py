@@ -290,6 +290,7 @@ class binary_sequence():
         print
         __len__
         __getitem__
+        __eq__
         __add__
         __radd__
         len
@@ -379,6 +380,29 @@ class binary_sequence():
         if isinstance(slice, int):
             return self.data[slice]
         return binary_sequence(self.data[slice])
+    
+    def __eq__(self, other):
+        """Compare two binary sequences.
+
+        Parameters
+        ----------
+        other : :obj:`str` or :obj:`binary_sequence` or :obj:`Array_Like`
+            The binary sequence to compare.
+            
+        Returns
+        -------
+        :obj:`np.ndarray` of :obj:`bool`
+            A boolean array with the result of the comparison. ``True`` if the elements are equal, ``False`` otherwise.
+        """
+        if isinstance(other, binary_sequence):
+            other = other.data
+        if isinstance(other, str):
+            other = str2array(other, bool)  
+        else:
+            other = np.array(other, dtype=bool)
+        if other.size != self.data.size and other.size != 1:
+            raise ValueError(f"Can't compare binary sequences with shapes {self.data.shape} and {other.shape}")
+        return self.data == other
 
     def __add__(self, other): 
         """ Concatenate two binary sequences, adding to the end.
