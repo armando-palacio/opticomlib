@@ -387,11 +387,14 @@
 
 <span class="sd">        __init__</span>
 <span class="sd">        __str__</span>
+<span class="sd">        __repr__</span>
 <span class="sd">        print</span>
 <span class="sd">        __len__</span>
 <span class="sd">        __getitem__</span>
+<span class="sd">        __eq__</span>
 <span class="sd">        __add__</span>
 <span class="sd">        __radd__</span>
+<span class="sd">        __invert__</span>
 <span class="sd">        len</span>
 <span class="sd">        ones</span>
 <span class="sd">        zeros</span>
@@ -449,6 +452,9 @@
         <span class="k">return</span> <span class="n">msg</span></div>
 
     
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;binary_sequence(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span><span class="si">}</span><span class="s1">)&#39;</span>
+    
 <div class="viewcode-block" id="binary_sequence.print">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.print">[docs]</a>
     <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
@@ -477,11 +483,50 @@
 
 <div class="viewcode-block" id="binary_sequence.__getitem__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__getitem__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a slice of the binary sequence.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span></div>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a slice of the binary sequence. </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slice : :obj:`int` or :obj:`slice`</span>
+<span class="sd">            The slice to get. </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :obj:`int` or :obj:`binary_sequence`</span>
+<span class="sd">            The value of the slot if `slice` is an integer, or a new binary sequence object with the result of the slice.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="nb">slice</span><span class="p">])</span></div>
 
     
+<div class="viewcode-block" id="binary_sequence.__eq__">
+<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__eq__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two binary sequences.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : :obj:`str` or :obj:`binary_sequence` or :obj:`Array_Like`</span>
+<span class="sd">            The binary sequence to compare.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :obj:`np.ndarray` of :obj:`bool`</span>
+<span class="sd">            A boolean array with the result of the comparison. ``True`` if the elements are equal, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare binary sequences with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">other</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="binary_sequence.__add__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__add__">[docs]</a>
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
@@ -560,6 +605,21 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t concatenate binary_sequence with type </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="binary_sequence.__invert__">
+<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__invert__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Invert the binary sequence </span>
+<span class="sd">        </span>
+<span class="sd">        Implement a bitwise not `~` operation on the binary sequence. Example: `~binary_sequence([1,0,1,0])` returns `binary_sequence([0,1,0,1])`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary_sequence</span>
+<span class="sd">            A new binary sequence object with the result of the inversion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="binary_sequence.len">

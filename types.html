@@ -79,8 +79,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.print"><code class="docutils literal notranslate"><span class="pre">binary_sequence.print()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.__len__"><code class="docutils literal notranslate"><span class="pre">binary_sequence.__len__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.__getitem__"><code class="docutils literal notranslate"><span class="pre">binary_sequence.__getitem__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.__eq__"><code class="docutils literal notranslate"><span class="pre">binary_sequence.__eq__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.__add__"><code class="docutils literal notranslate"><span class="pre">binary_sequence.__add__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.__radd__"><code class="docutils literal notranslate"><span class="pre">binary_sequence.__radd__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.__invert__"><code class="docutils literal notranslate"><span class="pre">binary_sequence.__invert__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.len"><code class="docutils literal notranslate"><span class="pre">binary_sequence.len()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.ones"><code class="docutils literal notranslate"><span class="pre">binary_sequence.ones()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.binary_sequence.zeros"><code class="docutils literal notranslate"><span class="pre">binary_sequence.zeros()</span></code></a></li>
@@ -453,14 +455,20 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__str__" title="opticomlib.typing.binary_sequence.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a>([title])</p></td>
 <td><p>Return a formatted string with the binary sequence data, length, size in bytes and time if available.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.print" title="opticomlib.typing.binary_sequence.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>([msg])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code>()</p></td>
+<td><p>Return repr(self).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.print" title="opticomlib.typing.binary_sequence.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>([msg])</p></td>
 <td><p>Print object parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__len__" title="opticomlib.typing.binary_sequence.__len__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__len__</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__len__" title="opticomlib.typing.binary_sequence.__len__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__len__</span></code></a>()</p></td>
 <td><p>Get number of slots of the binary sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__getitem__" title="opticomlib.typing.binary_sequence.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a>(key)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__getitem__" title="opticomlib.typing.binary_sequence.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a>(slice)</p></td>
 <td><p>Get a slice of the binary sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__eq__" title="opticomlib.typing.binary_sequence.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a>(other)</p></td>
+<td><p>Compare two binary sequences.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__add__" title="opticomlib.typing.binary_sequence.__add__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__add__</span></code></a>(other)</p></td>
 <td><p>Concatenate two binary sequences, adding to the end.</p></td>
@@ -468,19 +476,22 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__radd__" title="opticomlib.typing.binary_sequence.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a>(other)</p></td>
 <td><p>Concatenate two binary sequences, adding to the beginning.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.len" title="opticomlib.typing.binary_sequence.len"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__invert__" title="opticomlib.typing.binary_sequence.__invert__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__invert__</span></code></a>()</p></td>
+<td><p>Invert the binary sequence</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.len" title="opticomlib.typing.binary_sequence.len"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a>()</p></td>
 <td><p>Get number of slots of the binary sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.ones" title="opticomlib.typing.binary_sequence.ones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ones</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.ones" title="opticomlib.typing.binary_sequence.ones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ones</span></code></a>()</p></td>
 <td><p>Return the number of ones in the binary sequence.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.zeros" title="opticomlib.typing.binary_sequence.zeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zeros</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.zeros" title="opticomlib.typing.binary_sequence.zeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zeros</span></code></a>()</p></td>
 <td><p>Return the number of zeros in the binary sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.type" title="opticomlib.typing.binary_sequence.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.type" title="opticomlib.typing.binary_sequence.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a>()</p></td>
 <td><p>Return de object type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.sizeof" title="opticomlib.typing.binary_sequence.sizeof"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeof</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.sizeof" title="opticomlib.typing.binary_sequence.sizeof"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeof</span></code></a>()</p></td>
 <td><p>Get memory size of object in bytes.</p></td>
 </tr>
 </tbody>
@@ -539,8 +550,36 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__getitem__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__getitem__" title="Link to this definition"></a></dt>
 <dd><p>Get a slice of the binary sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slice</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code>) – The slice to get.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the slot if <cite>slice</cite> is an integer, or a new binary sequence object with the result of the slice.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__eq__" title="Link to this definition"></a></dt>
+<dd><p>Compare two binary sequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like</span></code>) – The binary sequence to compare.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean array with the result of the comparison. <code class="docutils literal notranslate"><span class="pre">True</span></code> if the elements are equal, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code> of <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -601,6 +640,21 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 </dd>
 </dl>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__invert__">
+<span class="sig-name descname"><span class="pre">__invert__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__invert__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__invert__" title="Link to this definition"></a></dt>
+<dd><p>Invert the binary sequence</p>
+<p>Implement a bitwise not <cite>~</cite> operation on the binary sequence. Example: <cite>~binary_sequence([1,0,1,0])</cite> returns <cite>binary_sequence([0,1,0,1])</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new binary sequence object with the result of the inversion.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence">binary_sequence</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
