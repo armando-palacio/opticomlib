@@ -287,6 +287,7 @@ class binary_sequence():
 
         __init__
         __str__
+        __repr__
         print
         __len__
         __getitem__
@@ -344,6 +345,9 @@ class binary_sequence():
             msg += '\t' +\
                 f'time  :  {si(self.execution_time, "s", 1)}\n'
         return msg
+    
+    def __repr__(self):
+        return f'binary_sequence({str(self.data)})'
     
     def print(self, msg: str=None): 
         """Print object parameters.
