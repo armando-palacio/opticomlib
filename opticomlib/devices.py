@@ -73,6 +73,13 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
     out : :obj:`binary_sequence`
         generated pseudorandom binary sequence
 
+    Raises
+    ------
+    ValueError
+        If ``order`` is not in [7, 9, 11, 15, 20, 23, 31].
+    TypeError
+        If ``len`` is not an integer.
+
     Examples
     --------
     For more details, see [prbs]_.
@@ -98,7 +105,13 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
     """
     tic()
     taps = {7: [7,6], 9: [9,5], 11: [11,9], 15: [15,14], 20: [20,3], 23: [23,18], 31: [31,28]}
-    len = len if len is not None else 2**order-1
+    
+    if len is not None:
+        if not isinstance(len, int):
+            raise TypeError('The parameter `len` must be an integer.')
+        len = min(len, 2**order-1)
+    else:
+        len = 2**order-1
     
     if order not in taps.keys():
         raise ValueError('The parameter `order` must be one of the following values (7, 9, 11, 15, 20, 23, 31).')
