@@ -610,6 +610,13 @@ class electrical_signal():
             raise TypeError("`signal` must be of type list, tuple or numpy array!")
         else:
             signal = np.array(signal, dtype=complex) # shape (1xN)
+
+        if self.__class__ == electrical_signal:
+            if signal.ndim != 1:
+                raise ValueError("Signal must be 1D when electrical_signal is instantiated")
+        else:
+            if signal.ndim != 2:
+                raise ValueError("Signal must be 2D when optical_signal is instantiated")
         
         if noise is None:
             noise = np.zeros_like(signal, dtype=complex)
@@ -1269,21 +1276,34 @@ class optical_signal(electrical_signal):
             The noise values, default is `None`.
         """
         if signal is not None:
-            ndim = np.array(signal).ndim
+            signal = np.array(signal, dtype=complex)
+            ndim = signal.ndim
             if ndim > 2 or ndim < 1:
                 raise ValueError("`signal` must be a 1D or 2D array!")
             if ndim == 1:
                 signal = np.array([signal, np.zeros_like(signal)])
+            elif ndim == 2 and signal.shape[0] == 1:
+                signal = np.array([signal[0], np.zeros_like(signal[0])])
+
         elif noise is not None:
             ndim = np.array(noise).ndim
             if ndim > 2 or ndim < 1:
                 raise ValueError("`noise` must be a 1D or 2D array!")
             if ndim == 1:
                 noise = np.array([noise, np.zeros_like(noise)])
+            elif ndim == 2 and noise.shape[0] == 2:
+                noise = np.array([noise[0], np.zeros_like(noise[0])])
         else:
             raise KeyError("`signal` or `noise` must be provided!")
         
         super().__init__( signal, noise )  
+    
+    def __repr__(self):
+        signal = str(self.signal).replace('\n', '\n\t' + 13*' ')
+        noise = str(self.noise).replace('\n', '\n\t' + 13*' ')
+        np.set_printoptions(precision=1, threshold=20)
+        return f'optical_signal(signal={signal},\n\t\tnoise={noise})'
+
     
     def len(self): 
         """Get number of samples of the optical signal.
