@@ -347,7 +347,7 @@ class binary_sequence():
         return msg
     
     def __repr__(self):
-        return f'binary_sequence({str(self.data)})'
+        return f'binary_sequence({str(self.data.astype(np.uint8))})'
     
     def print(self, msg: str=None): 
         """Print object parameters.
