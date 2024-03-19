@@ -287,11 +287,14 @@ class binary_sequence():
 
         __init__
         __str__
+        __repr__
         print
         __len__
         __getitem__
+        __eq__
         __add__
         __radd__
+        __invert__
         len
         ones
         zeros
@@ -343,6 +346,9 @@ class binary_sequence():
                 f'time  :  {si(self.execution_time, "s", 1)}\n'
         return msg
     
+    def __repr__(self):
+        return f'binary_sequence({str(self.data.astype(np.uint8))})'
+    
     def print(self, msg: str=None): 
         """Print object parameters.
 
@@ -363,10 +369,46 @@ class binary_sequence():
         """Get number of slots of the binary sequence."""
         return self.len()
 
-    def __getitem__(self, key):
-        """Get a slice of the binary sequence."""
-        return binary_sequence(self.data[key])
+    def __getitem__(self, slice: Union[int, slice]):
+        """Get a slice of the binary sequence. 
+        
+        Parameters
+        ----------
+        slice : :obj:`int` or :obj:`slice`
+            The slice to get. 
+
+        Returns
+        -------
+        :obj:`int` or :obj:`binary_sequence`
+            The value of the slot if `slice` is an integer, or a new binary sequence object with the result of the slice.
+        """
+        if isinstance(slice, int):
+            return self.data[slice]
+        return binary_sequence(self.data[slice])
     
+    def __eq__(self, other):
+        """Compare two binary sequences.
+
+        Parameters
+        ----------
+        other : :obj:`str` or :obj:`binary_sequence` or :obj:`Array_Like`
+            The binary sequence to compare.
+            
+        Returns
+        -------
+        :obj:`np.ndarray` of :obj:`bool`
+            A boolean array with the result of the comparison. ``True`` if the elements are equal, ``False`` otherwise.
+        """
+        if isinstance(other, binary_sequence):
+            other = other.data
+        if isinstance(other, str):
+            other = str2array(other, bool)  
+        else:
+            other = np.array(other, dtype=bool)
+        if other.size != self.data.size and other.size != 1:
+            raise ValueError(f"Can't compare binary sequences with shapes {self.data.shape} and {other.shape}")
+        return binary_sequence(self.data == other)
+
     def __add__(self, other): 
         """ Concatenate two binary sequences, adding to the end.
 
@@ -440,6 +482,18 @@ class binary_sequence():
             raise TypeError("Can't concatenate binary_sequence with type {}".format(type(other)))
         out = np.concatenate((other, self.data))
         return binary_sequence(out)
+
+    def __invert__(self):
+        """Invert the binary sequence 
+        
+        Implement a bitwise not `~` operation on the binary sequence. Example: `~binary_sequence([1,0,1,0])` returns `binary_sequence([0,1,0,1])`.
+
+        Returns
+        -------
+        binary_sequence
+            A new binary sequence object with the result of the inversion.
+        """
+        return binary_sequence(~self.data)
 
     def len(self): 
         """Get number of slots of the binary sequence.
