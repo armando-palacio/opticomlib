@@ -363,10 +363,23 @@ class binary_sequence():
         """Get number of slots of the binary sequence."""
         return self.len()
 
-    def __getitem__(self, key):
-        """Get a slice of the binary sequence."""
-        return binary_sequence(self.data[key])
-    
+    def __getitem__(self, slice: Union[int, slice]):
+        """Get a slice of the binary sequence. 
+        
+        Parameters
+        ----------
+        slice : :obj:`int` or :obj:`slice`
+            The slice to get. 
+
+        Returns
+        -------
+        :obj:`int` or :obj:`binary_sequence`
+            The value of the slot if `slice` is an integer, or a new binary sequence object with the result of the slice.
+        """
+        if isinstance(slice, int):
+            return self.data[slice]
+        return binary_sequence(self.data[slice])
+
     def __add__(self, other): 
         """ Concatenate two binary sequences, adding to the end.
 
