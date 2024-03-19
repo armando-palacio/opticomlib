@@ -293,6 +293,7 @@ class binary_sequence():
         __eq__
         __add__
         __radd__
+        __invert__
         len
         ones
         zeros
@@ -477,6 +478,18 @@ class binary_sequence():
             raise TypeError("Can't concatenate binary_sequence with type {}".format(type(other)))
         out = np.concatenate((other, self.data))
         return binary_sequence(out)
+
+    def __invert__(self):
+        """Invert the binary sequence 
+        
+        Implement a bitwise not `~` operation on the binary sequence. Example: `~binary_sequence([1,0,1,0])` returns `binary_sequence([0,1,0,1])`.
+
+        Returns
+        -------
+        binary_sequence
+            A new binary sequence object with the result of the inversion.
+        """
+        return binary_sequence(~self.data)
 
     def len(self): 
         """Get number of slots of the binary sequence.
