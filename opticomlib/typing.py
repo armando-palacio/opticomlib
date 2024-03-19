@@ -559,9 +559,11 @@ class electrical_signal():
 
         __init__
         __str__
+        __repr__
         print
         __len__
         __add__
+        __sub__
         __mul__
         __getitem__
         __call__
@@ -600,18 +602,18 @@ class electrical_signal():
         if signal is None and noise is None:
             raise KeyError("`signal` or `noise` must be provided!")
         if (signal is not None) and (noise is not None) and (len(signal)!=len(noise)):
-            raise ValueError(f"The arrays `signal`{signal.shape} and `noise`{noise.shape} must have the same length!")
+            raise ValueError(f"The arrays `signal` and `noise` must have the same length!")
 
         if signal is None:
             signal = np.zeros_like(noise, dtype=complex)
-        elif not isinstance(signal, (list, tuple, np.ndarray)):
+        elif not isinstance(signal, Array_Like):
             raise TypeError("`signal` must be of type list, tuple or numpy array!")
         else:
             signal = np.array(signal, dtype=complex) # shape (1xN)
         
         if noise is None:
             noise = np.zeros_like(signal, dtype=complex)
-        elif not isinstance(noise, (list, tuple, np.ndarray)):
+        elif not isinstance(noise, Array_Like):
             raise TypeError("`noise` must be of type list, tuple or numpy array!")
         else:
             noise = np.array(noise, dtype=complex)
@@ -651,6 +653,10 @@ class electrical_signal():
                 f'time    :  {si(self.execution_time, "s", 1)}\n'
         return msg
     
+    def __repr__(self):
+        np.set_printoptions(precision=1, threshold=20)
+        return f'electrical_signal(signal={str(self.signal)},\n\t\t  noise={str(self.noise)})'
+
     def print(self, msg: str=None): 
         """Prints object parameters.
         
@@ -688,7 +694,7 @@ class electrical_signal():
         
         other = np.array(other, dtype=complex)
         
-        if other.size != self.signal.size and other.size != 1:
+        if other.size != self.len() and other.size != 1:
             raise ValueError(f"Can't add electrical_signal with shapes {self.signal.shape} and {other.shape}")
         return electrical_signal(self.signal + other, self.noise)
         
@@ -712,8 +718,8 @@ class electrical_signal():
             return electrical_signal(self.signal - other.signal, self.noise - other.noise)
         other = np.array(other, dtype=complex)
         
-        if other.size != self.signal.size and other.size != 1:
-            raise TypeError("Can't substract electrical_signal with type {}".format(type(other)))
+        if other.size != self.len() and other.size != 1:
+            raise ValueError(f"Can't substract electrical_signal with shapes {self.signal.shape} and {other.shape}")
         return electrical_signal(self.signal - other, self.noise)
         
     def __rsub__(self, other):
@@ -721,8 +727,8 @@ class electrical_signal():
             return electrical_signal(other.signal - self.signal, other.noise - self.noise)
         other = np.array(other, dtype=complex)
         
-        if other.size != self.signal.size and other.size != 1:
-            raise TypeError("Can't substract electrical_signal with type {}".format(type(other)))
+        if other.size != self.len() and other.size != 1:
+            raise ValueError(f"Can't substract electrical_signal with shapes {self.signal.shape} and {other.shape}")
         return electrical_signal(other - self.signal, self.noise)
         
     def __mul__(self, other):
@@ -742,8 +748,8 @@ class electrical_signal():
             return electrical_signal(self.signal * other.signal, self.noise * other.noise)
         other = np.array(other, dtype=complex)
         
-        if other.size != self.signal.size and other.size != 1:
-            raise TypeError("Can't multiply electrical_signal with type {}".format(type(other)))
+        if other.size != self.len() and other.size != 1:
+            raise ValueError(f"Can't multiply electrical_signal with shapes {self.signal.shape} and {other.shape}")
         return electrical_signal(self.signal * other, self.noise)
         
     def __rmul__(self, other):
@@ -783,7 +789,7 @@ class electrical_signal():
             noise = ifft(self.noise)
         
         else:
-            raise TypeError("`domain` must be one of the following values ('t', 'w', 'f')")
+            raise ValueError("`domain` must be one of the following values ('t', 'w', 'f')")
         
         if shift:
             signal = fftshift(signal)
@@ -849,7 +855,7 @@ class electrical_signal():
         if self.len() != threshold.size and threshold.size != 1:
             raise ValueError(f"Can't compare electrical_signals with shapes {self.data.shape} and {other.shape}")
               
-        return binary_sequence( self.signal+self.noise > threshold )
+        return binary_sequence( self.signal+self.noise < threshold )
              
     def len(self): 
         """Get number of samples of the electrical signal.
@@ -952,19 +958,19 @@ class electrical_signal():
         :obj:`float`
             The power of the electrical signal.
         """
-        if by not in ['signal', 'noise', 'all']:
-            raise TypeError('`by` must be one of the following values ("signal", "noise", "all")')
+        if by.lower() not in ['signal', 'noise', 'all']:
+            raise ValueError('`by` must be one of the following values ("signal", "noise", "all")')
         return np.mean(self.abs(by)**2, axis=-1)
     
     def phase(self):
-        """Get phase of the electrical signal.
+        """Get phase of the ``signal`` + `noise`.
         
         Returns
         -------
         :obj:`np.ndarray`
             The phase of the electrical signal.
         """
-        return np.unwrap(np.angle(self.signal))
+        return np.unwrap(np.angle(self.signal + self.noise))
     
     def apply(self, function, *args, **kargs):
         r"""Apply a function to signal and noise.
@@ -1019,14 +1025,14 @@ class electrical_signal():
         out : :obj:`np.ndarray`, (1D, float)
             The absolute value of the electrical signal.
         """
-        if by == 'signal':
+        if by.lower() == 'signal':
             return np.abs(self.signal)
-        elif by == 'noise':
+        elif by.lower() == 'noise':
             return np.abs(self.noise)
-        elif by == 'all':
+        elif by.lower() == 'all':
             return np.abs(self.signal + self.noise)
         else:
-            raise TypeError('`by` must be one of the following values ("signal", "noise", "all")')
+            raise ValueError('`by` must be one of the following values ("signal", "noise", "all")')
     
 
     def plot(self, 
