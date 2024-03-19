@@ -370,7 +370,7 @@ class binary_sequence():
         return self.len()
 
     def __getitem__(self, slice: Union[int, slice]):
-        """Get a slice of the binary sequence. 
+        """Get a slice of the binary sequence (``x[slice]``). 
         
         Parameters
         ----------
@@ -387,7 +387,7 @@ class binary_sequence():
         return binary_sequence(self.data[slice])
     
     def __eq__(self, other):
-        """Compare two binary sequences.
+        """Compare two binary sequences using ``==`` operator.
 
         Parameters
         ----------
@@ -410,7 +410,7 @@ class binary_sequence():
         return binary_sequence(self.data == other)
 
     def __add__(self, other): 
-        """ Concatenate two binary sequences, adding to the end.
+        """ Concatenate two binary sequences, adding to the end (``+``).
 
         Parameters
         ----------
@@ -431,7 +431,7 @@ class binary_sequence():
         
         See Also
         --------
-        __radd__ : Concatenates two binary sequence, adding at the beginning.
+        __radd__ : Concatenates two binary sequence, adding at the beginning (``+``).
         """
         if isinstance(other, str):
             other = str2array(other, bool)
@@ -447,7 +447,7 @@ class binary_sequence():
         return binary_sequence(out)
     
     def __radd__(self, other): 
-        """ Concatenate two binary sequences, adding to the beginning.
+        """ Concatenate two binary sequences, adding to the beginning (``+``).
 
         Parameters
         ----------
@@ -484,9 +484,9 @@ class binary_sequence():
         return binary_sequence(out)
 
     def __invert__(self):
-        """Invert the binary sequence 
+        """Invert the binary sequence using the ``~`` operator. 
         
-        Implement a bitwise not `~` operation on the binary sequence. Example: `~binary_sequence([1,0,1,0])` returns `binary_sequence([0,1,0,1])`.
+        Implement a bitwise not ``~`` operation on the binary sequence. Example: ``~binary_sequence([1,0,1,0])`` returns ``binary_sequence([0,1,0,1])``.
 
         Returns
         -------
