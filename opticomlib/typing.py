@@ -401,12 +401,14 @@ class binary_sequence():
         """
         if isinstance(other, binary_sequence):
             other = other.data
-        if isinstance(other, str):
+        elif isinstance(other, str):
             other = str2array(other, bool)  
         else:
             other = np.array(other, dtype=bool)
+
         if other.size != self.data.size and other.size != 1:
             raise ValueError(f"Can't compare binary sequences with shapes {self.data.shape} and {other.shape}")
+        
         return binary_sequence(self.data == other)
 
     def __add__(self, other): 
@@ -433,10 +435,10 @@ class binary_sequence():
         --------
         __radd__ : Concatenates two binary sequence, adding at the beginning (``+``).
         """
-        if isinstance(other, str):
-            other = str2array(other, bool)
-        elif isinstance(other, binary_sequence):
+        if isinstance(other, binary_sequence):
             other = other.data
+        elif isinstance(other, str):
+            other = str2array(other, bool)
         elif isinstance(other, Array_Like):
             other = np.array(other)
             if not np.all((other == 0) | (other == 1)): 
@@ -470,10 +472,10 @@ class binary_sequence():
         --------
         __add__ : Concatenates two binary sequence, adding at the end.
         """
-        if isinstance(other, str):
-            other = str2array(other, bool)
-        elif isinstance(other, binary_sequence):
+        if isinstance(other, binary_sequence):
             other = other.data
+        elif isinstance(other, str):
+            other = str2array(other, bool)
         elif isinstance(other, Array_Like):
             other = np.array(other)
             if not np.all((other == 0) | (other == 1)): 
@@ -564,6 +566,7 @@ class electrical_signal():
         __getitem__
         __call__
         __gt__
+        __lt__
         len
         type
         sizeof
@@ -668,19 +671,88 @@ class electrical_signal():
         return self.len()
     
     def __add__(self, other):
+        """ Add two electrical signals (``+`` operator). Same that ``__radd__``.
+        
+        Parameters
+        ----------
+        other : :obj:`electrical_signal` or :obj:`Array_Like` or :obj:`Number`
+            The signal to add.
+        
+        Returns
+        -------
+        :obj:`electrical_signal`
+            A new electrical signal object with the result of the addition.
+        """
         if isinstance(other, electrical_signal): 
             return electrical_signal(self.signal + other.signal, self.noise + other.noise)
-        if isinstance(other, (int, float, complex, np.ndarray)):
-            return electrical_signal(self.signal + other, self.noise + other)
+        
+        other = np.array(other, dtype=complex)
+        
+        if other.size != self.signal.size and other.size != 1:
+            raise ValueError(f"Can't add electrical_signal with shapes {self.signal.shape} and {other.shape}")
+        return electrical_signal(self.signal + other, self.noise)
+        
+    def __radd__(self, other):
+        return self.__add__(other)
+    
+    def __sub__(self, other):
+        """ Substract two electrical signals (``-`` operator).
+
+        Parameters
+        ----------
+        other : :obj:`electrical_signal` or :obj:`Array_Like` or :obj:`Number`
+            The signal to substract.
+
+        Returns
+        -------
+        :obj:`electrical_signal`
+            A new electrical signal object with the result of the substraction.        
+        """
+        if isinstance(other, electrical_signal):
+            return electrical_signal(self.signal - other.signal, self.noise - other.noise)
+        other = np.array(other, dtype=complex)
+        
+        if other.size != self.signal.size and other.size != 1:
+            raise TypeError("Can't substract electrical_signal with type {}".format(type(other)))
+        return electrical_signal(self.signal - other, self.noise)
+        
+    def __rsub__(self, other):
+        if isinstance(other, electrical_signal):
+            return electrical_signal(other.signal - self.signal, other.noise - self.noise)
+        other = np.array(other, dtype=complex)
+        
+        if other.size != self.signal.size and other.size != 1:
+            raise TypeError("Can't substract electrical_signal with type {}".format(type(other)))
+        return electrical_signal(other - self.signal, self.noise)
         
     def __mul__(self, other):
+        """ Multiply two electrical signals (``*`` operator). Same that ``__rmul__``.
+        
+        Parameters
+        ----------
+        other : :obj:`electrical_signal` or :obj:`Array_Like` or :obj:`Number`
+            The signal to multiply.
+
+        Returns
+        -------
+        :obj:`electrical_signal`
+            A new electrical signal object with the result of the multiplication.
+        """
         if isinstance(other, electrical_signal):
             return electrical_signal(self.signal * other.signal, self.noise * other.noise)
-        if isinstance(other, (int, float, complex, np.ndarray)):
-            return electrical_signal(self.signal * other, self.noise * other)
-    
-    def __getitem__(self, key):
-        return electrical_signal( self.signal[key], self.noise[key] )
+        other = np.array(other, dtype=complex)
+        
+        if other.size != self.signal.size and other.size != 1:
+            raise TypeError("Can't multiply electrical_signal with type {}".format(type(other)))
+        return electrical_signal(self.signal * other, self.noise)
+        
+    def __rmul__(self, other):
+        return self.__mul__(other)
+        
+    def __getitem__(self, slice: Union[int, slice]):
+        if isinstance(slice, int):
+            return self.signal[slice], self.noise[slice] 
+        return electrical_signal( self.signal[slice], self.noise[slice] )
 
     def __call__(self, domain: Literal['t','w', 'f'], shift: bool=False):
         """ Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.
@@ -720,7 +792,7 @@ class electrical_signal():
         return electrical_signal(signal, noise)
     
     def __gt__(self, other): 
-        """ Compare the signal+noise with a threshold.
+        """ Compare the signal+noise with a threshold (``>`` operator).
 
         Parameters
         ----------
@@ -740,17 +812,43 @@ class electrical_signal():
             If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.
         """
         if isinstance(other, electrical_signal):
-            if self.len() != other.len():
-                raise ValueError("The arrays must have the same length!")
-            threshold = other.signal 
-        elif isinstance(other, (list, tuple, np.ndarray)):
-            if self.len() != len(other):
-                raise ValueError("The arrays must have the same length!")   
-            threshold = np.array(other)     
-        elif isinstance(other, (int, float)):
-            threshold = other
+            threshold = other.signal + other.noise
         else:
-            raise TypeError("`other` must be of type electrical_signal, list, tuple, numpy array, int or float!")       
+            threshold = np.array(other)
+            
+        if self.len() != threshold.size and threshold.size != 1:
+            raise ValueError(f"Can't compare electrical_signals with shapes {self.data.shape} and {other.shape}")
+              
+        return binary_sequence( self.signal+self.noise > threshold )
+    
+    def __lt__(self, other):
+        """ Compare the signal+noise with a threshold (``<`` operator).
+
+        Parameters
+        ----------
+        other : array_like or :obj:`float`    
+            The threshold to compare with. If other is an array, the comparison is element-wise.
+        
+        Returns
+        -------
+        out: binary_sequence
+            A new binary sequence object with the result of the comparison.
+
+        Raises
+        ------
+        ValueError
+            If the arrays must have the same length.
+        TypeError
+            If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.
+        """
+        if isinstance(other, electrical_signal):
+            threshold = other.signal + other.noise
+        else:
+            threshold = np.array(other)
+            
+        if self.len() != threshold.size and threshold.size != 1:
+            raise ValueError(f"Can't compare electrical_signals with shapes {self.data.shape} and {other.shape}")
+              
         return binary_sequence( self.signal+self.noise > threshold )
              
     def len(self): 
