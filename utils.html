@@ -60,7 +60,6 @@
 <li class="toctree-l1"><a class="reference internal" href="ppm.html">PPM Devices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Utilities functions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.generate_prbs"><code class="docutils literal notranslate"><span class="pre">generate_prbs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.dec2bin"><code class="docutils literal notranslate"><span class="pre">dec2bin()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.str2array"><code class="docutils literal notranslate"><span class="pre">str2array()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.get_time"><code class="docutils literal notranslate"><span class="pre">get_time()</span></code></a></li>
@@ -117,98 +116,65 @@
 <p class="rubric" id="module-opticomlib.utils">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.generate_prbs" title="opticomlib.utils.generate_prbs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_prbs</span></code></a>([order])</p></td>
-<td><p>Generates a pseudo-random binary sequence (PRBS) of desired order.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.dec2bin" title="opticomlib.utils.dec2bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dec2bin</span></code></a>(num[, digits])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.dec2bin" title="opticomlib.utils.dec2bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dec2bin</span></code></a>(num[, digits])</p></td>
 <td><p>Converts an integer to its binary representation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.str2array" title="opticomlib.utils.str2array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str2array</span></code></a>(string[, dtype])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.str2array" title="opticomlib.utils.str2array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str2array</span></code></a>(string[, dtype])</p></td>
 <td><p>Converts a string to array of numbers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.get_time" title="opticomlib.utils.get_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_time</span></code></a>(line_of_code, n)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.get_time" title="opticomlib.utils.get_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_time</span></code></a>(line_of_code, n)</p></td>
 <td><p>Get the average time of execution of a line of code.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.tic" title="opticomlib.utils.tic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tic</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.tic" title="opticomlib.utils.tic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tic</span></code></a>()</p></td>
 <td><p>Start a timer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.toc" title="opticomlib.utils.toc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toc</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.toc" title="opticomlib.utils.toc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toc</span></code></a>()</p></td>
 <td><p>Stop a timer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.db" title="opticomlib.utils.db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.db" title="opticomlib.utils.db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db</span></code></a>(x)</p></td>
 <td><p>Calculates the logarithm in base 10 of the input x and multiplies it by 10.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.dbm" title="opticomlib.utils.dbm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dbm</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.dbm" title="opticomlib.utils.dbm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dbm</span></code></a>(x)</p></td>
 <td><p>Calculates dBm from Watts.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.idb" title="opticomlib.utils.idb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idb</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.idb" title="opticomlib.utils.idb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idb</span></code></a>(x)</p></td>
 <td><p>Calculates the number value from a dB value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.idbm" title="opticomlib.utils.idbm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idbm</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.idbm" title="opticomlib.utils.idbm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idbm</span></code></a>(x)</p></td>
 <td><p>Calculates the power value in Watts from a dBm value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.gaus" title="opticomlib.utils.gaus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaus</span></code></a>(x[, mu, std])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.gaus" title="opticomlib.utils.gaus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaus</span></code></a>(x[, mu, std])</p></td>
 <td><p>Gaussian function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.Q" title="opticomlib.utils.Q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Q</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.Q" title="opticomlib.utils.Q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Q</span></code></a>(x)</p></td>
 <td><p>Q-function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.phase" title="opticomlib.utils.phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code></a>(H)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.phase" title="opticomlib.utils.phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code></a>(H)</p></td>
 <td><p>Calculate the unwrapped phase of a frequency response.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.tau_g" title="opticomlib.utils.tau_g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tau_g</span></code></a>(H, fs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.tau_g" title="opticomlib.utils.tau_g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tau_g</span></code></a>(H, fs)</p></td>
 <td><p>Calculate the group delay of a frequency response.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.dispersion" title="opticomlib.utils.dispersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispersion</span></code></a>(H, fs, f0)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.dispersion" title="opticomlib.utils.dispersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispersion</span></code></a>(H, fs, f0)</p></td>
 <td><p>Calculate the dispersion of a frequency response.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.bode" title="opticomlib.utils.bode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bode</span></code></a>(H, fs[, f0, xaxis, disp, yscale, ret, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.bode" title="opticomlib.utils.bode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bode</span></code></a>(H, fs[, f0, xaxis, disp, yscale, ret, ...])</p></td>
 <td><p>Plot the Bode plot of a given transfer function H (magnitude, phase and group delay).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.rcos" title="opticomlib.utils.rcos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcos</span></code></a>(x, alpha, T)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.rcos" title="opticomlib.utils.rcos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcos</span></code></a>(x, alpha, T)</p></td>
 <td><p>Raised cosine spectrum function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.si" title="opticomlib.utils.si"><code class="xref py py-obj docutils literal notranslate"><span class="pre">si</span></code></a>(x[, unit, k])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.si" title="opticomlib.utils.si"><code class="xref py py-obj docutils literal notranslate"><span class="pre">si</span></code></a>(x[, unit, k])</p></td>
 <td><p>Unit of measure classifier.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.norm" title="opticomlib.utils.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.norm" title="opticomlib.utils.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(x)</p></td>
 <td><p>Normalize an array by dividing each element by the maximum value in the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.nearest" title="opticomlib.utils.nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nearest</span></code></a>(x, a)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.nearest" title="opticomlib.utils.nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nearest</span></code></a>(x, a)</p></td>
 <td><p>Find the nearest value in an array.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py function">
-<dt class="sig sig-object py" id="opticomlib.utils.generate_prbs">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">generate_prbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#generate_prbs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.generate_prbs" title="Link to this definition"></a></dt>
-<dd><p>Generates a pseudo-random binary sequence (PRBS) of desired order.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>order</strong> (<em>int</em><em>, </em><em>default: 7</em>) – Order of the generator polynomial. Valid options are {7, 9, 11, 15, 20, 23, 31}.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>PRBS sequence of length <code class="docutils literal notranslate"><span class="pre">2^order-1</span></code>.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">order</span></code> is not in {7, 9, 11, 15, 20, 23, 31}.</p>
-</dd>
-</dl>
-<p class="rubric">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">generate_prbs</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
-<span class="go">array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,</span>
-<span class="go">       0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,</span>
-<span class="go">       0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,</span>
-<span class="go">       0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,</span>
-<span class="go">       0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,</span>
-<span class="go">       0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)</span>
-</pre></div>
-</div>
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.dec2bin">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">dec2bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#dec2bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.dec2bin" title="Link to this definition"></a></dt>

@@ -112,7 +112,7 @@
 <p class="rubric" id="module-opticomlib.devices">Devices</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.devices.PRBS" title="opticomlib.devices.PRBS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PRBS</span></code></a>([n, user, order])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.devices.PRBS" title="opticomlib.devices.PRBS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PRBS</span></code></a>(order[, len])</p></td>
 <td><p><strong>Pseudorandom binary sequence generator</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.devices.DAC" title="opticomlib.devices.DAC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DAC</span></code></a>(input[, Vout, pulse_shape])</p></td>
@@ -158,46 +158,51 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.devices.PRBS">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PRBS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#PRBS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.PRBS" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PRBS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">7</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">11</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">15</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">20</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">23</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">31</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#PRBS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.PRBS" title="Link to this definition"></a></dt>
 <dd><p><strong>Pseudorandom binary sequence generator</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 2**8</em>) – lenght of random binary sequence</p></li>
-<li><p><strong>user</strong> (<em>str</em><em> or </em><em>array_like</em><em>, </em><em>optional</em><em>, </em><em>default:</em><em> [</em><em>]</em>) – binary sequence user pattern</p></li>
-<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – degree of the generating pseudorandom polynomial</p></li>
+<li><p><strong>order</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, {7, 9, 11, 15, 20, 23, 31}) – degree of the generating pseudorandom polynomial</p></li>
+<li><p><strong>len</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – lenght of output binary sequence</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>seq</strong> – generated binary sequence</p>
+<dd class="field-even"><p><strong>out</strong> – generated pseudorandom binary sequence</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence">binary_sequence</a></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">order</span></code> is not in [7, 9, 11, 15, 20, 23, 31].</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">len</span></code> is not an integer.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<p>Using parameter <strong>n</strong>, this function generate a random sequence of lenght <cite>n</cite>. Internally it use <code class="docutils literal notranslate"><span class="pre">numpy.random.randint</span></code> function.</p>
+<p>For more details, see <a class="reference internal" href="#prbs" id="id1"><span>[prbs]</span></a>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">PRBS</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
-<span class="go">array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1], dtype=uint8)  #random</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="nb">len</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;PRBS&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>On the other hand, the <strong>user</strong> parameter can be used for a custom sequence.
-We can input it in <em>str</em> format separating the values by spaces <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code> or by commas <code class="docutils literal notranslate"><span class="pre">','</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="s1">&#39;1 0 1 0   0 1 1 1   0,1,0,0   1,1,0,1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
-<span class="go">array([1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1], dtype=uint8)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-----------------------------</span>
+<span class="o">***</span>    <span class="n">binary_sequence</span>    <span class="o">***</span>
+<span class="o">-----------------------------</span>
+    <span class="n">data</span>  <span class="p">:</span>  <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="nb">len</span>   <span class="p">:</span>  <span class="mi">10</span>
+    <span class="n">size</span>  <span class="p">:</span>  <span class="mi">440</span> <span class="nb">bytes</span>
+    <span class="n">time</span>  <span class="p">:</span>  <span class="mi">0</span> <span class="n">s</span>
+
+<span class="o">&lt;</span><span class="n">opticomlib</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">binary_sequence</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x000002385FD7D7F0</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>The last way in which the function can be used is by passing the <strong>order</strong> of the generating polynomial
-as an argument, which will return a pseudo-random binary sequence of lenght <span class="math notranslate nohighlight">\(2^{order}-1\)</span>, using an internal algorithm.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
-<span class="go">array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,</span>
-<span class="go">    0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,</span>
-<span class="go">    0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,</span>
-<span class="go">    0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,</span>
-<span class="go">    0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,</span>
-<span class="go">    0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)</span>
-</pre></div>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="prbs" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">prbs</a><span class="fn-bracket">]</span></span>
+<p>“Pseudorandom binary sequence” <a class="reference external" href="https://en.wikipedia.org/wiki/Pseudorandom_binary_sequence">https://en.wikipedia.org/wiki/Pseudorandom_binary_sequence</a></p>
+</div>
 </div>
 </dd></dl>
 
@@ -360,13 +365,13 @@ as an argument, which will return a pseudo-random binary sequence of lenght <spa
 <figure class="align-center">
 <a class="reference internal image-reference" href="_images/MZMv2.png"><img alt="MZM" src="_images/MZMv2.png" style="width: 50%;" /></a>
 </figure>
-<p>The output signal is given by <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<p>The output signal is given by <a class="footnote-reference brackets" href="#id3" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
 <div class="math notranslate nohighlight">
 \[E_{out} = E_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right]\]</div>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id2" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id3" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
 <p>Tetsuya Kawanishi, “Electro-optic Modulation for Photonic Networks”, Chapter 4.3 (2022). doi: <a class="reference external" href="https://doi.org/10.1007/978-3-030-86720-1">https://doi.org/10.1007/978-3-030-86720-1</a></p>
 </aside>
 </aside>
@@ -551,7 +556,7 @@ Simplest model (no saturation output power).</p>
 <span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">FIBER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#FIBER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.FIBER" title="Link to this definition"></a></dt>
 <dd><p><strong>Optical Fiber</strong></p>
 <p>Simulates the transmission through an optical fiber, solving Schrödinger’s equation numerically,
-by using split-step Fourier method with adaptive step (method based on limiting the nonlinear phase rotation) <a class="footnote-reference brackets" href="#id4" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.
+by using split-step Fourier method with adaptive step (method based on limiting the nonlinear phase rotation) <a class="footnote-reference brackets" href="#id5" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.
 Polarization mode dispersion (PMD) is not considered in this model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -578,8 +583,8 @@ Polarization mode dispersion (PMD) is not considered in this model.</p>
 </dl>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id4" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id5" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
 <p>O.V. Sinkin; R. Holzlohner; J. Zweck; C.R. Menyuk, “Optimization of the split-step Fourier method in modeling optical-fiber communications systems,” vol. 21, no. 1, pp. 61-68, Jan. 2003, doi: <a class="reference external" href="https://doi.org/10.1109/JLT.2003.808628">https://doi.org/10.1109/JLT.2003.808628</a></p>
 </aside>
 </aside>
@@ -599,11 +604,11 @@ Polarization mode dispersion (PMD) is not considered in this model.</p>
 </pre></div>
 </div>
 <p>(<a class="reference download internal" download="" href="_downloads/14ba9f4b39696fb74610e84d44d05c29/devices-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/e4bc1d91b71d76fc34e13b21e73db4b0/devices-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/0732fb09b6ab96da5c0052a22f3796c8/devices-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/2841db551a28406cce0e500e6402c2a7/devices-3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
-<figure class="align-center" id="id9">
+<figure class="align-center" id="id10">
 <img alt="FIBER example 1" class="plot-directive" src="_images/devices-3.png" />
 <figcaption>
 <p><span class="caption-text">The input signal is a 10 Gbps NRZ signal with 20 dBm of power. The fiber has a length of 50 km, an attenuation of 0.01 dB/km,
-a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.</span><a class="headerlink" href="#id9" title="Link to this image"></a></p>
+a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </dd></dl>
@@ -862,7 +867,7 @@ and the function must be defined in the range <code class="docutils literal notr
 <p class="rubric">Notes</p>
 <p id="notes">Following coupled-wave theory, we assume a periodic, single-mode
 waveguide with an electromagnetic field which can be represented by
-two contradirectional coupled waves in the form <a class="footnote-reference brackets" href="#id7" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
+two contradirectional coupled waves in the form <a class="footnote-reference brackets" href="#id8" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
 <div class="math notranslate nohighlight">
 \[E(z) = A(z)e^{-j\beta_0 z} + B(z)e^{j\beta_0 z}\]</div>
 <p>where A and B are slowly varying amplitudes of mode traveling in <span class="math notranslate nohighlight">\(+z\)</span> and math:<cite>-z</cite> directions, respectively
@@ -889,7 +894,7 @@ and thus <span class="math notranslate nohighlight">\(\kappa\)</span>, <span cla
 <p>If phase chirp is present, <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\phi'\)</span> are also a function of <span class="math notranslate nohighlight">\(z\)</span>. This implementation considers only linear chirp, so:</p>
 <div class="math notranslate nohighlight">
 \[\phi'(z) = 2Fz/L^2\]</div>
-<p>where <span class="math notranslate nohighlight">\(F\)</span> is a dimensionless “chirp parameter”, given by <a class="footnote-reference brackets" href="#id8" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
+<p>where <span class="math notranslate nohighlight">\(F\)</span> is a dimensionless “chirp parameter”, given by <a class="footnote-reference brackets" href="#id9" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
 <div class="math notranslate nohighlight">
 \[F = \pi N \Delta \Lambda/\Lambda\]</div>
 <p>or</p>
@@ -907,12 +912,12 @@ and thus <span class="math notranslate nohighlight">\(\kappa\)</span>, <span cla
 </ul>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id7" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">3</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id8" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">3</a><span class="fn-bracket">]</span></span>
 <p>Turan Erdogan, “Fiber Grating Spectra,” VOL. 15, NO. 8, AUGUST 1997. doi: <a class="reference external" href="https://doi.org/10.1109/50.618322">https://doi.org/10.1109/50.618322</a></p>
 </aside>
-<aside class="footnote brackets" id="id8" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">4</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id9" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">4</a><span class="fn-bracket">]</span></span>
 <ol class="upperalpha simple" start="8">
 <li><p>KOGELNIK, “Filter Response of Nonuniform Almost-Periodic Structures” Vol. 55, No. 1, January 1976. doi: <a class="reference external" href="https://doi.org/10.1002/j.1538-7305.1976.tb02062.x">https://doi.org/10.1002/j.1538-7305.1976.tb02062.x</a></p></li>
 </ol>
