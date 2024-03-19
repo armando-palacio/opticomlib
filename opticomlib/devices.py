@@ -2,20 +2,20 @@
 .. rubric:: Devices
 .. autosummary::
 
-   PRBS                  -- Pseudorandom binary sequence generator
-   DAC                   -- Digital-to-analog converter (DAC) model
-   PM                    -- Optical phase modulator (PM) model
-   MZM                   -- Mach-Zehnder modulator (MZM) model
-   BPF                   -- Optical band-pass filter (BPF) bessel model
-   EDFA                  -- Erbium-doped fiber amplifier (EDFA) simple model
-   DM                    -- Dispersion medium model
-   FIBER                 -- Optical fiber model (dispersion, attenuation and non-linearities, Split-Step Fourier Method)
-   LPF                   -- Electrical low-pass filter (LPF) bessel model
-   PD                    -- Photodetector (PD) model
-   ADC                   -- Analog-to-digital converter (ADC) model
-   GET_EYE               -- Eye diagram parameters and metrics estimator
-   SAMPLER               -- Sampler device
-   FBG                   -- Fiber Bragg Grating (FBG) model
+   PRBS                  
+   DAC                   
+   PM                    
+   MZM                   
+   BPF                   
+   EDFA                  
+   DM                    
+   FIBER                 
+   LPF                   
+   PD                    
+   ADC                   
+   GET_EYE               
+   SAMPLER               
+   FBG                   
 """
 
 
@@ -24,7 +24,6 @@ import numpy as np
 import scipy.signal as sg
 from scipy.integrate import solve_ivp
 from typing import Literal, Union, Callable
-from numpy import ndarray
 from scipy.constants import pi, k as kB, e, h, c
 from numpy.fft import fft, ifft, fftshift, ifftshift
 
@@ -32,8 +31,7 @@ import matplotlib.pyplot as plt
 plt.rcParams['font.family'] = 'serif' 
 
 import sklearn.cluster as sk
-from tqdm.auto import tqdm # barra de progreso
-from numpy.lib.scimath import sqrt as csqrt
+from tqdm.auto import tqdm # progress bar
 
 import warnings
 
@@ -47,7 +45,6 @@ from .typing import (
 )
 
 from .utils import (
-    generate_prbs,
     idbm,
     idb,
     db,
@@ -60,66 +57,85 @@ from .utils import (
     dispersion,
 )
 
-
-
-def PRBS(n=2**8, 
-         user=[], 
-         order=None):
+def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31], 
+         len: int = None):
     r"""**Pseudorandom binary sequence generator**
 
     Parameters
     ----------
-    n : int, optional, default: 2**8
-        lenght of random binary sequence
-    user : str or array_like, optional, default: []
-        binary sequence user pattern
-    order : int, optional, default: None
+    order : :obj:`int`, {7, 9, 11, 15, 20, 23, 31}
         degree of the generating pseudorandom polynomial
+    len : :obj:`int`, optional
+        lenght of output binary sequence
 
     Returns
     -------
-    seq : binary_sequence
-        generated binary sequence
+    out : :obj:`binary_sequence`
+        generated pseudorandom binary sequence
+
+    Raises
+    ------
+    ValueError
+        If ``order`` is not in [7, 9, 11, 15, 20, 23, 31].
+    TypeError
+        If ``len`` is not an integer.
 
     Examples
     --------
-    Using parameter **n**, this function generate a random sequence of lenght `n`. Internally it use ``numpy.random.randint`` function.
-    
+    For more details, see [prbs]_.
+
     >>> from opticomlib.devices import PRBS
-    >>> PRBS(10).data
-    array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1], dtype=uint8)  #random
+    >>> PRBS(7, len=10).print("PRBS")
 
-    On the other hand, the **user** parameter can be used for a custom sequence.
-    We can input it in *str* format separating the values by spaces ``' '`` or by commas ``','``. 
+    :: 
+  
+        -----------------------------
+        ***    binary_sequence    ***
+        -----------------------------
+            data  :  [1 0 0 0 0 0 0 1 0 0]
+            len   :  10
+            size  :  440 bytes
+            time  :  0 s
 
-    >>> PRBS(user='1 0 1 0   0 1 1 1   0,1,0,0   1,1,0,1').data
-    array([1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1], dtype=uint8)
+        <opticomlib.typing.binary_sequence object at 0x000002385FD7D7F0>
 
-    The last way in which the function can be used is by passing the **order** of the generating polynomial
-    as an argument, which will return a pseudo-random binary sequence of lenght :math:`2^{order}-1`, using an internal algorithm.
-
-    >>> PRBS(order=7).data 
-    array([1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-        0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,
-        0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-        0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1,
-        0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0,
-        0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1], dtype=uint8)
+    References
+    ----------
+    .. [prbs] "Pseudorandom binary sequence" https://en.wikipedia.org/wiki/Pseudorandom_binary_sequence
     """
     tic()
-
-    if user:
-        output = binary_sequence( user )
-    elif order:
-        output = binary_sequence( generate_prbs(order) )
+    taps = {7: [7,6], 9: [9,5], 11: [11,9], 15: [15,14], 20: [20,3], 23: [23,18], 31: [31,28]}
+    
+    if len is not None:
+        if not isinstance(len, int):
+            raise TypeError('The parameter `len` must be an integer.')
+        len = min(len, 2**order-1)
     else:
-        output = binary_sequence( np.random.randint(0, 2, n) )
+        len = 2**order-1
+    
+    if order not in taps.keys():
+        raise ValueError('The parameter `order` must be one of the following values (7, 9, 11, 15, 20, 23, 31).')
+
+    prbs = np.empty((len,), dtype=np.uint8)  # Preallocate memory
+    lfsr = (1<<order)-1 # initial state of the LFSR
+    tap1, tap2 = np.array(taps[order])-1
+
+    index = 0
+    while index < len:
+        prbs[index] = lfsr&1
+        new = ((lfsr>>tap1)^(lfsr>>tap2))&1
+        lfsr = ((lfsr<<1) | new) & (1<<order)-1 
+        index += 1
+        if lfsr == (1<<order)-1:
+            break
+    
+    output = binary_sequence( prbs )
     output.execution_time = toc()
+    
     return output
 
 
-
-def DAC(input: Union[str, list, tuple, ndarray, binary_sequence], 
+def DAC(input: Union[str, list, tuple, np.ndarray, binary_sequence], 
         Vout: float=None,
         pulse_shape: Literal['rect','gaussian']='rect', 
         **kargs):  
@@ -215,7 +231,7 @@ def DAC(input: Union[str, list, tuple, ndarray, binary_sequence],
 
 
 def PM(op_input: optical_signal, 
-       el_input: Union[float, ndarray, electrical_signal], 
+       el_input: Union[float, np.ndarray, electrical_signal], 
        Vpi: float=5.0):
     r"""
     **Optical Phase Modulator**
@@ -315,7 +331,7 @@ def PM(op_input: optical_signal,
         el_input = el_input.signal
         if el_input.size != op_input.signal.len():
             raise ValueError("The length of `el_input` must be equal to the length of `op_input`.")
-    elif isinstance(el_input, ndarray):
+    elif isinstance(el_input, np.ndarray):
         if len(el_input) != op_input.len():
             raise ValueError("The length of `el_input` must be equal to the length of `op_input`.")
     else:
@@ -334,7 +350,7 @@ def PM(op_input: optical_signal,
 
 
 def MZM(op_input: optical_signal, 
-        el_input: Union[float, ndarray, electrical_signal], 
+        el_input: Union[float, np.ndarray, electrical_signal], 
         bias: float=0.0, 
         Vpi: float=5.0, 
         loss_dB: float=0.0, 
@@ -463,7 +479,7 @@ def MZM(op_input: optical_signal,
         el_input = el_input.signal
         if el_input.size != op_input.signal.len():
             raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
-    elif isinstance(el_input, ndarray):
+    elif isinstance(el_input, np.ndarray):
         if len(el_input) != op_input.len():
             raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
     else:
@@ -795,8 +811,7 @@ def FIBER(input: optical_signal,
     return output
 
 
-
-def LPF(input: Union[ndarray, electrical_signal], 
+def LPF(input: Union[np.ndarray, electrical_signal], 
         BW: float, 
         n: int=4, 
         fs: float=None,
@@ -860,7 +875,7 @@ def LPF(input: Union[ndarray, electrical_signal],
     """
     tic()
 
-    if not isinstance(input, (ndarray, electrical_signal)):
+    if not isinstance(input, (np.ndarray, electrical_signal)):
         raise TypeError("`input` must be of type (ndarray or electrical_signal).")
     elif isinstance(input, electrical_signal):
             signal = input.signal
@@ -1048,7 +1063,7 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
     return output
 
 
-def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: int=4096, sps_resamp: int=None):
+def GET_EYE(input: Union[electrical_signal, optical_signal, np.ndarray], nslots: int=4096, sps_resamp: int=None):
     r"""
     **Get Eye Parameters Estimator**
 
@@ -1144,7 +1159,7 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, ndarray], nslots: in
 
     eye_dict = {}
 
-    if isinstance(input, ndarray):
+    if isinstance(input, np.ndarray):
         if input.ndim == 2:
             if input.shape[0] != 2 and input.shape[1] == 2:
                 input = input.T
