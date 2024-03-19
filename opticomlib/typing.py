@@ -407,7 +407,7 @@ class binary_sequence():
             other = np.array(other, dtype=bool)
         if other.size != self.data.size and other.size != 1:
             raise ValueError(f"Can't compare binary sequences with shapes {self.data.shape} and {other.shape}")
-        return self.data == other
+        return binary_sequence(self.data == other)
 
     def __add__(self, other): 
         """ Concatenate two binary sequences, adding to the end.
