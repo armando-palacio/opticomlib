@@ -17,6 +17,9 @@ from opticomlib.typing import (
     eye,
 )
 
+
+
+
 class TestGlobalVariables(unittest.TestCase):
     def test_global_variables(self):
         gv = global_variables()
@@ -54,6 +57,9 @@ class TestGlobalVariables(unittest.TestCase):
             gv.print()
         except Exception as e:
             self.fail(f"gv.print() raised {type(e).__name__} unexpectedly!")
+
+
+
 
 class TestBinarySequence(unittest.TestCase):
     inputs = ['000011110000',
@@ -113,6 +119,9 @@ class TestBinarySequence(unittest.TestCase):
                 assert_(bits.ones() == 4)
                 assert_(bits.zeros() == 8)
 
+
+
+
 class TestElectricalSignal(unittest.TestCase):
     inputs = [np.arange(100).tolist(), np.arange(100)] 
 
@@ -121,7 +130,7 @@ class TestElectricalSignal(unittest.TestCase):
         assert_raises(ValueError, lambda: electrical_signal([0,1,2], [0,1,2,3]))
         assert_raises(ValueError, lambda: electrical_signal([0,1,2,3], [0,1,2]))
         assert_raises(TypeError, lambda: electrical_signal(signal='0,0.1,0.2,0.3'))
-        assert_raises(TypeError, lambda: electrical_signal(noise='0,0.1,0.2,0.3'))
+        assert_raises(ValueError, lambda: electrical_signal([[1,2,3]]))
 
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
@@ -230,6 +239,16 @@ class TestElectricalSignal(unittest.TestCase):
                 signal = electrical_signal(input, noise=np.ones(100))
                 assert_equal(signal.apply(np.abs).signal, np.abs(input))
                 assert_equal(signal.apply(np.abs).noise, np.abs(signal.noise))
+
+
+
+
+class TestOpticalSignal(unittest.TestCase):
+    pass
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
