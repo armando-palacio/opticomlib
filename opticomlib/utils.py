@@ -81,22 +81,35 @@ def dec2bin(num: int, digits: int=8):
         i -= 1
     return binary
 
+def _get_type_array_from_str(string):
+    # just 0 and 1 without +/- --> bool
+    if re.match(r'^[0-1,;\s]+$', string):
+        return bool
+    # just numbers with +/- and without dots --> int
+    if re.match(r'^[0-9,;\-\+\s]+$', string):
+        return int
+    # just numbers with +/- and dots --> float
+    if re.match(r'^[0-9,;.\+\-\s]+$', string): 
+        return float
+     # just numbers with +/-, dots and j --> complex
+    if re.match(r'^[0-9,;.\+\-\sji]+$', string):
+        return complex
+    return None
 
-
-def str2array(string: str, dtype: type=float): 
+def str2array(string: str, dtype: bool | int | float | complex = None): 
     r"""
-    Converts a string to array of numbers. Use commas or whitespace as element separators.
-    Elements can be integer or floating point. If there is at least one floating point number, then all elements are converted to float.
-
-    If the string contains only 0 and 1, then the output is a binary array.
+    Converts a string to array of numbers. Use comma (``,``) or whitespace (`` ``) as element separators and semicolon (``;``) as row separator.
+    Also, ``i`` or ``j`` can be used to represent the imaginary unit.
 
     Parameters
     ----------
     string : :obj:`str`
         String to convert.
     dtype : :obj:`type`, optional
-        Data type of the output array. Default is `float`.
-        Allowed types are `int`, `float` and `bool`.
+        Data type of the output array. 
+        If ``dtype`` is not given, the data type is determined from the input string.
+        If ``dtype`` is given, the data output is cast to the given type.
+        Allowed values are ``bool``, ``int``, ``float`` and ``complex``.
 
     Returns
     -------
@@ -110,40 +123,70 @@ def str2array(string: str, dtype: type=float):
 
     Example
     -------
-    .. code-block:: python
+    For binary numbers, string must contain only 0 and 1. 
+    Only in this case, sequence don't need to be separated by commas or spaces although it is allowed.
 
-        >>> str2array('1 2 3 4')
-        array([1, 2, 3, 4])
-        >>> str2array('1,2,3,4')
-        array([1, 2, 3, 4])
-        >>> str2array('1.1 2.2 3.3 4.4')
-        array([1.1, 2.2, 3.3, 4.4])
-        >>> str2array('101010') 
-        array([1, 0, 1, 0, 1, 0], dtype=uint8)
+    >>> str2array('101')
+    array([ True, False, True])
+    >>> str2array('1 0 1; 0 1 0')
+    array([[ True, False,  True],
+           [False,  True, False]])
+
+    Special case 
+    >>> str2array('1 0 1 10')
+    array([True, False, True, True, False])
+    >>> str2array('1 0 1 10', dtype=int)
+    array([ 1,  0,  1, 10])
+    >>> str2array('1 0 1 10', dtype=float)
+    array([ 1.,  0.,  1., 10.])
+    >>> str2array('1 0 1 10', dtype=complex)
+    array([ 1.+0.j,  0.+0.j,  1.+0.j, 10.+0.j])
+
+    For integer and float numbers
+    >>> str2array('1 2 3 4')
+    array([1, 2, 3, 4])
+    >>> str2array('1.1 2.2 3.3 4.4')
+    array([1.1, 2.2, 3.3, 4.4])
+    
+    For complex numbers
+    >>> str2array('1+2j 3-4i')
+    array([1.+2.j, 3.-4.j])
     """
-
-    if dtype == bool:
-        if re.match(r'^[0-1, \s]+$', string): # check that only contains 0, 1, whitespace and commas
-            string = string.replace(' ', '').replace(',', '')
-            return np.array(list(string)).astype(bool)
-        else:
-            raise ValueError('String contains invalid characters. Only 0, 1, whitespace and commas are allowed when `dtype=bool`.')
+    _dtype = _get_type_array_from_str(string)
     
-    if dtype == int:
-        if re.match(r'^[0-9, \s]+$', string): # check that only contain numbers, whitespace and commas
-            string = re.split(r'[,\s]+', string)
-            return np.array(string).astype(int)
+    if _dtype == bool:
+        # for special cases when string = '10 100 1000' and dtype = int | float | complex 
+        if dtype == int or dtype==float or dtype==complex: 
+            string = string.split(';')
+            if len(string) == 1:
+                arr = np.array(re.split(r'[,\s]+', string[0].strip()), dtype=dtype)
+            else:
+                arr = np.array([re.split(r'[,\s]+', item.strip()) for item in string], dtype=dtype)
         else:
-            raise ValueError('String contains invalid characters. Only numbers, whitespace and commas are allowed when `dtype=int`.')
-    
-    if dtype == float:
-        if re.match(r'^[0-9, .\s]+$', string): # check that only contain numbers, whitespace, commas and dots
-            string = re.split(r'[,\s]+', string)
-            return np.array(string).astype(float)
-        else:
-            raise ValueError('String contains invalid characters. Only numbers, whitespace, commas and dots are allowed when `dtype=float`.')
+            string = string.replace(' ', '').replace(',', '').split(';')
+            if len(string) == 1:
+                arr = np.array(list(string[0])).astype(_dtype)
+            else:
+                arr = np.array([list(item) for item in string]).astype(_dtype)
 
-    raise ValueError('`dtype` must be `int`, `float` or `bool`.')
+    elif _dtype == int or _dtype==float:
+        string = string.split(';')
+        if len(string) == 1:
+            arr = np.array(re.split(r'[,\s]+', string[0].strip()), dtype=_dtype)
+        else:
+            arr = np.array([re.split(r'[,\s]+', item.strip()) for item in string], dtype=_dtype)
+
+    elif _dtype == complex:
+        string = string.replace('i','j').split(';')
+        if len(string) == 1:
+            arr = np.array(re.split(r'[,\s]+', string[0].strip()), dtype=_dtype)
+        else:
+            arr = np.array([re.split(r'[,\s]+', item.strip()) for item in string], dtype=_dtype)
+
+    else:
+        raise ValueError('The string contains invalid characters and can\'t be converted to an array.')
+    
+    return arr.astype(dtype) if dtype else arr
 
 
 
