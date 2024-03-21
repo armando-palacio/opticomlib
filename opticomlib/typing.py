@@ -20,7 +20,7 @@ plt.rcParams['font.family'] = 'serif'
 
 from matplotlib.widgets import Slider
 
-from typing import Literal, Union, Any
+from typing import Literal, Any, Iterable
 
 import warnings
 
@@ -302,25 +302,25 @@ class binary_sequence():
         sizeof
     """
 
-    def __init__(self, data: Union[str, list, tuple, np.ndarray]): 
+    def __init__(self, data: str | Iterable): 
         """ Initialize the binary sequence object.
 
         Parameters
         ----------
-        data : :obj:`str`, :obj:`Array_Like(bool)`
+        data : :obj:`str`, 1D array_like
             The binary sequence data.
         """
-        if not isinstance(data, ((str,) + Array_Like)):
-            raise TypeError("The argument must be an str or array_like, passed {}!".format(type(data)) )
-        
         if isinstance(data, str):
-            data = str2array(data, dtype=bool)
+            data = str2array(data)
         else:
             data = np.array(data)
-            if not np.all((data == 0) | (data == 1)): 
-                raise ValueError("The array must contain only 0's and 1's!")
 
-        self.data = np.array(data, dtype=bool)
+        if not np.all((data == 0) | (data == 1)): 
+            raise ValueError("The array must contain only 0's and 1's!")
+        if data.ndim != 1:
+            raise ValueError(f"Binary sequence must be 1D array, invalid shape {data.shape}")
+
+        self.data = data.astype(bool)
         """The binary sequence data, a 1D numpy array of boolean values."""
         self.execution_time = None
         """The execution time of the last operation performed on the binary sequence."""
@@ -369,7 +369,7 @@ class binary_sequence():
         """Get number of slots of the binary sequence."""
         return self.len()
 
-    def __getitem__(self, slice: Union[int, slice]):
+    def __getitem__(self, slice: int | slice):
         """Get a slice of the binary sequence (``x[slice]``). 
         
         Parameters
@@ -438,13 +438,17 @@ class binary_sequence():
         if isinstance(other, binary_sequence):
             other = other.data
         elif isinstance(other, str):
-            other = str2array(other, bool)
+            other = str2array(other)
         elif isinstance(other, Array_Like):
             other = np.array(other)
-            if not np.all((other == 0) | (other == 1)): 
-                raise ValueError("Sequence to concatenate must contain only 0's and 1's!")
         else:
             raise TypeError("Can't concatenate binary_sequence with type {}".format(type(other)))
+        
+        if not np.all((other == 0) | (other == 1)): 
+            raise ValueError("Sequence to concatenate must contain only 0's and 1's!")
+        if other.ndim != 1:
+            raise ValueError(f"Binary sequence must be 1D array, invalid shape {other.shape}")
+        
         out = np.concatenate((self.data, other))
         return binary_sequence(out)
     
@@ -475,13 +479,17 @@ class binary_sequence():
         if isinstance(other, binary_sequence):
             other = other.data
         elif isinstance(other, str):
-            other = str2array(other, bool)
+            other = str2array(other)
         elif isinstance(other, Array_Like):
             other = np.array(other)
-            if not np.all((other == 0) | (other == 1)): 
-                raise ValueError("Sequence to concatenate must contain only 0's and 1's!")
         else:
             raise TypeError("Can't concatenate binary_sequence with type {}".format(type(other)))
+        
+        if not np.all((other == 0) | (other == 1)): 
+            raise ValueError("Sequence to concatenate must contain only 0's and 1's!")
+        if other.ndim != 1:
+            raise ValueError(f"Binary sequence must be 1D array, invalid shape {other.shape}")
+
         out = np.concatenate((other, self.data))
         return binary_sequence(out)
 
@@ -545,7 +553,9 @@ class binary_sequence():
 class electrical_signal():
     """**Electrical Signal**
 
-    This class provides methods and attributes to work with electrical signals.
+    This class provides methods and attributes to work with electrical signals. 
+    It has overloaded operators necessary to properly interpret 
+    the ``+``, ``-``, ``*`` and ``/``` operations as any numpy array.
 
     .. rubric:: Attributes
     .. autosummary::
@@ -558,17 +568,8 @@ class electrical_signal():
     .. autosummary::
 
         __init__
-        __str__
-        __repr__
-        print
-        __len__
-        __add__
-        __sub__
-        __mul__
-        __getitem__
         __call__
-        __gt__
-        __lt__
+        print
         len
         type
         sizeof
@@ -577,11 +578,11 @@ class electrical_signal():
         dt
         t
         w
+        abs
         power
         phase
         apply
         copy
-        abs
         plot
         psd
         grid
@@ -589,41 +590,47 @@ class electrical_signal():
         show
     """
 
-    def __init__(self, signal: Union[list, tuple, np.ndarray]=None, noise: Union[list, tuple, np.ndarray]=None) -> None:
+    def __init__(self, signal: str | Iterable, noise: str | Iterable = None) -> None:
         """ Initialize the electrical signal object.
 
         Parameters
         ----------
-        signal : array_like, optional
-            The signal values. Defaults to `None`.
-        noise : array_like, optional
+        signal : :obj:`str` or 1D array_like
+            The signal values.
+        noise : :obj:`str` or 1D array_like, optional
             The noise values. Defaults to `None`.
-        """
-        if signal is None and noise is None:
-            raise KeyError("`signal` or `noise` must be provided!")
-        if (signal is not None) and (noise is not None) and (len(signal)!=len(noise)):
-            raise ValueError(f"The arrays `signal` and `noise` must have the same length!")
 
-        if signal is None:
-            signal = np.zeros_like(noise, dtype=complex)
-        elif not isinstance(signal, Array_Like):
-            raise TypeError("`signal` must be of type list, tuple or numpy array!")
-        else:
-            signal = np.array(signal, dtype=complex) # shape (1xN)
-
-        if self.__class__ == electrical_signal:
-            if signal.ndim != 1:
-                raise ValueError("Signal must be 1D when electrical_signal is instantiated")
-        else:
-            if signal.ndim != 2:
-                raise ValueError("Signal must be 2D when optical_signal is instantiated")
+        Notes
+        -----
+        The signal and noise can be provided as a string, in which case it will be converted to a 
+        ``numpy.array`` using the :func:`str2array` function. For example:
         
-        if noise is None:
-            noise = np.zeros_like(signal, dtype=complex)
-        elif not isinstance(noise, Array_Like):
-            raise TypeError("`noise` must be of type list, tuple or numpy array!")
+        .. code-block:: python
+
+            >>> electrical_signal('1 2 3,4,5')  # separate values by space or comma indistinctly
+            electrical_signal(signal=[1.+0.j 2.+0.j 3.+0.j 4.+0.j 5.+0.j],
+                              noise=[0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j])
+            >>> electrical_signal('1+2j, 3+4j, 5+6j') # complex values
+        """    
+        if isinstance(signal, str):
+            signal = str2array(signal, dtype=complex)
+        else: 
+            signal = np.array(signal, dtype=complex)
+        
+        if self.__class__ == electrical_signal:
+            if signal.ndim != 1 or signal.size < 1:
+                raise ValueError(f"Signal must be 1D array for electrical_signal, invalid shape {signal.shape}")
+        
+        if noise is not None:
+            if isinstance(noise, str):
+                noise = str2array(noise, dtype=complex)
+            else: 
+                noise = np.array(noise, dtype=complex)
+            
+            if signal.shape != noise.shape:
+                raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
         else:
-            noise = np.array(noise, dtype=complex)
+            noise = np.zeros(signal.shape, dtype=complex)
         
         self.signal = signal
         """The signal values, a 1D numpy array of complex values."""
@@ -639,25 +646,26 @@ class electrical_signal():
         
         title = 3*'*' + f'    {title}    ' + 3*'*'
         sub = len(title)*'-'
+        tab = 3*' '
 
-        np.set_printoptions(precision=0, threshold=10)
+        np.set_printoptions(precision=1, threshold=10)
 
         if self.signal.ndim == 1:
             signal = str(self.signal)
             noise = str(self.noise)
         else:
-            signal = str(self.signal).replace('\n', '\n\t' + 11*' ')
-            noise = str(self.noise).replace('\n', '\n\t' + 11*' ')
+            signal = str(self.signal).replace('\n', '\n'+tab + 11*' ')
+            noise = str(self.noise).replace('\n', '\n'+tab + 11*' ')
         
-        msg = f'\n{sub}\n{title}\n{sub}\n\t' + \
-            f'signal  :  {signal}\n\t' + \
-            f'noise   :  {noise}\n\t' + \
-            f'len     :  {self.len()}\n\t' + \
-            f'size    :  {self.sizeof()} bytes\n'
+        msg = f'\n{sub}\n{title}\n{sub}\n'+ tab + \
+            f'signal:    {signal}\n'+ tab + \
+            f'noise:     {noise}\n'+ tab + \
+            f'len:       {self.len()}\n' + tab + \
+            f'mem_size:  {self.sizeof()} bytes\n'
         
         if self.execution_time is not None:
-            msg += '\t' + \
-                f'time    :  {si(self.execution_time, "s", 1)}\n'
+            msg += tab + \
+                f'time:      {si(self.execution_time, "s", 1)}\n'
         return msg
     
     def __repr__(self):
@@ -762,7 +770,7 @@ class electrical_signal():
     def __rmul__(self, other):
         return self.__mul__(other)
         
-    def __getitem__(self, slice: Union[int, slice]):
+    def __getitem__(self, slice: int | slice):
         if isinstance(slice, int):
             return self.signal[slice], self.noise[slice] 
         return electrical_signal( self.signal[slice], self.noise[slice] )
@@ -1237,14 +1245,8 @@ class optical_signal(electrical_signal):
     .. autosummary::
 
         __init__
-        __str__
-        print
-        __len__
-        __add__
-        __mul__
-        __getitem__
         __call__
-        __gt__
+        print
         len
         type
         sizeof
@@ -1265,36 +1267,45 @@ class optical_signal(electrical_signal):
         show
     """
 
-    def __init__(self, signal: Union[list, tuple, np.ndarray]=None, noise: Union[list, tuple, np.ndarray]=None) -> None:
+    def __init__(self, signal: str | Iterable, noise: str | Iterable = None) -> None:
         """ Initialize the optical signal object.
 
         Parameters
         ----------
-        signal : array_like, (1D, 2D)
-            The signal values, default is `None`.
-        noise : array_like, (1D, 2D)
+        signal : :obj:`str` or array_like (1D, 2D)
+            The signal values.
+        noise : :obj:`str` or array_like (1D, 2D)
             The noise values, default is `None`.
         """
-        if signal is not None:
+        if isinstance(signal, str):
+            signal = str2array(signal, dtype=complex)
+        else:
             signal = np.array(signal, dtype=complex)
-            ndim = signal.ndim
-            if ndim > 2 or ndim < 1:
-                raise ValueError("`signal` must be a 1D or 2D array!")
-            if ndim == 1:
+
+        if self.__class__ == optical_signal:
+            if signal.ndim > 2 or signal.size < 1:
+                raise ValueError(f"Signal must be 1D or 2D array for optical_signal, invalid shape {signal.shape}")
+            if signal.ndim == 1:
                 signal = np.array([signal, np.zeros_like(signal)])
-            elif ndim == 2 and signal.shape[0] == 1:
+            elif signal.ndim == 2 and signal.shape[0] == 1:
                 signal = np.array([signal[0], np.zeros_like(signal[0])])
 
-        elif noise is not None:
-            ndim = np.array(noise).ndim
-            if ndim > 2 or ndim < 1:
-                raise ValueError("`noise` must be a 1D or 2D array!")
-            if ndim == 1:
+
+        if noise is not None:
+            if isinstance(noise, str):
+                noise = str2array(noise, dtype=complex)
+            else:
+                noise = np.array(noise, dtype=complex)
+            
+            if noise.ndim == 1:
                 noise = np.array([noise, np.zeros_like(noise)])
-            elif ndim == 2 and noise.shape[0] == 2:
+            elif noise.ndim == 2 and noise.shape[0] == 1:
                 noise = np.array([noise[0], np.zeros_like(noise[0])])
+
+            if signal.shape != noise.shape:
+                raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
         else:
-            raise KeyError("`signal` or `noise` must be provided!")
+            noise = np.zeros_like(signal, dtype=complex)
         
         super().__init__( signal, noise )  
     
@@ -1533,7 +1544,7 @@ class optical_signal(electrical_signal):
     
 
     def psd(self, 
-            fmt: Union[str, list]='-', 
+            fmt: str | list='-', 
             mode: Literal['x','y','both']='x', 
             n: int=None,
             xlabel: str=None,
