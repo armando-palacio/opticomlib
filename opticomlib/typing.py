@@ -613,9 +613,9 @@ class electrical_signal():
             >>> electrical_signal('1+2j, 3+4j, 5+6j') # complex values
         """    
         if isinstance(signal, str):
-            signal = str2array(signal, dtype=complex)
+            signal = str2array(signal)
         else: 
-            signal = np.array(signal, dtype=complex)
+            signal = np.array(signal)
         
         if self.__class__ == electrical_signal:
             if signal.ndim != 1 or signal.size < 1:
@@ -623,14 +623,14 @@ class electrical_signal():
         
         if noise is not None:
             if isinstance(noise, str):
-                noise = str2array(noise, dtype=complex)
+                noise = str2array(noise)
             else: 
-                noise = np.array(noise, dtype=complex)
+                noise = np.array(noise)
             
             if signal.shape != noise.shape:
                 raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
         else:
-            noise = np.zeros(signal.shape, dtype=complex)
+            noise = np.zeros(signal.shape, dtype=signal.dtype)
         
         self.signal = signal
         """The signal values, a 1D numpy array of complex values."""
@@ -670,7 +670,10 @@ class electrical_signal():
     
     def __repr__(self):
         np.set_printoptions(precision=1, threshold=20)
-        return f'electrical_signal(signal={str(self.signal)},\n\t\t  noise={str(self.noise)})'
+        
+        if self.noise.sum() == 0:
+            return f'electrical_signal({str(self.signal)})'
+        return f'electrical_signal(signal={str(self.signal)},\n\t\t   noise={str(self.noise)})'
 
     def print(self, msg: str=None): 
         """Prints object parameters.
@@ -705,9 +708,15 @@ class electrical_signal():
             A new electrical signal object with the result of the addition.
         """
         if isinstance(other, electrical_signal): 
+            if self.len() != other.len():
+                raise ValueError(f"Can't add electrical_signal with shapes {self.signal.shape} and {other.signal.shape}")
             return electrical_signal(self.signal + other.signal, self.noise + other.noise)
         
-        other = np.array(other, dtype=complex)
+        elif isinstance(other, str):
+            other = str2array(other)
+        
+        else:
+            other = np.array(other)
         
         if other.size != self.len() and other.size != 1:
             raise ValueError(f"Can't add electrical_signal with shapes {self.signal.shape} and {other.shape}")
@@ -730,8 +739,15 @@ class electrical_signal():
             A new electrical signal object with the result of the substraction.        
         """
         if isinstance(other, electrical_signal):
+            if self.len() != other.len():
+                raise ValueError(f"Can't substract electrical_signal with shapes {self.signal.shape} and {other.signal.shape}")
             return electrical_signal(self.signal - other.signal, self.noise - other.noise)
-        other = np.array(other, dtype=complex)
+        
+        elif isinstance(other, str):
+            other = str2array(other)
+        
+        else:
+            other = np.array(other)
         
         if other.size != self.len() and other.size != 1:
             raise ValueError(f"Can't substract electrical_signal with shapes {self.signal.shape} and {other.shape}")
@@ -739,8 +755,15 @@ class electrical_signal():
         
     def __rsub__(self, other):
         if isinstance(other, electrical_signal):
+            if self.len() != other.len():
+                raise ValueError(f"Can't substract electrical_signal with shapes {self.signal.shape} and {other.signal.shape}")
             return electrical_signal(other.signal - self.signal, other.noise - self.noise)
-        other = np.array(other, dtype=complex)
+        
+        elif isinstance(other, str):
+            other = str2array(other)
+        
+        else:
+            other = np.array(other)
         
         if other.size != self.len() and other.size != 1:
             raise ValueError(f"Can't substract electrical_signal with shapes {self.signal.shape} and {other.shape}")
@@ -760,8 +783,15 @@ class electrical_signal():
             A new electrical signal object with the result of the multiplication.
         """
         if isinstance(other, electrical_signal):
+            if self.len() != other.len():
+                raise ValueError(f"Can't multiply electrical_signal with shapes {self.signal.shape} and {other.signal.shape}")
             return electrical_signal(self.signal * other.signal, self.noise * other.noise)
-        other = np.array(other, dtype=complex)
+        
+        elif isinstance(other, str):
+            other = str2array(other)
+        
+        else:
+            other = np.array(other)
         
         if other.size != self.len() and other.size != 1:
             raise ValueError(f"Can't multiply electrical_signal with shapes {self.signal.shape} and {other.shape}")
@@ -833,12 +863,17 @@ class electrical_signal():
             If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.
         """
         if isinstance(other, electrical_signal):
+            if self.len() != other.len():
+                raise ValueError(f"Can't compare electrical_signals with shapes {self.signal.shape} and {other.signal.shape}")
             threshold = other.signal + other.noise
+        
+        elif isinstance(other, str):
+            threshold = str2array(other)
         else:
             threshold = np.array(other)
             
         if self.len() != threshold.size and threshold.size != 1:
-            raise ValueError(f"Can't compare electrical_signals with shapes {self.data.shape} and {other.shape}")
+            raise ValueError(f"Can't compare electrical_signals with shapes {self.signal.shape} and {threshold.shape}")
               
         return binary_sequence( self.signal+self.noise > threshold )
     
@@ -863,12 +898,18 @@ class electrical_signal():
             If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.
         """
         if isinstance(other, electrical_signal):
+            if self.len() != other.len():
+                raise ValueError(f"Can't compare electrical_signals with shapes {self.signal.shape} and {other.signal.shape}")
             threshold = other.signal + other.noise
+        
+        elif isinstance(other, str):
+            threshold = str2array(other)
+        
         else:
             threshold = np.array(other)
             
         if self.len() != threshold.size and threshold.size != 1:
-            raise ValueError(f"Can't compare electrical_signals with shapes {self.data.shape} and {other.shape}")
+            raise ValueError(f"Can't compare electrical_signals with shapes {self.signal.shape} and {threshold.shape}")
               
         return binary_sequence( self.signal+self.noise < threshold )
              
@@ -1278,12 +1319,12 @@ class optical_signal(electrical_signal):
             The noise values, default is `None`.
         """
         if isinstance(signal, str):
-            signal = str2array(signal, dtype=complex)
+            signal = str2array(signal)
         else:
-            signal = np.array(signal, dtype=complex)
+            signal = np.array(signal)
 
         if self.__class__ == optical_signal:
-            if signal.ndim > 2 or signal.size < 1:
+            if signal.ndim>2 or (signal.ndim>1 and signal.shape[0]>2) or signal.size<1:
                 raise ValueError(f"Signal must be 1D or 2D array for optical_signal, invalid shape {signal.shape}")
             if signal.ndim == 1:
                 signal = np.array([signal, np.zeros_like(signal)])
@@ -1293,9 +1334,9 @@ class optical_signal(electrical_signal):
 
         if noise is not None:
             if isinstance(noise, str):
-                noise = str2array(noise, dtype=complex)
+                noise = str2array(noise)
             else:
-                noise = np.array(noise, dtype=complex)
+                noise = np.array(noise)
             
             if noise.ndim == 1:
                 noise = np.array([noise, np.zeros_like(noise)])
@@ -1305,7 +1346,7 @@ class optical_signal(electrical_signal):
             if signal.shape != noise.shape:
                 raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
         else:
-            noise = np.zeros_like(signal, dtype=complex)
+            noise = np.zeros_like(signal, dtype=signal.dtype)
         
         super().__init__( signal, noise )  
     
@@ -1313,6 +1354,9 @@ class optical_signal(electrical_signal):
         signal = str(self.signal).replace('\n', '\n\t' + 13*' ')
         noise = str(self.noise).replace('\n', '\n\t' + 13*' ')
         np.set_printoptions(precision=1, threshold=20)
+
+        if self.noise.sum() == 0:
+            return f'optical_signal({signal})'
         return f'optical_signal(signal={signal},\n\t\tnoise={noise})'
 
     
@@ -1342,22 +1386,17 @@ class optical_signal(electrical_signal):
         """
         if isinstance(other, optical_signal):
             if self.len() != other.len():
-                raise ValueError("Can't sum signals with different lengths! ({} and {})".format(self.len(), other.len()))
+                raise ValueError(f"Can't add optical_signals with shapes {self.signal.shape} and {other.signal.shape}")
             return optical_signal(self.signal + other.signal, self.noise + other.noise)
-        if isinstance(other, (int, float, complex)):
-            return optical_signal(self.signal + other, self.noise)
-        if isinstance(other, (list, tuple, np.ndarray)):
+        
+        elif isinstance(other, str):
+            other = str2array(other)
+        else:
             other = np.array(other)
-            if other.ndim == 1:
-                l = other.size
-            elif other.ndim == 2:
-                l = other.shape[1]
-            else:
-                raise ValueError("`other` must be a 1D or 2D array!")
 
-            if self.len() != l:
-                raise ValueError("Can't sum signals with different lengths! ({} and {})".format(self.len(), l))
-            return optical_signal(self.signal + other, self.noise)
+        if other.ndim>2 or (other.ndim>1 and other.shape[0]>2) or other.size<1:
+            raise ValueError(f"Can't add optical_signals with shapes {self.signal.shape} and {other.shape}")
+        return optical_signal(self.signal + other, self.noise)
         
     def __radd__(self, other):
         """ Sum two optical signals. __radd__() = __add__()."""
@@ -1379,33 +1418,28 @@ class optical_signal(electrical_signal):
         """
         if isinstance(other, optical_signal):
             if self.len() != other.len():
-                raise ValueError("Can't multiply signals with different lengths! ({} and {})".format(self.len(), other.len()))
+                raise ValueError(f"Can't multiply optical_signals with shapes {self.signal.shape} and {other.signal.shape}")
             return optical_signal(self.signal * other.signal, self.noise * other.noise)
-        if isinstance(other, (int, float, complex)):
-            return optical_signal(self.signal * other, self.noise)
-        if isinstance(other, (list, tuple, np.ndarray)):
+        
+        elif isinstance(other, str):
+            other = str2array(other)
+        else:
             other = np.array(other)
-            if other.ndim == 1:
-                l = other.size
-            elif other.ndim == 2:
-                l = other.shape[1]
-            else:
-                raise ValueError("`other` must be a 1D or 2D array!")
 
-            if self.len() != l:
-                raise ValueError("Can't multiply signals with different lengths! ({} and {})".format(self.len(), l))
-            return optical_signal(self.signal * other, self.noise)
+        if other.ndim>2 or (other.ndim>1 and other.shape[0]>2) or other.size<1:
+            raise ValueError(f"Can't multiply optical_signals with shapes {self.signal.shape} and {other.shape}")
+        return optical_signal(self.signal * other, self.noise)
         
     def __rmul__(self, other):
         """ Multiply two optical signals. __rmul__() = __mul__()."""
         return self.__mul__(other)
     
-    def __getitem__(self, key): 
+    def __getitem__(self, slice: int | slice): 
         """Slice the optical signal.
 
         Parameters
         ----------
-        key : :obj:`int` or :obj:`slice`
+        slice : :obj:`int` or :obj:`slice`
             Index or slice to get the new optical signal.
 
         Returns
@@ -1413,7 +1447,9 @@ class optical_signal(electrical_signal):
         out : :obj:`optical_signal`
             A new optical signal object with the result of the slicing.
         """
-        return optical_signal( self.signal[:,key], self.noise[:,key] )
+        if isinstance(slice, int):
+            return self.signal[:,slice], self.noise[:,slice]
+        return optical_signal( self.signal[:,slice], self.noise[:,slice] )
     
     def __call__(self, domain: Literal['t','w','f'], shift: bool=False):
         """ Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.
