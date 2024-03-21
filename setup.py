@@ -68,6 +68,6 @@ setup(
     install_requires=REQUIREMENTS,
     long_description=LONG_DESCRIPTION[LONG_DESCRIPTION.find("#"):],
     long_description_content_type="text/markdown",
-    python_requires='>3.8',
+    python_requires='>=3.10',
     include_package_data=True,
 )
