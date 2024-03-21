@@ -63,9 +63,14 @@ class TestGlobalVariables(unittest.TestCase):
 
 class TestBinarySequence(unittest.TestCase):
     inputs = ['000011110000',
-                [0,0,0,0,1,1,1,1,0,0,0,0],
-                (0,0,0,0,1,1,1,1,0,0,0,0),
-                np.array([0,0,0,0,1,1,1,1,0,0,0,0])]
+            [0,0,0,0,1,1,1,1,0,0,0,0],
+            (0,0,0,0,1,1,1,1,0,0,0,0),
+            np.array([0,0,0,0,1,1,1,1,0,0,0,0])]
+    
+    assert_raises(TypeError, lambda: binary_sequence())
+    assert_raises(ValueError, lambda: binary_sequence([0,1,2,3]))
+    assert_raises(ValueError, lambda: binary_sequence('001201'))
+    assert_raises(ValueError, lambda: binary_sequence('001;101'))
     
     def test_init(self):
         for input in self.inputs:
@@ -104,7 +109,9 @@ class TestBinarySequence(unittest.TestCase):
                 assert_raises(TypeError, lambda: bits + 1)
                 assert_raises(TypeError, lambda: 1 + bits)
                 assert_raises(ValueError, lambda: '020' + bits)
+                assert_raises(ValueError, lambda: bits + '020')
                 assert_raises(ValueError, lambda: bits + [0,3,0])
+                assert_raises(ValueError, lambda: [0,3,0] + bits)
                 
     def test_invert(self):
         for input in self.inputs:
@@ -123,13 +130,12 @@ class TestBinarySequence(unittest.TestCase):
 
 
 class TestElectricalSignal(unittest.TestCase):
-    inputs = [np.arange(100).tolist(), np.arange(100)] 
+    inputs = [np.arange(100).tolist().__str__().strip('[]'), np.arange(100).tolist(), np.arange(100)] 
 
     def test_init(self):
-        assert_raises(KeyError, lambda: electrical_signal())
+        assert_raises(TypeError, lambda: electrical_signal())
         assert_raises(ValueError, lambda: electrical_signal([0,1,2], [0,1,2,3]))
         assert_raises(ValueError, lambda: electrical_signal([0,1,2,3], [0,1,2]))
-        assert_raises(TypeError, lambda: electrical_signal(signal='0,0.1,0.2,0.3'))
         assert_raises(ValueError, lambda: electrical_signal([[1,2,3]]))
 
         for input in self.inputs:
@@ -202,19 +208,19 @@ class TestElectricalSignal(unittest.TestCase):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 signal = electrical_signal(input)
-                assert_equal(signal('t').signal, np.fft.ifft(input))
-                assert_equal(signal('f').signal, np.fft.fft(input))
-                assert_equal(signal('w').signal, np.fft.fft(input))
+                assert_equal(signal('t').signal, np.fft.ifft(np.arange(100)))
+                assert_equal(signal('f').signal, np.fft.fft(np.arange(100)))
+                assert_equal(signal('w').signal, np.fft.fft(np.arange(100)))
                 assert_raises(ValueError, lambda: signal('z'))
 
-                assert_equal(signal('t', shift=True).signal, np.fft.ifftshift(np.fft.ifft(input)))
+                assert_equal(signal('t', shift=True).signal, np.fft.ifftshift(np.fft.ifft(np.arange(100))))
     
     def test_power(self):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 signal = electrical_signal(input, noise=np.ones(100))
-                assert_equal(signal.power(), np.sum(np.abs(input + signal.noise)**2)/len(input))
-                assert_equal(signal.power('signal'), np.sum(np.abs(input)**2)/len(input))
+                assert_equal(signal.power(), np.sum(np.abs(np.arange(100) + signal.noise)**2)/100)
+                assert_equal(signal.power('signal'), np.sum(np.abs(np.arange(100))**2)/100)
                 assert_equal(signal.power('noise'), 1)
                 assert_raises(ValueError, lambda: signal.power('z'))
 
@@ -222,8 +228,8 @@ class TestElectricalSignal(unittest.TestCase):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 signal = electrical_signal(input, noise=np.ones(100))
-                assert_equal(signal.abs(), np.abs(input + signal.noise))
-                assert_equal(signal.abs('signal'), np.abs(input))
+                assert_equal(signal.abs(), np.arange(100)+1)
+                assert_equal(signal.abs('signal'), np.arange(100))
                 assert_equal(signal.abs('noise'), np.ones(100))
                 assert_raises(ValueError, lambda: signal.abs('z'))
 
@@ -231,13 +237,13 @@ class TestElectricalSignal(unittest.TestCase):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 signal = electrical_signal(input, noise=np.ones(100))
-                assert_equal(signal.phase(), np.unwrap(np.angle(input + signal.noise)))
+                assert_equal(signal.phase(), np.unwrap(np.angle(np.arange(100) + signal.noise)))
     
     def test_apply(self):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 signal = electrical_signal(input, noise=np.ones(100))
-                assert_equal(signal.apply(np.abs).signal, np.abs(input))
+                assert_equal(signal.apply(np.abs).signal, np.arange(100))
                 assert_equal(signal.apply(np.abs).noise, np.abs(signal.noise))
 
 
