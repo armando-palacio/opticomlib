@@ -18,7 +18,8 @@ from opticomlib.typing import (
     gv
 )
 
-
+from opticomlib.devices import GET_EYE
+import matplotlib.pyplot as plt
 
 
 class TestGlobalVariables(unittest.TestCase):
@@ -556,22 +557,36 @@ class TestOpticalSignal(unittest.TestCase):
     def test_plot(self):
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=1)
         try:
-            assert_(x.plot('--r', n=98, mode='x', xlabel='Time', ylabel='Intensity', style='light', grid=True)==x)
+            assert_(x.plot('--r', n=98, mode='x', xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=False)==x)
         except Exception as e:
             self.fail(f"x.plot() raised {type(e).__name__} unexpectedly!")
 
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=2)
         try:
-            assert_(x.plot(['r','b'], n=98, mode='both', xlabel='Time', ylabel='Intensity', style='dark', grid=True)==x)
+            assert_(x.plot(['r','b'], n=98, mode='both', xlabel='Time', ylabel='Intensity', style='dark', grid=True, hold=False)==x)
         except Exception as e:
             self.fail(f"x.plot() raised {type(e).__name__} unexpectedly!")
 
     def test_psd(self):
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=1)
         try:
-            assert_(x.psd('--r', mode='both', n=98, xlabel='Time', ylabel='Intensity', style='light', grid=True)==x)
+            assert_(x.psd('--r', mode='both', n=98, xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=False)==x)
         except Exception as e:
             self.fail(f"x.psd() raised {type(e).__name__} unexpectedly!")
+
+
+class testEye(unittest.TestCase):
+    def test_eye(self):
+        x = eye()
+
+        assert_raises(ValueError, lambda: x.print())
+        assert_raises(ValueError, lambda: x.plot())
+
+        sig = np.kron(10*[1,0], np.ones(128)) + np.random.normal(0,0.05,128*20)
+        
+        x = GET_EYE(sig) # this returns an eye object with estimated parameters
+        
+        assert_(x.plot(medias_=True, legend_=True, style='light', cmap='plasma', label='TEST')==x)
 
 
 if __name__ == '__main__':
