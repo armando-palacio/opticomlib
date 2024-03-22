@@ -90,7 +90,7 @@ class TestPPM(unittest.TestCase):
         mu1 = [0.9, 1.0, 1.1, 1.2]
         s0 = s1 = [0.1, 0.2, 0.3, 0.4]
 
-        inputs = [eye({'mu0':mu0[i], 'mu1':mu1[i], 's0':s0[i], 's1':s1[i]}) for i in range(4)]
+        inputs = [eye(**{'mu0':mu0[i], 'mu1':mu1[i], 's0':s0[i], 's1':s1[i]}) for i in range(4)]
 
         M = 4
         out = [0.514014014014014, 0.6532532532532533, 0.8085085085085084, 0.9693693693693693]
@@ -103,7 +103,7 @@ class TestPPM(unittest.TestCase):
 
     def test_ber_analizer(self):
         bits = np.random.randint(0, 2, 2**11) # binary sequence of 2^11 bits
-        eye_obj = eye({'mu0':0.0, 'mu1':1.0, 's0':0.1, 's1':0.1})
+        eye_obj = eye(**{'mu0':0.0, 'mu1':1.0, 's0':0.1, 's1':0.1})
         M = 4
 
         # First, test raises conditions work properly
