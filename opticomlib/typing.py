@@ -9,7 +9,7 @@
     eye
 """
 
-from numpy.fft import fft, ifft, fftfreq, fftshift
+from numpy.fft import fft, ifft, fftfreq, fftshift, ifftshift
 from pympler.asizeof import asizeof as sizeof
 
 import numpy as np
@@ -595,9 +595,9 @@ class electrical_signal():
 
         Parameters
         ----------
-        signal : :obj:`str` or 1D array_like
+        signal : :obj:`str` or 1D array_like or scalar
             The signal values.
-        noise : :obj:`str` or 1D array_like, optional
+        noise : :obj:`str` or 1D array_like or scalar, optional
             The noise values. Defaults to `None`.
 
         Notes
@@ -617,20 +617,29 @@ class electrical_signal():
         else: 
             signal = np.array(signal)
         
-        if self.__class__ == electrical_signal:
-            if signal.ndim != 1 or signal.size < 1:
-                raise ValueError(f"Signal must be 1D array for electrical_signal, invalid shape {signal.shape}")
-        
         if noise is not None:
             if isinstance(noise, str):
                 noise = str2array(noise)
             else: 
                 noise = np.array(noise)
             
+            arrays_type = np.result_type(signal, noise) # obtain the most comprehensive type
+            
+            signal = signal.astype(arrays_type)
+            noise = noise.astype(arrays_type) 
+        else:
+            noise = np.zeros(signal.shape).astype(signal.dtype)
+
+        if self.__class__ == electrical_signal:
+            if signal.ndim > 1 or signal.size < 1:
+                raise ValueError(f"Signal must be scalar or 1D array for electrical_signal, invalid shape {signal.shape}")
+            
+            if signal.ndim == 0 and noise.ndim == 0:
+                signal = signal[np.newaxis]
+                noise = noise[np.newaxis]
+            
             if signal.shape != noise.shape:
                 raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
-        else:
-            noise = np.zeros(signal.shape, dtype=signal.dtype)
         
         self.signal = signal
         """The signal values, a 1D numpy array of complex values."""
@@ -1081,11 +1090,13 @@ class electrical_signal():
         out : :obj:`np.ndarray`, (1D, float)
             The absolute value of the electrical signal.
         """
-        if by.lower() == 'signal':
+        by = by.lower()
+        
+        if by == 'signal':
             return np.abs(self.signal)
-        elif by.lower() == 'noise':
+        elif by == 'noise':
             return np.abs(self.noise)
-        elif by.lower() == 'all':
+        elif by == 'all':
             return np.abs(self.signal + self.noise)
         else:
             raise ValueError('`by` must be one of the following values ("signal", "noise", "all")')
@@ -1308,56 +1319,97 @@ class optical_signal(electrical_signal):
         show
     """
 
-    def __init__(self, signal: str | Iterable, noise: str | Iterable = None) -> None:
+    def __init__(self, 
+                 signal: str | Iterable, 
+                 noise: str | Iterable = None, 
+                 n_pol: Literal[1, 2] = None):
         """ Initialize the optical signal object.
 
         Parameters
         ----------
-        signal : :obj:`str` or array_like (1D, 2D)
+        signal : :obj:`str` or array_like (1D, 2D) or scalar
             The signal values.
-        noise : :obj:`str` or array_like (1D, 2D)
+        noise : :obj:`str` or array_like (1D, 2D) or scalar, optional
             The noise values, default is `None`.
+        n_pol : :obj:`int`, optional
+            Number of polarizations. Defaults to 1.
         """
         if isinstance(signal, str):
             signal = str2array(signal)
         else:
             signal = np.array(signal)
 
-        if self.__class__ == optical_signal:
-            if signal.ndim>2 or (signal.ndim>1 and signal.shape[0]>2) or signal.size<1:
-                raise ValueError(f"Signal must be 1D or 2D array for optical_signal, invalid shape {signal.shape}")
-            if signal.ndim == 1:
-                signal = np.array([signal, np.zeros_like(signal)])
-            elif signal.ndim == 2 and signal.shape[0] == 1:
-                signal = np.array([signal[0], np.zeros_like(signal[0])])
-
-
         if noise is not None:
             if isinstance(noise, str):
                 noise = str2array(noise)
             else:
                 noise = np.array(noise)
+
+            arrays_type = np.result_type(signal, noise) # obtain the most comprehensive type
             
-            if noise.ndim == 1:
-                noise = np.array([noise, np.zeros_like(noise)])
-            elif noise.ndim == 2 and noise.shape[0] == 1:
-                noise = np.array([noise[0], np.zeros_like(noise[0])])
+            signal = signal.astype(arrays_type)
+            noise = noise.astype(arrays_type) 
+        else:
+            noise = np.zeros_like(signal).astype(signal.dtype)
+
+        if self.__class__ == optical_signal:
+            if signal.ndim>2 or (signal.ndim>1 and signal.shape[0]>2) or signal.size<1:
+                raise ValueError(f"Signal must be a scalar, 1D or 2D array for optical_signal, invalid shape {signal.shape}")
+            
+            if signal.ndim == 0 and noise.ndim == 0:
+                if n_pol is None:
+                    n_pol = 1
+                
+                if n_pol == 1:
+                    signal = signal[np.newaxis]
+                    noise = noise[np.newaxis]
+                else:
+                    signal = np.array([[signal], [signal]])
+                    noise = np.array([[noise], [noise]])
+            
+            elif signal.ndim == 1 and noise.ndim == 1:
+                if n_pol is None:
+                    n_pol = 1
+                
+                if n_pol == 2:
+                    signal = np.array([signal, signal])
+                    noise = np.array([noise, noise])
+            
+            elif signal.ndim == 2 and signal.shape[0] == 1 and noise.ndim == 2 and noise.shape[0] == 1:
+                if n_pol is None:
+                    n_pol = 2
+                
+                if n_pol == 1:
+                    signal = signal[0]
+                    noise = noise[0]
+                else:
+                    signal = np.array([signal[0], signal[0]])
+                    noise = np.array([noise[0], noise[0]])
+            
+            elif signal.ndim == 2 and signal.shape[0] == 2 and noise.ndim == 2 and noise.shape[0] == 2:
+                if n_pol is None:
+                    n_pol = 2
+                
+                if n_pol == 1:
+                    signal = signal[0]
+                    noise = noise[0]
 
             if signal.shape != noise.shape:
                 raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
-        else:
-            noise = np.zeros_like(signal, dtype=signal.dtype)
         
+        self.n_pol = n_pol
         super().__init__( signal, noise )  
     
     def __repr__(self):
-        signal = str(self.signal).replace('\n', '\n\t' + 13*' ')
-        noise = str(self.noise).replace('\n', '\n\t' + 13*' ')
         np.set_printoptions(precision=1, threshold=20)
 
         if self.noise.sum() == 0:
+            signal = str(self.signal).replace('\n', '\n' + 15*' ')
             return f'optical_signal({signal})'
-        return f'optical_signal(signal={signal},\n\t\tnoise={noise})'
+        
+        signal = str(self.signal).replace('\n', '\n' + 22*' ')
+        noise = str(self.noise).replace('\n', '\n' + 22*' ')
+        return f'optical_signal(signal={signal}\n' + 16*' '+ f'noise={noise})'
 
     
     def len(self): 
@@ -1368,6 +1420,8 @@ class optical_signal(electrical_signal):
         :obj:`int`
             The number of samples of the optical signal.
         """
+        if self.n_pol == 1:
+            return self.signal.size
         return self.signal.shape[1]
 
     def __add__(self, other): 
@@ -1384,24 +1438,45 @@ class optical_signal(electrical_signal):
         out : :obj:`optical_signal`
             A new optical signal object with the result of the sum.
         """
-        if isinstance(other, optical_signal):
-            if self.len() != other.len():
-                raise ValueError(f"Can't add optical_signals with shapes {self.signal.shape} and {other.signal.shape}")
-            return optical_signal(self.signal + other.signal, self.noise + other.noise)
-        
-        elif isinstance(other, str):
-            other = str2array(other)
-        else:
-            other = np.array(other)
+        if not isinstance(other, optical_signal):
+            other = optical_signal(other, other, self.n_pol)
 
-        if other.ndim>2 or (other.ndim>1 and other.shape[0]>2) or other.size<1:
-            raise ValueError(f"Can't add optical_signals with shapes {self.signal.shape} and {other.shape}")
-        return optical_signal(self.signal + other, self.noise)
+        if self.len() != other.len() and other.len() != 1:
+            raise ValueError(f"Can't add optical_signals with shapes {self.signal.shape} and {other.signal.shape}")
+        return optical_signal(self.signal + other.signal, self.noise + other.noise)
         
     def __radd__(self, other):
         """ Sum two optical signals. __radd__() = __add__()."""
         return self.__add__(other)
     
+    def __sub__(self, other):
+        """ Substract two optical signals (``-`` operator).
+
+        Parameters
+        ----------
+        other : :obj:`optical_signal` or :obj:`Array_Like` or :obj:`Number`
+            The signal to substract.
+
+        Returns
+        -------
+        :obj:`optical_signal`
+            A new optical signal object with the result of the substraction.        
+        """
+        if not isinstance(other, optical_signal):
+            other = optical_signal(other, other, self.n_pol)
+        
+        if self.len() != other.len() and other.len() != 1:
+            raise ValueError(f"Can't substract optical_signal with shapes {self.signal.shape} and {other.signal.shape}")
+        return optical_signal(self.signal - other.signal, self.noise - other.noise)
+        
+    def __rsub__(self, other):
+        if not isinstance(other, optical_signal):
+            other = optical_signal(other, other, self.n_pol)
+        
+        if self.len() != other.len() and other.len() != 1:
+            raise ValueError(f"Can't substract optical_signal with shapes {self.signal.shape} and {other.signal.shape}")
+        return optical_signal(other.signal - self.signal, other.noise - self.noise)
+
     def __mul__(self, other):
         """ Multiply two optical signals.
         
@@ -1416,19 +1491,11 @@ class optical_signal(electrical_signal):
         out : :obj:`optical_signal`
             A new optical signal object with the result of the multiply.
         """
-        if isinstance(other, optical_signal):
-            if self.len() != other.len():
-                raise ValueError(f"Can't multiply optical_signals with shapes {self.signal.shape} and {other.signal.shape}")
-            return optical_signal(self.signal * other.signal, self.noise * other.noise)
-        
-        elif isinstance(other, str):
-            other = str2array(other)
-        else:
-            other = np.array(other)
-
-        if other.ndim>2 or (other.ndim>1 and other.shape[0]>2) or other.size<1:
-            raise ValueError(f"Can't multiply optical_signals with shapes {self.signal.shape} and {other.shape}")
-        return optical_signal(self.signal * other, self.noise)
+        if not isinstance(other, optical_signal):
+            other = optical_signal(other, other, self.n_pol)
+        if self.len() != other.len() and other.len() != 1:
+            raise ValueError(f"Can't multiply optical_signals with shapes {self.signal.shape} and {other.signal.shape}")
+        return optical_signal(self.signal * other.signal, self.noise * other.noise)
         
     def __rmul__(self, other):
         """ Multiply two optical signals. __rmul__() = __mul__()."""
@@ -1447,8 +1514,10 @@ class optical_signal(electrical_signal):
         out : :obj:`optical_signal`
             A new optical signal object with the result of the slicing.
         """
+        if self.n_pol == 1:
+            return optical_signal( self.signal[slice], self.noise[slice] )
         if isinstance(slice, int):
-            return self.signal[:,slice], self.noise[:,slice]
+            return optical_signal( self.signal[:,slice,np.newaxis], self.noise[:,slice,np.newaxis] )
         return optical_signal( self.signal[:,slice], self.noise[:,slice] )
     
     def __call__(self, domain: Literal['t','w','f'], shift: bool=False):
@@ -1468,9 +1537,11 @@ class optical_signal(electrical_signal):
 
         Raises
         ------
-        TypeError
+        ValueError
             If ``domain`` is not one of the following values ('t', 'w', 'f').
         """
+        domain = domain.lower()
+
         if domain == 'w' or domain == 'f':
             signal = fft(self.signal, axis=-1)
             noise = fft(self.noise, axis=-1)
@@ -1480,18 +1551,22 @@ class optical_signal(electrical_signal):
             noise = ifft(self.noise, axis=-1)
         
         else:
-            raise TypeError("`domain` must be one of the following values ('t', 'w', 'f')")
+            raise ValueError("`domain` must be one of the following values ('t', 'w', 'f')")
         
         if shift:
-            signal = fftshift(signal, axes=-1)
-            noise = fftshift(noise, axes=-1)
+            if domain == 'w' or domain == 'f':
+                signal = fftshift(signal, axes=-1)
+                noise = fftshift(noise, axes=-1)
+            else:
+                signal = ifftshift(signal, axes=-1)
+                noise = ifftshift(noise, axes=-1)
 
         return optical_signal(signal, noise)
 
     def plot(self, 
-             fmt=None, 
-             n=None, 
+             fmt: str | list='-', 
              mode: Literal['x','y','both','abs']='abs', 
+             n=None, 
              xlabel: str=None,
              ylabel: str=None,
              style: Literal['dark', 'light'] = 'dark',
@@ -1504,8 +1579,6 @@ class optical_signal(electrical_signal):
         ----------
         fmt : :obj:`str`, optional
             Format style of line. Example 'b-.'. Default is '-'.
-        n : :obj:`int`, optional
-            Number of samples to plot. Default is the length of the signal.
         mode : :obj:`str`
             Polarization mode to show. Default is 'abs'.
 
@@ -1513,7 +1586,9 @@ class optical_signal(electrical_signal):
             - ``'y'`` plot polarization y.
             - ``'both'`` plot both polarizations x and y in the same figure
             - ``'abs'`` plot intensity sum of both polarizations I(x) + I(y).
-            
+
+        n : :obj:`int`, optional
+            Number of samples to plot. Default is the length of the signal.  
         xlabel : :obj:`str`, optional
             X-axis label. Default is 'Time [ns]'.
         ylabel : :obj:`str`, optional
@@ -1534,7 +1609,6 @@ class optical_signal(electrical_signal):
         self : :obj:`optical_signal`
             The same object.
         """
-        fmt = '-' if not fmt and mode != 'both' else ['-','-'] if not fmt and mode == 'both' else fmt 
         n = self.len() if not n else n
         t = self.t()[:n]*1e9
 
@@ -1549,16 +1623,38 @@ class optical_signal(electrical_signal):
         
         I = self[:n].abs('all')**2 *1e3
 
-        if mode == 'x':
-            args = (t, I[0], fmt)
-        elif mode == 'y':
-            args = (t, I[1], fmt)
-        elif mode == 'both':
-            args = (t, I[0], fmt[0], t, I[1], fmt[1])
-        elif mode == 'abs':
-            args = (t, I[0] + I[1], fmt)
-        else:
-            raise TypeError('argument `mode` must to be one of the following values ("x","y","both","abs").')
+        if self.n_pol == 1:
+            if not isinstance(fmt, str):
+                warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                fmt = '-'
+            args = (t, I, fmt)
+        else: 
+            if mode == 'x':
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (t, I[0], fmt)
+            elif mode == 'y':
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (t, I[1], fmt)
+            elif mode == 'both':
+                if isinstance(fmt, (list, tuple)):
+                    args = (t, I[0], fmt[0], t, I[1], fmt[1])
+                elif isinstance(fmt, str):
+                    args = (t, I[0], fmt, t, I[1], fmt)
+                else:
+                    warnings.warn('`fmt` must be a string or a list of strings for both polarizations signals, using default value.')
+                    args = (t, I[0], '-', t, I[1], '-')
+                    
+            elif mode == 'abs':
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (t, I[0] + I[1], fmt)
+            else:
+                raise TypeError('argument `mode` must to be one of the following values ("x","y","both","abs").')
         
         label = kwargs.pop('label', None) if mode == 'both' else None
 
@@ -1630,11 +1726,6 @@ class optical_signal(electrical_signal):
         self : :obj:`optical_signal`
             The same object.
         """
-        if mode == 'both' and isinstance(fmt, str):
-            fmt = [fmt, fmt]
-        elif mode != 'both' and isinstance(fmt, (list, tuple)):
-            fmt = fmt[0]
-
         n = self.len() if not n else n
         f = self[:n].w(shift=True)/2/pi * 1e-9
 
@@ -1660,14 +1751,32 @@ class optical_signal(electrical_signal):
         else:
             raise TypeError('argument `yscale` should be ("linear" or "log")')
 
-        if mode == 'x':
-            args = (f, psd[0], fmt)
-        elif mode == 'y':
-            args = (f, psd[1], fmt)
-        elif mode == 'both':
-            args = (f, psd[0], fmt[0], f, psd[1], fmt[1])
+        if self.n_pol == 1:
+            if not isinstance(fmt, str):
+                warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                fmt = '-'
+            args = (f, psd, fmt)
         else:
-            raise TypeError('argument `mode` should be ("x", "y" or "both")')    
+            if mode == 'x':
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (f, psd[0], fmt)
+            elif mode == 'y':
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (f, psd[1], fmt)
+            elif mode == 'both':
+                if isinstance(fmt, (list, tuple)):
+                    args = (f, psd[0], fmt[0], f, psd[1], fmt[1])
+                elif isinstance(fmt, str):
+                    args = (f, psd[0], fmt, f, psd[f], fmt)
+                else:
+                    warnings.warn('`fmt` must be a string or a list of strings for both polarizations signals, using default value.')
+                    args = (f, psd[0], '-', f, psd[1], '-')
+            else:
+                raise TypeError('argument `mode` should be ("x", "y" or "both")')    
         
         label = kwargs.pop('label', None)
 
