@@ -1109,6 +1109,7 @@ class electrical_signal():
              ylabel: str=None, 
              style: Literal['dark', 'light'] = 'dark',
              grid: bool=False,
+             hold: bool=True,
              **kwargs: dict): 
         r"""Plot real part of electrical signal.
 
@@ -1126,6 +1127,8 @@ class electrical_signal():
             Style of plot. Defaults to 'dark'.
         grid : :obj:`bool`, optional
             If show grid. Defaults to False.
+        hold : :obj:`bool`, optional
+            If hold the current plot. Defaults to True.
         \*\*kwargs : :obj:`dict`
             Aditional keyword arguments compatible with matplotlib.pyplot.plot().
 
@@ -1146,6 +1149,9 @@ class electrical_signal():
         else:
             raise ValueError('`style` must be "dark" or "light".')
         
+        if not hold:
+            plt.figure()
+
         plt.plot(t, (self[:n].signal+self[:n].noise).real, fmt, **kwargs)
         plt.xlabel(xlabel if xlabel else 'Time [ns]')
         plt.ylabel(ylabel if ylabel else 'Amplitude [V]')
@@ -1169,6 +1175,7 @@ class electrical_signal():
             yscale: Literal['linear','dbm']='dbm', 
             style: Literal['dark', 'light'] = 'dark',
             grid: bool=True,
+            hold: bool=True,
             **kwargs: dict):
         """Plot Power Spectral Density (PSD) of the electrical signal.
 
@@ -1188,6 +1195,8 @@ class electrical_signal():
             Style of plot. Defaults to 'dark'.
         grid : :obj:`bool`, optional
             If show grid. Defaults to True.
+        hold : :obj:`bool`, optional
+            If hold the current plot. Defaults to True.
         **kwargs : :obj:`dict`
             Aditional matplotlib arguments.
 
@@ -1221,6 +1230,9 @@ class electrical_signal():
         else:
             raise TypeError('`yscale` must be one of the following values ("linear", "dbm")')
         
+        if not hold:
+            plt.figure()
+
         plt.plot( *args, **kwargs )
         plt.ylabel( ylabel )
         plt.xlabel( xlabel if xlabel else 'Frequency [GHz]')
@@ -1571,6 +1583,7 @@ class optical_signal(electrical_signal):
              ylabel: str=None,
              style: Literal['dark', 'light'] = 'dark',
              grid: bool=False,
+             hold: bool=True,
              **kwargs): 
         r"""
         Plot intensity of optical signal for selected polarization mode.
@@ -1601,6 +1614,8 @@ class optical_signal(electrical_signal):
         
         grid : :obj:`bool`, optional
             If show grid. Default is ``False``.
+        hold : :obj:`bool`, optional
+            If hold the current figure. Default is ``True``.
         \*\*kwargs: :obj:`dict`
             Aditional matplotlib arguments.
 
@@ -1658,6 +1673,9 @@ class optical_signal(electrical_signal):
         
         label = kwargs.pop('label', None) if mode == 'both' else None
 
+        if not hold:
+            plt.figure()
+
         plt.plot( *args, **kwargs)
         plt.xlabel(xlabel if xlabel else 'Time [ns]')
         plt.ylabel(ylabel if ylabel else 'Power [mW]')
@@ -1684,6 +1702,7 @@ class optical_signal(electrical_signal):
             yscale: Literal['linear', 'dbm']='dbm', 
             style: Literal['dark', 'light'] = 'dark',
             grid: bool=True,
+            hold: bool=True,
             **kwargs: dict):
         r"""Plot Power Spectral Density (PSD) of the electrical signal.
 
@@ -1718,6 +1737,8 @@ class optical_signal(electrical_signal):
 
         grid : bool, optional
             If show grid. Default is ``True``.
+        hold : bool, optional
+            If hold the current figure. Default is ``True``.
         \*\*kwargs : :obj:`dict`
             Aditional matplotlib arguments.
 
@@ -1779,6 +1800,9 @@ class optical_signal(electrical_signal):
                 raise TypeError('argument `mode` should be ("x", "y" or "both")')    
         
         label = kwargs.pop('label', None)
+
+        if not hold:
+            plt.figure()
 
         plt.plot( *args, **kwargs)
         plt.ylabel(ylabel)
@@ -1848,21 +1872,27 @@ class eye():
         Eye height.
     """
 
-    def __init__(self, eye_dict={}):
-        """ Initialize the eye diagram object.
+    def __init__(self, **kwargs: dict):
+        r""" Initialize the eye diagram object.
 
         Parameters
         ----------
-        eye_dict : :obj:`dict`, optional
+        \*\*kwargs : :obj:`dict`, optional
             Dictionary with the eye diagram parameters.
         """
 
-        if eye_dict:
-            for key, value in eye_dict.items():
+        if kwargs:
+            for key, value in kwargs.items():
                 setattr(self, key, value)
+            self.empty = False
+        else:
+            self.empty = True
         
     def __str__(self, title: str=None): 
         """Return a formatted string with the eye diagram data."""
+        if self.empty:
+            raise ValueError('Empty eye diagram object.')
+
         if title is None:
             title = self.__class__.__name__
         
@@ -1894,12 +1924,12 @@ class eye():
         return self
     
     def plot(self, 
-             medias_=True, 
-             legend_=True, 
+             medias_: bool=True, 
+             legend_: bool=True, 
              style: Literal['dark', 'light']='dark', 
-             cmap:Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter',
+             cmap: Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter',
              label: str = '',
-             savefig=None):
+             savefig: str=None):
         """ Plot eye diagram.
 
         Parameters
@@ -1915,13 +1945,16 @@ class eye():
         label : :obj:`str`, optional
             Label to show in title.
         savefig : :obj:`str`, optional
-            If not None, save figure with the given name.
+            Name of the file to save the plot. If None, the plot is not saved.
+            Input just the name of the file without extension (extension is .png by default).
 
         Returns
         -------
         self: :obj:`eye`
             Same object
         """
+        if self.empty:
+            raise ValueError('Empty eye diagram object.')
 
         ## SETTINGS
 
@@ -2038,7 +2071,7 @@ class eye():
         t_slider.on_changed(update_t_line)
 
         if savefig: 
-            plt.savefig(savefig, dpi=300)
+            plt.savefig('.'.join((savefig, 'png')), dpi=300)
         return self
 
     def show(self):
