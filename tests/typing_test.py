@@ -261,6 +261,20 @@ class TestElectricalSignal(unittest.TestCase):
                 signal = electrical_signal(input, noise=np.ones(100))
                 assert_equal(signal.apply(np.abs).signal, np.arange(100))
                 assert_equal(signal.apply(np.abs).noise, np.ones(100))
+    
+    def test_plot(self):
+        x = electrical_signal(np.ones(100), np.random.normal(0,0.05,100))
+        try:
+            assert_(x.plot('-r', n=98, xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=False)==x)
+        except Exception as e:
+            self.fail(f"x.plot() raised {type(e).__name__} unexpectedly!")
+
+    def test_psd(self):
+        x = electrical_signal(np.ones(100), np.random.normal(0,0.05,100))
+        try:
+            assert_(x.psd('--b', n=98, xlabel='Freq', ylabel='Spectra', style='dark', grid=False, hold=False)==x)
+        except Exception as e:
+            self.fail(f"x.psd() raised {type(e).__name__} unexpectedly!")
 
 
 
@@ -570,7 +584,13 @@ class TestOpticalSignal(unittest.TestCase):
     def test_psd(self):
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=1)
         try:
-            assert_(x.psd('--r', mode='both', n=98, xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=False)==x)
+            assert_(x.psd('--r', mode='x', n=98, xlabel='Freq', ylabel='Spectra', style='light', grid=True, hold=False)==x)
+        except Exception as e:
+            self.fail(f"x.psd() raised {type(e).__name__} unexpectedly!")
+
+        x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=2)
+        try:
+            assert_(x.psd('--b', mode='both', n=98, xlabel='Freq', ylabel='Spectra', style='dark', grid=False, hold=False)==x)
         except Exception as e:
             self.fail(f"x.psd() raised {type(e).__name__} unexpectedly!")
 
