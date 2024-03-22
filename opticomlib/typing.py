@@ -1792,7 +1792,7 @@ class optical_signal(electrical_signal):
                 if isinstance(fmt, (list, tuple)):
                     args = (f, psd[0], fmt[0], f, psd[1], fmt[1])
                 elif isinstance(fmt, str):
-                    args = (f, psd[0], fmt, f, psd[f], fmt)
+                    args = (f, psd[0], fmt, f, psd[1], fmt)
                 else:
                     warnings.warn('`fmt` must be a string or a list of strings for both polarizations signals, using default value.')
                     args = (f, psd[0], '-', f, psd[1], '-')
