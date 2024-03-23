@@ -6,12 +6,12 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-import opticomlib
+import opticomlib as op
 
 project = 'opticomlib'
 copyright = '2024, Ing. Armando P. Romeu'
 author = 'Ing. Armando P. Romeu'
-release = opticomlib.__version__
+version = op.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

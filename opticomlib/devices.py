@@ -650,7 +650,7 @@ def DM(input: optical_signal, D: float, retH: bool=False):
         gv(N=7, sps=32, R=10e9)
 
         signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5 )
+        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2 )
 
         output, H = DM(input, D=4000, retH=True)
 
@@ -755,7 +755,7 @@ def FIBER(input: optical_signal,
         gv(sps=32, R=10e9)
 
         signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )
+        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2)
 
         output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)
 
@@ -1225,20 +1225,29 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, np.ndarray], nslots:
 
     t_set = np.array(list(set(t)))
 
-    # The following vector will be used only to determine the crossing times
-    tt = t[(input>v25)&(input<v75)]
+    try: 
+        # The following vector will be used only to determine the crossing times
+        tt = t[(input>v25)&(input<v75)]
 
-    # We get the centroid of the time data
-    tm = np.mean(sk.KMeans(n_clusters=2, n_init=10).fit(tt.reshape(-1,1)).cluster_centers_)
+        # We get the centroid of the time data
+        tm = np.mean(sk.KMeans(n_clusters=2, n_init=10).fit(tt.reshape(-1,1)).cluster_centers_)
 
-    # We obtain the left crossing time
-    t_left = find_nearest(t_set, np.mean(tt[tt<tm])); eye_dict['t_left'] = t_left
+        # We obtain the left crossing time
+        t_left = find_nearest(t_set, np.mean(tt[tt<tm])); eye_dict['t_left'] = t_left
 
-    # We obtain the crossing time from the right
-    t_right = find_nearest(t_set, np.mean(tt[tt>tm])); eye_dict['t_right'] = t_right
+        # We obtain the crossing time from the right
+        t_right = find_nearest(t_set, np.mean(tt[tt>tm])); eye_dict['t_right'] = t_right
 
-    # Determine the center of the eye
-    t_center = find_nearest(t_set, (t_left + t_right)/2); eye_dict['t_opt'] = t_center
+        # Determine the center of the eye
+        t_center = find_nearest(t_set, (t_left + t_right)/2); eye_dict['t_opt'] = t_center
+    
+    except ValueError:
+        t_left = -0.5; eye_dict['t_left'] = t_left
+        t_right = 0.5; eye_dict['t_right'] = t_right
+        t_center = 0.0; eye_dict['t_opt'] = t_center
+    
+    except Exception as e:
+        raise e
 
     # For 20% of the center of the eye diagram
     t_dist = t_right - t_left; eye_dict['t_dist'] = t_dist
@@ -1275,7 +1284,7 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, np.ndarray], nslots:
     eye_h = mu1 - 3 * s1 - mu0 - 3 * s0; eye_dict['eye_h'] = eye_h
 
     eye_dict['execution_time'] = toc()
-    return eye(eye_dict)
+    return eye(**eye_dict)
 
 
 def SAMPLER(input: electrical_signal, _eye_: eye):
