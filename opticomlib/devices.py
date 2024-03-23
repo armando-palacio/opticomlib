@@ -650,7 +650,7 @@ def DM(input: optical_signal, D: float, retH: bool=False):
         gv(N=7, sps=32, R=10e9)
 
         signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5 )
+        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2 )
 
         output, H = DM(input, D=4000, retH=True)
 
@@ -755,7 +755,7 @@ def FIBER(input: optical_signal,
         gv(sps=32, R=10e9)
 
         signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )
+        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2)
 
         output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)
 
