@@ -75,6 +75,9 @@ class TestBinarySequence(unittest.TestCase):
     assert_raises(ValueError, lambda: binary_sequence('001;101'))
     
     def test_init(self):
+        assert_(binary_sequence(0).data==0)
+        assert_(binary_sequence('1').data==1)
+
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 bits = binary_sequence(input)
@@ -90,15 +93,15 @@ class TestBinarySequence(unittest.TestCase):
         except Exception as e:
             self.fail(f"bits.print() raised {type(e).__name__} unexpectedly!")
     
-    def test_getitem(self):
+    def test_getitem_and_eq(self):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 bits = binary_sequence(input)
-                assert_(bits[0] == 0)
+                assert_((bits[0] == 0).data)
                 assert_((bits[:] == [0,0,0,0,1,1,1,1,0,0,0,0]).data.all())
                 assert_((bits[4:-1] == [1,1,1,1,0,0,0]).data.all())
                 assert_raises(IndexError, lambda: bits[12])
-
+    
     def test_add_and_radd(self):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
@@ -215,11 +218,11 @@ class TestElectricalSignal(unittest.TestCase):
             with self.subTest(input_type=type(input)):
                 signal = electrical_signal(input)
                 
-                assert_equal((signal + 1 > 0),  np.ones(100))
-                assert_equal((signal < 100), np.ones(100))
+                assert_equal((signal + 1 > 0).data,  np.ones(100))
+                assert_equal((signal < 100).data, np.ones(100))
 
-                assert_equal((signal > input),  np.zeros(100))
-                assert_equal((signal < input),  np.zeros(100))
+                assert_equal((signal > input).data,  np.zeros(100))
+                assert_equal((signal < input).data,  np.zeros(100))
                 assert_raises(ValueError, lambda: signal > input[:4])
 
     def test_call(self):
@@ -571,26 +574,26 @@ class TestOpticalSignal(unittest.TestCase):
     def test_plot(self):
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=1)
         try:
-            assert_(x.plot('--r', n=98, mode='x', xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=False)==x)
+            assert_(x.plot('--r', n=98, mode='x', xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=True)==x)
         except Exception as e:
             self.fail(f"x.plot() raised {type(e).__name__} unexpectedly!")
 
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=2)
         try:
-            assert_(x.plot(['r','b'], n=98, mode='both', xlabel='Time', ylabel='Intensity', style='dark', grid=True, hold=False)==x)
+            assert_(x.plot(['r','b'], n=98, mode='both', xlabel='Time', ylabel='Intensity', style='dark', grid=True, hold=True)==x)
         except Exception as e:
             self.fail(f"x.plot() raised {type(e).__name__} unexpectedly!")
 
     def test_psd(self):
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=1)
         try:
-            assert_(x.psd('--r', mode='x', n=98, xlabel='Freq', ylabel='Spectra', style='light', grid=True, hold=False)==x)
+            assert_(x.psd('--r', mode='x', n=98, xlabel='Freq', ylabel='Spectra', style='light', grid=True, hold=True)==x)
         except Exception as e:
             self.fail(f"x.psd() raised {type(e).__name__} unexpectedly!")
 
         x = optical_signal(np.ones(100), np.random.normal(0,0.05,100), n_pol=2)
         try:
-            assert_(x.psd('--b', mode='both', n=98, xlabel='Freq', ylabel='Spectra', style='dark', grid=False, hold=False)==x)
+            assert_(x.psd('--b', mode='both', n=98, xlabel='Freq', ylabel='Spectra', style='dark', grid=False, hold=True)==x)
         except Exception as e:
             self.fail(f"x.psd() raised {type(e).__name__} unexpectedly!")
 
