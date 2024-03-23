@@ -622,7 +622,7 @@ class PPG3204():
 
 
     def set_bits_shift(self, bsh: Union[int, list[int]], CHs: Union[int, list[int]] = None):
-        """Set the bits shift of the pattern
+        r"""Set the bits shift of the pattern
         
         Parameters
         ----------
@@ -700,7 +700,7 @@ class PPG3204():
 
 
     def set_freq(self, freq: float):
-        """Set the bit rate of the pattern
+        r"""Set the bit rate of the pattern
 
         - *Range*: 1.5 GHz to 32 GHz
         - *Resolution*: 10 kb/s
