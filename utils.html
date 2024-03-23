@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Utilities functions &mdash; opticomlib 0.4.15 documentation</title>
+  <title>Utilities functions &mdash; opticomlib  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=bb2d8cfc"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -39,6 +39,9 @@
             opticomlib
               <img src="_static/logo.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                1.0.0
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -205,16 +208,17 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.str2array">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">str2array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#str2array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.str2array" title="Link to this definition"></a></dt>
-<dd><p>Converts a string to array of numbers. Use commas or whitespace as element separators.
-Elements can be integer or floating point. If there is at least one floating point number, then all elements are converted to float.</p>
-<p>If the string contains only 0 and 1, then the output is a binary array.</p>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">str2array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#str2array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.str2array" title="Link to this definition"></a></dt>
+<dd><p>Converts a string to array of numbers. Use comma (<code class="docutils literal notranslate"><span class="pre">,</span></code>) or whitespace (`` <code class="docutils literal notranslate"><span class="pre">)</span> <span class="pre">as</span> <span class="pre">element</span> <span class="pre">separators</span> <span class="pre">and</span> <span class="pre">semicolon</span> <span class="pre">(</span></code>;``) as row separator.
+Also, <code class="docutils literal notranslate"><span class="pre">i</span></code> or <code class="docutils literal notranslate"><span class="pre">j</span></code> can be used to represent the imaginary unit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>string</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – String to convert.</p></li>
-<li><p><strong>dtype</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>, optional) – Data type of the output array. Default is <cite>float</cite>.
-Allowed types are <cite>int</cite>, <cite>float</cite> and <cite>bool</cite>.</p></li>
+<li><p><strong>dtype</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>, optional) – Data type of the output array.
+If <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is not given, the data type is determined from the input string.
+If <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is given, the data output is cast to the given type.
+Allowed values are <code class="docutils literal notranslate"><span class="pre">bool</span></code>, <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code> and <code class="docutils literal notranslate"><span class="pre">complex</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -228,16 +232,32 @@ Allowed types are <cite>int</cite>, <cite>float</cite> and <cite>bool</cite>.</p
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;1 2 3 4&#39;</span><span class="p">)</span>
-<span class="go">array([1, 2, 3, 4])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;1,2,3,4&#39;</span><span class="p">)</span>
-<span class="go">array([1, 2, 3, 4])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;1.1 2.2 3.3 4.4&#39;</span><span class="p">)</span>
-<span class="go">array([1.1, 2.2, 3.3, 4.4])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;101010&#39;</span><span class="p">)</span>
-<span class="go">array([1, 0, 1, 0, 1, 0], dtype=uint8)</span>
+<p>For binary numbers, string must contain only 0 and 1.
+Only in this case, sequence don’t need to be separated by commas or spaces although it is allowed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;101&#39;</span><span class="p">)</span>
+<span class="go">array([ True, False, True])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str2array</span><span class="p">(</span><span class="s1">&#39;1 0 1; 0 1 0&#39;</span><span class="p">)</span>
+<span class="go">array([[ True, False,  True],</span>
+<span class="go">       [False,  True, False]])</span>
 </pre></div>
 </div>
+<p>Special case
+&gt;&gt;&gt; str2array(‘1 0 1 10’)
+array([True, False, True, True, False])
+&gt;&gt;&gt; str2array(‘1 0 1 10’, dtype=int)
+array([ 1,  0,  1, 10])
+&gt;&gt;&gt; str2array(‘1 0 1 10’, dtype=float)
+array([ 1.,  0.,  1., 10.])
+&gt;&gt;&gt; str2array(‘1 0 1 10’, dtype=complex)
+array([ 1.+0.j,  0.+0.j,  1.+0.j, 10.+0.j])</p>
+<p>For integer and float numbers
+&gt;&gt;&gt; str2array(‘1 2 3 4’)
+array([1, 2, 3, 4])
+&gt;&gt;&gt; str2array(‘1.1 2.2 3.3 4.4’)
+array([1.1, 2.2, 3.3, 4.4])</p>
+<p>For complex numbers
+&gt;&gt;&gt; str2array(‘1+2j 3-4i’)
+array([1.+2.j, 3.-4.j])</p>
 </dd></dl>
 
 <dl class="py function">

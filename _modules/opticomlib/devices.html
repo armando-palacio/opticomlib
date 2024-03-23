@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>opticomlib.devices &mdash; opticomlib 0.4.15 documentation</title>
+  <title>opticomlib.devices &mdash; opticomlib  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=bb2d8cfc"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -36,6 +36,9 @@
             opticomlib
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                1.0.0
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -756,7 +759,7 @@
 <span class="sd">        gv(N=7, sps=32, R=10e9)</span>
 
 <span class="sd">        signal = DAC(&#39;0,0,0,1,0,0,0&#39;, pulse_shape=&#39;gaussian&#39;)</span>
-<span class="sd">        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5 )</span>
+<span class="sd">        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2 )</span>
 
 <span class="sd">        output, H = DM(input, D=4000, retH=True)</span>
 
@@ -864,7 +867,7 @@
 <span class="sd">        gv(sps=32, R=10e9)</span>
 
 <span class="sd">        signal = DAC(&#39;0,0,0,1,0,0,0&#39;, pulse_shape=&#39;gaussian&#39;)</span>
-<span class="sd">        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20) )</span>
+<span class="sd">        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2)</span>
 
 <span class="sd">        output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)</span>
 
@@ -1346,20 +1349,29 @@
 
     <span class="n">t_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
 
-    <span class="c1"># The following vector will be used only to determine the crossing times</span>
-    <span class="n">tt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[(</span><span class="nb">input</span><span class="o">&gt;</span><span class="n">v25</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">input</span><span class="o">&lt;</span><span class="n">v75</span><span class="p">)]</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="c1"># The following vector will be used only to determine the crossing times</span>
+        <span class="n">tt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[(</span><span class="nb">input</span><span class="o">&gt;</span><span class="n">v25</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="nb">input</span><span class="o">&lt;</span><span class="n">v75</span><span class="p">)]</span>
 
-    <span class="c1"># We get the centroid of the time data</span>
-    <span class="n">tm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sk</span><span class="o">.</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">tt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">)</span>
+        <span class="c1"># We get the centroid of the time data</span>
+        <span class="n">tm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sk</span><span class="o">.</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">tt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">)</span>
 
-    <span class="c1"># We obtain the left crossing time</span>
-    <span class="n">t_left</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">tt</span><span class="o">&lt;</span><span class="n">tm</span><span class="p">]));</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_left</span>
+        <span class="c1"># We obtain the left crossing time</span>
+        <span class="n">t_left</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">tt</span><span class="o">&lt;</span><span class="n">tm</span><span class="p">]));</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_left</span>
 
-    <span class="c1"># We obtain the crossing time from the right</span>
-    <span class="n">t_right</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">tt</span><span class="o">&gt;</span><span class="n">tm</span><span class="p">]));</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_right</span>
+        <span class="c1"># We obtain the crossing time from the right</span>
+        <span class="n">t_right</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">tt</span><span class="o">&gt;</span><span class="n">tm</span><span class="p">]));</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_right</span>
 
-    <span class="c1"># Determine the center of the eye</span>
-    <span class="n">t_center</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="p">(</span><span class="n">t_left</span> <span class="o">+</span> <span class="n">t_right</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_opt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_center</span>
+        <span class="c1"># Determine the center of the eye</span>
+        <span class="n">t_center</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="p">(</span><span class="n">t_left</span> <span class="o">+</span> <span class="n">t_right</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_opt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_center</span>
+    
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">t_left</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_left</span>
+        <span class="n">t_right</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_right</span>
+        <span class="n">t_center</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_opt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_center</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">e</span>
 
     <span class="c1"># For 20% of the center of the eye diagram</span>
     <span class="n">t_dist</span> <span class="o">=</span> <span class="n">t_right</span> <span class="o">-</span> <span class="n">t_left</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t_dist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_dist</span>
@@ -1396,7 +1408,7 @@
     <span class="n">eye_h</span> <span class="o">=</span> <span class="n">mu1</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s1</span> <span class="o">-</span> <span class="n">mu0</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s0</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;eye_h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eye_h</span>
 
     <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;execution_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">eye</span><span class="p">(</span><span class="n">eye_dict</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">eye</span><span class="p">(</span><span class="o">**</span><span class="n">eye_dict</span><span class="p">)</span></div>
 
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>opticomlib.utils &mdash; opticomlib 0.4.15 documentation</title>
+  <title>opticomlib.utils &mdash; opticomlib  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=bb2d8cfc"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -36,6 +36,9 @@
             opticomlib
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                1.0.0
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -170,24 +173,37 @@
     <span class="k">return</span> <span class="n">binary</span></div>
 
 
-
+<span class="k">def</span> <span class="nf">_get_type_array_from_str</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="c1"># just 0 and 1 without +/- --&gt; bool</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-1,;\s]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">bool</span>
+    <span class="c1"># just numbers with +/- and without dots --&gt; int</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-9,;\-\+\s]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span>
+    <span class="c1"># just numbers with +/- and dots --&gt; float</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-9,;.\+\-\s]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span> 
+        <span class="k">return</span> <span class="nb">float</span>
+     <span class="c1"># just numbers with +/-, dots and j --&gt; complex</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-9,;.\+\-\sji]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">complex</span>
+    <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="str2array">
 <a class="viewcode-back" href="../../utils.html#opticomlib.utils.str2array">[docs]</a>
-<span class="k">def</span> <span class="nf">str2array</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">):</span> 
+<span class="k">def</span> <span class="nf">str2array</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts a string to array of numbers. Use commas or whitespace as element separators.</span>
-<span class="sd">    Elements can be integer or floating point. If there is at least one floating point number, then all elements are converted to float.</span>
-
-<span class="sd">    If the string contains only 0 and 1, then the output is a binary array.</span>
+<span class="sd">    Converts a string to array of numbers. Use comma (``,``) or whitespace (`` ``) as element separators and semicolon (``;``) as row separator.</span>
+<span class="sd">    Also, ``i`` or ``j`` can be used to represent the imaginary unit.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    string : :obj:`str`</span>
 <span class="sd">        String to convert.</span>
 <span class="sd">    dtype : :obj:`type`, optional</span>
-<span class="sd">        Data type of the output array. Default is `float`.</span>
-<span class="sd">        Allowed types are `int`, `float` and `bool`.</span>
+<span class="sd">        Data type of the output array. </span>
+<span class="sd">        If ``dtype`` is not given, the data type is determined from the input string.</span>
+<span class="sd">        If ``dtype`` is given, the data output is cast to the given type.</span>
+<span class="sd">        Allowed values are ``bool``, ``int``, ``float`` and ``complex``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -201,40 +217,70 @@
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
-<span class="sd">    .. code-block:: python</span>
+<span class="sd">    For binary numbers, string must contain only 0 and 1. </span>
+<span class="sd">    Only in this case, sequence don&#39;t need to be separated by commas or spaces although it is allowed.</span>
 
-<span class="sd">        &gt;&gt;&gt; str2array(&#39;1 2 3 4&#39;)</span>
-<span class="sd">        array([1, 2, 3, 4])</span>
-<span class="sd">        &gt;&gt;&gt; str2array(&#39;1,2,3,4&#39;)</span>
-<span class="sd">        array([1, 2, 3, 4])</span>
-<span class="sd">        &gt;&gt;&gt; str2array(&#39;1.1 2.2 3.3 4.4&#39;)</span>
-<span class="sd">        array([1.1, 2.2, 3.3, 4.4])</span>
-<span class="sd">        &gt;&gt;&gt; str2array(&#39;101010&#39;) </span>
-<span class="sd">        array([1, 0, 1, 0, 1, 0], dtype=uint8)</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;101&#39;)</span>
+<span class="sd">    array([ True, False, True])</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1 0 1; 0 1 0&#39;)</span>
+<span class="sd">    array([[ True, False,  True],</span>
+<span class="sd">           [False,  True, False]])</span>
+
+<span class="sd">    Special case </span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1 0 1 10&#39;)</span>
+<span class="sd">    array([True, False, True, True, False])</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1 0 1 10&#39;, dtype=int)</span>
+<span class="sd">    array([ 1,  0,  1, 10])</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1 0 1 10&#39;, dtype=float)</span>
+<span class="sd">    array([ 1.,  0.,  1., 10.])</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1 0 1 10&#39;, dtype=complex)</span>
+<span class="sd">    array([ 1.+0.j,  0.+0.j,  1.+0.j, 10.+0.j])</span>
+
+<span class="sd">    For integer and float numbers</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1 2 3 4&#39;)</span>
+<span class="sd">    array([1, 2, 3, 4])</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1.1 2.2 3.3 4.4&#39;)</span>
+<span class="sd">    array([1.1, 2.2, 3.3, 4.4])</span>
+<span class="sd">    </span>
+<span class="sd">    For complex numbers</span>
+<span class="sd">    &gt;&gt;&gt; str2array(&#39;1+2j 3-4i&#39;)</span>
+<span class="sd">    array([1.+2.j, 3.-4.j])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-1, \s]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span> <span class="c1"># check that only contains 0, 1, whitespace and commas</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;String contains invalid characters. Only 0, 1, whitespace and commas are allowed when `dtype=bool`.&#39;</span><span class="p">)</span>
+    <span class="n">_dtype</span> <span class="o">=</span> <span class="n">_get_type_array_from_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
     
-    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-9, \s]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span> <span class="c1"># check that only contain numbers, whitespace and commas</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_dtype</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># for special cases when string = &#39;10 100 1000&#39; and dtype = int | float | complex </span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">or</span> <span class="n">dtype</span><span class="o">==</span><span class="nb">float</span> <span class="ow">or</span> <span class="n">dtype</span><span class="o">==</span><span class="nb">complex</span><span class="p">:</span> 
+            <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">string</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;String contains invalid characters. Only numbers, whitespace and commas are allowed when `dtype=int`.&#39;</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-9, .\s]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span> <span class="c1"># check that only contain numbers, whitespace, commas and dots</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;String contains invalid characters. Only numbers, whitespace, commas and dots are allowed when `dtype=float`.&#39;</span><span class="p">)</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_dtype</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">string</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_dtype</span><span class="p">)</span>
 
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`dtype` must be `int`, `float` or `bool`.&#39;</span><span class="p">)</span></div>
+    <span class="k">elif</span> <span class="n">_dtype</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">or</span> <span class="n">_dtype</span><span class="o">==</span><span class="nb">float</span><span class="p">:</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">string</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_dtype</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">_dtype</span> <span class="o">==</span> <span class="nb">complex</span><span class="p">:</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span><span class="s1">&#39;j&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[,\s]+&#39;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">string</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_dtype</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The string contains invalid characters and can</span><span class="se">\&#39;</span><span class="s1">t be converted to an array.&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="k">if</span> <span class="n">dtype</span> <span class="k">else</span> <span class="n">arr</span></div>
 
 
 

@@ -7,7 +7,7 @@ import numpy as np
 gv(N=7, sps=32, R=10e9)
 
 signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5 )
+input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2 )
 
 output, H = DM(input, D=4000, retH=True)
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Electro-Optical Devices &mdash; opticomlib 0.4.15 documentation</title>
+  <title>Electro-Optical Devices &mdash; opticomlib  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=bb2d8cfc"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -40,6 +40,9 @@
             opticomlib
               <img src="_static/logo.svg" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                1.0.0
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -522,7 +525,7 @@ Simplest model (no saturation output power).</p>
 <span class="n">gv</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span>
 
 <span class="n">signal</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0,0,0,1,0,0,0&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
-<span class="nb">input</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="o">/</span><span class="n">signal</span><span class="o">.</span><span class="n">power</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">idbm</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="p">)</span>
+<span class="nb">input</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="o">/</span><span class="n">signal</span><span class="o">.</span><span class="n">power</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">idbm</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">n_pol</span><span class="o">=</span><span class="mi">2</span> <span class="p">)</span>
 
 <span class="n">output</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">DM</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">retH</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -595,7 +598,7 @@ Polarization mode dispersion (PMD) is not considered in this model.</p>
 <span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span>
 
 <span class="n">signal</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0,0,0,1,0,0,0&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
-<span class="nb">input</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="o">/</span><span class="n">signal</span><span class="o">.</span><span class="n">power</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">idbm</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="p">)</span>
+<span class="nb">input</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="o">/</span><span class="n">signal</span><span class="o">.</span><span class="n">power</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">idbm</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">n_pol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="n">output</span> <span class="o">=</span> <span class="n">FIBER</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">beta_2</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">show_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
