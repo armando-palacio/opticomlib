@@ -307,7 +307,7 @@ class binary_sequence():
 
         Parameters
         ----------
-        data : :obj:`str`, 1D array_like
+        data : :obj:`str`, 1D array_like or scalar
             The binary sequence data.
         """
         if isinstance(data, str):
@@ -317,9 +317,11 @@ class binary_sequence():
 
         if not np.all((data == 0) | (data == 1)): 
             raise ValueError("The array must contain only 0's and 1's!")
-        if data.ndim != 1:
+        if data.ndim > 1:
             raise ValueError(f"Binary sequence must be 1D array, invalid shape {data.shape}")
-
+        if data.ndim == 0 and data.size == 1:
+            data = data[np.newaxis]
+        
         self.data = data.astype(bool)
         """The binary sequence data, a 1D numpy array of boolean values."""
         self.execution_time = None
@@ -347,6 +349,7 @@ class binary_sequence():
         return msg
     
     def __repr__(self):
+        np.set_printoptions(threshold=20)
         return f'binary_sequence({str(self.data.astype(np.uint8))})'
     
     def print(self, msg: str=None): 
@@ -381,9 +384,7 @@ class binary_sequence():
         -------
         :obj:`int` or :obj:`binary_sequence`
             The value of the slot if `slice` is an integer, or a new binary sequence object with the result of the slice.
-        """
-        if isinstance(slice, int):
-            return self.data[slice]
+        """ 
         return binary_sequence(self.data[slice])
     
     def __eq__(self, other):
