@@ -1,7 +1,7 @@
 ![image](docs/source/_static/logo.svg)
 
 [![PyPI](https://img.shields.io/pypi/v/opticomlib)](https://pypi.org/project/opticomlib/)
-[![Read the Docs](https://img.shields.io/badge/docs-latest-blue)](https://armando-palacio.github.io/opticomlib)
+[![Read the Docs](https://img.shields.io/badge/docs-latest-blue)](https://opticomlib.readthedocs.io/en/latest/)
 [![GitHub](https://img.shields.io/github/stars/armando-palacio/opticomlib?style=social)](https://github.com/armando-palacio/opticomlib.git)
 
 Opticomlib is an open source Python package for optical communications research. It is oriented to engineers who want to simulate optical communication systems using Python. The package provide `binary_sequence`, `electrical_signal`, `optical_signal`, and `eye` objects with methods for signal processing and visualization integrated with `numpy`, `scipy`, and `matplotlib` libraries for frendly use. The package also provide a set of electro-optic devices as `MZM`, `FIBER`, `PD`, `EDFA`, and much more. 
