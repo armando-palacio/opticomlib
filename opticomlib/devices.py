@@ -58,7 +58,9 @@ from .utils import (
 )
 
 def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31], 
-         len: int = None):
+         len: int = None,
+         seed: int = None,
+         return_seed: bool = False):
     r"""**Pseudorandom binary sequence generator**
 
     Parameters
@@ -67,6 +69,11 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
         degree of the generating pseudorandom polynomial
     len : :obj:`int`, optional
         lenght of output binary sequence
+    seed : :obj:`int`, optional
+        seed of the generator (initial state of the LFSR). It must be provided if you want to continue the sequence.
+        Default is 2**order-1.
+    return_seed : :obj:`bool`, optional
+        If True, the last state of LFSR is returned. Default is False.
 
     Returns
     -------
@@ -79,25 +86,39 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
         If ``order`` is not in [7, 9, 11, 15, 20, 23, 31].
     TypeError
         If ``len`` is not an integer.
+    
+    Warns
+    -----
+    UserWarning
+        If the seed is 0 or a multiple of 2**order.
 
     Examples
     --------
+    You can generate a PRBS sequence using the following code:
+    
+    >>> from opticomlib.devices import PRBS
+    >>> PRBS(order=7, len=10)
+    binary_sequence([1 0 0 0 0 0 0 1 0 0])
+    >>> PRBS(order=31, len=20)
+    binary_sequence([1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+
+    You can fix the LFSR iniitial state of generator by using the following code:
+    
+    >>> PRBS(order=7, len=10, seed=124)
+    binary_sequence([0 0 0 0 0 1 0 0 0 0])
+
+
+    Notes
+    -----
     For more details, see [prbs]_.
 
-    >>> from opticomlib.devices import PRBS
-    >>> PRBS(7, len=10).print("PRBS")
-
-    :: 
-  
-        -----------------------------
-        ***    binary_sequence    ***
-        -----------------------------
-            data  :  [1 0 0 0 0 0 0 1 0 0]
-            len   :  10
-            size  :  440 bytes
-            time  :  0 s
-
-        <opticomlib.typing.binary_sequence object at 0x000002385FD7D7F0>
+    - :math:`2^7-1` bits. Polynomial :math:`= X^7 + X^6 + 1`
+    - :math:`2^9-1` bits. Polynomial :math:`= X^9 + X^5 + 1`
+    - :math:`2^{11}-1` bits. Polynomial :math:`= X^{11} + X^9 + 1`
+    - :math:`2^{15}-1` bits. Polynomial :math:`= X^{15} + X^{14} + 1`
+    - :math:`2^{20}-1` bits. Polynomial :math:`= X^{20} + X^3 + 1`
+    - :math:`2^{23}-1` bits. Polynomial :math:`= X^{23} + X^{18} + 1`
+    - :math:`2^{31}-1` bits. Polynomial :math:`= X^{31} + X^{28} + 1`
 
     References
     ----------
@@ -105,19 +126,24 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
     """
     tic()
     taps = {7: [7,6], 9: [9,5], 11: [11,9], 15: [15,14], 20: [20,3], 23: [23,18], 31: [31,28]}
+    seed = seed%(2**order) if seed is not None else (1<<order)-1
+    if seed == 0:
+        seed = 1
+        warnings.warn('The seed can\'t be 0 or a multiple of 2**order. It has been changed to 1.', UserWarning)
     
     if len is not None:
         if not isinstance(len, int):
             raise TypeError('The parameter `len` must be an integer.')
-        len = min(len, 2**order-1)
+        elif len<=0:
+            raise ValueError('The parameter `len` must be an integer greater than cero.')
     else:
         len = 2**order-1
     
     if order not in taps.keys():
         raise ValueError('The parameter `order` must be one of the following values (7, 9, 11, 15, 20, 23, 31).')
 
-    prbs = np.empty((len,), dtype=np.uint8)  # Preallocate memory
-    lfsr = (1<<order)-1 # initial state of the LFSR
+    prbs = np.empty((len,), dtype=np.uint8)  # Preallocate memory for the PRBS
+    lfsr = seed # initial state of the LFSR 
     tap1, tap2 = np.array(taps[order])-1
 
     index = 0
@@ -126,13 +152,15 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
         new = ((lfsr>>tap1)^(lfsr>>tap2))&1
         lfsr = ((lfsr<<1) | new) & (1<<order)-1 
         index += 1
-        if lfsr == (1<<order)-1:
-            break
+        # if lfsr == seed:
+        #     break
     
     output = binary_sequence( prbs )
     output.execution_time = toc()
     
-    return output
+    if not return_seed:
+        return output
+    return output, lfsr   
 
 
 def DAC(input: Union[str, list, tuple, np.ndarray, binary_sequence], 
@@ -532,7 +560,7 @@ def BPF(input: optical_signal,
 
     sos_band = sg.bessel(N=n, Wn=BW/2, btype='low', fs=gv.fs, output='sos', norm='mag')
 
-    output = optical_signal(np.zeros((2, input.len())))
+    output = input.copy()
 
     output.signal = sg.sosfiltfilt(sos_band, input.signal, axis=-1)
 
