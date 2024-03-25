@@ -41,7 +41,7 @@
               <img src="_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -115,7 +115,7 @@
 <p class="rubric" id="module-opticomlib.devices">Devices</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.devices.PRBS" title="opticomlib.devices.PRBS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PRBS</span></code></a>(order[, len])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.devices.PRBS" title="opticomlib.devices.PRBS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PRBS</span></code></a>(order[, len, seed, return_seed])</p></td>
 <td><p><strong>Pseudorandom binary sequence generator</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.devices.DAC" title="opticomlib.devices.DAC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DAC</span></code></a>(input[, Vout, pulse_shape])</p></td>
@@ -161,13 +161,16 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.devices.PRBS">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PRBS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">7</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">11</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">15</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">20</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">23</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">31</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#PRBS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.PRBS" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PRBS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">7</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">11</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">15</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">20</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">23</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">31</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#PRBS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.PRBS" title="Link to this definition"></a></dt>
 <dd><p><strong>Pseudorandom binary sequence generator</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>order</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, {7, 9, 11, 15, 20, 23, 31}) – degree of the generating pseudorandom polynomial</p></li>
 <li><p><strong>len</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – lenght of output binary sequence</p></li>
+<li><p><strong>seed</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – seed of the generator (initial state of the LFSR). It must be provided if you want to continue the sequence.
+Default is 2**order-1.</p></li>
+<li><p><strong>return_seed</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, the last state of LFSR is returned. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -182,24 +185,35 @@
 <li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">len</span></code> is not an integer.</p></li>
 </ul>
 </dd>
+<dt class="field-odd">Warns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>UserWarning</strong> – If the seed is 0 or a multiple of 2**order.</p>
+</dd>
 </dl>
 <p class="rubric">Examples</p>
-<p>For more details, see <a class="reference internal" href="#prbs" id="id1"><span>[prbs]</span></a>.</p>
+<p>You can generate a PRBS sequence using the following code:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">PRBS</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="nb">len</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;PRBS&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="nb">len</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">binary_sequence([1 0 0 0 0 0 0 1 0 0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span> <span class="nb">len</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">binary_sequence([1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-----------------------------</span>
-<span class="o">***</span>    <span class="n">binary_sequence</span>    <span class="o">***</span>
-<span class="o">-----------------------------</span>
-    <span class="n">data</span>  <span class="p">:</span>  <span class="p">[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="nb">len</span>   <span class="p">:</span>  <span class="mi">10</span>
-    <span class="n">size</span>  <span class="p">:</span>  <span class="mi">440</span> <span class="nb">bytes</span>
-    <span class="n">time</span>  <span class="p">:</span>  <span class="mi">0</span> <span class="n">s</span>
-
-<span class="o">&lt;</span><span class="n">opticomlib</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">binary_sequence</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x000002385FD7D7F0</span><span class="o">&gt;</span>
+<p>You can fix the LFSR iniitial state of generator by using the following code:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="nb">len</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">124</span><span class="p">)</span>
+<span class="go">binary_sequence([0 0 0 0 0 1 0 0 0 0])</span>
 </pre></div>
 </div>
+<p class="rubric">Notes</p>
+<p>For more details, see <a class="reference internal" href="#prbs" id="id1"><span>[prbs]</span></a>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(2^7-1\)</span> bits. Polynomial <span class="math notranslate nohighlight">\(= X^7 + X^6 + 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2^9-1\)</span> bits. Polynomial <span class="math notranslate nohighlight">\(= X^9 + X^5 + 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2^{11}-1\)</span> bits. Polynomial <span class="math notranslate nohighlight">\(= X^{11} + X^9 + 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2^{15}-1\)</span> bits. Polynomial <span class="math notranslate nohighlight">\(= X^{15} + X^{14} + 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2^{20}-1\)</span> bits. Polynomial <span class="math notranslate nohighlight">\(= X^{20} + X^3 + 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2^{23}-1\)</span> bits. Polynomial <span class="math notranslate nohighlight">\(= X^{23} + X^{18} + 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2^{31}-1\)</span> bits. Polynomial <span class="math notranslate nohighlight">\(= X^{31} + X^{28} + 1\)</span></p></li>
+</ul>
 <p class="rubric">References</p>
 <div role="list" class="citation-list">
 <div class="citation" id="prbs" role="doc-biblioentry">

@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -149,7 +149,9 @@
 <div class="viewcode-block" id="PRBS">
 <a class="viewcode-back" href="../../devices.html#opticomlib.devices.PRBS">[docs]</a>
 <span class="k">def</span> <span class="nf">PRBS</span><span class="p">(</span><span class="n">order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">31</span><span class="p">],</span> 
-         <span class="nb">len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+         <span class="nb">len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+         <span class="n">return_seed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;**Pseudorandom binary sequence generator**</span>
 
 <span class="sd">    Parameters</span>
@@ -158,6 +160,11 @@
 <span class="sd">        degree of the generating pseudorandom polynomial</span>
 <span class="sd">    len : :obj:`int`, optional</span>
 <span class="sd">        lenght of output binary sequence</span>
+<span class="sd">    seed : :obj:`int`, optional</span>
+<span class="sd">        seed of the generator (initial state of the LFSR). It must be provided if you want to continue the sequence.</span>
+<span class="sd">        Default is 2**order-1.</span>
+<span class="sd">    return_seed : :obj:`bool`, optional</span>
+<span class="sd">        If True, the last state of LFSR is returned. Default is False.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -170,25 +177,39 @@
 <span class="sd">        If ``order`` is not in [7, 9, 11, 15, 20, 23, 31].</span>
 <span class="sd">    TypeError</span>
 <span class="sd">        If ``len`` is not an integer.</span>
+<span class="sd">    </span>
+<span class="sd">    Warns</span>
+<span class="sd">    -----</span>
+<span class="sd">    UserWarning</span>
+<span class="sd">        If the seed is 0 or a multiple of 2**order.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">    You can generate a PRBS sequence using the following code:</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; from opticomlib.devices import PRBS</span>
+<span class="sd">    &gt;&gt;&gt; PRBS(order=7, len=10)</span>
+<span class="sd">    binary_sequence([1 0 0 0 0 0 0 1 0 0])</span>
+<span class="sd">    &gt;&gt;&gt; PRBS(order=31, len=20)</span>
+<span class="sd">    binary_sequence([1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])</span>
+
+<span class="sd">    You can fix the LFSR iniitial state of generator by using the following code:</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; PRBS(order=7, len=10, seed=124)</span>
+<span class="sd">    binary_sequence([0 0 0 0 0 1 0 0 0 0])</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
 <span class="sd">    For more details, see [prbs]_.</span>
 
-<span class="sd">    &gt;&gt;&gt; from opticomlib.devices import PRBS</span>
-<span class="sd">    &gt;&gt;&gt; PRBS(7, len=10).print(&quot;PRBS&quot;)</span>
-
-<span class="sd">    :: </span>
-<span class="sd">  </span>
-<span class="sd">        -----------------------------</span>
-<span class="sd">        ***    binary_sequence    ***</span>
-<span class="sd">        -----------------------------</span>
-<span class="sd">            data  :  [1 0 0 0 0 0 0 1 0 0]</span>
-<span class="sd">            len   :  10</span>
-<span class="sd">            size  :  440 bytes</span>
-<span class="sd">            time  :  0 s</span>
-
-<span class="sd">        &lt;opticomlib.typing.binary_sequence object at 0x000002385FD7D7F0&gt;</span>
+<span class="sd">    - :math:`2^7-1` bits. Polynomial :math:`= X^7 + X^6 + 1`</span>
+<span class="sd">    - :math:`2^9-1` bits. Polynomial :math:`= X^9 + X^5 + 1`</span>
+<span class="sd">    - :math:`2^{11}-1` bits. Polynomial :math:`= X^{11} + X^9 + 1`</span>
+<span class="sd">    - :math:`2^{15}-1` bits. Polynomial :math:`= X^{15} + X^{14} + 1`</span>
+<span class="sd">    - :math:`2^{20}-1` bits. Polynomial :math:`= X^{20} + X^3 + 1`</span>
+<span class="sd">    - :math:`2^{23}-1` bits. Polynomial :math:`= X^{23} + X^{18} + 1`</span>
+<span class="sd">    - :math:`2^{31}-1` bits. Polynomial :math:`= X^{31} + X^{28} + 1`</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -196,19 +217,24 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tic</span><span class="p">()</span>
     <span class="n">taps</span> <span class="o">=</span> <span class="p">{</span><span class="mi">7</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="mi">9</span><span class="p">:</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="mi">11</span><span class="p">:</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="mi">15</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="mi">14</span><span class="p">],</span> <span class="mi">20</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="mi">23</span><span class="p">:</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span><span class="mi">18</span><span class="p">],</span> <span class="mi">31</span><span class="p">:</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">28</span><span class="p">]}</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span><span class="o">%</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">order</span><span class="p">)</span> <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">order</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The seed can</span><span class="se">\&#39;</span><span class="s1">t be 0 or a multiple of 2**order. It has been changed to 1.&#39;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="nb">len</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The parameter `len` must be an integer.&#39;</span><span class="p">)</span>
-        <span class="nb">len</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">order</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The parameter `len` must be an integer greater than cero.&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">len</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">order</span><span class="o">-</span><span class="mi">1</span>
     
     <span class="k">if</span> <span class="n">order</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">taps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The parameter `order` must be one of the following values (7, 9, 11, 15, 20, 23, 31).&#39;</span><span class="p">)</span>
 
-    <span class="n">prbs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>  <span class="c1"># Preallocate memory</span>
-    <span class="n">lfsr</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">order</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># initial state of the LFSR</span>
+    <span class="n">prbs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>  <span class="c1"># Preallocate memory for the PRBS</span>
+    <span class="n">lfsr</span> <span class="o">=</span> <span class="n">seed</span> <span class="c1"># initial state of the LFSR </span>
     <span class="n">tap1</span><span class="p">,</span> <span class="n">tap2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taps</span><span class="p">[</span><span class="n">order</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span>
 
     <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
@@ -217,13 +243,15 @@
         <span class="n">new</span> <span class="o">=</span> <span class="p">((</span><span class="n">lfsr</span><span class="o">&gt;&gt;</span><span class="n">tap1</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="n">lfsr</span><span class="o">&gt;&gt;</span><span class="n">tap2</span><span class="p">))</span><span class="o">&amp;</span><span class="mi">1</span>
         <span class="n">lfsr</span> <span class="o">=</span> <span class="p">((</span><span class="n">lfsr</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="n">new</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">order</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> 
         <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">lfsr</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">order</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">break</span>
+        <span class="c1"># if lfsr == seed:</span>
+        <span class="c1">#     break</span>
     
     <span class="n">output</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="n">prbs</span> <span class="p">)</span>
     <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
     
-    <span class="k">return</span> <span class="n">output</span></div>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">return_seed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">output</span>
+    <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">lfsr</span>   </div>
 
 
 
@@ -635,7 +663,7 @@
 
     <span class="n">sos_band</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">bessel</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">Wn</span><span class="o">=</span><span class="n">BW</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">gv</span><span class="o">.</span><span class="n">fs</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;sos&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;mag&#39;</span><span class="p">)</span>
 
-    <span class="n">output</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">())))</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
