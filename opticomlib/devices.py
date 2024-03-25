@@ -87,8 +87,8 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
     TypeError
         If ``len`` is not an integer.
     
-    Warnings
-    --------
+    Warns
+    -----
     UserWarning
         If the seed is 0 or a multiple of 2**order.
 
@@ -107,7 +107,18 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
     >>> PRBS(order=7, len=10, seed=124)
     binary_sequence([0 0 0 0 0 1 0 0 0 0])
 
+
+    Notes
+    -----
     For more details, see [prbs]_.
+
+    - :math:`2^7-1` bits. Polynomial :math:`= X^7 + X^6 + 1`
+    - :math:`2^9-1` bits. Polynomial :math:`= X^9 + X^5 + 1`
+    - :math:`2^{11}-1` bits. Polynomial :math:`= X^{11} + X^9 + 1`
+    - :math:`2^{15}-1` bits. Polynomial :math:`= X^{15} + X^{14} + 1`
+    - :math:`2^{20}-1` bits. Polynomial :math:`= X^{20} + X^3 + 1`
+    - :math:`2^{23}-1` bits. Polynomial :math:`= X^{23} + X^{18} + 1`
+    - :math:`2^{31}-1` bits. Polynomial :math:`= X^{31} + X^{28} + 1`
 
     References
     ----------
@@ -123,6 +134,8 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
     if len is not None:
         if not isinstance(len, int):
             raise TypeError('The parameter `len` must be an integer.')
+        elif len<=0:
+            raise ValueError('The parameter `len` must be an integer greater than cero.')
     else:
         len = 2**order-1
     
