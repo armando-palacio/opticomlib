@@ -1202,7 +1202,7 @@ def GET_EYE(input: Union[electrical_signal, np.ndarray], nslots: int=4096, sps_r
     nslots = min(input.len()//sps//2*2, nslots)
     input = input[:nslots*sps]
 
-    input = input.signal
+    input = (input.signal + input.noise).real if input.noise is not None else input.signal.real
 
     input = np.roll(input, -sps//2+1) # To focus the eye on the chart
     y_set = np.unique(input)

@@ -1083,6 +1083,7 @@ class electrical_signal():
         output.signal = function(self.signal, *args, **kargs)
         if self.noise is not None:
             output.noise = function(self.noise, *args, **kargs)
+        output.execution_time = self.execution_time
         return output
 
     def copy(self, n: int=None):
