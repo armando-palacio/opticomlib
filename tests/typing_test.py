@@ -151,7 +151,7 @@ class TestElectricalSignal(unittest.TestCase):
 
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 assert_equal(x.signal, np.arange(6))
                 assert_equal(x.noise, -np.arange(6))
@@ -159,7 +159,7 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_equal(x.execution_time, None)
                 assert_(x.len()==6)
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
 
                 assert_equal(x.signal, np.arange(6))
                 assert_(x.noise is None)
@@ -179,7 +179,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_getitem(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 # test int indexing 
                 assert_(x[0].type() == electrical_signal)
@@ -197,7 +197,7 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_equal(x[1:-1].noise, -np.arange(1,5))
                 assert_equal(x[:100].signal, np.arange(6))
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
 
                 # test int indexing
                 assert_(x[0].type() == electrical_signal)
@@ -218,7 +218,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_add_and_radd(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 y = x + x
                 assert_equal(y.signal, np.arange(6)*2)
@@ -246,7 +246,7 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_(y.signal.dtype == dtype)
                 assert_raises(ValueError, lambda: x + sig[:4]) # Different length
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
 
                 y = x + x
                 assert_equal(y.signal, np.arange(6)*2)
@@ -278,7 +278,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_sub_and_rsub(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 y = x - x
                 assert_equal(y.signal, np.zeros(6))
@@ -305,7 +305,7 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_equal(y.noise, -x.noise)
                 assert_raises(ValueError, lambda: x + sig[:4]) # Different length
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
 
                 y = x - x
                 assert_equal(y.signal, np.zeros(6))
@@ -336,7 +336,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_mul_and_rmul(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 y = x * x
                 assert_equal(y.signal, x.signal**2)
@@ -363,7 +363,7 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_equal(y.noise, x.noise)
                 assert_raises(ValueError, lambda: x + sig[:4]) # Different length
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
 
                 y = x * x
                 assert_equal(y.signal, x.signal**2)
@@ -394,7 +394,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_gt_and_lt(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 z = x.signal + x.noise
                 
                 y = x > x
@@ -417,7 +417,7 @@ class TestElectricalSignal(unittest.TestCase):
                 y = x < 2
                 assert_equal(y.data, z<2)
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
                 z = x.signal
 
                 y = x > x
@@ -443,7 +443,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_call(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 y = x('t')
                 assert_equal(y.signal, np.fft.ifft(x.signal))
@@ -471,7 +471,7 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
                 assert_equal(y.noise, np.fft.fftshift(np.fft.fft(x.noise)))
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
 
                 y = x('t')
                 assert_equal(y.signal, np.fft.ifft(x.signal))
@@ -503,7 +503,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_abs(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 x.noise=-x.noise
                 z = x.signal + x.noise
 
@@ -520,7 +520,7 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_equal(y, np.abs(x.noise))
 
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
                 z = x.signal
 
                 y = x.abs()
@@ -539,7 +539,7 @@ class TestElectricalSignal(unittest.TestCase):
     def test_power(self):
         for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = electrical_signal(sig, noi) # signal and noise
+                x = electrical_signal(sig, noi, dtype=dtype) # signal and noise
                 x.noise = -x.noise
                 z = x.signal + x.noise
 
@@ -555,7 +555,7 @@ class TestElectricalSignal(unittest.TestCase):
                 y = x.power('noise')
                 assert_equal(y, np.mean(np.abs(x.noise)**2))
 
-                x = electrical_signal(sig) # No noise
+                x = electrical_signal(sig, dtype=dtype) # No noise
                 z = x.signal
 
                 y = x.power()
@@ -618,14 +618,14 @@ class TestElectricalSignal(unittest.TestCase):
     def test_plot(self):
         x = electrical_signal(np.ones(100), np.random.normal(0,0.05,100))
         try:
-            assert_(x.plot('-r', n=98, xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=False)==x)
+            assert_(x.plot('-r', n=98, xlabel='Time', ylabel='Intensity', style='light', grid=True, hold=True)==x)
         except Exception as e:
             self.fail(f"x.plot() raised {type(e).__name__} unexpectedly!")
 
     def test_psd(self):
         x = electrical_signal(np.ones(100), np.random.normal(0,0.05,100))
         try:
-            assert_(x.psd('--b', n=98, xlabel='Freq', ylabel='Spectra', style='dark', grid=False, hold=False)==x)
+            assert_(x.psd('--b', n=98, xlabel='Freq', ylabel='Spectra', style='dark', grid=False, hold=True)==x)
         except Exception as e:
             self.fail(f"x.psd() raised {type(e).__name__} unexpectedly!")
 
@@ -718,7 +718,7 @@ class TestOpticalSignal(unittest.TestCase):
     def test_getitem(self):
         for sig, noi, dtype in zip(self.signals_1p, self.noises_1p, self.dtypes):
             with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig, noi)
+                x = optical_signal(sig, noi, dtype=dtype)
                 
                 # test int indexing 
                 assert_(x[0].type() == optical_signal)
@@ -738,7 +738,7 @@ class TestOpticalSignal(unittest.TestCase):
 
         for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
             with self.subTest(pol=2, type=type(sig)):
-                x = optical_signal(sig, noi)
+                x = optical_signal(sig, noi, dtype=dtype)
                 
                 # test int indexing 
                 assert_(x[0].type() == optical_signal)
@@ -758,7 +758,7 @@ class TestOpticalSignal(unittest.TestCase):
 
         for sig, dtype in zip(self.signals_1p, self.dtypes):
             with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig)
+                x = optical_signal(sig, dtype=dtype)
                 
                 # test int indexing 
                 assert_(x[0].type() == optical_signal)
@@ -778,7 +778,7 @@ class TestOpticalSignal(unittest.TestCase):
 
         for sig, dtype in zip(self.signals_2p, self.dtypes):
             with self.subTest(pol=2, type=type(sig)):
-                x = optical_signal(sig)
+                x = optical_signal(sig, dtype=dtype)
                 
                 # test int indexing 
                 assert_(x[0].type() == optical_signal)
@@ -799,7 +799,7 @@ class TestOpticalSignal(unittest.TestCase):
     def test_add_and_radd(self):
         for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=2) # signal and noise
+                x = optical_signal(sig, noi, n_pol=2, dtype=dtype) # signal and noise
                 
                 y = x + x
                 assert_(y.type()==optical_signal)
@@ -836,7 +836,7 @@ class TestOpticalSignal(unittest.TestCase):
                 else:
                     assert_raises(ValueError, lambda: x + sig[0][:4]) # Different length
 
-                x = optical_signal(sig) # No noise
+                x = optical_signal(sig, dtype=dtype) # No noise
 
                 y = x + x
                 assert_(y.type()==optical_signal)
@@ -877,7 +877,7 @@ class TestOpticalSignal(unittest.TestCase):
     def test_sub_and_rsub(self):
         for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = optical_signal(sig, noi) # signal and noise
+                x = optical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 y = x - x
                 assert_(y.type()==optical_signal)
@@ -913,7 +913,7 @@ class TestOpticalSignal(unittest.TestCase):
                 else:
                     assert_raises(ValueError, lambda: x - sig[0][:4]) # Different length
 
-                x = optical_signal(sig) # No noise
+                x = optical_signal(sig, dtype=dtype) # No noise
 
                 y = x - x
                 assert_(y.type()==optical_signal)
@@ -953,7 +953,7 @@ class TestOpticalSignal(unittest.TestCase):
     def test_mul_and_rmul(self):
         for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = optical_signal(sig, noi) # signal and noise
+                x = optical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 y = x * x
                 assert_(y.type()==optical_signal)
@@ -989,7 +989,7 @@ class TestOpticalSignal(unittest.TestCase):
                 else:
                     assert_raises(ValueError, lambda: x + sig[0][:4]) # Different length
 
-                x = optical_signal(sig) # No noise
+                x = optical_signal(sig, dtype=dtype) # No noise
 
                 y = x * x
                 assert_(y.type()==optical_signal)
@@ -1029,7 +1029,7 @@ class TestOpticalSignal(unittest.TestCase):
     def test_call(self):
         for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = optical_signal(sig, noi) # signal and noise
+                x = optical_signal(sig, noi, dtype=dtype) # signal and noise
                 
                 y = x('t')
                 assert_(y.type()==optical_signal)
@@ -1063,7 +1063,7 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
                 assert_equal(y.noise, np.fft.fftshift(np.fft.fft(x.noise)))
 
-                x = optical_signal(sig) # No noise
+                x = optical_signal(sig, dtype=dtype) # No noise
 
                 y = x('t')
                 assert_(y.type()==optical_signal)
@@ -1100,7 +1100,7 @@ class TestOpticalSignal(unittest.TestCase):
     def test_power(self):
         for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
             with self.subTest(type=type(sig)):
-                x = optical_signal(sig, noi) # signal and noise
+                x = optical_signal(sig, noi, dtype=dtype) # signal and noise
                 x.noise = -x.noise
                 z = x.signal + x.noise
 
@@ -1116,7 +1116,7 @@ class TestOpticalSignal(unittest.TestCase):
                 y = x.power('noise')
                 assert_equal(y, np.mean(np.abs(x.noise)**2))
 
-                x = optical_signal(sig) # No noise
+                x = optical_signal(sig, dtype=dtype) # No noise
                 z = x.signal
 
                 y = x.power()
