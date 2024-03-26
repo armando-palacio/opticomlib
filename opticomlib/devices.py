@@ -378,12 +378,12 @@ def PM(op_input: optical_signal,
 
 
 def MZM(op_input: optical_signal, 
-        el_input: Union[float, np.ndarray, electrical_signal], 
+        el_input: float | np.ndarray | electrical_signal, 
         bias: float=0.0, 
         Vpi: float=5.0, 
         loss_dB: float=0.0, 
-        eta: float=0.1, 
-        BW: float=40e9):
+        ER_dB: float=26.0,
+        BW: float=None):
     r"""
     **Mach-Zehnder modulator**
 
@@ -392,8 +392,9 @@ def MZM(op_input: optical_signal,
     Parameters
     ----------
     op_input : :obj:`optical_signal`
-        Optical signal to be modulated.
-    el_input : :obj:`float`, :obj:`ndarray`, or :obj:`electrical_signal`
+        Optical signal to be modulated. This optical signal must contain only one polarization ``op_input.n_pol=1``. Otherwise 
+        it remove the second polarization.
+    el_input : Number, :obj:`ndarray`, or :obj:`electrical_signal`
         Driver voltage, with zero bias. 
     bias : :obj:`float`, default: 0.0
         Modulator bias voltage.
@@ -401,8 +402,8 @@ def MZM(op_input: optical_signal,
         Voltage at which the device switches from on-state to off-state.
     loss_dB : :obj:`float`, default: 0.0
         Propagation or insertion losses in the modulator, value in dB.
-    eta : :obj:`float`, default: 0.1
-        Imbalance ratio of light intensity between the two arms of the modulator. :math:`ER = -20\log_{10}(\eta/2)` (:math:`=26` dB by default).
+    ER_dB: :obj:`float`, optional
+        Extinction ratio of the modulator, in dB. Default is 26 dB.
     BW : :obj:`float`, default: 40e9
         Modulator bandwidth in Hz.
 
@@ -431,6 +432,8 @@ def MZM(op_input: optical_signal,
 
     .. math:: 
         E_{out} = E_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] 
+
+    where :math:`\eta = 2*10^{-ER_dB/10}` and :math:`l = 10^{-loss_{dB}/10}`. 
 
     References
     ----------
@@ -501,29 +504,28 @@ def MZM(op_input: optical_signal,
     if not isinstance(op_input, optical_signal): 
         raise TypeError("`op_input` debe ser del tipo (optical_signal).")
     
-    if isinstance(el_input, (int, float)):
-        el_input = np.ones(op_input.len()) * el_input
-    elif isinstance(el_input, electrical_signal):
-        el_input = el_input.signal
-        if el_input.size != op_input.signal.len():
-            raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
-    elif isinstance(el_input, np.ndarray):
-        if len(el_input) != op_input.len():
-            raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
-    else:
-        raise TypeError("`el_input` debe ser del tipo (int, float, ndarray ó electrical_signal).")
+    if not isinstance(el_input, electrical_signal):
+        el_input = electrical_signal(el_input)
+
+    if op_input.len() != el_input.len() and el_input.len() != 1:
+        raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
     
     loss = idb(-loss_dB)
+    eta = 2*idb(-ER_dB)**0.5
 
-    output = op_input.copy()
-    g_t = pi/2/Vpi * (el_input + bias)
+    if op_input.n_pol != 1:
+        warnings.warn("The second polarization of optical signal has been removed.", UserWarning)
+        op_input.signal = op_input.signal[0]
+
+
+    g_t = pi/2/Vpi * (el_input.signal + bias)
     output.signal = op_input.signal * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
 
     if np.sum(op_input.noise):
         output.noise = op_input.noise * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
 
     t_ = toc()
-    output = LPF(output, BW)
+    output = BPF(output, BW)
 
     output.execution_time += t_ 
     return output
@@ -1091,7 +1093,7 @@ def ADC(input: electrical_signal, fs: float=None, BW: float=None, nbits: int=8) 
     return output
 
 
-def GET_EYE(input: Union[electrical_signal, optical_signal, np.ndarray], nslots: int=4096, sps_resamp: int=None):
+def GET_EYE(input: Union[electrical_signal, np.ndarray], nslots: int=4096, sps_resamp: int=None):
     r"""
     **Get Eye Parameters Estimator**
 
@@ -1099,16 +1101,16 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, np.ndarray], nslots:
 
     Parameters
     ----------
-    input : electrical_signal | optical_signal
+    input : :obj:`electrical_signal` | :obj:`np.ndarray`
         Electrical or optical signal from which the eye diagram will be estimated.
-    nslots : int, default: 4096
+    nslots : :obj:`int`, default: 4096
         Number of slots to consider for eye reconstruction.
-    sps_resamp : int, default: None
+    sps_resamp : :obj:`int`, default: None
         Number of samples per slot to interpolate the original signal.
 
     Returns
     -------
-    eye
+    :obj:`eye`
         Object of the eye class with all the parameters and metrics of the eye diagram.
 
     Raises
@@ -1187,20 +1189,9 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, np.ndarray], nslots:
 
     eye_dict = {}
 
-    if isinstance(input, np.ndarray):
-        if input.ndim == 2:
-            if input.shape[0] != 2 and input.shape[1] == 2:
-                input = input.T
-            elif input.shape[0] == 2 and input.shape[1] != 2:
-                pass
-            else:
-                raise ValueError("2D arrays must have a shape (2,N) or (N,2).")
-            input = optical_signal(input)
-        elif input.ndim == 1:
-            input = electrical_signal(input)
-        else:
-            raise ValueError("The `input` must be a 1D or 2D array.")
-
+    if not isinstance(input, electrical_signal):
+        input = electrical_signal(input)
+                      
     sps = input.sps(); eye_dict['sps'] = sps
     dt = input.dt(); eye_dict['dt'] = dt
 
@@ -1211,13 +1202,7 @@ def GET_EYE(input: Union[electrical_signal, optical_signal, np.ndarray], nslots:
     nslots = min(input.len()//sps//2*2, nslots)
     input = input[:nslots*sps]
 
-    if isinstance(input, optical_signal):
-        s = input.abs()
-        input = (s[0]**2 + s[1]**2)**0.5
-    elif isinstance(input, electrical_signal):
-        input = (input.signal+input.noise).real
-    else:
-        raise TypeError("The argument 'input' must be 'optical_signal', 'electrical_signal' or 'np.ndarray'.")
+    input = input.signal
 
     input = np.roll(input, -sps//2+1) # To focus the eye on the chart
     y_set = np.unique(input)
