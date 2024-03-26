@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.1.0
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -478,12 +478,12 @@
 <div class="viewcode-block" id="MZM">
 <a class="viewcode-back" href="../../devices.html#opticomlib.devices.MZM">[docs]</a>
 <span class="k">def</span> <span class="nf">MZM</span><span class="p">(</span><span class="n">op_input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> 
-        <span class="n">el_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">],</span> 
+        <span class="n">el_input</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">electrical_signal</span><span class="p">,</span> 
         <span class="n">bias</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> 
         <span class="n">Vpi</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> 
         <span class="n">loss_dB</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> 
-        <span class="n">eta</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> 
-        <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">40e9</span><span class="p">):</span>
+        <span class="n">ER_dB</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">26.0</span><span class="p">,</span>
+        <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Mach-Zehnder modulator**</span>
 
@@ -492,8 +492,9 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    op_input : :obj:`optical_signal`</span>
-<span class="sd">        Optical signal to be modulated.</span>
-<span class="sd">    el_input : :obj:`float`, :obj:`ndarray`, or :obj:`electrical_signal`</span>
+<span class="sd">        Optical signal to be modulated. This optical signal must contain only one polarization ``op_input.n_pol=1``. Otherwise </span>
+<span class="sd">        it remove the second polarization.</span>
+<span class="sd">    el_input : Number, :obj:`ndarray`, or :obj:`electrical_signal`</span>
 <span class="sd">        Driver voltage, with zero bias. </span>
 <span class="sd">    bias : :obj:`float`, default: 0.0</span>
 <span class="sd">        Modulator bias voltage.</span>
@@ -501,8 +502,8 @@
 <span class="sd">        Voltage at which the device switches from on-state to off-state.</span>
 <span class="sd">    loss_dB : :obj:`float`, default: 0.0</span>
 <span class="sd">        Propagation or insertion losses in the modulator, value in dB.</span>
-<span class="sd">    eta : :obj:`float`, default: 0.1</span>
-<span class="sd">        Imbalance ratio of light intensity between the two arms of the modulator. :math:`ER = -20\log_{10}(\eta/2)` (:math:`=26` dB by default).</span>
+<span class="sd">    ER_dB: :obj:`float`, optional</span>
+<span class="sd">        Extinction ratio of the modulator, in dB. Default is 26 dB.</span>
 <span class="sd">    BW : :obj:`float`, default: 40e9</span>
 <span class="sd">        Modulator bandwidth in Hz.</span>
 
@@ -531,6 +532,8 @@
 
 <span class="sd">    .. math:: </span>
 <span class="sd">        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] </span>
+
+<span class="sd">    where :math:`\eta = 2*10^{-ER_dB/10}` and :math:`l = 10^{-loss_{dB}/10}`. </span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -601,29 +604,28 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op_input</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span> 
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`op_input` debe ser del tipo (optical_signal).&quot;</span><span class="p">)</span>
     
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el_input</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-        <span class="n">el_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">op_input</span><span class="o">.</span><span class="n">len</span><span class="p">())</span> <span class="o">*</span> <span class="n">el_input</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el_input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-        <span class="n">el_input</span> <span class="o">=</span> <span class="n">el_input</span><span class="o">.</span><span class="n">signal</span>
-        <span class="k">if</span> <span class="n">el_input</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;La longitud de `el_input` debe ser igual a la longitud de `op_input`.&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el_input</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">el_input</span><span class="p">)</span> <span class="o">!=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;La longitud de `el_input` debe ser igual a la longitud de `op_input`.&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`el_input` debe ser del tipo (int, float, ndarray ó electrical_signal).&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el_input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+        <span class="n">el_input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">el_input</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">op_input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">el_input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">el_input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;La longitud de `el_input` debe ser igual a la longitud de `op_input`.&quot;</span><span class="p">)</span>
     
     <span class="n">loss</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">loss_dB</span><span class="p">)</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">ER_dB</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
 
-    <span class="n">output</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">g_t</span> <span class="o">=</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Vpi</span> <span class="o">*</span> <span class="p">(</span><span class="n">el_input</span> <span class="o">+</span> <span class="n">bias</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_input</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The second polarization of optical signal has been removed.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="n">op_input</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+    <span class="n">g_t</span> <span class="o">=</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Vpi</span> <span class="o">*</span> <span class="p">(</span><span class="n">el_input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">bias</span><span class="p">)</span>
     <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">loss</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">g_t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">eta</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">g_t</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">op_input</span><span class="o">.</span><span class="n">noise</span><span class="p">):</span>
         <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="n">loss</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">g_t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">eta</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">g_t</span><span class="p">))</span>
 
     <span class="n">t_</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">LPF</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
 
     <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">t_</span> 
     <span class="k">return</span> <span class="n">output</span></div>
@@ -1215,7 +1217,7 @@
 
 <div class="viewcode-block" id="GET_EYE">
 <a class="viewcode-back" href="../../devices.html#opticomlib.devices.GET_EYE">[docs]</a>
-<span class="k">def</span> <span class="nf">GET_EYE</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">electrical_signal</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">nslots</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">sps_resamp</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">GET_EYE</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">electrical_signal</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">nslots</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">sps_resamp</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Get Eye Parameters Estimator**</span>
 
@@ -1223,16 +1225,16 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    input : electrical_signal | optical_signal</span>
+<span class="sd">    input : :obj:`electrical_signal` | :obj:`np.ndarray`</span>
 <span class="sd">        Electrical or optical signal from which the eye diagram will be estimated.</span>
-<span class="sd">    nslots : int, default: 4096</span>
+<span class="sd">    nslots : :obj:`int`, default: 4096</span>
 <span class="sd">        Number of slots to consider for eye reconstruction.</span>
-<span class="sd">    sps_resamp : int, default: None</span>
+<span class="sd">    sps_resamp : :obj:`int`, default: None</span>
 <span class="sd">        Number of samples per slot to interpolate the original signal.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    eye</span>
+<span class="sd">    :obj:`eye`</span>
 <span class="sd">        Object of the eye class with all the parameters and metrics of the eye diagram.</span>
 
 <span class="sd">    Raises</span>
@@ -1311,20 +1313,9 @@
 
     <span class="n">eye_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">T</span>
-            <span class="k">elif</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">pass</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;2D arrays must have a shape (2,N) or (N,2).&quot;</span><span class="p">)</span>
-            <span class="nb">input</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">input</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The `input` must be a 1D or 2D array.&quot;</span><span class="p">)</span>
-
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+                      
     <span class="n">sps</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">sps</span><span class="p">();</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;sps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sps</span>
     <span class="n">dt</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">dt</span><span class="p">();</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span>
 
@@ -1335,13 +1326,7 @@
     <span class="n">nslots</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">//</span><span class="n">sps</span><span class="o">//</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">nslots</span><span class="p">)</span>
     <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:</span><span class="n">nslots</span><span class="o">*</span><span class="n">sps</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="o">+</span><span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The argument &#39;input&#39; must be &#39;optical_signal&#39;, &#39;electrical_signal&#39; or &#39;np.ndarray&#39;.&quot;</span><span class="p">)</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">real</span> <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">real</span>
 
     <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="o">-</span><span class="n">sps</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># To focus the eye on the chart</span>
     <span class="n">y_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>

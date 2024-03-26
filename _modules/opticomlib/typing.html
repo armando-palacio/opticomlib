@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.1.0
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -427,7 +427,7 @@
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The binary sequence data, a 1D numpy array of boolean values.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The execution time of the last operation performed on the binary sequence.&quot;&quot;&quot;</span></div>
@@ -443,8 +443,8 @@
         <span class="n">title</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s1">    &#39;</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;*&#39;</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">title</span><span class="p">)</span><span class="o">*</span><span class="s1">&#39;-&#39;</span>
 
-        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
         <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">sub</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">sub</span><span class="si">}</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;data  :  </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> \
@@ -458,8 +458,8 @@
 
     
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;binary_sequence(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;binary_sequence(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
     
 <div class="viewcode-block" id="binary_sequence.print">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.print">[docs]</a>
@@ -483,14 +483,14 @@
 <div class="viewcode-block" id="binary_sequence.__len__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__len__">[docs]</a>
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of slots of the binary sequence.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of slots of the binary sequence. ``len(self)``&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="binary_sequence.__getitem__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__getitem__">[docs]</a>
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a slice of the binary sequence (``x[slice]``). </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a slice of the binary sequence (``self[slice]``). </span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -526,11 +526,13 @@
             <span class="n">other</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>  
         <span class="k">else</span><span class="p">:</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare binary sequences with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
-        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">other</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="binary_sequence.__add__">
@@ -633,7 +635,7 @@
 <span class="sd">        binary_sequence</span>
 <span class="sd">            A new binary sequence object with the result of the inversion.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="binary_sequence.len">
@@ -741,7 +743,7 @@
 
 <div class="viewcode-block" id="electrical_signal.__init__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">noise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">noise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the electrical signal object.</span>
 
 <span class="sd">        Parameters</span>
@@ -766,31 +768,36 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">signal</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span> 
-            <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">noise</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span> 
-                <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
             
-            <span class="n">arrays_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span> <span class="c1"># obtain the most comprehensive type</span>
-            
+            <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">arrays_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span> <span class="c1"># obtain the most comprehensive type</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arrays_type</span> <span class="o">=</span> <span class="n">dtype</span>
+
             <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">arrays_type</span><span class="p">)</span>
             <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">arrays_type</span><span class="p">)</span> 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`signal` and `noise` must have the same shape, missmatch shapes </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+            
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">==</span> <span class="n">electrical_signal</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">signal</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Signal must be scalar or 1D array for electrical_signal, invalid shape </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             
-            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">noise</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-                <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-            
-            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`signal` and `noise` must have the same shape, missmatch shapes </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The signal values, a 1D numpy array of complex values.&quot;&quot;&quot;</span>
@@ -824,6 +831,7 @@
             <span class="sa">f</span><span class="s1">&#39;signal:    </span><span class="si">{</span><span class="n">signal</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span> <span class="n">tab</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;noise:     </span><span class="si">{</span><span class="n">noise</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span> <span class="n">tab</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;len:       </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">tab</span> <span class="o">+</span> \
+            <span class="sa">f</span><span class="s1">&#39;elem_type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">tab</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;mem_size:  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sizeof</span><span class="p">()</span><span class="si">}</span><span class="s1"> bytes</span><span class="se">\n</span><span class="s1">&#39;</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -835,7 +843,7 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;electrical_signal(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;electrical_signal(signal=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="se">\n\t\t</span><span class="s1">   noise=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
 
@@ -876,20 +884,21 @@
 <span class="sd">        :obj:`electrical_signal`</span>
 <span class="sd">            A new electrical signal object with the result of the addition.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span> 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t add electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">()):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="c1"># only signal is considered</span>
         
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t add </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;s with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t add electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span></div>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
         
     <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -910,37 +919,39 @@
 <span class="sd">        :obj:`electrical_signal`</span>
 <span class="sd">            A new electrical signal object with the result of the substraction.        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="c1"># only signal is considered</span>
         
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;s with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span></div>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="o">-</span><span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
         
     <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="c1"># only signal is considered</span>
         
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;s with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">other</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         
 <div class="viewcode-block" id="electrical_signal.__mul__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__mul__">[docs]</a>
@@ -957,29 +968,45 @@
 <span class="sd">        :obj:`electrical_signal`</span>
 <span class="sd">            A new electrical signal object with the result of the multiplication.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t multiply electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="c1"># only signal is considered</span>
         
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t add </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;s with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t multiply electrical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span></div>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
         
     <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         
+<div class="viewcode-block" id="electrical_signal.__getitem__">
+<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__getitem__">[docs]</a>
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> 
-        <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice the signal.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slice : :obj:`int` or :obj:`slice`</span>
+<span class="sd">            Index or slice to get.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        out : :obj:`optical_signal`</span>
+<span class="sd">            A new object with the result of the slicing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span> 
+        <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="electrical_signal.__call__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__call__">[docs]</a>
@@ -991,11 +1018,11 @@
 <span class="sd">        domain : {&#39;t&#39;, &#39;w&#39;, &#39;f&#39;}</span>
 <span class="sd">            Domain to transform. &#39;t&#39; for time domain (ifft is applied), &#39;w&#39; and &#39;f&#39; for frequency domain (fft is applied).</span>
 <span class="sd">        shift : :obj:`bool`, optional</span>
-<span class="sd">            If True, apply ``np.fft.fftshift()`` function.</span>
+<span class="sd">            If True, apply the ``np.fft.fftshift()`` or ``np.fft.ifftshift`` functions as appropriate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        new_obj : electrical_signal</span>
+<span class="sd">        new_obj : :obj:`electrical_signal` or :obj:`optical_signal`</span>
 <span class="sd">            A new electrical signal object with the result of the transformation.</span>
 
 <span class="sd">        Raises</span>
@@ -1004,21 +1031,31 @@
 <span class="sd">            If ``domain`` is not one of the following values (&#39;t&#39;, &#39;w&#39;, &#39;f&#39;).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">or</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
-            <span class="n">signal</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
-            <span class="n">noise</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
               
         <span class="k">elif</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
-            <span class="n">signal</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
-            <span class="n">noise</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`domain` must be one of the following values (&#39;t&#39;, &#39;w&#39;, &#39;f&#39;)&quot;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">shift</span><span class="p">:</span>
-            <span class="n">signal</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
-            <span class="n">noise</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">or</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
+                <span class="n">signal</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">noise</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="n">signal</span> <span class="o">=</span> <span class="n">ifftshift</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">noise</span> <span class="o">=</span> <span class="n">ifftshift</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span></div>
 
     
 <div class="viewcode-block" id="electrical_signal.__gt__">
@@ -1043,22 +1080,16 @@
 <span class="sd">        TypeError</span>
 <span class="sd">            If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="c1"># only signal is considered</span>
         
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-            
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">threshold</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">threshold</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">threshold</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-              
-        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">&gt;</span> <span class="n">threshold</span> <span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    
+        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span></div>
+
+        
+
 <div class="viewcode-block" id="electrical_signal.__lt__">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__lt__">[docs]</a>
     <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -1081,21 +1112,13 @@
 <span class="sd">        TypeError</span>
 <span class="sd">            If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="c1"># only signal is considered</span>
         
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-            
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">threshold</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">threshold</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">threshold</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-              
-        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span></div>
 
              
 <div class="viewcode-block" id="electrical_signal.len">
@@ -1108,6 +1131,8 @@
 <span class="sd">        :obj:`int`</span>
 <span class="sd">            The number of samples of the electrical signal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">size</span></div>
 
 
@@ -1240,6 +1265,8 @@
 <span class="sd">        :obj:`np.ndarray`</span>
 <span class="sd">            The phase of the electrical signal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">))</span></div>
 
     
@@ -1264,8 +1291,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
 
@@ -1292,26 +1320,28 @@
 <div class="viewcode-block" id="electrical_signal.abs">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.abs">[docs]</a>
     <span class="k">def</span> <span class="nf">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="s1">&#39;noise&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get absolute value of the electrical signal.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get absolute value of ``signal``, ``noise`` or ``signal+noise``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        by : :obj:`str`, optional</span>
-<span class="sd">            Defines from which attribute to obtain the absolute value. If &#39;all&#39;, absolute value of signal+noise is determined.</span>
+<span class="sd">            Defines from which attribute to obtain the absolute value. If &#39;all&#39;, absolute value of ``signal+noise`` is determined.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        out : :obj:`np.ndarray`, (1D, float)</span>
-<span class="sd">            The absolute value of the electrical signal.</span>
+<span class="sd">        out : :obj:`np.ndarray`, (1D or 2D, float)</span>
+<span class="sd">            The absolute value of the object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">by</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`by` must be a string.&#39;</span><span class="p">)</span>
         <span class="n">by</span> <span class="o">=</span> <span class="n">by</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         
         <span class="k">if</span> <span class="n">by</span> <span class="o">==</span> <span class="s1">&#39;signal&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">by</span> <span class="o">==</span> <span class="s1">&#39;noise&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">by</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`by` must be one of the following values (&quot;signal&quot;, &quot;noise&quot;, &quot;all&quot;)&#39;</span><span class="p">)</span></div>
 
@@ -1569,7 +1599,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">signal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">,</span> 
                  <span class="n">noise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                 <span class="n">n_pol</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                 <span class="n">n_pol</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the optical signal object.</span>
 
 <span class="sd">        Parameters</span>
@@ -1584,187 +1615,88 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">signal</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">noise</span> <span class="o">=</span> <span class="n">str2array</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
-            <span class="n">arrays_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span> <span class="c1"># obtain the most comprehensive type</span>
+            <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">arrays_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span> <span class="c1"># obtain the most comprehensive type</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arrays_type</span> <span class="o">=</span> <span class="n">dtype</span>
             
             <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">arrays_type</span><span class="p">)</span>
             <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">arrays_type</span><span class="p">)</span> 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`signal` and `noise` must have the same shape, missmatch shapes </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">==</span> <span class="n">optical_signal</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span><span class="o">&gt;</span><span class="mi">2</span> <span class="ow">or</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">ndim</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">signal</span><span class="o">.</span><span class="n">size</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Signal must be a scalar, 1D or 2D array for optical_signal, invalid shape </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             
-            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">noise</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">n_pol</span> <span class="o">=</span> <span class="mi">1</span>
                 
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">signal</span><span class="p">],</span> <span class="p">[</span><span class="n">signal</span><span class="p">]])</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">noise</span><span class="p">],</span> <span class="p">[</span><span class="n">noise</span><span class="p">]])</span>
             
-            <span class="k">elif</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">noise</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">n_pol</span> <span class="o">=</span> <span class="mi">1</span>
                 
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">signal</span><span class="p">,</span> <span class="n">signal</span><span class="p">])</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">noise</span><span class="p">,</span> <span class="n">noise</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">noise</span><span class="p">,</span> <span class="n">noise</span><span class="p">])</span>
             
-            <span class="k">elif</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">noise</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">n_pol</span> <span class="o">=</span> <span class="mi">2</span>
                 
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+                    <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
             
-            <span class="k">elif</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">noise</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">n_pol</span> <span class="o">=</span> <span class="mi">2</span>
                 
                 <span class="k">if</span> <span class="n">n_pol</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`signal` and `noise` must have the same shape, missmatch shapes </span><span class="si">{</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">noise</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">=</span> <span class="n">n_pol</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span> <span class="n">signal</span><span class="p">,</span> <span class="n">noise</span> <span class="p">)</span>  </div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span> <span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>  </div>
 
     
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">signal</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="mi">15</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;optical_signal(</span><span class="si">{</span><span class="n">signal</span><span class="si">}</span><span class="s1">)&#39;</span>
         
         <span class="n">signal</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="mi">22</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="n">noise</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="mi">22</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;optical_signal(signal=</span><span class="si">{</span><span class="n">signal</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="mi">16</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;noise=</span><span class="si">{</span><span class="n">noise</span><span class="si">}</span><span class="s1">)&#39;</span>
-
-    
-<div class="viewcode-block" id="optical_signal.len">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.len">[docs]</a>
-    <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of samples of the optical signal.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        :obj:`int`</span>
-<span class="sd">            The number of samples of the optical signal.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">size</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="optical_signal.__add__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__add__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Sum two optical signals.</span>
-<span class="sd">        </span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        other : :obj:`optical_signal` or :obj:`array_like` or :obj:`Number`</span>
-<span class="sd">            Optical_signal or value to sum. If `other` is an array_like or a Number it will be added to the signal only. </span>
-<span class="sd">            If `other` is an optical_signal, it will be added the corresponding signal and noise.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        out : :obj:`optical_signal`</span>
-<span class="sd">            A new optical signal object with the result of the sum.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t add optical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span></div>
-
-        
-<div class="viewcode-block" id="optical_signal.__radd__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__radd__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Sum two optical signals. __radd__() = __add__().&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
-
-    
-<div class="viewcode-block" id="optical_signal.__sub__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__sub__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Substract two optical signals (``-`` operator).</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        other : :obj:`optical_signal` or :obj:`Array_Like` or :obj:`Number`</span>
-<span class="sd">            The signal to substract.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        :obj:`optical_signal`</span>
-<span class="sd">            A new optical signal object with the result of the substraction.        </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract optical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span></div>
-
-        
-    <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t substract optical_signal with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
-
-<div class="viewcode-block" id="optical_signal.__mul__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__mul__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Multiply two optical signals.</span>
-<span class="sd">        </span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        other : :obj:`optical_signal` or :obj:`array_like` or :obj:`Number`</span>
-<span class="sd">            Optical_signal or value to multiply. If `other` is an array_like or a Number it will be multiply to the signal only. </span>
-<span class="sd">            If `other` is an optical_signal, it will be multiply the corresponding signal and noise.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        out : :obj:`optical_signal`</span>
-<span class="sd">            A new optical signal object with the result of the multiply.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t multiply optical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span></div>
-
-        
-<div class="viewcode-block" id="optical_signal.__rmul__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__rmul__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Multiply two optical signals. __rmul__() = __mul__().&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
 
     
 <div class="viewcode-block" id="optical_signal.__getitem__">
@@ -1783,57 +1715,25 @@
 <span class="sd">            A new optical signal object with the result of the slicing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span>
             <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="p">)</span>
             <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span></div>
 
     
-<div class="viewcode-block" id="optical_signal.__call__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__call__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">],</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        domain : {&#39;t&#39;, &#39;w&#39;, &#39;f&#39;}</span>
-<span class="sd">            Domain to transform. &#39;t&#39; for time domain (ifft is applied), &#39;w&#39; or &#39;f&#39; for frequency domain (fft is applied).</span>
-<span class="sd">        shift : :obj:`bool`, optional</span>
-<span class="sd">            If True, apply ``np.fft.fftshift()`` function.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        new_obj : optical_signal</span>
-<span class="sd">            A new optical signal object with the result of the transformation.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``domain`` is not one of the following values (&#39;t&#39;, &#39;w&#39;, &#39;f&#39;).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">or</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
-            <span class="n">signal</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">noise</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-              
-        <span class="k">elif</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
-            <span class="n">signal</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">noise</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`domain` must be one of the following values (&#39;t&#39;, &#39;w&#39;, &#39;f&#39;)&quot;</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">shift</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">or</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
-                <span class="n">signal</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">noise</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">signal</span> <span class="o">=</span> <span class="n">ifftshift</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">noise</span> <span class="o">=</span> <span class="n">ifftshift</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span></div>
-
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;The &gt; operator is not implemented for optical_signal objects.&#39;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;The &lt; operator is not implemented for optical_signal objects.&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="optical_signal.plot">
 <a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.plot">[docs]</a>

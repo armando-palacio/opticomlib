@@ -40,7 +40,7 @@
               <img src="_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.1.0
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -103,6 +103,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.electrical_signal.__add__"><code class="docutils literal notranslate"><span class="pre">electrical_signal.__add__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.electrical_signal.__sub__"><code class="docutils literal notranslate"><span class="pre">electrical_signal.__sub__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.electrical_signal.__mul__"><code class="docutils literal notranslate"><span class="pre">electrical_signal.__mul__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.electrical_signal.__getitem__"><code class="docutils literal notranslate"><span class="pre">electrical_signal.__getitem__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.electrical_signal.__call__"><code class="docutils literal notranslate"><span class="pre">electrical_signal.__call__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.electrical_signal.__gt__"><code class="docutils literal notranslate"><span class="pre">electrical_signal.__gt__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.electrical_signal.__lt__"><code class="docutils literal notranslate"><span class="pre">electrical_signal.__lt__()</span></code></a></li>
@@ -128,14 +129,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.typing.optical_signal"><code class="docutils literal notranslate"><span class="pre">optical_signal</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__init__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.len"><code class="docutils literal notranslate"><span class="pre">optical_signal.len()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__add__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__add__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__radd__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__radd__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__sub__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__sub__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__mul__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__mul__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__rmul__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__rmul__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__getitem__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__getitem__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.__call__"><code class="docutils literal notranslate"><span class="pre">optical_signal.__call__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.plot"><code class="docutils literal notranslate"><span class="pre">optical_signal.plot()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.optical_signal.psd"><code class="docutils literal notranslate"><span class="pre">optical_signal.psd()</span></code></a></li>
 </ul>
@@ -214,10 +208,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_sequence</span></code></a>(data)</p></td>
 <td><p><strong>Binary Sequence</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a>(signal[, noise])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a>(signal[, noise, dtype])</p></td>
 <td><p><strong>Electrical Signal</strong></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a>(signal[, noise, n_pol])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a>(signal[, noise, n_pol, dtype])</p></td>
 <td><p><strong>Optical Signal</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.eye" title="opticomlib.typing.eye"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eye</span></code></a>(**kwargs)</p></td>
@@ -473,7 +467,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <td><p>Get number of slots of the binary sequence.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__getitem__" title="opticomlib.typing.binary_sequence.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a>(slice)</p></td>
-<td><p>Get a slice of the binary sequence (<code class="docutils literal notranslate"><span class="pre">x[slice]</span></code>).</p></td>
+<td><p>Get a slice of the binary sequence (<code class="docutils literal notranslate"><span class="pre">self[slice]</span></code>).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.binary_sequence.__eq__" title="opticomlib.typing.binary_sequence.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a>(other)</p></td>
 <td><p>Compare two binary sequences using <code class="docutils literal notranslate"><span class="pre">==</span></code> operator.</p></td>
@@ -553,13 +547,13 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__len__">
 <span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__len__" title="Link to this definition"></a></dt>
-<dd><p>Get number of slots of the binary sequence.</p>
+<dd><p>Get number of slots of the binary sequence. <code class="docutils literal notranslate"><span class="pre">len(self)</span></code></p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__getitem__">
 <span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__getitem__" title="Link to this definition"></a></dt>
-<dd><p>Get a slice of the binary sequence (<code class="docutils literal notranslate"><span class="pre">x[slice]</span></code>).</p>
+<dd><p>Get a slice of the binary sequence (<code class="docutils literal notranslate"><span class="pre">self[slice]</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>slice</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code>) – The slice to get.</p>
@@ -731,7 +725,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">electrical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">electrical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal" title="Link to this definition"></a></dt>
 <dd><p><strong>Electrical Signal</strong></p>
 <p>This class provides methods and attributes to work with electrical signals.
 It has overloaded operators necessary to properly interpret
@@ -753,7 +747,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.electrical_signal.__init__" title="opticomlib.typing.electrical_signal.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(signal[, noise])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.electrical_signal.__init__" title="opticomlib.typing.electrical_signal.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(signal[, noise, dtype])</p></td>
 <td><p>Initialize the electrical signal object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.electrical_signal.__call__" title="opticomlib.typing.electrical_signal.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(domain[, shift])</p></td>
@@ -787,7 +781,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 <td><p>Return angular frequency for spectrum representation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.electrical_signal.abs" title="opticomlib.typing.electrical_signal.abs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">abs</span></code></a>([by])</p></td>
-<td><p>Get absolute value of the electrical signal.</p></td>
+<td><p>Get absolute value of <code class="docutils literal notranslate"><span class="pre">signal</span></code>, <code class="docutils literal notranslate"><span class="pre">noise</span></code> or <code class="docutils literal notranslate"><span class="pre">signal+noise</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.electrical_signal.power" title="opticomlib.typing.electrical_signal.power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power</span></code></a>([by])</p></td>
 <td><p>Get power of the electrical signal.</p></td>
@@ -820,7 +814,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the electrical signal object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -934,6 +928,23 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__getitem__" title="Link to this definition"></a></dt>
+<dd><p>Slice the signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slice</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code>) – Index or slice to get.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> – A new object with the result of the slicing.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__call__">
 <span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'t'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__call__" title="Link to this definition"></a></dt>
 <dd><p>Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.</p>
@@ -941,14 +952,14 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>domain</strong> (<em>{'t'</em><em>, </em><em>'w'</em><em>, </em><em>'f'}</em>) – Domain to transform. ‘t’ for time domain (ifft is applied), ‘w’ and ‘f’ for frequency domain (fft is applied).</p></li>
-<li><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, apply <code class="docutils literal notranslate"><span class="pre">np.fft.fftshift()</span></code> function.</p></li>
+<li><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, apply the <code class="docutils literal notranslate"><span class="pre">np.fft.fftshift()</span></code> or <code class="docutils literal notranslate"><span class="pre">np.fft.ifftshift</span></code> functions as appropriate.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>new_obj</strong> – A new electrical signal object with the result of the transformation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal">electrical_signal</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a> or <a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">domain</span></code> is not one of the following values (‘t’, ‘w’, ‘f’).</p>
@@ -1189,16 +1200,16 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.abs">
 <span class="sig-name descname"><span class="pre">abs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'signal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'noise'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.abs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.abs" title="Link to this definition"></a></dt>
-<dd><p>Get absolute value of the electrical signal.</p>
+<dd><p>Get absolute value of <code class="docutils literal notranslate"><span class="pre">signal</span></code>, <code class="docutils literal notranslate"><span class="pre">noise</span></code> or <code class="docutils literal notranslate"><span class="pre">signal+noise</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>by</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Defines from which attribute to obtain the absolute value. If ‘all’, absolute value of signal+noise is determined.</p>
+<dd class="field-odd"><p><strong>by</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Defines from which attribute to obtain the absolute value. If ‘all’, absolute value of <code class="docutils literal notranslate"><span class="pre">signal+noise</span></code> is determined.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> – The absolute value of the electrical signal.</p>
+<dd class="field-even"><p><strong>out</strong> – The absolute value of the object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>, (1D, float)</p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>, (1D or 2D, float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1311,7 +1322,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">optical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">optical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal" title="Link to this definition"></a></dt>
 <dd><p><strong>Optical Signal</strong></p>
 <p>Bases: <a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
 <p>This class provides methods and attributes to work with optical signals.</p>
@@ -1332,17 +1343,17 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.optical_signal.__init__" title="opticomlib.typing.optical_signal.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(signal[, noise, n_pol])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.optical_signal.__init__" title="opticomlib.typing.optical_signal.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(signal[, noise, n_pol, dtype])</p></td>
 <td><p>Initialize the optical signal object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.optical_signal.__call__" title="opticomlib.typing.optical_signal.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(domain[, shift])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code>(domain[, shift])</p></td>
 <td><p>Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code>([msg])</p></td>
 <td><p>Prints object parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.optical_signal.len" title="opticomlib.typing.optical_signal.len"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a>()</p></td>
-<td><p>Get number of samples of the optical signal.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code>()</p></td>
+<td><p>Get number of samples of the electrical signal.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>()</p></td>
 <td><p>Return de object type (<code class="docutils literal notranslate"><span class="pre">electrical_signal</span></code>).</p></td>
@@ -1378,7 +1389,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 <td><p>Return a copy of the object.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">abs</span></code>([by])</p></td>
-<td><p>Get absolute value of the electrical signal.</p></td>
+<td><p>Get absolute value of <code class="docutils literal notranslate"><span class="pre">signal</span></code>, <code class="docutils literal notranslate"><span class="pre">noise</span></code> or <code class="docutils literal notranslate"><span class="pre">signal+noise</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.optical_signal.plot" title="opticomlib.typing.optical_signal.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([fmt, mode, n, xlabel, ylabel, style, ...])</p></td>
 <td><p>Plot intensity of optical signal for selected polarization mode.</p></td>
@@ -1399,7 +1410,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the optical signal object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1410,85 +1421,6 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="opticomlib.typing.optical_signal.len">
-<span class="sig-name descname"><span class="pre">len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.len" title="Link to this definition"></a></dt>
-<dd><p>Get number of samples of the optical signal.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of samples of the optical signal.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__add__">
-<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__add__" title="Link to this definition"></a></dt>
-<dd><p>Sum two optical signals.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">array_like</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code>) – Optical_signal or value to sum. If <cite>other</cite> is an array_like or a Number it will be added to the signal only.
-If <cite>other</cite> is an optical_signal, it will be added the corresponding signal and noise.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> – A new optical signal object with the result of the sum.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__radd__">
-<span class="sig-name descname"><span class="pre">__radd__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__radd__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__radd__" title="Link to this definition"></a></dt>
-<dd><p>Sum two optical signals. __radd__() = __add__().</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__sub__">
-<span class="sig-name descname"><span class="pre">__sub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__sub__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__sub__" title="Link to this definition"></a></dt>
-<dd><p>Substract two optical signals (<code class="docutils literal notranslate"><span class="pre">-</span></code> operator).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Array_Like</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code>) – The signal to substract.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new optical signal object with the result of the substraction.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__mul__">
-<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__mul__" title="Link to this definition"></a></dt>
-<dd><p>Multiply two optical signals.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">array_like</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code>) – Optical_signal or value to multiply. If <cite>other</cite> is an array_like or a Number it will be multiply to the signal only.
-If <cite>other</cite> is an optical_signal, it will be multiply the corresponding signal and noise.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out</strong> – A new optical signal object with the result of the multiply.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__rmul__">
-<span class="sig-name descname"><span class="pre">__rmul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__rmul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__rmul__" title="Link to this definition"></a></dt>
-<dd><p>Multiply two optical signals. __rmul__() = __mul__().</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1504,29 +1436,6 @@ If <cite>other</cite> is an optical_signal, it will be multiply the correspondin
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'t'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__call__" title="Link to this definition"></a></dt>
-<dd><p>Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<em>{'t'</em><em>, </em><em>'w'</em><em>, </em><em>'f'}</em>) – Domain to transform. ‘t’ for time domain (ifft is applied), ‘w’ or ‘f’ for frequency domain (fft is applied).</p></li>
-<li><p><strong>shift</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, apply <code class="docutils literal notranslate"><span class="pre">np.fft.fftshift()</span></code> function.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>new_obj</strong> – A new optical signal object with the result of the transformation.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal">optical_signal</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">domain</span></code> is not one of the following values (‘t’, ‘w’, ‘f’).</p>
 </dd>
 </dl>
 </dd></dl>

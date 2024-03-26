@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.1.0
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -333,7 +333,10 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`M` must be a power of 2.&quot;</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span>
+        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span>
 
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
@@ -508,7 +511,7 @@
     
     <span class="k">elif</span> <span class="n">decision</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;soft&#39;</span><span class="p">:</span>
         <span class="n">tic</span><span class="p">()</span>
-        <span class="n">simbols</span> <span class="o">=</span> <span class="n">SDD</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">M</span><span class="p">);</span> <span class="n">simbols</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">toc</span><span class="p">()</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span>
+        <span class="n">simbols</span> <span class="o">=</span> <span class="n">SDD</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">M</span><span class="p">);</span> <span class="n">simbols</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">toc</span><span class="p">()</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">execution_time</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">PPM_DECODER</span><span class="p">(</span><span class="n">simbols</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
         <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">simbols</span><span class="o">.</span><span class="n">execution_time</span>
         <span class="k">return</span> <span class="n">output</span>
