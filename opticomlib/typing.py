@@ -322,7 +322,7 @@ class binary_sequence():
         if data.ndim == 0 and data.size == 1:
             data = data[np.newaxis]
         
-        self.data = data.astype(bool)
+        self.data = data.astype(np.uint8)
         """The binary sequence data, a 1D numpy array of boolean values."""
         self.execution_time = None
         """The execution time of the last operation performed on the binary sequence."""
@@ -335,8 +335,8 @@ class binary_sequence():
         title = 3*'*' + f'    {title}    ' + 3*'*'
         sub = len(title)*'-'
 
-        np.set_printoptions(precision=0, threshold=10)
-        data = str(self.data.astype(np.uint8))
+        np.set_printoptions(precision=0, threshold=100)
+        data = str(self.data)
 
         msg = f'\n{sub}\n{title}\n{sub}\n\t' + \
             f'data  :  {data}\n\t' + \
@@ -349,8 +349,8 @@ class binary_sequence():
         return msg
     
     def __repr__(self):
-        np.set_printoptions(threshold=20)
-        return f'binary_sequence({str(self.data.astype(np.uint8))})'
+        np.set_printoptions(threshold=100)
+        return f'binary_sequence({str(self.data)})'
     
     def print(self, msg: str=None): 
         """Print object parameters.
@@ -369,11 +369,11 @@ class binary_sequence():
         return self
     
     def __len__(self):
-        """Get number of slots of the binary sequence."""
+        """Get number of slots of the binary sequence. ``len(self)``"""
         return self.len()
 
     def __getitem__(self, slice: int | slice):
-        """Get a slice of the binary sequence (``x[slice]``). 
+        """Get a slice of the binary sequence (``self[slice]``). 
         
         Parameters
         ----------
@@ -410,7 +410,7 @@ class binary_sequence():
         if other.size != self.data.size and other.size != 1:
             raise ValueError(f"Can't compare binary sequences with shapes {self.data.shape} and {other.shape}")
         
-        return binary_sequence(self.data == other)
+        return np.array_equal(self.data, other)
 
     def __add__(self, other): 
         """ Concatenate two binary sequences, adding to the end (``+``).
