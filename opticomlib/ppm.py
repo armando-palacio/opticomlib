@@ -233,7 +233,10 @@ def SDD(input: electrical_signal, M: int) -> binary_sequence:
         raise ValueError("`M` must be a power of 2.")
     
     if isinstance(input, electrical_signal):
-        input = input.signal + input.noise
+        if input.noise is not None:
+            input = input.signal + input.noise
+        else:
+            input = input.signal
 
     elif isinstance(input, Array_Like):
         input = np.array(input)
@@ -402,7 +405,7 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
     
     elif decision.lower() == 'soft':
         tic()
-        simbols = SDD(input, M); simbols.execution_time += toc() + x.execution_time
+        simbols = SDD(x, M); simbols.execution_time += toc() + x.execution_time
         output = PPM_DECODER(simbols, M)
         output.execution_time += simbols.execution_time
         return output
