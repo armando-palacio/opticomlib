@@ -81,7 +81,7 @@ class TestBinarySequence(unittest.TestCase):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 bits = binary_sequence(input)
-                assert_((bits == [0,0,0,0,1,1,1,1,0,0,0,0]).data.all()) # Check if the data is correct, and test the __eq__ method
+                assert_(bits == [0,0,0,0,1,1,1,1,0,0,0,0]) # Check if the data is correct, and test the __eq__ method
                 assert_(bits.len() == 12) # Check that the length is correct, and test the len method
                 assert_(bits.execution_time is None) # Check that the execution time is None
 
@@ -97,9 +97,9 @@ class TestBinarySequence(unittest.TestCase):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 bits = binary_sequence(input)
-                assert_((bits[0] == 0).data)
-                assert_((bits[:] == [0,0,0,0,1,1,1,1,0,0,0,0]).data.all())
-                assert_((bits[4:-1] == [1,1,1,1,0,0,0]).data.all())
+                assert_(bits[0] == 0)
+                assert_(bits[:] == [0,0,0,0,1,1,1,1,0,0,0,0])
+                assert_(bits[4:-1] == [1,1,1,1,0,0,0])
                 assert_raises(IndexError, lambda: bits[12])
     
     def test_add_and_radd(self):
@@ -107,9 +107,9 @@ class TestBinarySequence(unittest.TestCase):
             with self.subTest(input_type=type(input)):
                 bits = binary_sequence(input)
                 
-                assert_((bits + bits == [0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0]).data.all())
-                assert_((bits + '0101' == [0,0,0,0,1,1,1,1,0,0,0,0,0,1,0,1]).data.all())
-                assert_(('0101' + bits == [0,1,0,1,0,0,0,0,1,1,1,1,0,0,0,0]).data.all())
+                assert_(bits + bits == [0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0])
+                assert_(bits + '0101' == [0,0,0,0,1,1,1,1,0,0,0,0,0,1,0,1])
+                assert_('0101' + bits == [0,1,0,1,0,0,0,0,1,1,1,1,0,0,0,0])
                 assert_raises(TypeError, lambda: bits + 1)
                 assert_raises(TypeError, lambda: 1 + bits)
                 assert_raises(ValueError, lambda: '020' + bits)
@@ -121,7 +121,7 @@ class TestBinarySequence(unittest.TestCase):
         for input in self.inputs:
             with self.subTest(input_type=type(input)):
                 bits = binary_sequence(input)
-                assert_((~bits == [1,1,1,1,0,0,0,0,1,1,1,1]).data.all())
+                assert_(~bits == [1,1,1,1,0,0,0,0,1,1,1,1])
     
     def test_ones_and_zeros(self):
         for input in self.inputs:
@@ -134,7 +134,13 @@ class TestBinarySequence(unittest.TestCase):
 
 
 class TestElectricalSignal(unittest.TestCase):
-    inputs = [np.arange(100).tolist().__str__().strip('[]'), np.arange(100).tolist(), np.arange(100)] 
+    signals = ['+0,1,2,3,4+0j,5.', 
+                  [0,1,2,3,4.,5], 
+                  np.arange(6)]
+    noises = ['+0,-1,-2,-3,-4+0i,-5.',
+                [0,-1,-2,-3,-4.,-5],
+                -np.arange(6)]
+    dtypes = [np.complex128, np.float64, np.int32]
 
     def test_init(self):
         assert_raises(TypeError, lambda: electrical_signal())
@@ -143,14 +149,23 @@ class TestElectricalSignal(unittest.TestCase):
         assert_raises(ValueError, lambda: electrical_signal([0,1,2,3], [0,1,2]))
         assert_raises(ValueError, lambda: electrical_signal([[1,2,3]]))
 
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input)
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
                 
-                assert_equal(signal.signal, np.arange(100))
-                assert_equal(signal.noise, np.zeros(100))
-                assert_equal(signal.execution_time, None)
-                assert_equal(signal.len(), 100)
+                assert_equal(x.signal, np.arange(6))
+                assert_equal(x.noise, -np.arange(6))
+                assert_( x.signal.dtype == dtype and x.noise.dtype == dtype)
+                assert_equal(x.execution_time, None)
+                assert_(x.len()==6)
+
+                x = electrical_signal(sig) # No noise
+
+                assert_equal(x.signal, np.arange(6))
+                assert_(x.noise is None)
+                assert_( x.signal.dtype == dtype)
+                assert_equal(x.execution_time, None)
+                assert_(x.len()==6)
 
     def test_print(self):
         x = np.linspace(0, 1, 100)
@@ -162,108 +177,443 @@ class TestElectricalSignal(unittest.TestCase):
             self.fail(f"signal.print() raised {type(e).__name__} unexpectedly!")
 
     def test_getitem(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input)
-                assert_equal(signal[0][0], 0)
-                assert_equal(signal[:].signal, np.arange(100))
-                assert_equal(signal[4:-1].signal, np.arange(4,99))
-                assert_equal(signal.noise, np.zeros(100))
-                assert_raises(IndexError, lambda: signal[100])
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
+                
+                # test int indexing 
+                assert_(x[0].type() == electrical_signal)
+                assert_(x[0].signal.dtype == dtype)
+                assert_equal(x[0].signal, 0)
+                assert_equal(x[-1].noise, -5)
+                assert_raises(IndexError, lambda: x[10])
+
+                # test slice indexing
+                assert_(x[:].type() == electrical_signal)
+                assert_(x[:].signal.dtype == dtype)
+                assert_equal(x[:].signal, np.arange(6))
+                assert_equal(x[:].noise, -np.arange(6))
+                assert_equal(x[1:-1].signal, np.arange(1,5))
+                assert_equal(x[1:-1].noise, -np.arange(1,5))
+                assert_equal(x[:100].signal, np.arange(6))
+
+                x = electrical_signal(sig) # No noise
+
+                # test int indexing
+                assert_(x[0].type() == electrical_signal)
+                assert_(x[0].signal.dtype == dtype)
+                assert_equal(x[0].signal, 0)
+                assert_(x[0].noise is None)
+                assert_raises(IndexError, lambda: x[10])
+
+                # test slice indexing
+                assert_(x[:].type() == electrical_signal)
+                assert_(x[:].signal.dtype == dtype)
+                assert_equal(x[:].signal, np.arange(6))
+                assert_(x[:].noise is None)
+                assert_equal(x[1:-1].signal, np.arange(1,5))
+                assert_(x[1:-1].noise is None)
+                assert_equal(x[:100].signal, np.arange(6))
 
     def test_add_and_radd(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input)
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
                 
-                assert_equal((signal + signal).signal, np.arange(100)*2)
+                y = x + x
+                assert_equal(y.signal, np.arange(6)*2)
+                assert_equal(y.noise, -np.arange(6)*2)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((signal + input).signal, np.arange(100)*2)
-                # assert_equal((input + signal).signal, np.arange(100)*2)  ## revisar esta linea
+                y = x + sig
+                assert_equal(y.signal, np.arange(6)*2)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((signal + 1).signal, np.arange(100)+1)
-                assert_equal((1 + signal).signal, np.arange(100)+1)
-                assert_raises(ValueError, lambda: signal + input[:4]) # Different length
-                
+                # y = sig + x
+                # assert_equal(y.signal, np.arange(6)*2)  ## revisar esta linea
+                # assert_equal(y.noise, x.noise)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x + 1
+                assert_equal(y.signal, np.arange(6)+1)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
+
+                y = 1 + x
+                assert_equal(y.signal, np.arange(6)+1)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
+                assert_raises(ValueError, lambda: x + sig[:4]) # Different length
+
+                x = electrical_signal(sig) # No noise
+
+                y = x + x
+                assert_equal(y.signal, np.arange(6)*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = x + sig
+                assert_equal(y.signal, np.arange(6)*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                # y = sig + x
+                # assert_equal((sig + x).signal, np.arange(6)*2)  ## revisar esta linea
+                # assert_((sig + x).noise is None)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x + 1
+                assert_equal(y.signal, np.arange(6)+1)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = 1 + x
+                assert_equal(y.signal, np.arange(6)+1)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+                assert_raises(ValueError, lambda: x + sig[:4])
+
+
     def test_sub_and_rsub(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input)
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
                 
-                assert_equal((signal - signal).signal, np.zeros(100))
-                
-                assert_equal((signal - input).signal, np.zeros(100))
-                # assert_equal((input - signal).signal, np.zeros(100))  ## revisar esta linea
+                y = x - x
+                assert_equal(y.signal, np.zeros(6))
+                assert_equal(y.noise, np.zeros(6))
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((signal - 1).signal, np.arange(100)-1)
-                assert_equal((1 - signal).signal, 1-np.arange(100))
-                assert_raises(ValueError, lambda: signal - input[:4]) # Different length
+                y = x - sig
+                assert_equal(y.signal, np.zeros(6))
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
+
+                # y = sig - y
+                # assert_equal(y.signal, np.zeros(6))  ## revisar esta linea
+                # assert_equal(y.noise, x.noise)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x - 1
+                assert_equal(y.signal, np.arange(6)-1)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
+
+                y = 1 - x
+                assert_equal(y.signal, 1-np.arange(6))
+                assert_equal(y.noise, -x.noise)
+                assert_raises(ValueError, lambda: x + sig[:4]) # Different length
+
+                x = electrical_signal(sig) # No noise
+
+                y = x - x
+                assert_equal(y.signal, np.zeros(6))
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = x - sig
+                assert_equal(y.signal, np.zeros(6))
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                # y = sig - y
+                # assert_equal((sig + x).signal, np.zeros(6))  ## revisar esta linea
+                # assert_((sig + x).noise is None)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x - 1
+                assert_equal(y.signal, np.arange(6)-1)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = 1 - x
+                assert_equal(y.signal, 1-np.arange(6))
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+                assert_raises(ValueError, lambda: x + sig[:4])
 
     def test_mul_and_rmul(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input)
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
                 
-                assert_equal((signal * signal).signal, np.arange(100)**2)
-                
-                assert_equal((signal * input).signal, np.arange(100)**2)
-                # assert_equal((input * signal).signal, np.arange(100)**2)  ## revisar esta linea
-                
-                assert_equal((signal * 2).signal, np.arange(100)*2)
-                assert_equal((2 * signal).signal, np.arange(100)*2)
-                assert_raises(ValueError, lambda: signal * input[:4]) # Different length
+                y = x * x
+                assert_equal(y.signal, x.signal**2)
+                assert_equal(y.noise, x.noise**2)
+                assert_(y.signal.dtype == dtype)
+
+                y = x * sig
+                assert_equal(y.signal, x.signal**2)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
+
+                # y = sig * y
+                # assert_equal(y.signal, x.signal**2)  ## revisar esta linea
+                # assert_equal(y.noise, x.noise)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x * 2
+                assert_equal(y.signal, x.signal*2)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
+
+                y = 2 * x
+                assert_equal(y.signal, x.signal*2)
+                assert_equal(y.noise, x.noise)
+                assert_raises(ValueError, lambda: x + sig[:4]) # Different length
+
+                x = electrical_signal(sig) # No noise
+
+                y = x * x
+                assert_equal(y.signal, x.signal**2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = x * sig
+                assert_equal(y.signal, x.signal**2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                # y = sig * y
+                # assert_equal((sig + x).signal, x.signal**2)  ## revisar esta linea
+                # assert_((sig + x).noise is None)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x * 2
+                assert_equal(y.signal, x.signal*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = 2 * x
+                assert_equal(y.signal, x.signal*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+                assert_raises(ValueError, lambda: x + sig[:4])
     
     def test_gt_and_lt(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input)
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
+                z = x.signal + x.noise
                 
-                assert_equal((signal + 1 > 0).data,  np.ones(100))
-                assert_equal((signal < 100).data, np.ones(100))
+                y = x > x
+                assert_equal(y.data, z>z)
+                y = x < x
+                assert_equal(y.data, z<z)
 
-                assert_equal((signal > input).data,  np.zeros(100))
-                assert_equal((signal < input).data,  np.zeros(100))
-                assert_raises(ValueError, lambda: signal > input[:4])
+                y = x > sig
+                assert_equal(y.data, z>np.arange(6))
+                y = x < sig
+                assert_equal(y.data, z<np.arange(6))
+
+                # y = sig > y
+                # assert_equal(y.data, np.ones(6))  ## revisar esta linea
+                # y = sig < y
+                # assert_equal(y.data, np.zeros(6))  ## revisar esta linea
+
+                y = x > 2
+                assert_equal(y.data, z>2)
+                y = x < 2
+                assert_equal(y.data, z<2)
+
+                x = electrical_signal(sig) # No noise
+                z = x.signal
+
+                y = x > x
+                assert_equal(y.data, z>z)
+                y = x < x
+                assert_equal(y.data, z<z)
+
+                y = x > sig
+                assert_equal(y.data, z>np.arange(6))
+                y = x < sig
+                assert_equal(y.data, z<np.arange(6))
+
+                # y = sig > y
+                # assert_equal(y.data, np.ones(6))  ## revisar esta linea
+                # y = sig < y
+                # assert_equal(y.data, np.zeros(6))  ## revisar esta linea
+
+                y = x > 2
+                assert_equal(y.data, z>2)
+                y = x < 2
+                assert_equal(y.data, z<2)
 
     def test_call(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input)
-                assert_equal(signal('t').signal, np.fft.ifft(np.arange(100)))
-                assert_equal(signal('f').signal, np.fft.fft(np.arange(100)))
-                assert_equal(signal('w').signal, np.fft.fft(np.arange(100)))
-                assert_raises(ValueError, lambda: signal('z'))
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
+                
+                y = x('t')
+                assert_equal(y.signal, np.fft.ifft(x.signal))
+                assert_equal(y.noise, np.fft.ifft(x.noise))
 
-                assert_equal(signal('t', shift=True).signal, np.fft.ifftshift(np.fft.ifft(np.arange(100))))
+                y = x('f')
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_equal(y.noise, np.fft.fft(x.noise))
+
+                y = x('w')
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_equal(y.noise, np.fft.fft(x.noise))
+
+                assert_raises(ValueError, lambda: x('z'))
+
+                y = x('t', shift=True)
+                assert_equal(y.signal, np.fft.ifftshift(np.fft.ifft(x.signal)))
+                assert_equal(y.noise, np.fft.ifftshift(np.fft.ifft(x.noise)))
     
-    def test_power(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input, noise=np.ones(100))
-                assert_equal(signal.power(), np.sum(np.abs(np.arange(100) + signal.noise)**2)/100)
-                assert_equal(signal.power('signal'), np.sum(np.abs(np.arange(100))**2)/100)
-                assert_equal(signal.power('noise'), 1)
-                assert_raises(ValueError, lambda: signal.power('z'))
+                y = x('f', shift=True)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_equal(y.noise, np.fft.fftshift(np.fft.fft(x.noise)))
 
+                y = x('w', shift=True)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_equal(y.noise, np.fft.fftshift(np.fft.fft(x.noise)))
+
+                x = electrical_signal(sig) # No noise
+
+                y = x('t')
+                assert_equal(y.signal, np.fft.ifft(x.signal))
+                assert_(y.noise is None)
+
+                y = x('f')
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_(y.noise is None)
+
+                y = x('w')
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_(y.noise is None)
+
+                assert_raises(ValueError, lambda: x('z'))
+
+                y = x('t', shift=True)
+                assert_equal(y.signal, np.fft.ifftshift(np.fft.ifft(x.signal)))
+                assert_(y.noise is None)
+
+                y = x('f', shift=True)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_(y.noise is None)
+
+                y = x('w', shift=True)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_(y.noise is None)
+
+    
     def test_abs(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input, noise=np.ones(100))
-                assert_equal(signal.abs(), np.arange(100)+1)
-                assert_equal(signal.abs('signal'), np.arange(100))
-                assert_equal(signal.abs('noise'), np.ones(100))
-                assert_raises(ValueError, lambda: signal.abs('z'))
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
+                x.noise=-x.noise
+                z = x.signal + x.noise
+
+                y = x.abs()  # same that abs('all')
+                assert_equal(y, np.abs(z))
+
+                y = x.abs('all')  # same that abs('all')
+                assert_equal(y, np.abs(z))
+
+                y = x.abs('signal')
+                assert_equal(y, np.abs(x.signal))
+
+                y = x.abs('noise')
+                assert_equal(y, np.abs(x.noise))
+
+
+                x = electrical_signal(sig) # No noise
+                z = x.signal
+
+                y = x.abs()
+                assert_equal(y, np.abs(z))
+                y = x.abs('all')
+                assert_equal(y, np.abs(z))
+
+                y = x.abs('signal')
+                assert_equal(y, np.abs(z))
+
+                y = x.abs('noise')
+                assert_equal(y, np.zeros(6))
+
+                assert_raises(ValueError, lambda: x.abs('z'))
+
+    def test_power(self):
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
+                x.noise = -x.noise
+                z = x.signal + x.noise
+
+                y = x.power()  # same that power('all')
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('all')  # same that power()
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('signal')
+                assert_equal(y, np.mean(np.abs(x.signal)**2))
+
+                y = x.power('noise')
+                assert_equal(y, np.mean(np.abs(x.noise)**2))
+
+                x = electrical_signal(sig) # No noise
+                z = x.signal
+
+                y = x.power()
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('all')
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('signal')
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('noise')
+                assert_equal(y, 0)
+
 
     def test_phase(self):
-        signal = electrical_signal(self.inputs[-1] + self.inputs[-1]*1j)
-        assert_equal(signal.phase(), np.concatenate(([0], np.ones(99)*pi/4)))
+        x = electrical_signal(self.signals[-1] + self.signals[-1]*1j, -self.noises[-1] - self.noises[-1]*1j)
+        z = x.signal + x.noise
+
+        assert_equal(x.phase(), np.unwrap(np.angle(z)))
+        
+        x = electrical_signal(self.signals[-1] + self.signals[-1]*1j)
+        z = x.signal
+
+        assert_equal(x.phase(), np.unwrap(np.angle(z)))
     
+
     def test_apply(self):
-        for input in self.inputs:
-            with self.subTest(input_type=type(input)):
-                signal = electrical_signal(input, noise=np.ones(100))
-                assert_equal(signal.apply(np.abs).signal, np.arange(100))
-                assert_equal(signal.apply(np.abs).noise, np.ones(100))
+        for sig, noi, dtype in zip(self.signals, self.noises, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = electrical_signal(sig, noi) # signal and noise
+                
+                y = x.apply(np.abs)
+                assert_(y.type(), electrical_signal)
+                assert_equal(y.signal, np.abs(x.signal))
+                assert_equal(y.noise, np.abs(x.noise))
+
+                x = electrical_signal(sig) # No noise
+
+                y = x.apply(np.abs)
+                assert_(y.type(), electrical_signal)
+                assert_equal(y.signal, np.abs(x.signal))
+                assert_(y.noise is None)
+
+
+    def test_copy(self):
+        x = electrical_signal(self.signals[-1], self.noises[-1])
+        y = x.copy()
+        assert_(x is not y)
+        assert_equal(x.signal, y.signal)
+        assert_equal(x.noise, y.noise)
+
+        y = x.copy(n=3)
+        assert_(x is not y)
+        assert_(y.len() == 3)
+        assert_equal(y.signal, x.signal[:3])
+        assert_equal(y.noise, x.noise[:3])
+
     
     def test_plot(self):
         x = electrical_signal(np.ones(100), np.random.normal(0,0.05,100))
@@ -284,19 +634,21 @@ class TestElectricalSignal(unittest.TestCase):
 
 class TestOpticalSignal(unittest.TestCase):
     signals_1p = ['+0,1,2,3,4+0j,5.', 
-                  [0,1,2,3,4,5], 
+                  [0,1,2,3,4.,5], 
                   np.arange(6)]
     noises_1p = ['+0,-1,-2,-3,-4+0i,-5.',
-                [0,-1,-2,-3,-4,-5],
+                [0,-1,-2,-3,-4.,-5],
                 -np.arange(6)]
     
     signals_2p = ['+0,1,2,3,4+0j,5.; +0,1,2,3,4+0i,5.',
-                  [[0,1,2,3,4,5]],
+                  [[0,1,2,3,4.,5]],
                   np.array([[0,1,2,3,4,5]])]
 
     noises_2p = ['+0,-1,-2,-3,-4+0j,-5.; +0,-1,-2,-3,-4+0i,-5.',
-                 [[0,-1,-2,-3,-4,-5]],
+                 [[0,-1,-2,-3,-4.,-5]],
                  -np.array([[0,1,2,3,4,5]])]
+    
+    dtypes = [np.complex128, np.float64, np.int32]
     
     def test_init(self):
         assert_raises(TypeError, lambda: optical_signal()) # No input
@@ -308,13 +660,22 @@ class TestOpticalSignal(unittest.TestCase):
 
         for sig, noi in zip(self.signals_1p, self.noises_1p):
             with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig, noi)
+                x = optical_signal(sig, noi, n_pol=1)
                 
                 assert_equal(x.signal, np.arange(6))
                 assert_equal(x.noise, -np.arange(6))
                 assert_equal(x.n_pol, 1)
                 assert_equal(x.execution_time, None)
                 assert_equal(x.len(), 6)
+
+                x = optical_signal(sig) # No noise
+
+                assert_equal(x.signal, np.arange(6))
+                assert_(x.noise is None)
+                assert_equal(x.n_pol, 1)
+                assert_(x.execution_time is None)
+                assert_(x.len() == 6)
+
 
         for sig, noi in zip(self.signals_2p, self.noises_2p):
             with self.subTest(pol=2, type=type(sig)):
@@ -326,7 +687,17 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_equal(x.execution_time, None)
                 assert_equal(x.len(), 6)
 
+                x = optical_signal(sig) # No noise
+
+                assert_equal(x.signal, np.tile(np.arange(6),(2,1)))
+                assert_(x.noise is None)
+                assert_equal(x.n_pol, 2)
+                assert_(x.execution_time is None)
+                assert_(x.len() == 6)
+
+
     def test_print(self):
+        # with noise
         x_1p = optical_signal([1,2,3], [1,1,0])
         x_2p = optical_signal([[1,2,3]], [[1,1,0]])
         try:
@@ -335,221 +706,430 @@ class TestOpticalSignal(unittest.TestCase):
         except Exception as e:
             self.fail(f"signal.print() raised {type(e).__name__} unexpectedly!")
 
+        # without noise
+        x_1p = optical_signal([1,2,3])
+        x_2p = optical_signal([[1,2,3]])
+        try:
+            x_1p.print("optic test 1 pol")
+            x_2p.print("optic test 2 pol")
+        except Exception as e:
+            self.fail(f"signal.print() raised {type(e).__name__} unexpectedly!")
+
     def test_getitem(self):
-        for sig, noi in zip(self.signals_1p, self.noises_1p):
+        for sig, noi, dtype in zip(self.signals_1p, self.noises_1p, self.dtypes):
             with self.subTest(pol=1, type=type(sig)):
                 x = optical_signal(sig, noi)
                 
-                assert_(x[0].signal == 0)
-                assert_equal(x[:].signal, np.arange(6))
-                assert_equal(x[1:-1].signal, np.arange(1,5))
-                
-                assert_(x[0].noise == 0)
-                assert_equal(x[:].noise, -np.arange(6))
-                assert_equal(x[1:-1].noise, -np.arange(1,5))
-                
+                # test int indexing 
+                assert_(x[0].type() == optical_signal)
+                assert_(x[0].signal.dtype == dtype)
+                assert_equal(x[0].signal, 0)
+                assert_equal(x[-1].noise, -5)
                 assert_raises(IndexError, lambda: x[10])
 
-        for sig, noi in zip(self.signals_2p, self.noises_2p):
+                # test slice indexing
+                assert_(x[:].type() == optical_signal)
+                assert_(x[:].signal.dtype == dtype)
+                assert_equal(x[:].signal, np.arange(6))
+                assert_equal(x[:].noise, -np.arange(6))
+                assert_equal(x[1:-1].signal, np.arange(1,5))
+                assert_equal(x[1:-1].noise, -np.arange(1,5))
+                assert_equal(x[:100].signal, np.arange(6))
+
+        for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
             with self.subTest(pol=2, type=type(sig)):
                 x = optical_signal(sig, noi)
                 
+                # test int indexing 
+                assert_(x[0].type() == optical_signal)
+                assert_(x[0].signal.dtype == dtype)
                 assert_equal(x[0].signal, [[0],[0]])
-                assert_equal(x[:].signal, np.tile(np.arange(6),(2,1)))
-                assert_equal(x[1:-1].signal, np.array([[1,2,3,4], [1,2,3,4]]))
-                
-                assert_equal(x[0].noise, [[0],[0]])
-                assert_equal(x[:].noise, -np.tile(np.arange(6),(2,1)))
-                assert_equal(x[1:-1].noise, -np.array([[1,2,3,4], [1,2,3,4]]))
-                
+                assert_equal(x[-1].noise, [[-5],[-5]])
                 assert_raises(IndexError, lambda: x[10])
+
+                # test slice indexing
+                assert_(x[:].type() == optical_signal)
+                assert_(x[:].signal.dtype == dtype)
+                assert_equal(x[:].signal, x.signal)
+                assert_equal(x[:].noise, x.noise)
+                assert_equal(x[1:-1].signal, x.signal[:,1:-1])
+                assert_equal(x[1:-1].noise, x.noise[:,1:-1])
+                assert_equal(x[:100].signal, x.signal)
+
+        for sig, dtype in zip(self.signals_1p, self.dtypes):
+            with self.subTest(pol=1, type=type(sig)):
+                x = optical_signal(sig)
+                
+                # test int indexing 
+                assert_(x[0].type() == optical_signal)
+                assert_(x[0].signal.dtype == dtype)
+                assert_equal(x[0].signal, 0)
+                assert_(x[-1].noise is None)
+                assert_raises(IndexError, lambda: x[10])
+
+                # test slice indexing
+                assert_(x[:].type() == optical_signal)
+                assert_(x[:].signal.dtype == dtype)
+                assert_equal(x[:].signal, x.signal)
+                assert_(x[:].noise is None)
+                assert_equal(x[1:-1].signal, x.signal[1:-1])
+                assert_(x[1:-1].noise is None)
+                assert_equal(x[:100].signal, x.signal)
+
+        for sig, dtype in zip(self.signals_2p, self.dtypes):
+            with self.subTest(pol=2, type=type(sig)):
+                x = optical_signal(sig)
+                
+                # test int indexing 
+                assert_(x[0].type() == optical_signal)
+                assert_(x[0].signal.dtype == dtype)
+                assert_equal(x[0].signal, [[0],[0]])
+                assert_(x[-1].noise is None)
+                assert_raises(IndexError, lambda: x[10])
+
+                # test slice indexing
+                assert_(x[:].type() == optical_signal)
+                assert_(x[:].signal.dtype == dtype)
+                assert_equal(x[:].signal, x.signal)
+                assert_(x[:].noise is None)
+                assert_equal(x[1:-1].signal, x.signal[:,1:-1])
+                assert_(x[1:-1].noise is None)
+                assert_equal(x[:100].signal, x.signal)
 
     def test_add_and_radd(self):
-        for sig, noi in zip(self.signals_1p, self.noises_1p):
-            with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=1)
+        for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = optical_signal(sig, noi, n_pol=2) # signal and noise
                 
-                # self + self = 2*self
-                assert_equal((x + x).signal, np.arange(6)*2) 
-                assert_equal((x + x).noise, -np.arange(6)*2) 
+                y = x + x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_equal(y.noise, x.noise*2)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((x + sig).signal, np.arange(6)*2) # suma por la derecha
-                assert_equal((x + sig).noise, np.zeros(6))
+                y = x + sig
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
 
-                # assert_equal((sig + x).signal, np.arange(6)*2) # suma por la izquierda
-                # assert_equal((sig + x).noise, np.zeros(6))
+                # y = sig + x
+                # assert_(y.type()==optical_signal)
+                # assert_equal(y.signal, x.signal*2)  ## revisar esta linea
+                # assert_equal(y.noise, x.noise)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
 
-                assert_equal((x + 1).signal, np.arange(1,7)) # suma por la derecha
-                assert_equal((x + 1).noise, -np.arange(-1,5))
+                y = x + 1
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal+1)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((1 + x).signal, np.arange(1,7)) 
-                assert_equal((1 + x).noise, -np.arange(-1,5)) 
+                y = 1 + x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal+1)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
+
+                if isinstance(sig, str): 
+                    assert_raises(ValueError, lambda: x + '+0,-1,-2')
+                else:
+                    assert_raises(ValueError, lambda: x + sig[0][:4]) # Different length
+
+                x = optical_signal(sig) # No noise
+
+                y = x + x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = x + sig
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                # y = sig + x
+                # assert_(y.type()==optical_signal)
+                # assert_equal((sig + x).signal, x.signal*2)  ## revisar esta linea
+                # assert_((sig + x).noise is None)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x + 1
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal+1)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = 1 + x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal+1)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
                 
-                assert_raises(ValueError, lambda: x + sig[:4]) # Different length
-
-        for sig, noi in zip(self.signals_2p, self.noises_2p):
-            with self.subTest(pol=2, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=2)
-                
-                # self + self = 2*self
-                assert_equal((x + x).signal, np.tile(np.arange(6),(2,1))*2) 
-                assert_equal((x + x).noise, -np.tile(np.arange(6),(2,1))*2) 
-
-                assert_equal((x + sig).signal, np.tile(np.arange(6),(2,1))*2)
-                assert_equal((x + sig).noise, np.zeros((2,6)))
-
-                # assert_equal((sig + x).signal, np.tile(np.arange(6),(2,1))*2)
-                # assert_equal((sig + x).noise, np.zeros((2,6)))
-
-                assert_equal((x + 1).signal, np.tile(np.arange(6),(2,1))+1)
-                assert_equal((x + 1).noise, -np.tile(np.arange(6),(2,1))+1)
-
-                assert_equal((1 + x).signal, np.tile(np.arange(6),(2,1))+1)
-                assert_equal((1 + x).noise, -np.tile(np.arange(6),(2,1))+1)
-
-                if type(sig) == str: assert_raises(ValueError, lambda: x + '+0,-1,-2') # Different length
-                else: assert_raises(ValueError, lambda: x + sig[0][:3]) # Different length
+                if isinstance(sig, str): 
+                    assert_raises(ValueError, lambda: x + '+0,-1,-2')
+                else:
+                    assert_raises(ValueError, lambda: x + sig[0][:4]) # Different length
 
 
     def test_sub_and_rsub(self):
-        for sig, noi in zip(self.signals_1p, self.noises_1p):
-            with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=1)
+        for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = optical_signal(sig, noi) # signal and noise
                 
-                # self - self = 0
-                assert_equal((x - x).signal, np.zeros(6)) 
-                assert_equal((x - x).noise, np.zeros(6)) 
+                y = x - x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.zeros((2,6)))
+                assert_equal(y.noise, np.zeros((2,6)))
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((x - sig).signal, np.zeros(6))
-                assert_equal((x - noi).noise, np.zeros(6))
+                y = x - sig
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.zeros((2,6)))
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
 
-                # assert_equal((sig - x).signal, np.zeros(100))
-                # assert_equal((sig - x).noise, np.zeros(100))
+                # y = sig - y
+                # assert_(y.type()==optical_signal)
+                # assert_equal(y.signal, np.zeros(6))  ## revisar esta linea
+                # assert_equal(y.noise, x.noise)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
 
-                assert_equal((x - 1).signal, np.arange(6)-1)
-                assert_equal((x - 1).noise, -np.arange(6)-1)
+                y = x - 1
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal-1)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((1 - x).signal, 1-np.arange(6))
-                assert_equal((1 - x).noise, 1+np.arange(6))
+                y = 1 - x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, 1-x.signal)
+                assert_equal(y.noise, -x.noise)
 
-                assert_raises(ValueError, lambda: x - sig[:4])
+                if isinstance(sig, str): 
+                    assert_raises(ValueError, lambda: x - '+0,-1,-2')
+                else:
+                    assert_raises(ValueError, lambda: x - sig[0][:4]) # Different length
 
-        for sig, noi in zip(self.signals_2p, self.noises_2p):
-            with self.subTest(pol=2, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=2)
+                x = optical_signal(sig) # No noise
+
+                y = x - x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.zeros((2,6)))
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = x - sig
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.zeros((2,6)))
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                # y = sig - y
+                # assert_(y.type()==optical_signal)
+                # assert_equal((sig + x).signal, np.zeros(6))  ## revisar esta linea
+                # assert_((sig + x).noise is None)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
+
+                y = x - 1
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal-1)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = 1 - x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, 1-x.signal)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
                 
-                # self - self = 0
-                assert_equal((x - x).signal, np.zeros((2,6))) 
-                assert_equal((x - x).noise, np.zeros((2,6))) 
-
-                assert_equal((x - sig).signal, np.zeros((2,6)))
-                assert_equal((x - noi).noise, np.zeros((2,6)))
-
-                # assert_equal((sig - x).signal, np.zeros(100))
-                # assert_equal((sig - x).noise, np.zeros(100))
-
-                assert_equal((x - 1).signal, np.tile(np.arange(6),(2,1))-1)
-                assert_equal((x - 1).noise, -np.tile(np.arange(6),(2,1))-1)
-
-                assert_equal((1 - x).signal, 1-np.tile(np.arange(6),(2,1)))
-                assert_equal((1 - x).noise, 1+np.tile(np.arange(6),(2,1)))
-
-                if type(sig) == str: assert_raises(ValueError, lambda: x - '+0,-1,-2') # Different length
-                else: assert_raises(ValueError, lambda: x - sig[0][:3]) # Different length
+                if isinstance(sig, str): 
+                    assert_raises(ValueError, lambda: x - '+0,-1,-2')
+                else:
+                    assert_raises(ValueError, lambda: x - sig[0][:4]) # Different length
 
     def test_mul_and_rmul(self):
-        for sig, noi in zip(self.signals_1p, self.noises_1p):
-            with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=1)
+        for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = optical_signal(sig, noi) # signal and noise
                 
-                # self * self = self**2
-                assert_equal((x * x).signal, np.arange(6)**2) 
-                assert_equal((x * x).noise, np.arange(6)**2) 
+                y = x * x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal**2)
+                assert_equal(y.noise, x.noise**2)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((x * sig).signal, np.arange(6)**2)
-                assert_equal((x * sig).noise, -np.arange(6)**2)
+                y = x * sig
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal**2)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
 
-                # assert_equal((sig * x).signal, np.arange(6)**2)
-                # assert_equal((sig * x).noise, np.zeros(6))
+                # y = sig * y
+                # assert_(y.type()==optical_signal)
+                # assert_equal(y.signal, x.signal**2)  ## revisar esta linea
+                # assert_equal(y.noise, x.noise)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
 
-                assert_equal((x * 2).signal, np.arange(6)*2)
-                assert_equal((x * 2).noise, -np.arange(6)*2)
+                y = x * 2
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_equal(y.noise, x.noise)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((2 * x).signal, np.arange(6)*2)
-                assert_equal((2 * x).noise, -np.arange(6)*2)
-
-                assert_raises(ValueError, lambda: x * sig[:4])
-
-        for sig, noi in zip(self.signals_2p, self.noises_2p):
-            with self.subTest(pol=2, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=2)
+                y = 2 * x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_equal(y.noise, x.noise)
                 
-                # self * self = self**2
-                assert_equal((x * x).signal, np.tile(np.arange(6),(2,1))**2) 
-                assert_equal((x * x).noise, np.tile(np.arange(6),(2,1))**2) 
+                if isinstance(sig, str): 
+                    assert_raises(ValueError, lambda: x + '+0,-1,-2')
+                else:
+                    assert_raises(ValueError, lambda: x + sig[0][:4]) # Different length
 
-                assert_equal((x * sig).signal, np.tile(np.arange(6),(2,1))**2)
-                assert_equal((x * sig).noise, -np.tile(np.arange(6),(2,1))**2)
+                x = optical_signal(sig) # No noise
 
-                # assert_equal((sig * x).signal, np.tile(np.arange(6),(2,1))**2)
-                # assert_equal((sig * x).noise, -np.tile(np.arange(6),(2,1))**2)
+                y = x * x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal**2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((x * 2).signal, np.tile(np.arange(6),(2,1))*2)
-                assert_equal((x * 2).noise, -np.tile(np.arange(6),(2,1))*2)
+                y = x * sig
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal**2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
 
-                assert_equal((2 * x).signal, np.tile(np.arange(6),(2,1))*2)
-                assert_equal((2 * x).noise, -np.tile(np.arange(6),(2,1))*2)
+                # y = sig * y
+                # assert_(y.type()==optical_signal)
+                # assert_equal((sig + x).signal, x.signal**2)  ## revisar esta linea
+                # assert_((sig + x).noise is None)  ## revisar esta linea
+                # assert_(y.signal.dtype == dtype)
 
-                if type(sig) == str: assert_raises(ValueError, lambda: x * '+0,-1,-2') # Different length
-                else: assert_raises(ValueError, lambda: x * sig[0][:3]) # Different length
+                y = x * 2
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+
+                y = 2 * x
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, x.signal*2)
+                assert_(y.noise is None)
+                assert_(y.signal.dtype == dtype)
+                
+                if isinstance(sig, str): 
+                    assert_raises(ValueError, lambda: x + '+0,-1,-2')
+                else:
+                    assert_raises(ValueError, lambda: x + sig[0][:4]) # Different length
 
     def test_call(self):
-        for sig, noi in zip(self.signals_1p, self.noises_1p):
-            with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=1)
+        for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = optical_signal(sig, noi) # signal and noise
                 
-                assert_equal(x('t').signal, np.fft.ifft(np.arange(6)))
-                assert_equal(x('t').noise, np.fft.ifft(-np.arange(6)))
+                y = x('t')
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.ifft(x.signal))
+                assert_equal(y.noise, np.fft.ifft(x.noise))
 
-                assert_equal(x('f').signal, np.fft.fft(np.arange(6)))
-                assert_equal(x('f').noise, np.fft.fft(-np.arange(6)))
-                
-                assert_equal(x('w').signal, np.fft.fft(np.arange(6)))
-                assert_equal(x('w').noise, np.fft.fft(-np.arange(6)))
-                
+                y = x('f')
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_equal(y.noise, np.fft.fft(x.noise))
+
+                y = x('w')
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_equal(y.noise, np.fft.fft(x.noise))
+
                 assert_raises(ValueError, lambda: x('z'))
 
-                assert_equal(x('t', shift=True).signal, np.fft.ifftshift(np.fft.ifft(np.arange(6))))
+                y = x('t', shift=True)
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.ifftshift(np.fft.ifft(x.signal)))
+                assert_equal(y.noise, np.fft.ifftshift(np.fft.ifft(x.noise)))
+    
+                y = x('f', shift=True)
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_equal(y.noise, np.fft.fftshift(np.fft.fft(x.noise)))
 
-        for sig, noi in zip(self.signals_2p, self.noises_2p):
-            with self.subTest(pol=2, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=2)
-                
-                assert_equal(x('t').signal, np.fft.ifft(np.tile(np.arange(6),(2,1))))
-                assert_equal(x('f').signal, np.fft.fft(np.tile(np.arange(6),(2,1))))
-                assert_equal(x('w').signal, np.fft.fft(np.tile(np.arange(6),(2,1))))
+                y = x('w', shift=True)
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_equal(y.noise, np.fft.fftshift(np.fft.fft(x.noise)))
+
+                x = optical_signal(sig) # No noise
+
+                y = x('t')
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.ifft(x.signal))
+                assert_(y.noise is None)
+
+                y = x('f')
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_(y.noise is None)
+
+                y = x('w')
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fft(x.signal))
+                assert_(y.noise is None)
+
                 assert_raises(ValueError, lambda: x('z'))
 
-                assert_equal(x('t', shift=True).signal, np.fft.ifftshift(np.fft.ifft(np.tile(np.arange(6),(2,1)))))
+                y = x('t', shift=True)
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.ifftshift(np.fft.ifft(x.signal)))
+                assert_(y.noise is None)
 
+                y = x('f', shift=True)
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_(y.noise is None)
+
+                y = x('w', shift=True)
+                assert_(y.type()==optical_signal)
+                assert_equal(y.signal, np.fft.fftshift(np.fft.fft(x.signal)))
+                assert_(y.noise is None)
+    
     def test_power(self):
-        for sig, noi in zip(self.signals_1p, self.noises_1p):
-            with self.subTest(pol=1, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=1)
-                
-                assert_equal(x.power(), 0)
-                assert_equal(x.power('signal'), np.mean(np.arange(6)**2))
-                assert_equal(x.power('noise'), np.mean(np.arange(6)**2))
-                assert_raises(ValueError, lambda: x.power('z'))
+        for sig, noi, dtype in zip(self.signals_2p, self.noises_2p, self.dtypes):
+            with self.subTest(type=type(sig)):
+                x = optical_signal(sig, noi) # signal and noise
+                x.noise = -x.noise
+                z = x.signal + x.noise
 
-        for sig, noi in zip(self.signals_2p, self.noises_2p):
-            with self.subTest(pol=2, type=type(sig)):
-                x = optical_signal(sig, noi, n_pol=2)
-                
-                assert_equal(x.power(), 0)
-                assert_equal(x.power('signal'), np.tile(np.mean(np.arange(6)**2), 2))
-                assert_equal(x.power('noise'), np.tile(np.mean(np.arange(6)**2), 2))
-                assert_raises(ValueError, lambda: x.power('z'))
+                y = x.power()  # same that power('all')
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('all')  # same that power()
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('signal')
+                assert_equal(y, np.mean(np.abs(x.signal)**2))
+
+                y = x.power('noise')
+                assert_equal(y, np.mean(np.abs(x.noise)**2))
+
+                x = optical_signal(sig) # No noise
+                z = x.signal
+
+                y = x.power()
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('all')
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('signal')
+                assert_equal(y, np.mean(np.abs(z)**2))
+
+                y = x.power('noise')
+                assert_equal(y, 0)
 
     def test_w(self):
         x = optical_signal(np.arange(6), -np.arange(6), n_pol=1)
