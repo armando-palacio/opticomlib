@@ -14,9 +14,10 @@ from opticomlib.typing import (
     binary_sequence,
     electrical_signal,
     optical_signal,
-    eye,
-    gv
+    eye
 )
+
+gv = global_variables()
 
 from opticomlib.devices import GET_EYE
 import matplotlib.pyplot as plt
@@ -83,7 +84,7 @@ class TestBinarySequence(unittest.TestCase):
                 bits = binary_sequence(input)
                 assert_(bits == [0,0,0,0,1,1,1,1,0,0,0,0]) # Check if the data is correct, and test the __eq__ method
                 assert_(bits.len() == 12) # Check that the length is correct, and test the len method
-                assert_(bits.execution_time is None) # Check that the execution time is None
+                assert_(bits.execution_time == 0) # Check that the execution time is None
 
     def test_print(self):
         input = '000011110000'
@@ -154,14 +155,14 @@ class TestElectricalSignal(unittest.TestCase):
                 
                 assert_equal(x.signal, np.arange(6))
                 assert_equal(x.noise, -np.arange(6))
-                assert_equal(x.execution_time, None)
+                assert_equal(x.execution_time, 0)
                 assert_(x.len()==6)
 
                 x = electrical_signal(sig) # No noise
 
                 assert_equal(x.signal, np.arange(6))
                 assert_(x.noise is None)
-                assert_equal(x.execution_time, None)
+                assert_equal(x.execution_time, 0)
                 assert_(x.len()==6)
 
     def test_print(self):
@@ -641,7 +642,7 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_equal(x.signal, np.arange(6))
                 assert_equal(x.noise, -np.arange(6))
                 assert_equal(x.n_pol, 1)
-                assert_equal(x.execution_time, None)
+                assert_equal(x.execution_time, 0)
                 assert_equal(x.len(), 6)
 
                 x = optical_signal(sig) # No noise
@@ -649,7 +650,7 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_equal(x.signal, np.arange(6))
                 assert_(x.noise is None)
                 assert_equal(x.n_pol, 1)
-                assert_(x.execution_time is None)
+                assert_(x.execution_time == 0)
                 assert_(x.len() == 6)
 
 
@@ -660,7 +661,7 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_equal(x.signal, np.tile(np.arange(6),(2,1)))
                 assert_equal(x.noise, -np.tile(np.arange(6),(2,1)))
                 assert_equal(x.n_pol, 2)
-                assert_equal(x.execution_time, None)
+                assert_equal(x.execution_time, 0)
                 assert_equal(x.len(), 6)
 
                 x = optical_signal(sig) # No noise
@@ -668,7 +669,7 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_equal(x.signal, np.tile(np.arange(6),(2,1)))
                 assert_(x.noise is None)
                 assert_equal(x.n_pol, 2)
-                assert_(x.execution_time is None)
+                assert_(x.execution_time == 0)
                 assert_(x.len() == 6)
 
 

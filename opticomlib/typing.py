@@ -324,7 +324,7 @@ class binary_sequence():
         
         self.data = data.astype(np.uint8)
         """The binary sequence data, a 1D numpy array of boolean values."""
-        self.execution_time = None
+        self.execution_time = 0
         """The execution time of the last operation performed on the binary sequence."""
 
     def __str__(self, title: str=None): 
@@ -653,7 +653,7 @@ class electrical_signal():
         """The signal values, a 1D numpy array of complex values."""
         self.noise = noise
         """The noise values, a 1D numpy array of complex values."""
-        self.execution_time = None
+        self.execution_time = 0
         """The execution time of the last operation performed on the electrical signal."""
 
     def __str__(self, title: str=None): 
@@ -1180,7 +1180,12 @@ class electrical_signal():
         if not hold:
             plt.figure()
 
-        plt.plot(t, (self[:n].signal+self[:n].noise).real, fmt, **kwargs)
+        if self.noise is None:
+            y = self[:n].signal.real
+        else:
+            y = (self[:n].signal + self[:n].noise).real
+        
+        plt.plot(t, y, fmt, **kwargs)
         plt.xlabel(xlabel if xlabel else 'Time [ns]')
         plt.ylabel(ylabel if ylabel else 'Amplitude [V]')
 
