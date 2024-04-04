@@ -383,11 +383,15 @@ def MZM(op_input: optical_signal,
         Vpi: float=5.0, 
         loss_dB: float=0.0, 
         ER_dB: float=26.0,
+        pol: Literal['x', 'y']='x',
         BW: float=None):
     r"""
     **Mach-Zehnder modulator**
 
-    Asymmetric coupler and opposite driving voltages model (:math:`V_1=-V_2` Push-Pull config). 
+    Asymmetric coupler and opposite driving voltages model (:math:`u_1(t)=-u_2(t)=u(t)` Push-Pull configuration). 
+    The input and output are polarization maintained. Internally, the modulator can select the polarization 
+    to be modulated by setting the parameter ``pol`` to ``'x'`` or ``'y'``. If one of them is selected, the other is
+    strongly attenuated (set to zeros).
 
     Parameters
     ----------
@@ -396,16 +400,18 @@ def MZM(op_input: optical_signal,
         it remove the second polarization.
     el_input : Number, :obj:`ndarray`, or :obj:`electrical_signal`
         Driver voltage, with zero bias. 
-    bias : :obj:`float`, default: 0.0
-        Modulator bias voltage.
-    Vpi : :obj:`float`, default: 5.0
-        Voltage at which the device switches from on-state to off-state.
-    loss_dB : :obj:`float`, default: 0.0
-        Propagation or insertion losses in the modulator, value in dB.
+    bias : :obj:`float`, optional
+        Modulator bias voltage. Default is 0.0.
+    Vpi : :obj:`float`, optional
+        Voltage at which the device switches from on-state to off-state. Default is 5.0 V.
+    loss_dB : :obj:`float`, optional
+        Propagation or insertion losses in the modulator, value in dB. Default is 0.0 dB.
     ER_dB: :obj:`float`, optional
         Extinction ratio of the modulator, in dB. Default is 26 dB.
-    BW : :obj:`float`, default: 40e9
-        Modulator bandwidth in Hz.
+    pol : :obj:`str`, {'x', 'y'} optional
+        Polarization of the modulator. Default is ``'x'``.
+    BW : :obj:`float`, optional
+        Modulator bandwidth in Hz. If not provided, the bandwidth is not limited.
 
     Returns
     -------
@@ -431,9 +437,9 @@ def MZM(op_input: optical_signal,
 
 
     .. math:: 
-        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] 
+        \vec{E}_{out} = \vec{E}_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] 
 
-    where :math:`\eta = 2*10^{-ER_dB/10}` and :math:`l = 10^{-loss_{dB}/10}`. 
+    where :math:`\eta = 2\times 10^{-ER_{dB}/10}` and :math:`l = 10^{-loss_{dB}/10}`. 
 
     References
     ----------
@@ -453,27 +459,30 @@ def MZM(op_input: optical_signal,
         gv(sps=128, R=10e9) # set samples per bit and bitrate
 
         Vpi = 5
-        tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool); not_tx_seq = ~tx_seq
-        V = 2*(np.kron(not_tx_seq, np.ones(gv.sps)) - 0.5 )*Vpi/2 
+        tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool)
 
-        input = optical_signal( np.ones_like(V)*idbm(10)**0.5 )
+        V = DAC(~tx_seq, Vout=Vpi, pulse_shape='rect') - Vpi/2 
+
+        input = optical_signal( np.ones_like(V.signal)*idbm(10)**0.5 )
+        input.noise = np.random.normal(0, 0.01, input.len())
         t = input.t()*1e9
 
-        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=3, eta=0.1, BW=2*gv.R)
+        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=2, ER_dB=40, BW=40e9)
 
         fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
 
+
         # Plot input and output power
-        axs[0].plot(t, dbm(input.signal[0].real**2), 'r-', label='input', lw=3)
-        axs[0].plot(t, dbm(mod_sig.abs('signal')[0]**2), 'C1-', label='output', lw=3)
+        axs[0].plot(t, dbm(input.abs()**2), 'r-', label='input', lw=3)
+        axs[0].plot(t, dbm(mod_sig.abs()**2), 'C1-', label='output', lw=3)
         axs[0].legend(bbox_to_anchor=(1, 1), loc='upper left')
         axs[0].set_ylabel('Potencia [dBm]')
         for i in t[::gv.sps]:
             axs[0].axvline(i, color='k', linestyle='--', alpha=0.5)
 
-        # Plot fase
-        phi_in = input.phase()[0]
-        phi_out = mod_sig.phase()[0]
+        # # Plot fase
+        phi_in = input.phase()
+        phi_out = mod_sig.phase()
 
         axs[1].plot(t, phi_in, 'b-', label='Fase in', lw=3)
         axs[1].plot(t, phi_out, 'C0-', label='Fase out', lw=3)
@@ -495,39 +504,51 @@ def MZM(op_input: optical_signal,
             axs[2].axvline(i, color='k', linestyle='--', alpha=0.5)
         plt.show()
 
-    .. image:: _images/MZM_example1.svg
+    .. image:: _images/MZM_example.svg
         :width: 100%
         :align: center
     """
 
     tic()
     if not isinstance(op_input, optical_signal): 
-        raise TypeError("`op_input` debe ser del tipo (optical_signal).")
+        raise TypeError("`op_input` must be of type (optical_signal).")
     
     if not isinstance(el_input, electrical_signal):
         el_input = electrical_signal(el_input)
 
     if op_input.len() != el_input.len() and el_input.len() != 1:
-        raise ValueError("La longitud de `el_input` debe ser igual a la longitud de `op_input`.")
+        raise ValueError("Length of `op_input` and `el_input` must be equal or `el_input` must be an scalar value. Current lengths are {} and {}.".format(op_input.len(), el_input.len()))
+
+    if pol not in ['x', 'y']:
+        raise ValueError("The parameter `pol` must be one of the following values ('x', 'y').")
+
+    loss = idb(-loss_dB) # Propagation losses
+    eta = 2*idb(-ER_dB)**0.5 # armsdesvalance factor
+
+    output = op_input.copy()
     
-    loss = idb(-loss_dB)
-    eta = 2*idb(-ER_dB)**0.5
-
-    if op_input.n_pol != 1:
-        warnings.warn("The second polarization of optical signal has been removed.", UserWarning)
-        op_input.signal = op_input.signal[0]
-
-
     g_t = pi/2/Vpi * (el_input.signal + bias)
-    output.signal = op_input.signal * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
-
-    if np.sum(op_input.noise):
-        output.noise = op_input.noise * loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
+    h_t = loss**0.5 * (np.cos(g_t) + 1j*eta/2*np.sin(g_t))
+    
+    output.signal = output.signal * h_t
+    if output.noise is not None:
+        output.noise = output.noise * h_t
+    
+    if pol == 'x' and output.n_pol == 2:
+        output.signal[1] = 0
+        if output.noise is not None:
+            output.noise[1] = 0
+    elif pol == 'y' and output.n_pol == 2:
+        output.signal[0] = 0
+        if output.noise is not None:
+            output.noise[0] = 0
 
     t_ = toc()
-    output = BPF(output, BW)
-
     output.execution_time += t_ 
+    
+    if BW is not None:
+        output = BPF(output, BW) # Filter the modulated optical signal and add the execution time of the filter
+        
     return output
 
 
@@ -566,10 +587,10 @@ def BPF(input: optical_signal,
 
     output.signal = sg.sosfiltfilt(sos_band, input.signal, axis=-1)
 
-    if np.sum(input.noise):
+    if output.noise is not None:
         output.noise = sg.sosfiltfilt(sos_band, input.noise, axis=-1)
 
-    output.execution_time = toc()
+    output.execution_time += toc()
     return output
 
 
