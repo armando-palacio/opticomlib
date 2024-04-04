@@ -22,6 +22,7 @@ from opticomlib import (
 
 from opticomlib.devices import (
     PRBS,
+    DAC,
     MZM,
 )
 
@@ -55,6 +56,46 @@ class TestDevices(unittest.TestCase):
         assert_equal(PRBS(7, len=2*127), PRBS(7, len=127).data.tolist()*2) # checking lengths longer than 2**order-1
 
 
+    def test_DAC(self):
+        assert_raises(ValueError, DAC, '010', pulse_shape='triangle') # pulse_shape must be one of ['gaussian', 'rect', 'nrz', 'rz']
+        assert_raises(ValueError, DAC, '010', Vout=50) # Vout must be in a range of [-48, 48]
+        assert_raises(ValueError, DAC, '010', bias=50) # bias must be in a range of [-48, 48]
+        assert_raises(ValueError, DAC, '010', pulse_shape='gaussian', T=0) # T must be greater than 0
+        assert_raises(ValueError, DAC, '010', pulse_shape='gaussian', T=3*gv.sps) # T must be less than 2*sps
+        assert_raises(ValueError, DAC, '010', pulse_shape='gaussian', T=8, m=0) # m must be an integer
+        
+        assert_raises(TypeError, DAC, '010', Vout='5') # Vout must be a real number
+        assert_raises(TypeError, DAC, '010', bias=1+1j) # bias must be a real number
+        assert_raises(TypeError, DAC, '010', pulse_shape='gaussian', T=8.5) # T must be an integer
+        assert_raises(TypeError, DAC, '010', pulse_shape='gaussian', m=1.5) # m must be an integer
+        assert_raises(TypeError, DAC, '010', pulse_shape='gaussian', c=1+1j) # c must be a real number
+
+        
+        gv(sps=16, R=1e9)
+        # test NRZ pulse shape
+
+        dac = DAC('010', pulse_shape='nrz', Vout=5, bias=0)
+        assert_equal(dac.type(), electrical_signal)
+        assert_equal(dac.len(), 3*gv.sps)
+        assert_allclose(dac.signal, np.concatenate((np.zeros(gv.sps), 5*np.ones(gv.sps), np.zeros(gv.sps))))
+
+        # test RZ pulse shape
+        dac = DAC('010', pulse_shape='rz', Vout=5, bias=1)
+        assert_equal(dac.type(), electrical_signal)
+        assert_equal(dac.len(), 3*gv.sps)
+        assert_allclose(dac.signal, np.concatenate((np.ones(gv.sps), 6*np.ones(gv.sps//2), np.ones(gv.sps//2), np.ones(gv.sps))))
+
+        # test gaussian pulse shape
+        dac = DAC('010', pulse_shape='gaussian', Vout=5, bias=1, T=8, m=2)
+        assert_equal(dac.type(), electrical_signal)
+        assert_equal(dac.len(), 3*gv.sps)
+
+
+
+        
+
+
+    
     def test_MZM(self):
         assert_raises(TypeError, MZM, op_input=electrical_signal(np.ones(5)), el_input=3) # op_input must be an optical_signal
         assert_raises(ValueError, MZM, op_input=optical_signal(np.ones(5)), el_input=[1,2,3]) # el_input must be a scalar or an array_like with the same length as op_input

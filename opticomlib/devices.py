@@ -163,46 +163,61 @@ def PRBS(order: Literal[7, 9, 11, 15, 20, 23, 31],
     return output, lfsr   
 
 
-def DAC(input: Union[str, list, tuple, np.ndarray, binary_sequence], 
-        Vout: float=None,
-        pulse_shape: Literal['rect','gaussian']='rect', 
-        **kargs):  
-    r"""
-    **Digital-to-Analog Converter**
+def DAC(input: str | list | tuple | np.ndarray | binary_sequence,
+        bias: float=0.0,
+        Vout: float=1.0,
+        pulse_shape: Literal['nrz', 'rz','rect','gaussian']='nrz', 
+        BW: float=None,
+        **kwargs):  
+    r"""**Digital-to-Analog Converter**
 
     Converts a binary sequence into an electrical signal, sampled at a frequency ``gv.fs``.
 
+    Warning
+    -------
+    Parameter value ``pulse_shape='rect'`` is equivalent to ``pulse_shape='nrz'``. It is recommended to use ``pulse_shape='nrz'``, ``'rect'`` will be removed in futures versions.
+
     Parameters
     ----------
-    input : str, list, tuple, ndarray, or binary_sequence
+    input : :obj:`str`, :obj:`list`, :obj:`tuple`, :obj:`np.ndarray`, or :obj:`binary_sequence`
         Input binary sequence.
-    Vout : float, default: 1.0
-        Output signal amplitude. Should be in the range [-15, 15] Volts.
-    pulse_shape : str, default: "rect"
-        Pulse shape at the output. Can be ``'rect'`` or ``'gaussian'``.
+    bias : :obj:`float`
+        DC bias of the output signal. Default: 0.0
+    Vout : :obj:`float`
+        Output signal amplitude. Should be in the range [-48, 48] Volts. Default: 1.0
+    pulse_shape : :obj:`str`, {'nrz', 'rect', 'gaussian'}
+        Pulse shape at the output. Default: 'nrz'
+    BW : :obj:`float`
+        Bandwidth of DAC. If ``None`` bandwidth is not limited. Default: None
 
     Other Parameters
     ----------------
-    c : float, default: 0.0
-        Chirp of the Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``.
-    m : int, default: 1
-        Order of the super-Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``.
-    T : int, default: ``gv.sps``
-        Pulse width at half maximum in number of samples. Only applicable if ``pulse_shape='gaussian'``.
+    c : :obj:`float`
+        Chirp of the Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``. Default: 0.0
+    m : :obj:`int`
+        Order of the super-Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``. Default: 1
+    T : :obj:`int`
+        Pulse width at half maximum in number of samples. Only applicable if ``pulse_shape='gaussian'``. Default: ``gv.sps``
 
     Returns
     -------
-    electrical_signal
+    :obj:`electrical_signal`
         The converted electrical signal.
 
     Raises
     ------
-    TypeError
-        If ``input`` type is not in [str, list, tuple, ndarray, binary_sequence].
-    NameError
-        If ``pulse_shape`` is not 'rect' or 'gaussian'.
     ValueError
-        If ``Vout`` is not between -15 and 15 Volts.
+        If ``pulse_shape`` is not ``'rect'`` or ``'gaussian'``.
+        If ``Vout`` is not between -48 and 48 Volts.
+        If ``bias`` is not between -48 and 48 Volts.
+        If ``T`` is <=0 or greater than 2 times the samples per bit.
+        If ``m`` is not a positive integer.
+    TypeError
+        If ``Vout`` is not a scalar value.
+        If ``bias`` is not a scalar value.
+        If ``c`` is not a scalar value.
+        If ``m`` is not an integer value.
+        If ``T`` is not an integer value.
 
     Examples
     --------
@@ -216,7 +231,7 @@ def DAC(input: Union[str, list, tuple, np.ndarray, binary_sequence],
 
         gv(sps=32) # set samples per bit
 
-        DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r', lw=3).show()
+        DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r', lw=3, grid=True).show()
     """
     tic()
     if not isinstance(input, binary_sequence):
@@ -224,19 +239,42 @@ def DAC(input: Union[str, list, tuple, np.ndarray, binary_sequence],
     
     sps = gv.sps
 
-    if pulse_shape == 'rect':
+    if pulse_shape in ['rect', 'nrz', 'NRZ']:
         x = np.kron(input.data, np.ones(sps))
+
+    elif pulse_shape in ['rz', 'RZ']:
+        rz_pulse = np.zeros(sps)
+        rz_pulse[:sps//2] = 1
+
+        mask = np.tile(rz_pulse, input.len())
+
+        x = np.kron(input.data, np.ones(sps)) * mask
     
-    elif pulse_shape == 'gaussian':
-        c = kargs['c'] if 'c' in kargs.keys() else 0.0
-        m = kargs['m'] if 'm' in kargs.keys() else 1
-        T = kargs['T'] if 'T' in kargs.keys() else sps
+    elif pulse_shape in ['gaussian', 'GAUSSIAN']:
+        c = kwargs.get('c', 0.0)
+        m = kwargs.get('m', 1)
+        T = kwargs.get('T', sps)
+
+        if not isinstance(c, (int, float)):
+            raise TypeError('The parameter `c` must be a scalar value.')
+        
+        if not isinstance(m, int):
+            raise TypeError('The parameter `m` must be an integer value.')
+        else:
+            if m <= 0:
+                raise ValueError('The parameter `m` must be a positive integer value.')
+        
+        if not isinstance(T, int):
+            raise TypeError('The parameter `T` must be an integer value.')
+        else:
+            if T > 2*sps or T <= 0:
+                raise ValueError('The parameter `T` must be in the range [0, 2*sps].')
 
         p = lambda t, T: np.exp(-(1+1j*c)/2 * (t/T)**(2*m))
 
-        t = np.linspace(-2*sps, 2*sps, 4*sps) # vector de tiempo del pulso gaussiano
-        k = 2*(2*np.log(2))**(1/(2*m)) # factor de escala entre el ancho de un slot y la desviación estándar del pulso gaussiano
-        pulse = p(t, T/k) # pulso gaussiano
+        t = np.linspace(-4*sps, 4*sps, 8*sps) # time vector of the Gaussian pulse
+        k = 2*(2*np.log(2))**(1/(2*m)) # scaling factor between the width of a slot and the standard deviation of a Gaussian pulse
+        pulse = p(t, T/k) # gaussian pulse
 
         s = np.zeros(input.len()*sps)
         s[int(sps//2)::sps]=input.data
@@ -244,16 +282,30 @@ def DAC(input: Union[str, list, tuple, np.ndarray, binary_sequence],
 
         x = sg.fftconvolve(s, pulse, mode='same')/2
     else:
-        raise NameError('El parámetro `type` debe ser uno de los siguientes valores ("rect","gaussian").')
+        raise ValueError('The parameter `pulse_shape` must be one of the following values ("rect", "gaussian")')
 
-    if Vout:
-        if np.abs(Vout)>=15:
-            raise ValueError('El parámetro `Vout` debe ser un valor entre -15 y 15 Volts.')
-        x = x * Vout / x.max()
+    if Vout is not None:
+        if not isinstance(Vout, (int, float)):
+            raise TypeError('The parameter `Vout` must be a scalar value.')
+        if np.abs(Vout)>=48:
+            raise ValueError('The parameter `Vout` must be in the range [-48, 48] Volts.')
+        x = x * Vout
 
-    output = electrical_signal( x )
+    if bias is not None:
+        if not isinstance(bias, (int, float)):
+            raise TypeError('The parameter `bias` must be a scalar value.')
+        if np.abs(bias)>=48:
+            raise ValueError('The parameter `bias` must be in the range [-48, 48] Volts.')
+        x = x + bias
 
-    output.execution_time = toc()
+    output = electrical_signal(x)
+    output.execution_time += toc()
+
+    if BW is not None:
+        t_ = output.execution_time
+        output = LPF(output, BW)
+        output.execution_time += t_
+
     return output
 
 
@@ -928,6 +980,7 @@ def LPF(input: Union[np.ndarray, electrical_signal],
 
     if not isinstance(input, (np.ndarray, electrical_signal)):
         raise TypeError("`input` must be of type (ndarray or electrical_signal).")
+    
     elif isinstance(input, electrical_signal):
             signal = input.signal
             noise = input.noise
@@ -947,7 +1000,7 @@ def LPF(input: Union[np.ndarray, electrical_signal],
     if np.sum(noise):
         output.noise = sg.sosfiltfilt(sos_band, noise)
     
-    output.execution_time = toc()
+    output.execution_time += toc()
     if retH:
         _,H = sg.sosfreqz(sos_band, worN=signal.size, fs=fs, whole=True)
         return output, fftshift(H) 
