@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.2.0
+                1.3.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -483,11 +483,15 @@
         <span class="n">Vpi</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> 
         <span class="n">loss_dB</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> 
         <span class="n">ER_dB</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">26.0</span><span class="p">,</span>
+        <span class="n">pol</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span>
         <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Mach-Zehnder modulator**</span>
 
-<span class="sd">    Asymmetric coupler and opposite driving voltages model (:math:`V_1=-V_2` Push-Pull config). </span>
+<span class="sd">    Asymmetric coupler and opposite driving voltages model (:math:`u_1(t)=-u_2(t)=u(t)` Push-Pull configuration). </span>
+<span class="sd">    The input and output are polarization maintained. Internally, the modulator can select the polarization </span>
+<span class="sd">    to be modulated by setting the parameter ``pol`` to ``&#39;x&#39;`` or ``&#39;y&#39;``. If one of them is selected, the other is</span>
+<span class="sd">    strongly attenuated (set to zeros).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -496,16 +500,18 @@
 <span class="sd">        it remove the second polarization.</span>
 <span class="sd">    el_input : Number, :obj:`ndarray`, or :obj:`electrical_signal`</span>
 <span class="sd">        Driver voltage, with zero bias. </span>
-<span class="sd">    bias : :obj:`float`, default: 0.0</span>
-<span class="sd">        Modulator bias voltage.</span>
-<span class="sd">    Vpi : :obj:`float`, default: 5.0</span>
-<span class="sd">        Voltage at which the device switches from on-state to off-state.</span>
-<span class="sd">    loss_dB : :obj:`float`, default: 0.0</span>
-<span class="sd">        Propagation or insertion losses in the modulator, value in dB.</span>
+<span class="sd">    bias : :obj:`float`, optional</span>
+<span class="sd">        Modulator bias voltage. Default is 0.0.</span>
+<span class="sd">    Vpi : :obj:`float`, optional</span>
+<span class="sd">        Voltage at which the device switches from on-state to off-state. Default is 5.0 V.</span>
+<span class="sd">    loss_dB : :obj:`float`, optional</span>
+<span class="sd">        Propagation or insertion losses in the modulator, value in dB. Default is 0.0 dB.</span>
 <span class="sd">    ER_dB: :obj:`float`, optional</span>
 <span class="sd">        Extinction ratio of the modulator, in dB. Default is 26 dB.</span>
-<span class="sd">    BW : :obj:`float`, default: 40e9</span>
-<span class="sd">        Modulator bandwidth in Hz.</span>
+<span class="sd">    pol : :obj:`str`, {&#39;x&#39;, &#39;y&#39;} optional</span>
+<span class="sd">        Polarization of the modulator. Default is ``&#39;x&#39;``.</span>
+<span class="sd">    BW : :obj:`float`, optional</span>
+<span class="sd">        Modulator bandwidth in Hz. If not provided, the bandwidth is not limited.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -531,9 +537,9 @@
 
 
 <span class="sd">    .. math:: </span>
-<span class="sd">        E_{out} = E_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] </span>
+<span class="sd">        \vec{E}_{out} = \vec{E}_{in} \cdot \sqrt{l} \cdot \left[ \cos\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) + j \frac{\eta}{2} \sin\left(\frac{\pi}{2V_{\pi}}(u(t)+V_{bias})\right) \right] </span>
 
-<span class="sd">    where :math:`\eta = 2*10^{-ER_dB/10}` and :math:`l = 10^{-loss_{dB}/10}`. </span>
+<span class="sd">    where :math:`\eta = 2\times 10^{-ER_{dB}/10}` and :math:`l = 10^{-loss_{dB}/10}`. </span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -553,27 +559,30 @@
 <span class="sd">        gv(sps=128, R=10e9) # set samples per bit and bitrate</span>
 
 <span class="sd">        Vpi = 5</span>
-<span class="sd">        tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool); not_tx_seq = ~tx_seq</span>
-<span class="sd">        V = 2*(np.kron(not_tx_seq, np.ones(gv.sps)) - 0.5 )*Vpi/2 </span>
+<span class="sd">        tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool)</span>
 
-<span class="sd">        input = optical_signal( np.ones_like(V)*idbm(10)**0.5 )</span>
+<span class="sd">        V = DAC(~tx_seq, Vout=Vpi, pulse_shape=&#39;rect&#39;) - Vpi/2 </span>
+
+<span class="sd">        input = optical_signal( np.ones_like(V.signal)*idbm(10)**0.5 )</span>
+<span class="sd">        input.noise = np.random.normal(0, 0.01, input.len())</span>
 <span class="sd">        t = input.t()*1e9</span>
 
-<span class="sd">        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=3, eta=0.1, BW=2*gv.R)</span>
+<span class="sd">        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=2, ER_dB=40, BW=40e9)</span>
 
 <span class="sd">        fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)</span>
 
+
 <span class="sd">        # Plot input and output power</span>
-<span class="sd">        axs[0].plot(t, dbm(input.signal[0].real**2), &#39;r-&#39;, label=&#39;input&#39;, lw=3)</span>
-<span class="sd">        axs[0].plot(t, dbm(mod_sig.abs(&#39;signal&#39;)[0]**2), &#39;C1-&#39;, label=&#39;output&#39;, lw=3)</span>
+<span class="sd">        axs[0].plot(t, dbm(input.abs()**2), &#39;r-&#39;, label=&#39;input&#39;, lw=3)</span>
+<span class="sd">        axs[0].plot(t, dbm(mod_sig.abs()**2), &#39;C1-&#39;, label=&#39;output&#39;, lw=3)</span>
 <span class="sd">        axs[0].legend(bbox_to_anchor=(1, 1), loc=&#39;upper left&#39;)</span>
 <span class="sd">        axs[0].set_ylabel(&#39;Potencia [dBm]&#39;)</span>
 <span class="sd">        for i in t[::gv.sps]:</span>
 <span class="sd">            axs[0].axvline(i, color=&#39;k&#39;, linestyle=&#39;--&#39;, alpha=0.5)</span>
 
-<span class="sd">        # Plot fase</span>
-<span class="sd">        phi_in = input.phase()[0]</span>
-<span class="sd">        phi_out = mod_sig.phase()[0]</span>
+<span class="sd">        # # Plot fase</span>
+<span class="sd">        phi_in = input.phase()</span>
+<span class="sd">        phi_out = mod_sig.phase()</span>
 
 <span class="sd">        axs[1].plot(t, phi_in, &#39;b-&#39;, label=&#39;Fase in&#39;, lw=3)</span>
 <span class="sd">        axs[1].plot(t, phi_out, &#39;C0-&#39;, label=&#39;Fase out&#39;, lw=3)</span>
@@ -595,39 +604,51 @@
 <span class="sd">            axs[2].axvline(i, color=&#39;k&#39;, linestyle=&#39;--&#39;, alpha=0.5)</span>
 <span class="sd">        plt.show()</span>
 
-<span class="sd">    .. image:: _images/MZM_example1.svg</span>
+<span class="sd">    .. image:: _images/MZM_example.svg</span>
 <span class="sd">        :width: 100%</span>
 <span class="sd">        :align: center</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">tic</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op_input</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span> 
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`op_input` debe ser del tipo (optical_signal).&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`op_input` must be of type (optical_signal).&quot;</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el_input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
         <span class="n">el_input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">el_input</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">op_input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="n">el_input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="ow">and</span> <span class="n">el_input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;La longitud de `el_input` debe ser igual a la longitud de `op_input`.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Length of `op_input` and `el_input` must be equal or `el_input` must be an scalar value. Current lengths are </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">op_input</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="n">el_input</span><span class="o">.</span><span class="n">len</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="n">pol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The parameter `pol` must be one of the following values (&#39;x&#39;, &#39;y&#39;).&quot;</span><span class="p">)</span>
+
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">loss_dB</span><span class="p">)</span> <span class="c1"># Propagation losses</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">ER_dB</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="c1"># armsdesvalance factor</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
-    <span class="n">loss</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">loss_dB</span><span class="p">)</span>
-    <span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">ER_dB</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-
-    <span class="k">if</span> <span class="n">op_input</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The second polarization of optical signal has been removed.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
-        <span class="n">op_input</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-
     <span class="n">g_t</span> <span class="o">=</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">Vpi</span> <span class="o">*</span> <span class="p">(</span><span class="n">el_input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">bias</span><span class="p">)</span>
-    <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">loss</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">g_t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">eta</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">g_t</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">op_input</span><span class="o">.</span><span class="n">noise</span><span class="p">):</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">op_input</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="n">loss</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">g_t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">eta</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">g_t</span><span class="p">))</span>
+    <span class="n">h_t</span> <span class="o">=</span> <span class="n">loss</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">g_t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">eta</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">g_t</span><span class="p">))</span>
+    
+    <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">h_t</span>
+    <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="n">h_t</span>
+    
+    <span class="k">if</span> <span class="n">pol</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span> <span class="ow">and</span> <span class="n">output</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">pol</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span> <span class="ow">and</span> <span class="n">output</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">t_</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
-
     <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">t_</span> 
+    
+    <span class="k">if</span> <span class="n">BW</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span> <span class="c1"># Filter the modulated optical signal and add the execution time of the filter</span>
+        
     <span class="k">return</span> <span class="n">output</span></div>
 
 
@@ -669,10 +690,10 @@
 
     <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">toc</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
