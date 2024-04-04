@@ -10,11 +10,10 @@ from numpy.testing import (
 )
 
 from opticomlib import (
+    global_variables,
     binary_sequence,
     optical_signal,
     electrical_signal,
-    gv,
-
     idb,
     idbm,
     dbm,
@@ -25,6 +24,8 @@ from opticomlib.devices import (
     PRBS,
     MZM,
 )
+
+gv = global_variables()
 
 class TestDevices(unittest.TestCase):
     def test_PRBS(self):

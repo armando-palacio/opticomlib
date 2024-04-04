@@ -12,9 +12,13 @@ from opticomlib.ppm import (
     BER_analizer,
     theory_BER,
     eye, 
-    gv,
 )
+
+from opticomlib import global_variables
+gv = global_variables()
+
 class TestPPM(unittest.TestCase):
+
     def test_ppm_encoder(self):
         inputs = [
             '00011011',

@@ -14,9 +14,10 @@ from opticomlib.typing import (
     binary_sequence,
     electrical_signal,
     optical_signal,
-    eye,
-    gv
+    eye
 )
+
+gv = global_variables()
 
 from opticomlib.devices import GET_EYE
 import matplotlib.pyplot as plt
