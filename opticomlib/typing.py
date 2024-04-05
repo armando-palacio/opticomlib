@@ -1600,7 +1600,7 @@ class optical_signal(electrical_signal):
         if not hold:
             plt.figure()
 
-        plt.plot( *args, **kwargs)
+        ls = plt.plot( *args, **kwargs)
         plt.xlabel(xlabel if xlabel else 'Time [ns]')
         plt.ylabel(ylabel if ylabel else 'Power [mW]')
         
@@ -1612,8 +1612,16 @@ class optical_signal(electrical_signal):
 
         if label is not None:
             if isinstance(label, str):
-                label = [label]
-            plt.legend(label)
+                ls[0].set_label(label)
+                ls[1].set_label(label)
+            elif isinstance(label, (list, tuple)):
+                ls[0].set_label(label[0])
+                ls[1].set_label(label[1])
+            else:
+                raise ValueError('`label` must be a string or a list of strings.')
+            plt.legend()
+        if 'label' in kwargs.keys():
+            plt.legend()
         return self
     
 
@@ -1723,12 +1731,12 @@ class optical_signal(electrical_signal):
             else:
                 raise TypeError('argument `mode` should be ("x", "y" or "both")')    
         
-        label = kwargs.pop('label', None)
+        label = kwargs.pop('label', None) if mode == 'both' else None
 
         if not hold:
             plt.figure()
 
-        plt.plot( *args, **kwargs)
+        ls = plt.plot( *args, **kwargs)
         plt.ylabel(ylabel)
         plt.xlabel(xlabel if xlabel else 'Frequency [GHz]')
         plt.xlim( -3.5*gv.R*1e-9, 3.5*gv.R*1e-9 )
@@ -1737,8 +1745,16 @@ class optical_signal(electrical_signal):
         
         if label is not None:
             if isinstance(label, str):
-                label = [label]
-            plt.legend(label)
+                ls[0].set_label(label)
+                ls[1].set_label(label)
+            elif isinstance(label, (list, tuple)):
+                ls[0].set_label(label[0])
+                ls[1].set_label(label[1])
+            else:
+                raise ValueError('`label` must be a string or a list of strings.')
+            plt.legend()
+        if 'label' in kwargs.keys():
+            plt.legend()
         return self
     
 
