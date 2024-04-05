@@ -672,7 +672,21 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_(x.execution_time == 0)
                 assert_(x.len() == 6)
 
+    def test_copy(self):
+        x = optical_signal(self.signals_1p[-1], self.noises_1p[-1])
+        y = x.copy()
+        assert_(x is not y)
+        assert_(type(y) == optical_signal)
+        assert_equal(x.signal, y.signal)
+        assert_equal(x.noise, y.noise)
 
+        y = x.copy(n=3)
+        assert_(x is not y)
+        assert_(type(y) == optical_signal)
+        assert_(y.len() == 3)
+        assert_equal(y.signal, x.signal[:3])
+        assert_equal(y.noise, x.noise[:3])
+    
     def test_print(self):
         # with noise
         x_1p = optical_signal([1,2,3], [1,1,0])
