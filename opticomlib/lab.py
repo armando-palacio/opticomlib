@@ -543,7 +543,6 @@ class PPG3204():
         for ch, data_ch_i in zip(CHs, data):
 
             if data_ch_i.size > self.MAX_CHUNK_LEN:
-                # chunks = np.split(data_ch_i, self.MAX_CHUNK_LEN*np.arange(1, data_ch_i.size//self.MAX_CHUNK_LEN + 1))
                 chunks = np.split(data_ch_i, np.arange(self.MAX_CHUNK_LEN, data_ch_i.size, self.MAX_CHUNK_LEN))
             else:
                 chunks = [data_ch_i]
