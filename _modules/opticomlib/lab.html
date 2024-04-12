@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.4.3
+                1.4.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -669,7 +669,7 @@
         <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">data_ch_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CHs</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 
             <span class="k">if</span> <span class="n">data_ch_i</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_CHUNK_LEN</span><span class="p">:</span>
-                <span class="n">chunks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">data_ch_i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_CHUNK_LEN</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_ch_i</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">MAX_CHUNK_LEN</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">chunks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">data_ch_i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAX_CHUNK_LEN</span><span class="p">,</span> <span class="n">data_ch_i</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_CHUNK_LEN</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_ch_i</span><span class="p">]</span>
             
