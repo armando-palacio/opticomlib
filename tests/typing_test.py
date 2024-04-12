@@ -1172,7 +1172,7 @@ class testEye(unittest.TestCase):
         
         x = GET_EYE(sig) # this returns an eye object with estimated parameters
         
-        assert_(x.plot(medias_=True, legend_=True, style='light', cmap='plasma', label='TEST')==x)
+        assert_(x.plot(medias_=True, legend_=True, style='light', cmap='plasma', title='TEST')==x)
 
 
 if __name__ == '__main__':

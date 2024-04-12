@@ -1868,7 +1868,7 @@ class eye():
              legend_: bool=True, 
              style: Literal['dark', 'light']='dark', 
              cmap: Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter',
-             label: str = '',
+             title: str = '',
              savefig: str=None):
         """ Plot eye diagram.
 
@@ -1882,8 +1882,8 @@ class eye():
             If True, show legend.
         cmap : :obj:`str`, optional
             Colormap to plot.
-        label : :obj:`str`, optional
-            Label to show in title.
+        title : :obj:`str`, optional
+            Title of plot.
         savefig : :obj:`str`, optional
             Name of the file to save the plot. If None, the plot is not saved.
             Input just the name of the file without extension (extension is .png by default).
@@ -1904,6 +1904,7 @@ class eye():
             means_color = 'white'
             bgcolor='black'
         elif style == 'light':
+            plt.style.use('default')
             t_opt_color = 'green'#'#229954'
             means_color = '#5A5A5A'
             bgcolor='white'
@@ -1915,9 +1916,8 @@ class eye():
         fig, ax = plt.subplots(1,2, gridspec_kw={'width_ratios': [4,1],  
                                                 'wspace': 0.03},
                                                 figsize=(8,5))
-        if label:
-            label = ', '+label
-        plt.suptitle(f'Eye diagram{label}')
+        if title:
+            plt.suptitle(f'Eye diagram {title}')
         
         ax[0].set_xlim(-1-dt,1)
         ax[0].set_ylim(self.mu0-4*self.s0, self.mu1+4*self.s1)
@@ -2011,7 +2011,10 @@ class eye():
         t_slider.on_changed(update_t_line)
 
         if savefig: 
-            plt.savefig('.'.join((savefig, 'png')), dpi=300)
+            if savefig.endswith('.png'):
+                plt.savefig(savefig, dpi=300)
+            else:
+                plt.savefig(savefig)
         return self
 
     def show(self):
