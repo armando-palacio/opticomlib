@@ -26,12 +26,12 @@
 import re
 import numpy as np
 import timeit, time as tm
-import scipy.special as sp
-import scipy.signal as sg
+import scipy.special as sp # type: ignore
+import scipy.signal as sg # type: ignore
 
 from typing import Literal, Union
 
-from scipy.constants import pi, c
+from scipy.constants import pi, c # type: ignore
 
 import matplotlib.pyplot as plt
 from numpy.fft import fft, ifft, fftfreq, fftshift
@@ -96,7 +96,7 @@ def _get_type_array_from_str(string):
         return complex
     return None
 
-def str2array(string: str, dtype: bool | int | float | complex = None): 
+def str2array(string: str, dtype: bool | int | float | complex | None = None): 
     r"""
     Converts a string to array of numbers. Use comma (``,``) or whitespace (`` ``) as element separators and semicolon (``;``) as row separator.
     Also, ``i`` or ``j`` can be used to represent the imaginary unit.
@@ -157,31 +157,31 @@ def str2array(string: str, dtype: bool | int | float | complex = None):
     if _dtype == bool:
         # for special cases when string = '10 100 1000' and dtype = int | float | complex 
         if dtype == int or dtype==float or dtype==complex: 
-            string = string.split(';')
-            if len(string) == 1:
-                arr = np.array(re.split(r'[,\s]+', string[0].strip()), dtype=dtype)
+            strings = string.split(';')
+            if len(strings) == 1:
+                arr = np.array(re.split(r'[,\s]+', strings[0].strip()), dtype=dtype)
             else:
-                arr = np.array([re.split(r'[,\s]+', item.strip()) for item in string], dtype=dtype)
+                arr = np.array([re.split(r'[,\s]+', item.strip()) for item in strings], dtype=dtype)
         else:
-            string = string.replace(' ', '').replace(',', '').split(';')
-            if len(string) == 1:
-                arr = np.array(list(string[0])).astype(_dtype)
+            strings = string.replace(' ', '').replace(',', '').split(';')
+            if len(strings) == 1:
+                arr = np.array(list(strings[0])).astype(_dtype)
             else:
-                arr = np.array([list(item) for item in string]).astype(_dtype)
+                arr = np.array([list(item) for item in strings]).astype(_dtype)
 
     elif _dtype == int or _dtype==float:
-        string = string.split(';')
-        if len(string) == 1:
-            arr = np.array(re.split(r'[,\s]+', string[0].strip()), dtype=_dtype)
+        strings = string.split(';')
+        if len(strings) == 1:
+            arr = np.array(re.split(r'[,\s]+', strings[0].strip()), dtype=_dtype)
         else:
-            arr = np.array([re.split(r'[,\s]+', item.strip()) for item in string], dtype=_dtype)
+            arr = np.array([re.split(r'[,\s]+', item.strip()) for item in strings], dtype=_dtype)
 
     elif _dtype == complex:
-        string = string.replace('i','j').split(';')
-        if len(string) == 1:
-            arr = np.array(re.split(r'[,\s]+', string[0].strip()), dtype=_dtype)
+        strings = string.replace('i','j').split(';')
+        if len(strings) == 1:
+            arr = np.array(re.split(r'[,\s]+', strings[0].strip()), dtype=_dtype)
         else:
-            arr = np.array([re.split(r'[,\s]+', item.strip()) for item in string], dtype=_dtype)
+            arr = np.array([re.split(r'[,\s]+', item.strip()) for item in strings], dtype=_dtype)
 
     else:
         raise ValueError('The string contains invalid characters and can\'t be converted to an array.')
