@@ -18,7 +18,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -142,8 +142,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.devices.LPF" title="opticomlib.devices.LPF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LPF</span></code></a>(input, BW[, n, fs, retH])</p></td>
 <td><p><strong>Low Pass Filter</strong></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.devices.PD" title="opticomlib.devices.PD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PD</span></code></a>(input, BW[, responsivity, T, R_load, noise])</p></td>
-<td><p><strong>Photodetector</strong></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.devices.PD" title="opticomlib.devices.PD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PD</span></code></a>(input, BW[, r, T, R_load, include_noise, ...])</p></td>
+<td><p><strong>P-I-N Photodetector</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.devices.ADC" title="opticomlib.devices.ADC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ADC</span></code></a>(input[, fs, BW, nbits])</p></td>
 <td><p><strong>Analog-to-Digital Converter</strong></p></td>
@@ -168,7 +168,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>order</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, {7, 9, 11, 15, 20, 23, 31}) – degree of the generating pseudorandom polynomial</p></li>
 <li><p><strong>len</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – lenght of output binary sequence</p></li>
-<li><p><strong>seed</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – seed of the generator (initial state of the LFSR). It must be provided if you want to continue the sequence.
+<li><p><strong>seed</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – seed of the generator (initial state of the LFSR).
+It must be provided if you want to continue the sequence.
 Default is 2**order-1.</p></li>
 <li><p><strong>return_seed</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, the last state of LFSR is returned. Default is False.</p></li>
 </ul>
@@ -642,11 +643,11 @@ Polarization mode dispersion (PMD) is not considered in this model.</p>
 </pre></div>
 </div>
 <p>(<a class="reference download internal" download="" href="_downloads/14ba9f4b39696fb74610e84d44d05c29/devices-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/e4bc1d91b71d76fc34e13b21e73db4b0/devices-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/0732fb09b6ab96da5c0052a22f3796c8/devices-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/2841db551a28406cce0e500e6402c2a7/devices-3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
-<figure class="align-center" id="id10">
+<figure class="align-center" id="id11">
 <img alt="FIBER example 1" class="plot-directive" src="_images/devices-3.png" />
 <figcaption>
 <p><span class="caption-text">The input signal is a 10 Gbps NRZ signal with 20 dBm of power. The fiber has a length of 50 km, an attenuation of 0.01 dB/km,
-a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
+a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.</span><a class="headerlink" href="#id11" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </dd></dl>
@@ -708,18 +709,18 @@ Bessel filter model.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.devices.PD">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responsivity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ase-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'thermal-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'shot-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ase-thermal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ase-shot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'thermal-shot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#PD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.PD" title="Link to this definition"></a></dt>
-<dd><p><strong>Photodetector</strong></p>
-<p>Simulates the detection of an optical signal by a photodetector.</p>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.devices.</span></span><span class="sig-name descname"><span class="pre">PD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><span class="pre">optical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ase-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'thermal-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'shot-only'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ase-thermal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ase-shot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'thermal-shot'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_dark</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/devices.html#PD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.devices.PD" title="Link to this definition"></a></dt>
+<dd><p><strong>P-I-N Photodetector</strong></p>
+<p>Simulates the detection of an optical signal by a P-I-N photodetector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="types.html#opticomlib.typing.optical_signal" title="opticomlib.typing.optical_signal"><em>optical_signal</em></a>) – Optical signal to be detected.</p></li>
-<li><p><strong>BW</strong> (<em>float</em>) – Detector bandwidth in [Hz].</p></li>
-<li><p><strong>responsivity</strong> (<em>float</em><em>, </em><em>default: 1.0</em>) – Detector responsivity in [A/W].</p></li>
-<li><p><strong>T</strong> (<em>float</em><em>, </em><em>default: 300.0</em>) – Detector temperature in [K].</p></li>
-<li><p><strong>R_load</strong> (<em>float</em><em>, </em><em>default: 50.0</em>) – Detector load resistance in [<span class="math notranslate nohighlight">\(\Omega\)</span>].</p></li>
-<li><p><strong>noise</strong> (<em>str</em><em>, </em><em>default: 'all'</em>) – <p>Type of noise to include in the simulation.
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">optical_signal</span></code>) – Optical signal to be photodetected.</p></li>
+<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Detector bandwidth in [Hz].</p></li>
+<li><p><strong>r</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Detector responsivity in [A/W]. Default: 1.0.</p></li>
+<li><p><strong>T</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Detector temperature in [K]. Default: 300.0.</p></li>
+<li><p><strong>R_load</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Detector load resistance in [<span class="math notranslate nohighlight">\(\Omega\)</span>]. Default: 50.0.</p></li>
+<li><p><strong>include_noise</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – <p>Type of noise to include in the simulation. Default: ‘all’.
 Options include:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'ase-only'</span></code>: only include ASE noise</p></li>
@@ -731,6 +732,8 @@ Options include:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'all'</span></code>: include all types of noise</p></li>
 </ul>
 </p></li>
+<li><p><strong>i_dark</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Dark current of the photodetector in [A]. Default: 10e-9 [10 nA].</p></li>
+<li><p><strong>Fn</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Noise figure of Photodetector amplifiers states, in [dB]. Default: 0 dB</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -741,11 +744,44 @@ Options include:</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not of type optical_signal.</p></li>
-<li><p><strong>ValueError</strong> – If the <code class="docutils literal notranslate"><span class="pre">noise</span></code> argument is not one of the valid options.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">input</span></code> is not of type optical_signal.
+    If <code class="docutils literal notranslate"><span class="pre">r</span></code>, <code class="docutils literal notranslate"><span class="pre">T</span></code>, or <code class="docutils literal notranslate"><span class="pre">R_load</span></code> are not scalar values.
+    If <code class="docutils literal notranslate"><span class="pre">include_noise</span></code> is not a string.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">r</span></code> is not between (0, 1].
+    If <code class="docutils literal notranslate"><span class="pre">T</span></code> or <code class="docutils literal notranslate"><span class="pre">R_load</span></code> are negative values.
+    If <code class="docutils literal notranslate"><span class="pre">include_noise</span></code> argument is not one of the valid options.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The total photodetected current is given by:</p>
+<div class="math notranslate nohighlight">
+\[i_{ph} = \mathcal{R}P_{in} + i_{th} + i_{sh} + i_{dark}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> is the responsivity of the photodetector, <span class="math notranslate nohighlight">\(P_{in}\)</span> is the input power, <span class="math notranslate nohighlight">\(i_{th}\)</span> and <span class="math notranslate nohighlight">\(i_{sh}\)</span> are thermal and shot noise
+respectively and <span class="math notranslate nohighlight">\(i_{dark}\)</span> is the dark current of photodetector.</p>
+<p>The input power <span class="math notranslate nohighlight">\(P_{in}\)</span> is determinated as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}P_{in} &amp;= |E_x + n_x|^2 + |E_y + n_y|^2 \\
+P_{in} &amp;= |E_x|^2 + |E_y|^2 + 2\Re\{E_x n_x^* + E_y n_y^*\} + |n_x|^2 + |n_y|^2 \\
+P_{in} &amp;= P_{sig} + P_{sig-noise} + P_{noise} \\\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(E_x\)</span> and <span class="math notranslate nohighlight">\(E_y\)</span> are the amplitudes of x-polarization and y-polarization modes respectively
+and <span class="math notranslate nohighlight">\(n_x\)</span> and <span class="math notranslate nohighlight">\(n_y\)</span> are the noise of x-polarization and y-polarization modes respectively.</p>
+<p>The thermal and shot noises are random variables with normal distribution and variance given by <a class="reference internal" href="#agrawal" id="id6"><span>[Agrawal]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma_{th}^2 &amp;= \frac{4k_B T}{R_L}F_n \Delta f \\
+\sigma_{sh}^2 &amp;= 2e\left( r(P_{sig}^2 + P_{noise}^2) + i_{dark} \right)\Delta f\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(k_B\)</span> is the Boltzmann constant, <span class="math notranslate nohighlight">\(T\)</span> is the temperature of the photodetector, <span class="math notranslate nohighlight">\(R_L\)</span> is the load resistance,
+<span class="math notranslate nohighlight">\(F_n\)</span> is the noise figure of the photodetector, <span class="math notranslate nohighlight">\(\Delta f\)</span> is the bandwidth of the photodetector, <span class="math notranslate nohighlight">\(e\)</span> is the electron charge.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}i_{ph} &amp;= \mathcal{R}P_{sig} + \mathcal{R}P_{sig-noise} + \mathcal{R}P_{noise} + i_{th} + i_{sh} + i_{dark} \\
+i_{ph} &amp;= i_{sig} + i_{sig-noise} + i_{noise-noise} + i_{th} + i_{sh} + i_{dark}\end{split}\]</div>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="agrawal" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">Agrawal</a><span class="fn-bracket">]</span></span>
+<p>Agrawal, G.P., “Fiber-Optic Communication Systems”. Chapter 4.4 (1997).</p>
+</div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -905,7 +941,7 @@ and the function must be defined in the range <code class="docutils literal notr
 <p class="rubric">Notes</p>
 <p id="notes">Following coupled-wave theory, we assume a periodic, single-mode
 waveguide with an electromagnetic field which can be represented by
-two contradirectional coupled waves in the form <a class="footnote-reference brackets" href="#id8" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
+two contradirectional coupled waves in the form <a class="footnote-reference brackets" href="#id9" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
 <div class="math notranslate nohighlight">
 \[E(z) = A(z)e^{-j\beta_0 z} + B(z)e^{j\beta_0 z}\]</div>
 <p>where A and B are slowly varying amplitudes of mode traveling in <span class="math notranslate nohighlight">\(+z\)</span> and math:<cite>-z</cite> directions, respectively
@@ -932,7 +968,7 @@ and thus <span class="math notranslate nohighlight">\(\kappa\)</span>, <span cla
 <p>If phase chirp is present, <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\phi'\)</span> are also a function of <span class="math notranslate nohighlight">\(z\)</span>. This implementation considers only linear chirp, so:</p>
 <div class="math notranslate nohighlight">
 \[\phi'(z) = 2Fz/L^2\]</div>
-<p>where <span class="math notranslate nohighlight">\(F\)</span> is a dimensionless “chirp parameter”, given by <a class="footnote-reference brackets" href="#id9" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
+<p>where <span class="math notranslate nohighlight">\(F\)</span> is a dimensionless “chirp parameter”, given by <a class="footnote-reference brackets" href="#id10" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
 <div class="math notranslate nohighlight">
 \[F = \pi N \Delta \Lambda/\Lambda\]</div>
 <p>or</p>
@@ -950,12 +986,12 @@ and thus <span class="math notranslate nohighlight">\(\kappa\)</span>, <span cla
 </ul>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id8" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">3</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id9" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">3</a><span class="fn-bracket">]</span></span>
 <p>Turan Erdogan, “Fiber Grating Spectra,” VOL. 15, NO. 8, AUGUST 1997. doi: <a class="reference external" href="https://doi.org/10.1109/50.618322">https://doi.org/10.1109/50.618322</a></p>
 </aside>
-<aside class="footnote brackets" id="id9" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">4</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id10" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">4</a><span class="fn-bracket">]</span></span>
 <ol class="upperalpha simple" start="8">
 <li><p>KOGELNIK, “Filter Response of Nonuniform Almost-Periodic Structures” Vol. 55, No. 1, January 1976. doi: <a class="reference external" href="https://doi.org/10.1002/j.1538-7305.1976.tb02062.x">https://doi.org/10.1002/j.1538-7305.1976.tb02062.x</a></p></li>
 </ol>
