@@ -312,6 +312,7 @@
 <span class="sd">        set_offset</span>
 <span class="sd">        get_offset</span>
 <span class="sd">        __call__</span>
+<span class="sd">        config</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">CHANNELS</span> <span class="o">=</span> <span class="mi">4</span> 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of channels of the PPG3204, 4 channels.&quot;&quot;&quot;</span>
@@ -359,7 +360,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">addr_ID</span><span class="p">:</span> 
             <span class="bp">self</span><span class="o">.</span><span class="n">inst</span> <span class="o">=</span> <span class="n">visa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">()</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="n">addr_ID</span><span class="p">)</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;A connection (session) to the PPG.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;A connection (session) to the PPG instrument (if `addr_ID` is provided).&quot;&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inst</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">10000</span> <span class="c1"># timeout in milliseconds</span>
             <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s1">&#39;*IDN?&#39;</span><span class="p">))</span></div>
 
@@ -400,9 +401,9 @@
                 <span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="n">channels</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">channels</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHANNELS</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">channels</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHANNELS</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;The channels number is out of the range of the PPG3204. Setting to the limits.&#39;</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="n">channels</span> <span class="o">=</span> <span class="n">channels</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHANNELS</span><span class="p">)[:</span><span class="bp">self</span><span class="o">.</span><span class="n">CHANNELS</span><span class="p">]</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The channels number is out of the range of the PPG3204. Setting to the limits </span><span class="si">{</span><span class="n">channels</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHANNELS</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">channels</span>
@@ -454,9 +455,9 @@
             <span class="n">patt_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">patt_len</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="n">patt_len</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">PATT_LEN_MIN</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">patt_len</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">PATT_LEN_MAX</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The pattern length is out of the range of the PPG3204. Setting to the limits.&#39;</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">patt_len</span> <span class="o">=</span> <span class="n">patt_len</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PATT_LEN_MIN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PATT_LEN_MAX</span><span class="p">)</span> 
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The pattern length is out of the range of the PPG3204. Setting to the limits </span><span class="si">{</span><span class="n">patt_len</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         
         <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">pl</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CHs</span><span class="p">,</span> <span class="n">patt_len</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:LENG </span><span class="si">{</span><span class="n">pl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
@@ -861,11 +862,11 @@
 <span class="sd">            If the frequency is out of the range of the PPG3204.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">freq</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">FREQ_MIN</span> <span class="ow">or</span> <span class="n">freq</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">FREQ_MAX</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The frequency is out of the range of the PPG3204. Setting to the limits.&#39;</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">FREQ_MIN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">FREQ_MAX</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The frequency is out of the range of the PPG3204. Setting to the limits </span><span class="si">{</span><span class="n">freq</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> Hz.&#39;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:FREQ </span><span class="si">{</span><span class="n">freq</span><span class="si">:</span><span class="s1">.1e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:FREQ </span><span class="si">{</span><span class="n">freq</span><span class="si">:</span><span class="s1">.5e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
     
 
@@ -916,9 +917,9 @@
             <span class="n">skew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">skew</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">skew</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MIN_SKEW</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">skew</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_SKEW</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The skew is out of the range of the PPG3204. Setting to the limits.&#39;</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">skew</span> <span class="o">=</span> <span class="n">skew</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MIN_SKEW</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_SKEW</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;The skew is out of the range of the PPG3204. Setting to the limits </span><span class="si">{</span><span class="n">skew</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         
         <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CHs</span><span class="p">,</span> <span class="n">skew</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:SKEW</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
@@ -947,32 +948,32 @@
 
 <div class="viewcode-block" id="PPG3204.set_output_voltage">
 <a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_output_voltage">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_output_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitud</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_output_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the peak-to-peak output voltage of each channel, in volts.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        amplitud : :obj:`float` or :obj:`Array_Like`</span>
-<span class="sd">            Amplitud to set to the specify channels</span>
+<span class="sd">        amplitude : :obj:`float` or :obj:`Array_Like`</span>
+<span class="sd">            Amplitude to set to the specify channels</span>
 <span class="sd">        CHs : :obj:`int` or :obj:`Array_Like`, optional</span>
-<span class="sd">            Channels to set the amplitud. If ``CHs=None`` amplitud will be fixed in all channels.</span>
+<span class="sd">            Channels to set the amplitude. If ``CHs=None`` amplitude will be fixed in all channels.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">CHs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_channels</span><span class="p">(</span><span class="n">CHs</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">amplitud</span><span class="p">,</span> <span class="n">Number</span> <span class="o">+</span> <span class="n">Array_Like</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`amplitud` is not in the correct format&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">Number</span> <span class="o">+</span> <span class="n">Array_Like</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`amplitude` is not in the correct format&#39;</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">amplitud</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
-            <span class="n">amplitud</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">([</span><span class="n">amplitud</span><span class="p">],</span> <span class="n">CHs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
+            <span class="n">amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">([</span><span class="n">amplitude</span><span class="p">],</span> <span class="n">CHs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">amplitud</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">amplitud</span><span class="p">)</span>
+            <span class="n">amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">amplitud</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MIN</span> <span class="ow">or</span> <span class="n">amplitud</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MAX</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;The amplitude is out of the range of the PPG3204. Setting to the limits.&#39;</span>
+        <span class="k">if</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MIN</span> <span class="ow">or</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MAX</span><span class="p">:</span>
+            <span class="n">amplitude</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MIN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MAX</span><span class="p">)</span> 
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The amplitude is out of the range of the PPG3204. Setting to the limits </span><span class="si">{</span><span class="n">amplitude</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">.&#39;</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">amplitud</span> <span class="o">=</span> <span class="n">amplitud</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MIN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">AMPLITUDE_MAX</span><span class="p">)</span> 
         
-        <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">amp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CHs</span><span class="p">,</span> <span class="n">amplitud</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">amp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CHs</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:VOLT</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:POS </span><span class="si">{</span><span class="n">amp</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">v&#39;</span><span class="p">)</span></div>
 
 
@@ -984,7 +985,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        CHs : :obj:`int` or :obj:`Array_Like(int)`, optional</span>
-<span class="sd">            List of channels to get the amplitud.</span>
+<span class="sd">            List of channels to get the amplitude.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1035,9 +1036,9 @@
             <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="n">offset</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">OFFSET_MIN</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">offset</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">OFFSET_MAX</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;The offset is out of the range of the PPG3204. Setting to the limits.&#39;</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OFFSET_MIN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OFFSET_MAX</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The offset is out of the range of the PPG3204. Setting to the limits </span><span class="si">{</span><span class="n">offset</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">off</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CHs</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">off</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -1089,7 +1090,7 @@
 <span class="sd">        patt_len : :obj:`int` or :obj:`Array_Like(int)`, optional</span>
 <span class="sd">            Pattern length for every channel specified in ``CHs``.</span>
 <span class="sd">        Vout : :obj:`float` or :obj:`Array_Like(float)`, optional</span>
-<span class="sd">            Amplitud to set to the specify channels</span>
+<span class="sd">            Amplitude to set to the specify channels</span>
 <span class="sd">        offset : :obj:`float` or :obj:`Array_Like(float)`, optional</span>
 <span class="sd">            Offset to set to the specify channels</span>
 <span class="sd">        bsh : :obj:`int` or :obj:`Array_Like(int)`, optional</span>
@@ -1107,7 +1108,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        In this examples we don&#39;t pass the argument ``addr_ID`` in order to print the commands output. For communication with a device this parameter is requered.</span>
+<span class="sd">        In this examples we don&#39;t pass the argument ``addr_ID`` in order to print the commands output. For communication with a device this parameter is required.</span>
 
 <span class="sd">        .. code-block:: python</span>
 
@@ -1151,6 +1152,66 @@
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;DATA&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">CHs</span><span class="o">=</span><span class="n">CHs</span><span class="p">)</span>
         <span class="k">return</span> <span class="s1">&#39;Done&#39;</span></div>
+
+    
+<div class="viewcode-block" id="PPG3204.config">
+<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.config">[docs]</a>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+               <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">patt_len</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">Vout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">offset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">bsh</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">skew</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;PRBS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">order</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Configure the PPG3204 with the specified parameters for specified channels.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        freq : :obj:`float`, optional</span>
+<span class="sd">            Frequency of the pattern in Hz. The range is from 1.5 GHz to 32 GHz.</span>
+<span class="sd">        patt_len : :obj:`int` or :obj:`Array_Like(int)`, optional</span>
+<span class="sd">            Pattern length for every channel specified in ``CHs``.</span>
+<span class="sd">        Vout : :obj:`float` or :obj:`Array_Like(float)`, optional</span>
+<span class="sd">            Amplitude to set to the specify channels</span>
+<span class="sd">        offset : :obj:`float` or :obj:`Array_Like(float)`, optional</span>
+<span class="sd">            Offset to set to the specify channels</span>
+<span class="sd">        bsh : :obj:`int` or :obj:`Array_Like(int)`, optional</span>
+<span class="sd">            Bits shift to set to the specify channels</span>
+<span class="sd">        skew : :obj:`float` or :obj:`Array_Like(float)`, optional</span>
+<span class="sd">            Skew to set to the specify channels</span>
+<span class="sd">        mode : :obj:`str`, optional</span>
+<span class="sd">            Work mode of the PPG.</span>
+<span class="sd">        order : :obj:`int` or :obj:`Array_Like(int)`, optional</span>
+<span class="sd">            order of the polynomial generator. If ``mode=&#39;PRBS&#39;``.</span>
+<span class="sd">        data : :obj:`np.ndarray` or :obj:`Array_Like(np.ndarray)`, optional</span>
+<span class="sd">            Data to set to the specify channels. If ``mode=&#39;DATA&#39;``.</span>
+<span class="sd">        CHs : :obj:`int` or :obj:`Array_Like(int)`, optional</span>
+<span class="sd">            Channels to set the configuration.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        In this examples we don&#39;t pass the argument ``addr_ID`` in order to print the commands output. For communication with a device this parameter is required.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; from opticomlib.lab import PPG3204</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; ppg = PPG3204()</span>
+<span class="sd">            &gt;&gt;&gt; ppg(freq=10e9, patt_len=1000, Vout=1.5, offset=0.5, bsh=10, skew=0.5e-12, mode=&#39;PRBS&#39;, order=7, CHs=2)</span>
+<span class="sd">            :FREQ 1.0e+10</span>
+<span class="sd">            :DIG2:PATT:LENG 1000</span>
+<span class="sd">            :VOLT2:POS 1.5v</span>
+<span class="sd">            :VOLT2:POS:OFFS 0.5v</span>
+<span class="sd">            :DIG2:PATT:BSH 10</span>
+<span class="sd">            :SKEW2 5e-13</span>
+<span class="sd">            :DIG2:PATT:TYPE PRBS</span>
+<span class="sd">            :DIG2:PATT:PLEN 7</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">patt_len</span><span class="p">,</span> <span class="n">Vout</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">bsh</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">CHs</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
