@@ -298,9 +298,9 @@ class PPG3204():
                 channels = np.array(channels, dtype=int)
 
             if (channels < 1).any() or (channels > self.CHANNELS).any() or channels.size > self.CHANNELS:
-                msg = 'The channels number is out of the range of the PPG3204. Setting to the limits.'
-                warnings.warn(msg)
                 channels = channels.clip(1, self.CHANNELS)[:self.CHANNELS]
+                msg = f'The channels number is out of the range of the PPG3204. Setting to the limits {channels}.'
+                warnings.warn(msg)
         else:
             channels = np.arange(1, self.CHANNELS+1)
         return channels
@@ -347,9 +347,9 @@ class PPG3204():
             patt_len = np.array(patt_len)
         
         if (patt_len < self.PATT_LEN_MIN).any() or (patt_len > self.PATT_LEN_MAX).any():
-            msg = f'The pattern length is out of the range of the PPG3204. Setting to the limits.'
-            warnings.warn(msg)
             patt_len = patt_len.clip(self.PATT_LEN_MIN, self.PATT_LEN_MAX) 
+            msg = f'The pattern length is out of the range of the PPG3204. Setting to the limits {patt_len}.'
+            warnings.warn(msg)
         
         for ch, pl in zip(CHs, patt_len):
             self._query(f':DIG{ch}:PATT:LENG {pl}')
@@ -719,7 +719,7 @@ class PPG3204():
         """
         if freq < self.FREQ_MIN or freq > self.FREQ_MAX:
             freq = np.clip(freq, self.FREQ_MIN, self.FREQ_MAX)
-            msg = f'The frequency is out of the range of the PPG3204. Setting to the limits {freq:.1e} Hz.'
+            msg = f'The frequency is out of the range of the PPG3204. Setting to the limits {freq:.2e} Hz.'
             warnings.warn(msg)
 
         self._query(f':FREQ {freq:.5e}')
@@ -767,9 +767,9 @@ class PPG3204():
             skew = np.array(skew)
 
         if (skew < self.MIN_SKEW).any() or (skew > self.MAX_SKEW).any():
-            msg='The skew is out of the range of the PPG3204. Setting to the limits.'
-            warnings.warn(msg)
             skew = skew.clip(self.MIN_SKEW, self.MAX_SKEW)
+            msg=f'The skew is out of the range of the PPG3204. Setting to the limits {skew}.'
+            warnings.warn(msg)
         
         for ch, s in zip(CHs, skew):
             self._query(f':SKEW{ch} {s}')
@@ -813,9 +813,9 @@ class PPG3204():
             amplitude = np.array(amplitude)
 
         if amplitude.any() < self.AMPLITUDE_MIN or amplitude.any() > self.AMPLITUDE_MAX:
-            msg = 'The amplitude is out of the range of the PPG3204. Setting to the limits.'
-            warnings.warn(msg)
             amplitude = amplitude.clip(self.AMPLITUDE_MIN, self.AMPLITUDE_MAX) 
+            msg = f'The amplitude is out of the range of the PPG3204. Setting to the limits {amplitude:.2f}.'
+            warnings.warn(msg)
         
         for ch, amp in zip(CHs, amplitude):
             self._query(f':VOLT{ch}:POS {amp:.1f}v')
@@ -875,7 +875,7 @@ class PPG3204():
         
         if (offset < self.OFFSET_MIN).any() or (offset > self.OFFSET_MAX).any():
             offset = offset.clip(self.OFFSET_MIN, self.OFFSET_MAX)
-            msg = f'The offset is out of the range of the PPG3204. Setting to the limits {offset:.1f}.'
+            msg = f'The offset is out of the range of the PPG3204. Setting to the limits {offset:.2f}.'
             warnings.warn(msg)
 
         for ch, off in zip(CHs, offset):
