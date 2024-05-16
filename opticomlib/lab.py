@@ -212,6 +212,7 @@ class PPG3204():
         set_offset
         get_offset
         __call__
+        config
     """
     CHANNELS = 4 
     """Number of channels of the PPG3204, 4 channels."""
@@ -257,7 +258,7 @@ class PPG3204():
         """
         if addr_ID: 
             self.inst = visa.ResourceManager().open_resource(addr_ID)
-            """A connection (session) to the PPG."""
+            """A connection (session) to the PPG instrument (if `addr_ID` is provided)."""
             self.inst.timeout = 10000 # timeout in milliseconds
             print(self._query('*IDN?'))
         
@@ -297,9 +298,9 @@ class PPG3204():
                 channels = np.array(channels, dtype=int)
 
             if (channels < 1).any() or (channels > self.CHANNELS).any() or channels.size > self.CHANNELS:
-                msg = 'The channels number is out of the range of the PPG3204. Setting to the limits.'
-                warnings.warn(msg)
                 channels = channels.clip(1, self.CHANNELS)[:self.CHANNELS]
+                msg = f'The channels number is out of the range of the PPG3204. Setting to the limits {channels}.'
+                warnings.warn(msg)
         else:
             channels = np.arange(1, self.CHANNELS+1)
         return channels
@@ -346,9 +347,9 @@ class PPG3204():
             patt_len = np.array(patt_len)
         
         if (patt_len < self.PATT_LEN_MIN).any() or (patt_len > self.PATT_LEN_MAX).any():
-            msg = f'The pattern length is out of the range of the PPG3204. Setting to the limits.'
-            warnings.warn(msg)
             patt_len = patt_len.clip(self.PATT_LEN_MIN, self.PATT_LEN_MAX) 
+            msg = f'The pattern length is out of the range of the PPG3204. Setting to the limits {patt_len}.'
+            warnings.warn(msg)
         
         for ch, pl in zip(CHs, patt_len):
             self._query(f':DIG{ch}:PATT:LENG {pl}')
@@ -717,11 +718,11 @@ class PPG3204():
             If the frequency is out of the range of the PPG3204.
         """
         if freq < self.FREQ_MIN or freq > self.FREQ_MAX:
-            msg = f'The frequency is out of the range of the PPG3204. Setting to the limits.'
-            warnings.warn(msg)
             freq = np.clip(freq, self.FREQ_MIN, self.FREQ_MAX)
+            msg = f'The frequency is out of the range of the PPG3204. Setting to the limits {freq:.2e} Hz.'
+            warnings.warn(msg)
 
-        self._query(f':FREQ {freq:.1e}')
+        self._query(f':FREQ {freq:.5e}')
     
 
     def get_freq(self):
@@ -766,9 +767,9 @@ class PPG3204():
             skew = np.array(skew)
 
         if (skew < self.MIN_SKEW).any() or (skew > self.MAX_SKEW).any():
-            msg='The skew is out of the range of the PPG3204. Setting to the limits.'
-            warnings.warn(msg)
             skew = skew.clip(self.MIN_SKEW, self.MAX_SKEW)
+            msg=f'The skew is out of the range of the PPG3204. Setting to the limits {skew}.'
+            warnings.warn(msg)
         
         for ch, s in zip(CHs, skew):
             self._query(f':SKEW{ch} {s}')
@@ -791,32 +792,32 @@ class PPG3204():
         return np.array([float(self._query(f':SKEW{ch}?')) for ch in CHs])
 
 
-    def set_output_voltage(self, amplitud: Union[float, list[float]], CHs: Union[int, list[int]] = None):
+    def set_output_voltage(self, amplitude: Union[float, list[float]], CHs: Union[int, list[int]] = None):
         """Set the peak-to-peak output voltage of each channel, in volts.
         
         Parameters
         ----------
-        amplitud : :obj:`float` or :obj:`Array_Like`
-            Amplitud to set to the specify channels
+        amplitude : :obj:`float` or :obj:`Array_Like`
+            Amplitude to set to the specify channels
         CHs : :obj:`int` or :obj:`Array_Like`, optional
-            Channels to set the amplitud. If ``CHs=None`` amplitud will be fixed in all channels.
+            Channels to set the amplitude. If ``CHs=None`` amplitude will be fixed in all channels.
         """
         CHs = self._check_channels(CHs)
         
-        if not isinstance(amplitud, Number + Array_Like):
-            raise ValueError('`amplitud` is not in the correct format')
+        if not isinstance(amplitude, Number + Array_Like):
+            raise ValueError('`amplitude` is not in the correct format')
         
-        if isinstance(amplitud, Number):
-            amplitud = np.tile([amplitud], CHs.size)
+        if isinstance(amplitude, Number):
+            amplitude = np.tile([amplitude], CHs.size)
         else:
-            amplitud = np.array(amplitud)
+            amplitude = np.array(amplitude)
 
-        if amplitud.any() < self.AMPLITUDE_MIN or amplitud.any() > self.AMPLITUDE_MAX:
-            msg = 'The amplitude is out of the range of the PPG3204. Setting to the limits.'
+        if amplitude.any() < self.AMPLITUDE_MIN or amplitude.any() > self.AMPLITUDE_MAX:
+            amplitude = amplitude.clip(self.AMPLITUDE_MIN, self.AMPLITUDE_MAX) 
+            msg = f'The amplitude is out of the range of the PPG3204. Setting to the limits {amplitude:.2f}.'
             warnings.warn(msg)
-            amplitud = amplitud.clip(self.AMPLITUDE_MIN, self.AMPLITUDE_MAX) 
         
-        for ch, amp in zip(CHs, amplitud):
+        for ch, amp in zip(CHs, amplitude):
             self._query(f':VOLT{ch}:POS {amp:.1f}v')
 
     def get_output_voltage(self, CHs: Union[int, list[int]] = None):
@@ -825,7 +826,7 @@ class PPG3204():
         Parameters
         ----------
         CHs : :obj:`int` or :obj:`Array_Like(int)`, optional
-            List of channels to get the amplitud.
+            List of channels to get the amplitude.
 
         Returns
         -------
@@ -873,9 +874,9 @@ class PPG3204():
             offset = np.array(offset)
         
         if (offset < self.OFFSET_MIN).any() or (offset > self.OFFSET_MAX).any():
-            msg = 'The offset is out of the range of the PPG3204. Setting to the limits.'
-            warnings.warn(msg)
             offset = offset.clip(self.OFFSET_MIN, self.OFFSET_MAX)
+            msg = f'The offset is out of the range of the PPG3204. Setting to the limits {offset:.2f}.'
+            warnings.warn(msg)
 
         for ch, off in zip(CHs, offset):
             if off < 0:
@@ -921,7 +922,7 @@ class PPG3204():
         patt_len : :obj:`int` or :obj:`Array_Like(int)`, optional
             Pattern length for every channel specified in ``CHs``.
         Vout : :obj:`float` or :obj:`Array_Like(float)`, optional
-            Amplitud to set to the specify channels
+            Amplitude to set to the specify channels
         offset : :obj:`float` or :obj:`Array_Like(float)`, optional
             Offset to set to the specify channels
         bsh : :obj:`int` or :obj:`Array_Like(int)`, optional
@@ -939,7 +940,7 @@ class PPG3204():
 
         Examples
         --------
-        In this examples we don't pass the argument ``addr_ID`` in order to print the commands output. For communication with a device this parameter is requered.
+        In this examples we don't pass the argument ``addr_ID`` in order to print the commands output. For communication with a device this parameter is required.
 
         .. code-block:: python
 
@@ -983,3 +984,60 @@ class PPG3204():
         if data is not None and mode == 'DATA':
             self.set_data(data, CHs=CHs)
         return 'Done'
+    
+    def config(self, 
+               freq: float = None, 
+               patt_len: Union[int, list[int]] = None, 
+               Vout: Union[float, list[float]] = None,
+               offset: Union[float, list[float]] = None,
+               bsh: Union[int, list[int]] = None, 
+               skew: Union[float, list[float]] = None,
+               mode: Literal['DATA', 'PRBS'] = None, 
+               order: Union[int, list[int]] = None, 
+               data: Union[np.ndarray, list[np.ndarray]] = None,
+               CHs: Union[int, list[int]] = None):
+        """ Configure the PPG3204 with the specified parameters for specified channels.
+        
+        Parameters
+        ----------
+        freq : :obj:`float`, optional
+            Frequency of the pattern in Hz. The range is from 1.5 GHz to 32 GHz.
+        patt_len : :obj:`int` or :obj:`Array_Like(int)`, optional
+            Pattern length for every channel specified in ``CHs``.
+        Vout : :obj:`float` or :obj:`Array_Like(float)`, optional
+            Amplitude to set to the specify channels
+        offset : :obj:`float` or :obj:`Array_Like(float)`, optional
+            Offset to set to the specify channels
+        bsh : :obj:`int` or :obj:`Array_Like(int)`, optional
+            Bits shift to set to the specify channels
+        skew : :obj:`float` or :obj:`Array_Like(float)`, optional
+            Skew to set to the specify channels
+        mode : :obj:`str`, optional
+            Work mode of the PPG.
+        order : :obj:`int` or :obj:`Array_Like(int)`, optional
+            order of the polynomial generator. If ``mode='PRBS'``.
+        data : :obj:`np.ndarray` or :obj:`Array_Like(np.ndarray)`, optional
+            Data to set to the specify channels. If ``mode='DATA'``.
+        CHs : :obj:`int` or :obj:`Array_Like(int)`, optional
+            Channels to set the configuration.
+
+        Examples
+        --------
+        In this examples we don't pass the argument ``addr_ID`` in order to print the commands output. For communication with a device this parameter is required.
+
+        .. code-block:: python
+
+            >>> from opticomlib.lab import PPG3204
+            >>> 
+            >>> ppg = PPG3204()
+            >>> ppg(freq=10e9, patt_len=1000, Vout=1.5, offset=0.5, bsh=10, skew=0.5e-12, mode='PRBS', order=7, CHs=2)
+            :FREQ 1.0e+10
+            :DIG2:PATT:LENG 1000
+            :VOLT2:POS 1.5v
+            :VOLT2:POS:OFFS 0.5v
+            :DIG2:PATT:BSH 10
+            :SKEW2 5e-13
+            :DIG2:PATT:TYPE PRBS
+            :DIG2:PATT:PLEN 7
+        """
+        self.__call__(freq, patt_len, Vout, offset, bsh, skew, mode, order, data, CHs)
