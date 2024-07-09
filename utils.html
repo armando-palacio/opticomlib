@@ -82,6 +82,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.si"><code class="docutils literal notranslate"><span class="pre">si()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.norm"><code class="docutils literal notranslate"><span class="pre">norm()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.nearest"><code class="docutils literal notranslate"><span class="pre">nearest()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -176,7 +177,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.nearest" title="opticomlib.utils.nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nearest</span></code></a>(x, a)</p></td>
 <td><p>Find the nearest value in an array.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">theory_BER</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.theory_BER" title="opticomlib.utils.theory_BER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">theory_BER</span></code></a>(P_avg, modulation[, M, decision, ...])</p></td>
 <td><p>This function calculates the bit error rate (BER) for an OPTICAL RECEIVER, based on a PIN photodetector, from the average input power.</p></td>
 </tr>
 </tbody>
@@ -782,6 +783,73 @@ Then you can use toc() to get the elapsed time.</p>
     If <code class="docutils literal notranslate"><span class="pre">a</span></code> is not a <cite>number</cite>.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.theory_BER">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">theory_BER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_avg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modulation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ook'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ppm'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ER</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">193414500000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_el</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF_el</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#theory_BER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.theory_BER" title="Link to this definition"></a></dt>
+<dd><p>This function calculates the bit error rate (BER) for an OPTICAL RECEIVER, based on a PIN photodetector, from the average input power.
+It also allows consider the effects of an EDFA amplifier in the results.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">amplify==False</span></code>, thermal and shot noise of PIN will be consider in BER calculation.
+If <code class="docutils literal notranslate"><span class="pre">amplify==True</span></code>, signal-ase and ase-ase beating noises generated by the EDFA are consider too.</p>
+<p>In addition, parameter <code class="docutils literal notranslate"><span class="pre">NF_el</span> <span class="pre">!=</span> <span class="pre">0</span></code> (electrical noise figure) can be used to represent another sources of noise after detection, like electrical amplifiers, etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P_avg</strong> (<em>float</em>) – Average Received input optical Power (in [dB]).</p></li>
+<li><p><strong>modulation</strong> (<em>Literal</em><em>[</em><em>'ook'</em><em>, </em><em>'ppm'</em><em>]</em>) – Kind of modulation format {‘ook’, ‘ppm’}, more modulations in future…</p></li>
+<li><p><strong>M</strong> (<em>int</em>) – Order of M-ary PPM (a power of 2). Only needed if <cite>modulation=’ppm’</cite>.</p></li>
+<li><p><strong>decision</strong> (<em>Literal</em><em>[</em><em>'hard'</em><em>, </em><em>'soft'</em><em>]</em>) – Kind of PPM decision. ‘hard’ decision use the optimum threshold to separate ON and OFF slots. ‘soft’ decision
+use the Maximum a Posteriori (MAP) and it outperform ‘hard’ decision. Only needed if <cite>modulation=’ppm’</cite>.</p></li>
+<li><p><strong>ER</strong> (<em>float</em>) – Extinction Ratio of the input optical signal, in [dB].</p></li>
+<li><p><strong>amplify</strong> (<em>bool</em>) – If use an EDFA or not at the receiver (before PIN). Default: <cite>False</cite>.</p></li>
+<li><p><strong>f0</strong> (<em>float</em>) – Central frequency of communication, in [Hz]. Only used if <cite>amplify=True</cite>. Default: <cite>193.4 THz</cite> corresponding to <cite>1550 nm</cite>.</p></li>
+<li><p><strong>G</strong> (<em>float</em>) – Gain of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. This parameter is mandatory.</p></li>
+<li><p><strong>NF</strong> (<em>float</em>) – Noise Figure of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+<li><p><strong>BW_opt</strong> (<em>float</em>) – Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – Responsivity of photo-detector. Default: 1.0 [A/W]</p></li>
+<li><p><strong>BW_el</strong> (<em>float</em>) – Bandwidth of photo-detector or electrical filter, in [Hz]. Default: 5e9 [Hz].</p></li>
+<li><p><strong>R_L</strong> (<em>float</em>) – Load resistance of photo-detector, in [Ω]. Default: 50 [Ω].</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature of photo-detector, in [K]. Default: 300 [K].</p></li>
+<li><p><strong>NF_el</strong> (<em>float</em>) – Equivalent Noise Figure of electric circuit, in [dB]. Default: 0 [dB]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>BER</strong> – Theoretical Bit Error rate of the system specified.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The bandwidths are used only for the determination of the noise contribution to the BER value, i.e. the signal
+distortion due to these bandwidth is not taken into account. Therefore, the bandwidths <code class="docutils literal notranslate"><span class="pre">BW_el</span></code> and <code class="docutils literal notranslate"><span class="pre">BW_opt</span></code> are
+not considered to affect the transmitted signal.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib</span> <span class="kn">import</span> <span class="n">theory_BER</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Average input optical power [dB]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theory_BER</span><span class="p">(</span><span class="n">P_avg</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">modulation</span><span class="o">=</span><span class="s1">&#39;ook&#39;</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;OOK&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theory_BER</span><span class="p">(</span><span class="n">P_avg</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">modulation</span><span class="o">=</span><span class="s1">&#39;ppm&#39;</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">decision</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;4-PPM (soft)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">theory_BER</span><span class="p">(</span><span class="n">P_avg</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">modulation</span><span class="o">=</span><span class="s1">&#39;ppm&#39;</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">decision</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;4-PPM (hard)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$P_</span><span class="si">{avg}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;BER&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-9</span><span class="p">,)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="_downloads/58190ec26d7ed52e2bc7f57d014a5ed9/utils-6.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/1dcde4bb63598fa0a43bc617da406bea/utils-6.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/4bb3aac38539f1e98c39eb6f7b7ccc5c/utils-6.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/6e5b5f601402b9d59fa07e9f0b914d52/utils-6.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="Raised cosine function" class="plot-directive" src="_images/utils-6.png" />
+</figure>
 </dd></dl>
 
 </section>
