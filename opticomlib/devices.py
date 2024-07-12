@@ -1204,8 +1204,8 @@ def PD(
 
     .. math::
         P_{in} &= |E_x + n_x|^2 + |E_y + n_y|^2 \\
-        P_{in} &= |E_x|^2 + |E_y|^2 + 2\Re\{E_x n_x^* + E_y n_y^*\} + |n_x|^2 + |n_y|^2 \\
-        P_{in} &= P_{sig} + P_{sig-noise} + P_{noise} \\
+        P_{in} &= |E_x|^2 + |E_y|^2 + E_x n_x^* + E_x^* n_x + E_y n_y^*+E_y^* n_y + |n_x|^2 + |n_y|^2 \\
+        P_{in} &= P_\text{sig} + P_\text{sig-ase} + P_\text{ase-ase} \\
 
     where :math:`E_x` and :math:`E_y` are the amplitudes of x-polarization and y-polarization modes respectively
     and :math:`n_x` and :math:`n_y` are the noise of x-polarization and y-polarization modes respectively.
@@ -1214,14 +1214,19 @@ def PD(
 
     .. math::
         \sigma_{th}^2 &= \frac{4k_B T}{R_L}F_n \Delta f \\
-        \sigma_{sh}^2 &= 2e\left( r(P_{sig}^2 + P_{noise}^2) + i_{dark} \right)\Delta f
+        \sigma_{sh}^2 &= 2e\left[ r(P_\text{sig} + P_\text{ase-ase}) + i_{dark} \right]\Delta f
 
     where :math:`k_B` is the Boltzmann constant, :math:`T` is the temperature of the photodetector, :math:`R_L` is the load resistance,
     :math:`F_n` is the noise figure of the photodetector, :math:`\Delta f` is the bandwidth of the photodetector, :math:`e` is the electron charge.
 
     .. math::
-        i_{ph} &= \mathcal{R}P_{sig} + \mathcal{R}P_{sig-noise} + \mathcal{R}P_{noise} + i_{th} + i_{sh} + i_{dark} \\
-        i_{ph} &= i_{sig} + i_{sig-noise} + i_{noise-noise} + i_{th} + i_{sh} + i_{dark}
+        i_{ph} &= \mathcal{R}P_{sig} + \mathcal{R}P_{sig-ase} + \mathcal{R}P_{ase-ase} + i_{th} + i_{sh} + i_{dark} \\
+        i_{ph} &= i_\text{sig} + i_\text{sig-ase} + i_\text{ase-ase} + i_{th} + i_{sh} + i_{dark}
+    
+    Finally, the output voltage is given by:
+
+    .. math::
+        v_{ph} = i_{ph}R_L
 
     References
     ----------
