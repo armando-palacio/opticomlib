@@ -610,7 +610,7 @@ def MZM(
         )
 
     loss = idb(-loss_dB)  # Propagation losses
-    eta = 2 * idb(-ER_dB) ** 0.5  # armsdesvalance factor
+    eta = 2 * idb(-ER_dB) ** 0.5  # arms desbalance factor
 
     output = op_input[:]
 
@@ -682,11 +682,11 @@ def BPF(input: optical_signal, BW: float, n: int = 4):
     return output
 
 
-def EDFA(input: optical_signal, G: float, NF: float, BW: float):
+def EDFA(input: optical_signal, G: float, NF: float, BW: float=None):
     r"""
     **Erbium Doped Fiber**
 
-    Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise.
+    Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise in two polarizations at the output.
     Simplest model (no saturation output power).
 
     Parameters
@@ -697,8 +697,8 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float):
         The gain of the amplifier, in dB.
     NF : float
         The noise figure of the amplifier, in dB.
-    BW : float
-        The bandwidth of the amplifier, in Hz.
+    BW : float, optional
+        The bandwidth of the amplifier, in Hz. If ``None`` bandwidth will be ``gv.fs``.
 
     Returns
     -------
@@ -710,33 +710,94 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float):
     TypeError
         If ``input`` is not an optical_signal.
 
+    Notes
+    -----
+    ASE noise power must be theoretically:
+
+    .. math:: 
+        P_\text{ase} = \text{NF} h f_0 (G-1) BW
+
+    where :math:`h` is the Planck constant and :math:`f_0` is the central frequency of communication 
+    (by default ``gv.f0`` is taken, if you wish change this value, you can change ``wavelength`` 
+    parameter in ``gv()``). Noise is generated for two polarizations xy as a complex signal, with a
+    distribution :math:`\mathcal{N}(0, P_\text{ase}/4)` for real and imaginary parts.  
+
+    Examples
+    --------
+    Following picture show the input-output of EDFA from a sinusoidal signal. For values of example, the output noise power 
+    must be :math:`P_{ase} \approx -27` dBm.
+
+    .. plot::
+        :include-source:
+        :alt: DM example 1
+        :align: center
+
+        from opticomlib.devices import EDFA
+        from opticomlib import optical_signal, gv, np, plt
+
+        gv(sps=256, R=1e9, N=5, G=20, NF=5, BW=50e9)
+
+        x = optical_signal(
+            signal=[
+                (1e-3)*np.sin(2*np.pi*gv.R*gv.t), 
+                np.zeros_like(gv.t)
+            ], 
+            n_pol=2
+        )
+
+        y = EDFA(x, G=gv.G, NF=gv.NF, BW=gv.BW)
+
+        fig, axs = plt.subplots(2,1, sharex=True, figsize=(8,6))
+        plt.suptitle(f"EDFA input-output (G={gv.G} dB, NF={gv.NF} dB, BW={gv.BW*1e-9} GHz)")
+
+        axs[0].set_title('Input')
+        axs[0].plot(gv.t*1e9, x.signal.T)
+        axs[0].set_ylim(-0.015, 0.015)
+
+        axs[1].set_title('Output')
+        axs[1].plot(gv.t*1e9, y.signal.T + y.noise.T.real)
+        axs[1].set_ylim(-0.015, 0.015)
+
+        plt.legend(['x-pol', 'y-pol'])
+        plt.xlabel('t [ns]')
+        plt.show()
+
+    >>> from opticomlib import dbm
+    >>> print(dbm(y.power('noise').sum())) # print sum of power of two polarizations
+    -28.068263005828555
+
+    We can see that noise power is a little less than theoretical prediction, this is because 
+    the filter used in the EDFA is not a rectangular response filter (it's a 4th order Bessel filter).
     """
+    tic()
+
     if not isinstance(input, optical_signal):
         raise TypeError("`input` must be of type (optical_signal).")
 
-    output = BPF(input * idb(G) ** 0.5, BW)
-    # ase = BPF( optical_signal( np.zeros_like(input.signal), np.exp(-1j*np.random.uniform(0, 2*pi, input.noise.shape)) ), BW )
-    ase = BPF(
-        optical_signal(
-            noise=np.exp(-1j * np.random.uniform(0, 2 * pi, input.signal.shape))
-        ),
-        BW,
-    )
-    t_ = output.execution_time + ase.execution_time
+    output = optical_signal(signal=input.signal, noise=input.noise, n_pol=2) * np.sqrt( idb(G) )
+    
+    if input.n_pol == 1:
+        output.signal[1] = np.zeros_like(output.signal[0])  # y-polarization of signal is set to zeros.
 
-    tic()
-    P_ase = idb(NF) * h * gv.f0 * (idb(G) - 1) * BW
+    # generate ASE noise (2-polarizations with real and imaginary parts)
+    # gv.fs is taken as initial bandwidth of noise 
+    P_ase = idb(NF) * h * gv.f0 * (idb(G) - 1) * gv.fs
 
-    norm_x, norm_y = ase.power(
-        "noise"
-    )  # power of ASE noise in [W] for each polarization
+    # generate 4 vectors for, x-polarization real and imaginary parts and y-polarization real and imaginary parts
+    ase = np.sqrt(P_ase/4) * np.random.randn(4, input.len())
+    ase = ase[:2] + 1j*ase[2:]
 
-    ase.noise[0] /= norm_x**0.5 / (P_ase / 2) ** 0.5
-    ase.noise[1] /= norm_y**0.5 / (P_ase / 2) ** 0.5
+    if output.noise is not None:
+        output.noise += ase
+    else:
+        output.noise = ase
 
-    output += ase
+    t_ = toc()
 
-    output.execution_time = t_ + toc()
+    if BW is not None:
+        output = BPF(output, BW)
+
+    output.execution_time += t_ 
     return output
 
 
@@ -1040,21 +1101,21 @@ def LPF(
         noise = input.noise
     else:
         signal = input
-        noise = np.zeros_like(input)
+        noise = None
 
     if not fs:
         fs = gv.fs
 
     sos_band = sg.bessel(N=n, Wn=BW, btype="low", fs=fs, output="sos", norm="mag")
 
-    output = electrical_signal(np.zeros_like(signal))
+    output = input[:]
 
     output.signal = sg.sosfiltfilt(sos_band, signal)
 
-    if np.sum(noise):
+    if noise is not None:
         output.noise = sg.sosfiltfilt(sos_band, noise)
 
-    output.execution_time += toc()
+    output.execution_time = toc()
     if retH:
         _, H = sg.sosfreqz(sos_band, worN=signal.size, fs=fs, whole=True)
         return output, fftshift(H)
@@ -1116,7 +1177,7 @@ def PD(
     Returns
     -------
     electrical_signal
-        The detected electrical signal.
+        The detected electrical signal, in [v].
 
     Raises
     ------
@@ -1143,8 +1204,8 @@ def PD(
 
     .. math::
         P_{in} &= |E_x + n_x|^2 + |E_y + n_y|^2 \\
-        P_{in} &= |E_x|^2 + |E_y|^2 + 2\Re\{E_x n_x^* + E_y n_y^*\} + |n_x|^2 + |n_y|^2 \\
-        P_{in} &= P_{sig} + P_{sig-noise} + P_{noise} \\
+        P_{in} &= |E_x|^2 + |E_y|^2 + E_x n_x^* + E_x^* n_x + E_y n_y^*+E_y^* n_y + |n_x|^2 + |n_y|^2 \\
+        P_{in} &= P_\text{sig} + P_\text{sig-ase} + P_\text{ase-ase} \\
 
     where :math:`E_x` and :math:`E_y` are the amplitudes of x-polarization and y-polarization modes respectively
     and :math:`n_x` and :math:`n_y` are the noise of x-polarization and y-polarization modes respectively.
@@ -1153,14 +1214,19 @@ def PD(
 
     .. math::
         \sigma_{th}^2 &= \frac{4k_B T}{R_L}F_n \Delta f \\
-        \sigma_{sh}^2 &= 2e\left( r(P_{sig}^2 + P_{noise}^2) + i_{dark} \right)\Delta f
+        \sigma_{sh}^2 &= 2e\left[ r(P_\text{sig} + P_\text{ase-ase}) + i_{dark} \right]\Delta f
 
     where :math:`k_B` is the Boltzmann constant, :math:`T` is the temperature of the photodetector, :math:`R_L` is the load resistance,
     :math:`F_n` is the noise figure of the photodetector, :math:`\Delta f` is the bandwidth of the photodetector, :math:`e` is the electron charge.
 
     .. math::
-        i_{ph} &= \mathcal{R}P_{sig} + \mathcal{R}P_{sig-noise} + \mathcal{R}P_{noise} + i_{th} + i_{sh} + i_{dark} \\
-        i_{ph} &= i_{sig} + i_{sig-noise} + i_{noise-noise} + i_{th} + i_{sh} + i_{dark}
+        i_{ph} &= \mathcal{R}P_{sig} + \mathcal{R}P_{sig-ase} + \mathcal{R}P_{ase-ase} + i_{th} + i_{sh} + i_{dark} \\
+        i_{ph} &= i_\text{sig} + i_\text{sig-ase} + i_\text{ase-ase} + i_{th} + i_{sh} + i_{dark}
+    
+    Finally, the output voltage is given by:
+
+    .. math::
+        v_{ph} = i_{ph}R_L
 
     References
     ----------
@@ -1194,72 +1260,61 @@ def PD(
     i_sig = r * input.abs("signal") ** 2
 
     if input.n_pol == 2:
-        i_sig = i_sig[0] + i_sig[1]
+        i_sig = i_sig.sum(axis=0)
 
     include_noise = include_noise.lower()  # This allow write in upper or lower case
 
     if "thermal" in include_noise or "all" in include_noise:
-        S_T = 4 * kB * T * BW * idb(Fn) / R_load  # thermal noise variance, in [A^2]
-        i_T = np.random.normal(
-            0, S_T**0.5, input.len()
-        )  # thermal noise current, in [A]
+        S_T = 4 * kB * T * gv.fs/2 * idb(Fn) / R_load  # thermal noise variance, in [V^2]
+        i_T = np.random.normal(0, S_T**0.5, input.len())  # thermal noise current, in [A]
 
     if "shot" in include_noise or "all" in include_noise:
         if input.noise is not None:
-            ase = input.abs("noise")
-            if input.n_pol == 2:
-                ase = ase[0] + ase[1]
+            i_ase = r * input.power("noise").sum()
         else:
-            ase = 0
+            i_ase = 0
 
-        S_N = (
-            2 * e * (r * (i_sig**2 + ase**2) + i_dark) * BW
-        )  # shot noise variance, in [A^2]
-        i_N = np.vectorize(lambda s: np.random.normal(0, s))(
-            S_N**0.5
-        )  # shot noise current, in [A]
+        S_N = 2 * e * (i_sig.mean() + i_ase + i_dark) * gv.fs/2  # shot noise variance, in [A^2]
+        i_N = np.random.normal(0, S_N**0.5, input.len())  # shot noise current, in [A]
 
     if "ase" in include_noise or "all" in include_noise:
         if input.noise is not None:
-            i_s_n = (
-                r * (input.signal * input.noise.conj() + input.noise * input.signal.conj()).real
-            )  # SIG-Noise term
+            i_s_n = r * (input.signal * input.noise.conj() + input.noise * input.signal.conj()).real  # SIG-Noise term
             i_n_n = r * input.abs("noise") ** 2  # Noise-Noise term
 
             if input.n_pol == 2:
-                i_s_n = i_s_n[0] + i_s_n[1]
-                i_n_n = i_n_n[0] + i_n_n[1]
+                i_s_n = i_s_n.sum(axis=0)
+                i_n_n = i_n_n.sum(axis=0)
         else:
-            i_s_n = 0
-            i_n_n = 0
+            i_s_n = np.zeros(input.len())
+            i_n_n = np.zeros(input.len())
 
     if include_noise == "ase-only":
-        noise = i_s_n + i_n_n + i_dark
+        i_noise = i_s_n + i_n_n + i_dark
     elif include_noise == "thermal-only":
-        noise = i_T + i_dark
+        i_noise = i_T + i_dark
     elif include_noise == "shot-only":
-        noise = i_N + i_dark
+        i_noise = i_N + i_dark
     elif include_noise == "ase-shot":
-        noise = i_s_n + i_n_n + i_N + i_dark
+        i_noise = i_s_n + i_n_n + i_N + i_dark
     elif include_noise == "ase-thermal":
-        noise = i_s_n + i_n_n + i_T + i_dark
+        i_noise = i_s_n + i_n_n + i_T + i_dark
     elif include_noise == "thermal-shot":
-        noise = i_T + i_N + i_dark
+        i_noise = i_T + i_N + i_dark
     elif include_noise == "all":
-        noise = i_s_n + i_n_n + i_N + i_T + i_dark
+        i_noise = i_s_n + i_n_n + i_N + i_T + i_dark
     else:
         raise ValueError(
-            "The argument `noise` must be one of the following: 'ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all'."
+            "The argument `include_noise` must be one of the following: 'ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all'."
         )
 
-    sos_band = sg.bessel(N=4, Wn=BW, btype="low", fs=gv.fs, output="sos", norm="mag")
+    output = electrical_signal(signal=i_sig*R_load, noise=i_noise*R_load)
+    
+    t_ = toc()
 
-    signal = sg.sosfiltfilt(sos_band, i_sig)
-    noise = sg.sosfiltfilt(sos_band, noise)
+    output = LPF(output, BW)
 
-    output = electrical_signal(signal, noise)
-
-    output.execution_time = toc()
+    output.execution_time += t_
     return output
 
 
