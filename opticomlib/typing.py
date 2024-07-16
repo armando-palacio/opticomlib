@@ -200,7 +200,7 @@ class global_variables():
             self.sps = int(fs/self.R)
 
         else:
-            msg = f'`sps`, `R` and `fs` will be set to default values ({self.sps} samples per slot, {self.R:.2e} Hz, {self.fs:.2e} Samples/s)'
+            msg = f'`sps`, `R` and `fs` will be set to previous values ({self.sps} samples per slot, {self.R:.2e} Hz, {self.fs:.2e} Samples/s)'
             warnings.warn(msg)
 
         self.dt = 1/self.fs
@@ -210,11 +210,6 @@ class global_variables():
             self.t = np.linspace(0, N*self.sps*self.dt, N*self.sps, endpoint=True)
             self.dw = 2*pi*self.fs/(N*self.sps)
             self.w = 2*pi*fftshift(fftfreq(N*self.sps))*self.fs
-        else:
-            self.N = None
-            self.t = None
-            self.dw = None
-            self.w = None
         
         self.wavelength = wavelength
         self.f0 = c/wavelength
@@ -265,6 +260,26 @@ class global_variables():
         """
         np.set_printoptions(precision=0, threshold=10)
         print(self)
+    
+    def clean(self):
+        """ Return all attributes to default values.
+        
+        """
+        self.sps = 16
+        self.R = 1e9
+        self.fs = self.R*self.sps
+        self.dt = 1/self.fs
+        self.wavelength = 1550e-9
+        self.f0 = c/self.wavelength
+        self.N = None
+        self.t = None
+        self.dw = None
+        self.w = None
+
+        attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw'])]
+        
+        for attr in attrs:
+            delattr(self, attr)
 
 
 gv = global_variables()
