@@ -1,94 +1,83 @@
-from opticomlib.ook import (
-    DSP,
-    THRESHOLD_EST,
-    BER_analizer,
+""" 
+    This example will simulate the transmission over 50 km of SMF optical fiber of a 10 Gbps OOK 
+    signal with a PRBS of 2^7-1 bits. NRZ modulation with gaussian pulse shaping will be used.
+
+    required opticomlib-v1.5
+"""
+
+import opticomlib.ook as ook
+
+import opticomlib.devices as dvs
+
+from opticomlib import (
+    dbm,
+    idbm, 
+    optical_signal, 
+    gv,
     theory_BER
 )
 
-from opticomlib.devices import (
-    PRBS,
-    DAC,
-    MODULATOR,
-    FIBER,
-    PD,
-    GET_EYE,
-    gv
-)
+nm = 1e-9
 
 import numpy as np
-from numpy.fft import fft, fftshift
 import matplotlib.pyplot as plt
-from scipy.constants import k as kB, e
 
-""" 
-    En este ejemplo se simulará la transmisión sobre 50 km de fibra óptica SMF de una señal OOK de 10 Gbps con un PRBS de 2^7-1 bits.
-    Se utilizará un DAC con una frecuencia de muestreo de 20 GSPS y una modulación NRZ.
-"""
 
-# Parámetros de la simulación
-gv(sps=16, R=1e9)
+# Simulation parameters
+gv(sps=64, R=10e9, wavelength=1550*nm, Vpi=5).print()
 
 # prbs
-tx_seq = PRBS(order=15)
+tx_seq = dvs.PRBS(order=7, len=2**10)
 
-# DAC y pulse shaping
-dig_signal = DAC(tx_seq, Vout=1, pulse_shape='rect')
+# DAC and pulse shaping
+v = dvs.DAC(~tx_seq, Vout=gv.Vpi, pulse_shape='gaussian')
 
-# modulador
-mod_signal = MODULATOR(dig_signal, p_laser=-21)
+# optical source
+cw_laser = optical_signal(np.ones_like(v.signal)*idbm(-6)**0.5) # 5 dBm CW optical source, 1-polarization
 
-# fibra óptica
-fiber_signal = FIBER(mod_signal, length=50, alpha=0.1, beta_2=20, gamma=2, show_progress=True)
+# Mach-Zehnder modulator
+mod_signal = dvs.MZM(cw_laser, v, bias=0, Vpi=gv.Vpi, loss_dB=1, ER_dB=26)
 
-# fotodetector
-pd_signal = PD(fiber_signal, BW=gv.R*0.75, responsivity=1, noise='all')
+# optical fiber
+fiber_signal = dvs.FIBER(mod_signal, length=50, alpha=0.2, beta_2=-20, gamma=2, show_progress=True)
+P_avg = dbm( fiber_signal.power() )
 
-# parámetros del diagrama de ojos
-eye_ = GET_EYE(pd_signal, sps_resamplig=128)
+# photo-detector
+pd_signal = dvs.PD(fiber_signal, BW=gv.R*0.75, r=1, include_noise='all')
 
 # DSP
-rx_seq = DSP(pd_signal, eye_)
+rx_seq, eye_, rth = ook.DSP(pd_signal) # return received bits, eye diagram and decision threshold
 
 # BER
-ber = BER_analizer('counter', Tx=tx_seq, Rx=rx_seq)
+ber = ook.BER_analizer('counter', Tx=tx_seq, Rx=rx_seq)
 
 
-# Cálculo teórico de la BER
+# Theoretical BER
+ber_theory = theory_BER(
+    P_avg = P_avg,
+    modulation = 'ook',
+    ER = 26,
+    amplify=False,
+    BW_el=0.75*gv.R,
+    r=1.0,
+    T=300,
+    R_L=50,
+)
 
-
-responsivity = 1 # Responsividad del fotodetector
-T = 300 # Temperatura equivalente del receptor
-BW = gv.R*0.75 # Ancho de banda del receptor
-R_load = 50 # Resistencia de carga del fotodetector
-
-mu0 = 0
-mu1 = fiber_signal.power('signal')[0] * responsivity * 2
-
-sT = (4*kB*T*BW/R_load)**0.5
-sS = 2*e*mu1*BW
-
-s0 = sT
-s1 = (sT**2 + sS**2)**0.5
-
-ber_theory = theory_BER(mu0, mu1, s0, s1)
-
-print(f'BER medida: {ber:.2e} ({ber*tx_seq.len():.0f} errores de {tx_seq.len()} bits transmitidos)')
-print(f'BER teórica:  {ber_theory:.2e}')
+print(f'BER counts: {ber:.2e} ({ber*tx_seq.len():.0f} errors of {tx_seq.len()} transmitted bits)')
+print(f'BER theoretical:  {ber_theory:.2e}')
 
 
 ## PLOTS
-
-mod_signal.psd(label='Señal modulada')
-fiber_signal.psd(label='Señal de salida de la fibra')
-plt.ylim(1e-11, 1e-1)
-plt.grid()
+mod_signal.psd(label='Fiber input PSD')
+fiber_signal.psd(label='Fiber output PSD', grid=True)
 
 plt.figure()
-mod_signal.plot('r', n=50*gv.sps, label = 'Señal modulada')
-fiber_signal.plot('b', n=50*gv.sps, label='Señal de salida de la fibra')
-pd_signal.plot('g', n=50*gv.sps, label='Señal photodetectada').grid(n=50)
-plt.axhline(THRESHOLD_EST(eye_), color='r', linestyle='--', label='Umbral de decisión')
-plt.legend(loc='upper right')
+mod_signal.plot('r', n=50*gv.sps, label = 'Fiber input')
+fiber_signal.plot('b', n=50*gv.sps, label='Fiber output', grid=True)
 
-eye_.plot(THRESHOLD_EST(eye_))
-plt.show()
+plt.figure()
+pd_signal.plot('g', n=50*gv.sps, label='Photodetected signal', grid=True)
+plt.axhline(rth, color='r', linestyle='--', label='Decision threshold')
+
+eye_.plot().show()
