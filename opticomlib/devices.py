@@ -20,8 +20,9 @@
 
 import numpy as np
 import scipy.signal as sg
-from scipy.integrate import solve_ivp
 from typing import Literal, Union, Callable
+from scipy.integrate import solve_ivp
+from scipy.stats import gaussian_kde
 from scipy.constants import pi, k as kB, e, h, c
 from numpy.fft import fft, ifft, fftshift, ifftshift
 import sklearn.cluster as sk
@@ -1403,7 +1404,8 @@ def GET_EYE(
     r"""
     **Get Eye Parameters Estimator**
 
-    Estimates all the fundamental parameters and metrics of the eye diagram of the input electrical signal.
+    Estimates all fundamental parameters and metrics of the eye diagram 
+    of the input electrical signal.
 
     Parameters
     ----------
@@ -1412,7 +1414,7 @@ def GET_EYE(
     nslots : :obj:`int`, default: 4096
         Number of slots to consider for eye reconstruction.
     sps_resamp : :obj:`int`, default: None
-        Number of samples per slot to interpolate the original signal.
+        Number of samples per slot to interpolate the original signal. If None the signal is not interpolated.
 
     Returns
     -------
@@ -1437,16 +1439,16 @@ def GET_EYE(
 
         gv(sps=64, R=1e9)
 
-        y = DAC( PRBS(), pulse_shape='gaussian')
+        y = DAC( PRBS(order=7), pulse_shape='gaussian')
         y.noise = np.random.normal(0, 0.05, y.len())
 
-        GET_EYE(y, sps_resamp=512).plot() # with interpolation
+        GET_EYE(y, sps_resamp=512).plot().show() # with interpolation
 
     .. image:: /_images/GET_EYE_example1.png
     """
     tic()
 
-    def shorth_int(data: np.ndarray) -> tuple[float, float]:
+    def shorth_int(data: np.ndarray, percent: float=50) -> tuple[float, float]:
         r"""
         Estimation of the shortest interval containing 50% of the samples in 'data'.
 
@@ -1465,12 +1467,12 @@ def GET_EYE(
         )  # Difference between two elements of an array separated by a distance 'lag'
 
         data = np.sort(data)
-        lag = len(data) // 2
+        lag = int(len(data) * percent/100)
         diff = diff_lag(data, lag)
         i = np.where(np.abs(diff - np.min(diff)) < 1e-10)[0]
         if len(i) > 1:
             i = int(np.mean(i))
-        return (data[i], data[i + lag])
+        return np.array((data[i], data[i + lag]))
 
     def find_nearest(
         levels: np.ndarray, data: Union[np.ndarray, float]
@@ -1503,6 +1505,10 @@ def GET_EYE(
                 )
             ]
 
+    #########################
+    ## Preprocessing input ##
+    #########################
+
     eye_dict = {}
 
     if not isinstance(input, electrical_signal):
@@ -1513,46 +1519,55 @@ def GET_EYE(
     dt = input.dt()
     eye_dict["dt"] = dt
 
-    n = input[sps:].len() % (2 * input.sps())
-    if n:
-        input = input[sps:-n]
-
-    nslots = min(input.len() // sps // 2 * 2, nslots)
-    input = input[: nslots * sps]
+    # truncate
+    n = input.len() % (2 * sps)  # we obtain the rest %(2*sps)
+    if n: # if rest is not zero
+        input = input[:-n] # ignore last 'n' samples
+                              
+    nslots = min( int(input.len() // sps), nslots) # determine the minimum between slots of signal and 'nslots' parameter
+    input = input[: nslots * sps] # truncate signal
 
     input = (
         (input.signal + input.noise).real
         if input.noise is not None
         else input.signal.real
-    )
+    ) # add noise to signal, if there is noise
 
-    input = np.roll(input, -sps // 2 + 1)  # To focus the eye on the chart
-    y_set = np.unique(input)
+    input = np.roll(input, -sps // 2 + 1)  # roll (-sps/2) to focus the eye in center of figure
+    y_set = np.unique(input) # take a set of signal values
 
     # resampled the signal to obtain a higher resolution in both axes
     if sps_resamp:
         input = sg.resample(input, nslots * sps_resamp)
         eye_dict["y"] = input
+        eye_dict["sps_resamp"] = sps_resamp
         t = np.kron(np.ones(nslots // 2), np.linspace(-1, 1 - dt, 2 * sps_resamp))
         eye_dict["t"] = t
     else:
         eye_dict["y"] = input
-        t = np.kron(np.ones((len(input) // sps) // 2), np.linspace(-1, 1 - dt, 2 * sps))
+        t = np.kron(np.ones(nslots // 2), np.linspace(-1, 1 - dt, 2 * sps))
         eye_dict["t"] = t
 
-    # We obtain the centroid of the samples on the Y axis
-    vm = np.mean(
-        sk.KMeans(n_clusters=2, n_init=10).fit(input.reshape(-1, 1)).cluster_centers_
-    )
+    ###############
+    ## Algorithm ##
+    ###############
+
+    kmeans = sk.KMeans(n_clusters=2, n_init=10) # A model of sklearn to separete clusters
+
+    # Obtain centroide of data (y)
+    vm = np.mean(kmeans.fit(input.reshape(-1,1)).cluster_centers_)
 
     # we obtain the shortest interval of the upper half that contains 50% of the samples
-    top_int = shorth_int(input[input > vm])
+    top_int = shorth_int(input[input > vm], percent=50)
     # We obtain the LMS of level 1
     state_1 = np.mean(top_int)
     # we obtain the shortest interval of the lower half that contains 50% of the samples
-    bot_int = shorth_int(input[input < vm])
+    bot_int = shorth_int(input[input < vm], percent=50)
     # We obtain the LMS of level 0
     state_0 = np.mean(bot_int)
+
+    eye_dict["top_int"] = top_int
+    eye_dict["bot_int"] = bot_int
 
     # We obtain the amplitude between the two levels 0 and 1
     d01 = state_1 - state_0
@@ -1563,41 +1578,53 @@ def GET_EYE(
     # We take 25% threshold level
     v25 = state_0 + 0.25 * d01
 
-    t_set = np.array(list(set(t)))
+    t_set = np.unique(t)
 
     try:
-        # The following vector will be used only to determine the crossing times
-        tt = t[(input > v25) & (input < v75)]
+        # The following vectors will be used only to determine the crossing times
+        # and crossing amplitude
+        cond = (input > v25) & (input < v75)
 
-        # We get the centroid of the time data
-        tm = np.mean(
-            sk.KMeans(n_clusters=2, n_init=10).fit(tt.reshape(-1, 1)).cluster_centers_
-        )
+        ty = np.vstack([t[cond], input[cond]]).T
 
-        # We obtain the left crossing time
-        t_left = find_nearest(t_set, np.mean(tt[tt < tm]))
+        # We get centroids of 2 clusters for t,y
+        kmeans.fit(ty)
+        ty_c = kmeans.cluster_centers_
+
+        left = np.argmin(ty_c[:,0])
+        right = np.argmax(ty_c[:,0])
+
+        t_left = find_nearest(t_set, ty_c[left,0])
+        t_right = find_nearest(t_set, ty_c[right,0])
+        t_center = find_nearest(t_set, ty_c[:,0].mean())
+        
         eye_dict["t_left"] = t_left
-
-        # We obtain the crossing time from the right
-        t_right = find_nearest(t_set, np.mean(tt[tt > tm]))
         eye_dict["t_right"] = t_right
-
-        # Determine the center of the eye
-        t_center = find_nearest(t_set, (t_left + t_right) / 2)
         eye_dict["t_opt"] = t_center
+
+        eye_dict["y_left"] = find_nearest(y_set, ty_c[left,1])
+        eye_dict["y_right"] = find_nearest(y_set, ty_c[right,1])
+
+        y_25_75 = input.copy()
+        y_25_75[~cond] = np.nan
+        eye_dict["y_25_75"] = y_25_75
 
     except ValueError:
         t_left = -0.5
-        eye_dict["t_left"] = t_left
         t_right = 0.5
-        eye_dict["t_right"] = t_right
         t_center = 0.0
+
+        eye_dict["t_left"] = t_left
+        eye_dict["t_right"] = t_right
         eye_dict["t_opt"] = t_center
+
+        eye_dict["y_left"] = None
+        eye_dict["y_right"] = None
 
     except Exception as e:
         raise e
 
-    # For 20% of the center of the eye diagram
+    # For 10% of the center of the eye diagram
     t_dist = t_right - t_left
     eye_dict["t_dist"] = t_dist
     t_span0 = t_center - 0.05 * t_dist
@@ -1605,7 +1632,7 @@ def GET_EYE(
     t_span1 = t_center + 0.05 * t_dist
     eye_dict["t_span1"] = t_span1
 
-    # Within the 20% of the data in the center of the eye diagram, we separate into two clusters top and bottom
+    # Within the 10% of the data in the center of the eye diagram, we separate into two clusters top and bottom
     y_center = find_nearest(y_set, (state_0 + state_1) / 2)
 
     # We obtain the optimum time for down sampling
@@ -1617,25 +1644,35 @@ def GET_EYE(
     eye_dict["i"] = instant
 
     # We obtain the upper cluster
-    y_top = input[(input > y_center) & ((t_span0 < t) & (t < t_span1))]
+    cond = (input > y_center) & ((t_span0 < t) & (t < t_span1))
+    y_top = input.copy()
+    y_top[~cond]=np.nan
     eye_dict["y_top"] = y_top
 
     # We obtain the lower cluster
-    y_bot = input[(input < y_center) & ((t_span0 < t) & (t < t_span1))]
+    cond = (input < y_center) & ((t_span0 < t) & (t < t_span1))
+    y_bot = input.copy()
+    y_bot[~cond]=np.nan
     eye_dict["y_bot"] = y_bot
 
     # For each cluster we calculated the means and standard deviations
-    mu1 = np.mean(y_top)
+    mu1 = np.mean(y_top, where=~np.isnan(y_top))
     eye_dict["mu1"] = mu1
-    s1 = np.std(y_top)
+    s1 = np.std(y_top, where=~np.isnan(y_top))
     eye_dict["s1"] = s1
-    mu0 = np.mean(y_bot)
+    mu0 = np.mean(y_bot, where=~np.isnan(y_bot))
     eye_dict["mu0"] = mu0
-    s0 = np.std(y_bot)
+    s0 = np.std(y_bot, where=~np.isnan(y_bot))
     eye_dict["s0"] = s0
 
+    # compute umbral
+    x = np.linspace(mu0, mu1, 500)
+    pdf = gaussian_kde(input[ ((t_span0 < t) & (t < t_span1)) ]).evaluate(x)
+    thr= x[np.argmin(pdf)]
+    eye_dict["threshold"] = thr
+
     # We obtain the extinction ratio
-    er = 10 * np.log10(mu1 / mu0) if mu0 > 0 else np.nan
+    er = 10 * np.log10(mu1 / mu0) if mu0 > 0 else np.inf if mu0 == 0 else np.nan
     eye_dict["er"] = er
 
     # We obtain the eye opening

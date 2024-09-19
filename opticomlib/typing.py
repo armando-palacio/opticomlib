@@ -1772,6 +1772,19 @@ class optical_signal(electrical_signal):
             plt.legend()
         return self
     
+class EyeShowOptions():
+    def __init__(self, 
+            averages : bool = None, 
+            threshold : bool = None, 
+            cross_points : bool = None, 
+            legends : bool = None, 
+            t_opt : bool = None
+        ):
+        self.averages = averages if averages is not None else True
+        self.threshold = threshold if threshold is not None else True
+        self.cross_points = cross_points if cross_points is not None else True
+        self.legends = legends if legends is not None else True
+        self.t_opt = t_opt if t_opt is not None else True
 
 class eye():
     """**Eye Diagram Parameters**.
@@ -1879,22 +1892,26 @@ class eye():
         return self
     
     def plot(self, 
-             medias_: bool=True, 
-             legend_: bool=True, 
+             show_options: EyeShowOptions=EyeShowOptions(),
+             hlines: list=[],
+             vlines: list=[], 
              style: Literal['dark', 'light']='dark', 
              cmap: Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter',
              title: str = '',
-             savefig: str=None):
+             savefig: str=None
+        ):
         """ Plot eye diagram.
 
         Parameters
         ----------
+        show_options : :obj:`typing.EyeShowOptions`, optional
+            Options to show in the plot. Default show all.
+        hlines : :obj:`list`, optional
+            A list of time values in which hlines will be set.
+        vlines : :obj:`list`, optional
+            A list of voltage values in which vlines will be set.
         style : :obj:`str`, optional
             Plot style. 'dark' or 'light'.
-        means_ : :obj:`bool`, optional
-            If True, plot mean values.
-        legend_ : :obj:`bool`, optional
-            If True, show legend.
         cmap : :obj:`str`, optional
             Colormap to plot.
         title : :obj:`str`, optional
@@ -1936,25 +1953,51 @@ class eye():
         
         ax[0].set_xlim(-1-dt,1)
         ax[0].set_ylim(self.mu0-4*self.s0, self.mu1+4*self.s1)
-        ax[0].set_ylabel(r'Amplitude [mV]', fontsize=12)
+        ax[0].set_ylabel(r'Amplitude [V]', fontsize=12)
         ax[0].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
         ax[0].set_xticks([-1,-0.5,0,0.5,1])
         ax[0].set_xlabel(r'Time [$t/T_{slot}$]', fontsize=12)
-        t_line1 = ax[0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
-        t_line_span0 = ax[0].axvline(self.t_span0, color = t_opt_color, ls = '-', alpha = 0.4)
-        t_line_span1 = ax[0].axvline(self.t_span1, color = t_opt_color, ls = '-', alpha = 0.4)
         
-        if legend_: 
+        if show_options.t_opt:
+            ax[0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
+            ax[0].axvline(self.t_span0, color = t_opt_color, ls = '-', alpha = 0.4)
+            ax[0].axvline(self.t_span1, color = t_opt_color, ls = '-', alpha = 0.4)
+
+        # crossing points
+        if show_options.cross_points:
+            if self.y_right and self.y_left:
+                ax[0].plot([self.t_left, self.t_right], [self.y_left, self.y_right], 'xr')
+
+        # threshold
+        if show_options.threshold:
+            ax[0].axhline(self.threshold, c='r', ls='--')
+            ax[1].axhline(self.threshold, c='r', ls='--', label='th')
+            if show_options.legends:
+                ax[1].legend()
+        
+        # horizontal lines
+        for hl in hlines:
+            ax[0].axhline(hl, c='y')
+            ax[1].axhline(hl, c='y')
+        
+        # vertical lines
+        for vl in vlines:
+            ax[0].axvline(vl, c='y')
+            ax[1].axvline (vl, c='y')
+        
+        # legend
+        if show_options.legends: 
             ax[0].legend([r'$t_{opt}$'], fontsize=12, loc='upper right')
         
-        if medias_:
+        # means
+        if show_options.averages:
             ax[0].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
             ax[0].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
 
-            ax[1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
-            ax[1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
-            if legend_:
-                ax[1].legend([r'$\mu_1$',r'$\mu_0$'])
+            ax[1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7, label=r'$\mu_1$')
+            ax[1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7, label=r'$\mu_0$')
+            if show_options.legends:
+                ax[1].legend()
 
         ax[1].sharey(ax[0])
         ax[1].tick_params(axis='x', which='both', length=0, labelbottom=False)
@@ -1985,46 +2028,6 @@ class eye():
             histtype='step',
         )
 
-        ## ADD SLIDERS
-        p = ax[0].get_position()
-        t_slider_ax = fig.add_axes([p.x0,p.y1+0.01,p.x1-p.x0,0.02])
-
-        t_slider = Slider(
-            ax=t_slider_ax,
-            label='',
-            valmin=-1, 
-            valmax=1,
-            valstep=0.1, 
-            valinit=self.t_opt, 
-            initcolor=t_opt_color,
-            orientation='horizontal',
-            color=bgcolor,
-            track_color=bgcolor,
-            handle_style = dict(facecolor=t_opt_color, edgecolor=bgcolor, size=10)
-        )
-
-        ## PLOTS UPDATE
-        def update_t_line(val):
-            t_line1.set_xdata(val)
-
-            t_line_span0.set_xdata(val-0.05*self.t_dist)
-            t_line_span1.set_xdata(val+0.05*self.t_dist)
-
-            ax[1].patches[-1].remove()
-
-            n,_,_ = ax[1].hist(
-                y_[(t_>val-0.01) & (t_<val+0.01)], 
-                bins=200, 
-                density=True, 
-                orientation = 'horizontal', 
-                color = t_opt_color, 
-                alpha = 0.9,
-                histtype='step',
-            )
-            ax[1].set_xlim(0,max(n))
-
-        t_slider.on_changed(update_t_line)
-
         if savefig: 
             if savefig.endswith('.png'):
                 plt.savefig(savefig, dpi=300)
@@ -2042,3 +2045,4 @@ class eye():
         """
         plt.show()
         return self
+

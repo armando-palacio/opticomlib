@@ -88,12 +88,13 @@ def SYNC(signal_rx: electrical_signal,
     return signal_sync, i
 
 
-def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, sps:int, nslots:int=8192):
+def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, nslots:int=8192):
     r"""**Eye diagram parameters v2**
 
     Estimate the means and standard deviations of levels 0 and 1 in the ``sync_signal`` 
-    knowing the transmitted sequence ``slots_tx``. It separates the received signal levels
-    corresponding to transmitted level 0 and 1 and estimates the means and standard deviations. 
+    by knowing the transmitted sequence ``slots_tx``. It separates the received signal levels
+    corresponding to transmitted level 0 and 1 and estimates the means and standard deviations,
+    different to ``devices.GET_EYE()`` that assume transmitted bits are not known. 
 
     Parameters
     ----------
@@ -101,8 +102,6 @@ def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, sps:in
         Synchronized digital signal in time with the transmitted signal.
     slots_tx : binary_sequence
         Transmitted bit sequence.
-    sps : int
-        Number of samples per slot of the digitalized signal ``sync_signal``.
     nslots : int, default: 8192
         Number of slots to use for estimation.
 
@@ -123,14 +122,23 @@ def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, sps:in
             - ``s0``: Standard deviation of level 0.
             - ``s1``: Standard deviation of level 1.
     """
-    sps = sync_signal.sps()
+    if not isinstance(sync_signal, electrical_signal):
+        raise TypeError('"sync_signal" parameter must be of type `electrical_signal`')
+    
+    if not isinstance(slots_tx, binary_sequence):
+        raise TypeError('"slots_tx" parameter must be of type `binary_sequence`')
 
     eye_dict = {}
 
-    eye_dict['sps'] = sps
+    sps = sync_signal.sps(); eye_dict['sps'] = sps
 
-
-    rx = sync_signal[:nslots*sps].signal + sync_signal[:nslots*sps].noise; eye_dict['y'] = rx
+    if sync_signal.noise is not None: 
+        rx = sync_signal[:nslots*sps].signal + sync_signal[:nslots*sps].noise
+    else:
+        rx = sync_signal[:nslots*sps].signal
+    
+    eye_dict['y'] = rx
+    
     tx = np.kron(slots_tx.data[:nslots], np.ones(sps))
 
     unos = rx[tx==1]; eye_dict['unos']=unos
@@ -150,7 +158,7 @@ def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, sps:in
     s0 = np.std(zeros_).real; eye_dict['s0'] = s0
     s1 = np.std(unos_).real; eye_dict['s1'] = s1
 
-    return eye(eye_dict)
+    return eye(**eye_dict)
 
 
 class PPG3204():
