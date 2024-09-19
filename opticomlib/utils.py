@@ -922,6 +922,7 @@ def theory_BER(
     modulation: Literal['ook', 'ppm'], 
     M=None, 
     decision=None, 
+    threshold=None,
     ER=np.inf, 
     amplify=False, 
     f0=193.4145e12, 
@@ -946,7 +947,7 @@ def theory_BER(
     Parameters
     ----------
     P_avg: float
-        Average Received input optical Power (in [dB]).
+        Average Received input optical Power (in [dBm]).
     modulation: Literal['ook', 'ppm']
         Kind of modulation format {'ook', 'ppm'}, more modulations in future...
     M: int
@@ -954,6 +955,9 @@ def theory_BER(
     decision: Literal['hard', 'soft']
         Kind of PPM decision. 'hard' decision use the optimum threshold to separate ON and OFF slots. 'soft' decision
         use the Maximum a Posteriori (MAP) and it outperform 'hard' decision. Only needed if `modulation='ppm'`.
+    threshold: float 
+        Threshold for decision. Only needed if (`modulation='ook'`) or (`modulation='ppm` and `decision='hard'`). Value
+        must be in (0, 1), without include edges. By default optimum threshold is used.
     ER: float
         Extinction Ratio of the input optical signal, in [dB].
     amplify: bool
@@ -1023,7 +1027,8 @@ def theory_BER(
         P_avg, 
         modulation: Literal['ook', 'ppm'], 
         M=None, 
-        decision=None, 
+        decision=None,
+        threshold=None, 
         ER=np.inf, 
         amplify=False, 
         f0=193.4145e12, 
@@ -1078,25 +1083,43 @@ def theory_BER(
         if modulation.lower() == 'ppm':
             if M is None:
                 raise ValueError('Enter a value for "M".')
+    
             if M<2 or (M & (M - 1)):
                 raise ValueError('The parameter "M" must be a power of 2 greater than or equal to 2.')
             
             if decision.lower()=='hard':
                 SER = lambda x: 1 - Q((x-mu_ON)/s[1]) * (1-Q((x-mu_OFF)/s[0]))**(M-1) # hard decision
-                SER = SER(np.linspace(mu_OFF, mu_ON, 5000)).min()
+                
+                if threshold is not None:
+                    if threshold<=0 or threshold>=1:
+                        raise ValueError('The threshold value must be in the range (0, 1).')
+                    
+                    SER = SER(threshold * mu_ON + (1 - threshold) * mu_OFF)
+                else:
+                    SER = SER(np.linspace(mu_OFF, mu_ON, 5000)).min()
+    
             elif decision.lower()=='soft':
                 SER = 1-1/(2*pi)**0.5*quad(lambda x: (1-Q((mu_ON-mu_OFF+s[1]*x)/s[0]))**(M-1)*np.exp(-x**2/2),-np.inf,np.inf)[0]
+    
             else:
                 raise ValueError('decision must be "hard" or "soft"')
+    
             BER = SER * M/2/(M-1)
         
         elif modulation.lower() == 'ook':
             BER = lambda x: 0.5*(Q((mu_ON-x)/s[1]) + Q((x-mu_OFF)/s[0]))
-            BER = BER(np.linspace(mu_OFF, mu_ON, 5000)).min()
-        
+
+            if threshold is not None:
+                if threshold<=0 or threshold>=1:
+                    raise ValueError('The threshold value must be in the range (0, 1).')
+                
+                BER = BER(threshold * mu_ON + (1 - threshold) * mu_OFF)
+            else:
+                BER = BER(np.linspace(mu_OFF, mu_ON, 5000)).min()
+    
         else:
             raise KeyError(f'The modulation type "{modulation}" is invalid.')
         
         return BER
     
-    return temp(P_avg, modulation, M, decision, ER, amplify, f0, G, NF, BW_opt, r, BW_el, R_L, T, NF_el)
+    return temp(P_avg, modulation, M, decision, threshold, ER, amplify, f0, G, NF, BW_opt, r, BW_el, R_L, T, NF_el)
