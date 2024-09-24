@@ -32,9 +32,9 @@ def search_inst():
     print(rm.list_resources())
 
 
-def SYNC(signal_rx: electrical_signal, 
-         slots_tx: binary_sequence, 
-         sps: int):
+def SYNC(signal_rx: electrical_signal | np.ndarray, 
+         slots_tx: binary_sequence | np.ndarray, 
+         sps: int = None):
     r"""**Signal Synchronizer**
 
     Synchronizes the received signal with the transmitted signal to determine the starting position in the received signal for further processing. 
@@ -43,11 +43,11 @@ def SYNC(signal_rx: electrical_signal,
 
     Parameters
     ----------
-    signal_rx : :obj:`electrical_signal`
+    signal_rx : :obj:`electrical_signal` | :obj:`np.ndarray`
         The received digital signal (from the oscilloscope or an ADC).
-    slots_tx : :obj:`binary_sequence`
+    slots_tx : :obj:`binary_sequence` | :obj:`np.ndarray`
         The transmitted slots sequence.
-    sps : :obj:`int`
+    sps : :obj:`int`, optional
         Number of samples per slot of the digitalized signal ``signal_rx``.
 
     Returns
@@ -66,16 +66,26 @@ def SYNC(signal_rx: electrical_signal,
     """
     
     tic()
-    if not isinstance(sps, int):
-        raise TypeError('The "sps" must be an integer to perform synchronization.')
+    if isinstance(signal_rx, electrical_signal):
+        sps = signal_rx.sps()
+        signal_rx = signal_rx.signal
+    elif isinstance(signal_rx, np.ndarray):
+        if sps is None:
+            raise ValueError('"sps" must be provided to perform synchronization.')
+    else: 
+        raise TypeError('The "signal_rx" must be of type `electrical_signal` or `np.ndarray`.')
 
-    signal_tx = np.kron(slots_tx.data, np.ones(sps))
-    signal_rx = signal_rx.signal
+    if isinstance(slots_tx, binary_sequence):
+        slots_tx = slots_tx.data
+    elif not isinstance(slots_tx, np.ndarray):
+        raise TypeError('The "slots_tx" must be of type `binary_sequence` or `np.ndarray`.')
+
+    signal_tx = np.kron(slots_tx, np.ones(sps))
 
     if len(signal_rx)<len(signal_tx): 
         raise BufferError('The length of the received vector must be greater than the transmitted vector!!')
 
-    l = len(signal_tx)
+    l = signal_tx.size
     corr = sg.fftconvolve(signal_rx[:2*l], signal_tx[l::-1], mode='valid') # Correlation of the transmitted signal with the received signal in a window of 2*l (sufficient to find a maximum)
 
     if np.max(corr) < 3*np.std(corr): 
