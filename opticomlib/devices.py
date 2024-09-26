@@ -1111,10 +1111,10 @@ def LPF(
 
     output = input[:]
 
-    output.signal = sg.sosfiltfilt(sos_band, signal)
+    output.signal = sg.sosfiltfilt(sos_band, signal).real
 
     if noise is not None:
-        output.noise = sg.sosfiltfilt(sos_band, noise)
+        output.noise = sg.sosfiltfilt(sos_band, noise).real
 
     output.execution_time = toc()
     if retH:
@@ -1320,7 +1320,10 @@ def PD(
 
 
 def ADC(
-    input: electrical_signal, fs: float = None, BW: float = None, nbits: int = 8
+    input: electrical_signal | np.ndarray, 
+    fs: float = None,
+    n: int = 8,
+    otype: Literal['v', 'n'] = 'v'
 ) -> binary_sequence:
     r"""
     **Analog-to-Digital Converter**
@@ -1330,74 +1333,79 @@ def ADC(
 
     Parameters
     ----------
-    input : electrical_signal
+    input : electrical_signal | np.array
         Electrical signal to be quantized.
     fs : float, default: None
-        Sampling frequency of the output signal.
-    BW : float, default: None
-        ADC bandwidth in Hz.
-    nbits : int, default: 8
-        Vertical resolution of the ADC, in bits.
+        Sampling frequency of the output signal. If None, signal is not sampled.
+    n : int, default: 8
+        Bits of quantization. Default is 8 bits.
+    otype : str, default: 'v'
+        Signal output type. If 'v' discrete amplitudes are return, if 'n' integer amplitudes between 0 and 2**n-1 are return. 
 
     Returns
     -------
     electrical_signal
         Quantized digital signal.
 
-    Raises
-    ------
-    TypeError
-        If the ``input`` is not of type `electrical_signal`.
+    Example
+    -------
+    .. plot::
+        :include-source:
+        :alt: LPF example 1
+        :align: center
+
+        from opticomlib.devices import ADC
+        from opticomlib import gv, electrical_signal
+        import numpy as np
+
+        gv(sps=64, R=1e9, N=2)
+
+        y = electrical_signal( np.sin(2*np.pi*gv.R*gv.t) )
+
+        yn = ADC(y, n=2)
+
+        y.plot(
+            style='light', 
+            grid=True, 
+            lw=5
+        )
+        yn.plot('.-', lw=2).show()
     """
     tic()
 
-    if not isinstance(input, electrical_signal):
-        raise TypeError("`input` debe ser del tipo (electrical_signal).")
-
-    if not fs:
-        fs = gv.fs
-
-    if BW:
-        filt = sg.bessel(
-            N=4, Wn=BW, btype="low", fs=input.fs(), output="sos", norm="mag"
-        )
-        signal = sg.sosfiltfilt(filt, input.signal)
+    if isinstance(input, electrical_signal):
+        if input.noise is not None:
+            signal = input.signal + input.noise
+        else:
+            signal = input.signal
     else:
-        signal = input.signal
+        signal = input
 
-    signal = sg.resample(signal, int(input.len() * fs / input.fs()))
+    if fs is not None:
+        signal = sg.resample(signal, int(input.len() * fs / input.fs()))
 
     V_min = signal.min()
     V_max = signal.max()
+    
     dig_signal = np.round(
-        (signal - V_min) / (V_max - V_min) * (2**nbits - 1)
-    )  # normalizo la señal entre 0 y 2**nbits-1
-    dig_signal = (
-        dig_signal / (2**nbits - 1) * (V_max - V_min) + V_min
-    )  # vuelvo a la amplitud original
+        (signal - V_min) / (V_max - V_min) * (2**n - 1)
+    ).astype(int)  # quantize signal between 0 and 2**n-1
+    
+    if otype == 'v':
+        dig_signal = (
+            dig_signal / (2**n - 1) * (V_max - V_min) + V_min
+        )  # back to discrete amplitude 
+    elif otype != 'n':
+        raise ValueError("`otype` must be 'v' or 'n'.")
 
-    if np.sum(input.noise):
-        noise = sg.sosfiltfilt(filt, input.noise)
-        noise = sg.resample(noise, int(input.len() * fs // input.fs()))
-        V_min = noise.min()
-        V_max = noise.max()
-        dig_noise = np.round(
-            (noise - V_min) / (V_max - V_min) * (2**nbits - 1)
-        )  # normalizo la señal entre 0 y 2**nbits-1
-        dig_noise = (
-            dig_noise / (2**nbits - 1) * (V_max - V_min) + V_min
-        )  # vuelvo a la amplitud original
-
-        output = electrical_signal(dig_signal, dig_noise)
-    else:
-        output = electrical_signal(dig_signal)
+    output = electrical_signal(dig_signal)
 
     output.execution_time = toc()
     return output
 
 
 def GET_EYE(
-    input: Union[electrical_signal, np.ndarray],
+    input: electrical_signal | np.ndarray,
     nslots: int = 4096,
     sps_resamp: int = None,
 ):
@@ -1475,8 +1483,8 @@ def GET_EYE(
         return np.array((data[i], data[i + lag]))
 
     def find_nearest(
-        levels: np.ndarray, data: Union[np.ndarray, float]
-    ) -> Union[np.ndarray, float]:
+        levels: np.ndarray, data: np.ndarray | float
+    ) -> np.ndarray | float:
         r"""
         Find the element in 'levels' that is closest to each value in 'data'.
 
@@ -1514,10 +1522,8 @@ def GET_EYE(
     if not isinstance(input, electrical_signal):
         input = electrical_signal(input)
 
-    sps = input.sps()
-    eye_dict["sps"] = sps
-    dt = input.dt()
-    eye_dict["dt"] = dt
+    eye_dict["sps"] = sps = input.sps()
+    eye_dict["dt"] = dt = input.dt()
 
     # truncate
     n = input.len() % (2 * sps)  # we obtain the rest %(2*sps)
@@ -1541,12 +1547,10 @@ def GET_EYE(
         input = sg.resample(input, nslots * sps_resamp)
         eye_dict["y"] = input
         eye_dict["sps_resamp"] = sps_resamp
-        t = np.kron(np.ones(nslots // 2), np.linspace(-1, 1 - dt, 2 * sps_resamp))
-        eye_dict["t"] = t
+        eye_dict["t"] = t = np.kron(np.ones(nslots // 2), np.linspace(-1, 1 - 1/sps_resamp, 2 * sps_resamp))
     else:
         eye_dict["y"] = input
-        t = np.kron(np.ones(nslots // 2), np.linspace(-1, 1 - dt, 2 * sps))
-        eye_dict["t"] = t
+        eye_dict["t"] = t = np.kron(np.ones(nslots // 2), np.linspace(-1, 1 - 1/sps, 2 * sps))
 
     ###############
     ## Algorithm ##
@@ -1558,16 +1562,13 @@ def GET_EYE(
     vm = np.mean(kmeans.fit(input.reshape(-1,1)).cluster_centers_)
 
     # we obtain the shortest interval of the upper half that contains 50% of the samples
-    top_int = shorth_int(input[input > vm], percent=50)
+    eye_dict["top_int"] = top_int = shorth_int(input[input > vm], percent=50)
     # We obtain the LMS of level 1
     state_1 = np.mean(top_int)
     # we obtain the shortest interval of the lower half that contains 50% of the samples
-    bot_int = shorth_int(input[input < vm], percent=50)
+    eye_dict["bot_int"] = bot_int = shorth_int(input[input < vm], percent=50)
     # We obtain the LMS of level 0
     state_0 = np.mean(bot_int)
-
-    eye_dict["top_int"] = top_int
-    eye_dict["bot_int"] = bot_int
 
     # We obtain the amplitude between the two levels 0 and 1
     d01 = state_1 - state_0
@@ -1594,29 +1595,20 @@ def GET_EYE(
         left = np.argmin(ty_c[:,0])
         right = np.argmax(ty_c[:,0])
 
-        t_left = find_nearest(t_set, ty_c[left,0])
-        t_right = find_nearest(t_set, ty_c[right,0])
-        t_center = find_nearest(t_set, ty_c[:,0].mean())
+        eye_dict["t_left"] = t_left = find_nearest(t_set, ty_c[left,0])
+        eye_dict["t_right"] = t_right = find_nearest(t_set, ty_c[right,0])
+        eye_dict["t_opt"] = t_center = find_nearest(t_set, ty_c[:,0].mean())
         
-        eye_dict["t_left"] = t_left
-        eye_dict["t_right"] = t_right
-        eye_dict["t_opt"] = t_center
-
         eye_dict["y_left"] = find_nearest(y_set, ty_c[left,1])
         eye_dict["y_right"] = find_nearest(y_set, ty_c[right,1])
 
-        y_25_75 = input.copy()
+        eye_dict["y_25_75"] = y_25_75 = input.copy()
         y_25_75[~cond] = np.nan
-        eye_dict["y_25_75"] = y_25_75
 
     except ValueError:
-        t_left = -0.5
-        t_right = 0.5
-        t_center = 0.0
-
-        eye_dict["t_left"] = t_left
-        eye_dict["t_right"] = t_right
-        eye_dict["t_opt"] = t_center
+        eye_dict["t_left"] = t_left = -0.5
+        eye_dict["t_right"] = t_right = 0.5
+        eye_dict["t_opt"] = t_center = 0.0
 
         eye_dict["y_left"] = None
         eye_dict["y_right"] = None
@@ -1625,12 +1617,9 @@ def GET_EYE(
         raise e
 
     # For 10% of the center of the eye diagram
-    t_dist = t_right - t_left
-    eye_dict["t_dist"] = t_dist
-    t_span0 = t_center - 0.05 * t_dist
-    eye_dict["t_span0"] = t_span0
-    t_span1 = t_center + 0.05 * t_dist
-    eye_dict["t_span1"] = t_span1
+    eye_dict["t_dist"] = t_dist = t_right - t_left
+    eye_dict["t_span0"] = t_span0 = t_center - 0.05 * t_dist
+    eye_dict["t_span1"] = t_span1 = t_center + 0.05 * t_dist
 
     # Within the 10% of the data in the center of the eye diagram, we separate into two clusters top and bottom
     y_center = find_nearest(y_set, (state_0 + state_1) / 2)
@@ -1656,28 +1645,21 @@ def GET_EYE(
     eye_dict["y_bot"] = y_bot
 
     # For each cluster we calculated the means and standard deviations
-    mu1 = np.mean(y_top, where=~np.isnan(y_top))
-    eye_dict["mu1"] = mu1
-    s1 = np.std(y_top, where=~np.isnan(y_top))
-    eye_dict["s1"] = s1
-    mu0 = np.mean(y_bot, where=~np.isnan(y_bot))
-    eye_dict["mu0"] = mu0
-    s0 = np.std(y_bot, where=~np.isnan(y_bot))
-    eye_dict["s0"] = s0
+    eye_dict["mu1"] = mu1 = np.mean(y_top, where=~np.isnan(y_top))
+    eye_dict["s1"] = s1 = np.std(y_top, where=~np.isnan(y_top))
+    eye_dict["mu0"] = mu0 = np.mean(y_bot, where=~np.isnan(y_bot))
+    eye_dict["s0"] = s0 = np.std(y_bot, where=~np.isnan(y_bot))
 
     # compute umbral
     x = np.linspace(mu0, mu1, 500)
     pdf = gaussian_kde(input[ ((t_span0 < t) & (t < t_span1)) ]).evaluate(x)
-    thr= x[np.argmin(pdf)]
-    eye_dict["threshold"] = thr
+    eye_dict["threshold"] = x[np.argmin(pdf)]
 
     # We obtain the extinction ratio
-    er = 10 * np.log10(mu1 / mu0) if mu0 > 0 else np.inf if mu0 == 0 else np.nan
-    eye_dict["er"] = er
+    eye_dict["er"] = 10 * np.log10(mu1 / mu0) if mu0 > 0 else np.inf if mu0 == 0 else np.nan
 
     # We obtain the eye opening
-    eye_h = mu1 - 3 * s1 - mu0 - 3 * s0
-    eye_dict["eye_h"] = eye_h
+    eye_dict["eye_h"] = mu1 - 3 * s1 - mu0 - 3 * s0
 
     eye_dict["execution_time"] = toc()
     return eye(**eye_dict)
