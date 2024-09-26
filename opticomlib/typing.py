@@ -171,23 +171,23 @@ class global_variables():
         If none of `sps`, `R`, or `fs` is provided, it will use the instance's default values.
         """
         if sps:
-            self.sps = sps
+            self.sps = int(np.round(sps))
             if R:
                 self.R = R
-                self.fs = R*sps
+                self.fs = R*self.sps
             elif fs:
                 self.fs = fs
-                self.R = fs/sps
+                self.R = fs/self.sps
             else:
                 msg = f'`R` will be set to default value ({self.R:.2e} Hz)'
                 warnings.warn(msg)
-                self.fs = self.R*sps
+                self.fs = self.R*self.sps
 
         elif R: 
             self.R = R
             if fs:
                 self.fs = fs
-                self.sps = int(fs/R)
+                self.sps = int(np.round(fs/R))
             else:
                 msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
                 warnings.warn(msg)
@@ -197,7 +197,7 @@ class global_variables():
             msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
             warnings.warn(msg)
             self.fs = fs
-            self.sps = int(fs/self.R)
+            self.sps = int(np.round(fs/self.R))
 
         else:
             msg = f'`sps`, `R` and `fs` will be set to previous values ({self.sps} samples per slot, {self.R:.2e} Hz, {self.fs:.2e} Samples/s)'
@@ -232,6 +232,7 @@ class global_variables():
             f'sps :  {self.sps}\n\t' + \
             f'R   :  {self.R:.2e}\n\t' + \
             f'fs  :  {self.fs:.2e}\n\t' + \
+            f'dt  :  {self.dt:.2e}\n\t' + \
             f'λ0  :  {self.wavelength:.2e}\n\t' + \
             f'f0  :  {self.f0:.2e}\n'
         
@@ -1212,6 +1213,8 @@ class electrical_signal():
         
         if 'label' in kwargs.keys():
             plt.legend()
+
+        plt.style.use('default')
         return self
     
 
@@ -1290,6 +1293,8 @@ class electrical_signal():
 
         if 'label' in kwargs.keys():
             plt.legend()
+
+        plt.style.use('default')
         return self
     
     def grid(self, **kwargs):
@@ -1637,6 +1642,8 @@ class optical_signal(electrical_signal):
             plt.legend()
         if 'label' in kwargs.keys():
             plt.legend()
+
+        plt.style.use('default')
         return self
     
 
@@ -1770,6 +1777,8 @@ class optical_signal(electrical_signal):
             plt.legend()
         if 'label' in kwargs.keys():
             plt.legend()
+
+        plt.style.use('default')
         return self
     
 class EyeShowOptions():
@@ -2033,6 +2042,8 @@ class eye():
                 plt.savefig(savefig, dpi=300)
             else:
                 plt.savefig(savefig)
+        
+        plt.style.use('default')
         return self
 
     def show(self):
