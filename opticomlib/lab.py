@@ -13,6 +13,7 @@
 """
 import numpy as np
 import scipy.signal as sg
+from scipy.stats import gaussian_kde
 
 from .typing import binary_sequence, electrical_signal, eye, Array_Like, Number
 from typing import Literal, Union
@@ -31,10 +32,19 @@ def search_inst():
     rm = visa.ResourceManager()
     print(rm.list_resources())
 
+def connect_inst(addr_ID: str):
+    inst = visa.ResourceManager().open_resource(addr_ID)
+    inst.timeout = 10000 # timeout in milliseconds
+    try:
+        print(inst.query('*IDN?'))
+    except:
+        print('No identification received!!')
+    return inst
 
-def SYNC(signal_rx: electrical_signal, 
-         slots_tx: binary_sequence, 
-         sps: int):
+
+def SYNC(signal_rx: electrical_signal | np.ndarray, 
+         slots_tx: binary_sequence | np.ndarray, 
+         sps: int = None):
     r"""**Signal Synchronizer**
 
     Synchronizes the received signal with the transmitted signal to determine the starting position in the received signal for further processing. 
@@ -43,11 +53,11 @@ def SYNC(signal_rx: electrical_signal,
 
     Parameters
     ----------
-    signal_rx : :obj:`electrical_signal`
+    signal_rx : :obj:`electrical_signal` | :obj:`np.ndarray`
         The received digital signal (from the oscilloscope or an ADC).
-    slots_tx : :obj:`binary_sequence`
+    slots_tx : :obj:`binary_sequence` | :obj:`np.ndarray`
         The transmitted slots sequence.
-    sps : :obj:`int`
+    sps : :obj:`int`, optional
         Number of samples per slot of the digitalized signal ``signal_rx``.
 
     Returns
@@ -66,16 +76,26 @@ def SYNC(signal_rx: electrical_signal,
     """
     
     tic()
-    if not isinstance(sps, int):
-        raise TypeError('The "sps" must be an integer to perform synchronization.')
+    if isinstance(signal_rx, electrical_signal):
+        sps = signal_rx.sps()
+        signal_rx = signal_rx.signal
+    elif isinstance(signal_rx, np.ndarray):
+        if sps is None:
+            raise ValueError('"sps" must be provided to perform synchronization.')
+    else: 
+        raise TypeError('The "signal_rx" must be of type `electrical_signal` or `np.ndarray`.')
 
-    signal_tx = np.kron(slots_tx.data, np.ones(sps))
-    signal_rx = signal_rx.signal
+    if isinstance(slots_tx, binary_sequence):
+        slots_tx = slots_tx.data
+    elif not isinstance(slots_tx, np.ndarray):
+        raise TypeError('The "slots_tx" must be of type `binary_sequence` or `np.ndarray`.')
+
+    signal_tx = np.kron(slots_tx, np.ones(sps))
 
     if len(signal_rx)<len(signal_tx): 
         raise BufferError('The length of the received vector must be greater than the transmitted vector!!')
 
-    l = len(signal_tx)
+    l = signal_tx.size
     corr = sg.fftconvolve(signal_rx[:2*l], signal_tx[l::-1], mode='valid') # Correlation of the transmitted signal with the received signal in a window of 2*l (sufficient to find a maximum)
 
     if np.max(corr) < 3*np.std(corr): 
@@ -88,7 +108,11 @@ def SYNC(signal_rx: electrical_signal,
     return signal_sync, i
 
 
-def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, nslots:int=8192):
+def GET_EYE_v2(
+        sync_signal: electrical_signal | np.ndarray, 
+        slots_tx: binary_sequence | np.ndarray, 
+        nslots: int = 4096,
+):
     r"""**Eye diagram parameters v2**
 
     Estimate the means and standard deviations of levels 0 and 1 in the ``sync_signal`` 
@@ -122,42 +146,83 @@ def GET_EYE_v2(sync_signal: electrical_signal, slots_tx: binary_sequence, nslots
             - ``s0``: Standard deviation of level 0.
             - ``s1``: Standard deviation of level 1.
     """
-    if not isinstance(sync_signal, electrical_signal):
-        raise TypeError('"sync_signal" parameter must be of type `electrical_signal`')
+    tic()
+
+    #########################
+    ## Preprocessing input ##
+    #########################
+    
+    input = sync_signal
+    
+    if not isinstance(input, electrical_signal):
+        input = electrical_signal(input)
     
     if not isinstance(slots_tx, binary_sequence):
-        raise TypeError('"slots_tx" parameter must be of type `binary_sequence`')
+        slots_tx = binary_sequence(slots_tx)
 
     eye_dict = {}
 
-    sps = sync_signal.sps(); eye_dict['sps'] = sps
+    eye_dict['sps'] = sps = input.sps()
+    eye_dict['dt'] = dt = input.dt()
 
-    if sync_signal.noise is not None: 
-        rx = sync_signal[:nslots*sps].signal + sync_signal[:nslots*sps].noise
-    else:
-        rx = sync_signal[:nslots*sps].signal
+    # truncate
+    n = input.len() % (2 * sps)  # we obtain the rest %(2*sps)
+    if n: # if rest is not zero
+        input = input[:-n] # ignore last 'n' samples
+
+    nslots = min( int(input.len() // sps), nslots) # determine the minimum between slots of signal and 'nslots' parameter
+    input = input[: nslots * sps] # truncate signal
+
+    input = (input.signal + input.noise).real if input.noise is not None else input.signal.real # add noise to signal, if there is noise
+
+    eye_dict["y"] = np.roll(input, -sps // 2 + 1)
+    eye_dict['t'] = t = np.kron(np.ones(nslots // 2), np.linspace(-1, 1 - 1/sps, 2 * sps), )
     
-    eye_dict['y'] = rx
-    
-    tx = np.kron(slots_tx.data[:nslots], np.ones(sps))
+    ###############
+    ## Algorithm ##
+    ###############
 
-    unos = rx[tx==1]; eye_dict['unos']=unos
-    zeros = rx[tx==0]; eye_dict['zeros']=zeros
+    ref = np.kron(slots_tx.data[:nslots], np.ones(sps))
 
-    t0 = np.kron(np.ones(zeros.size//sps), np.linspace(-0.5, 0.5, sps, endpoint=False)); eye_dict['t0']=t0
-    t1 = np.kron(np.ones(unos.size//sps), np.linspace(-0.5, 0.5, sps, endpoint=False)); eye_dict['t1']=t1
+    eye_dict['ones'] = ones = input[ref==1]
+    eye_dict['zeros'] = zeros = input[ref==0]
+
+    eye_dict['t0'] = t0 = np.kron(np.ones(zeros.size//sps), np.linspace(-0.5, 0.5, sps, endpoint=False))
+    eye_dict['t1'] = t1 = np.kron(np.ones(ones.size//sps), np.linspace(-0.5, 0.5, sps, endpoint=False))
 
     eye_dict['i']=sps//2
+    eye_dict["t_left"] = -0.5
+    eye_dict["t_right"] = 0.5
 
-    unos_ = unos[(t1<0.05) & (t1>-0.05)]
-    zeros_ = zeros[(t0<0.05) & (t0>-0.05)]
+    eye_dict["y_left"] = None
+    eye_dict["y_right"] = None
 
-    mu0 = np.mean(zeros_).real; eye_dict['mu0'] = mu0
-    mu1 = np.mean(unos_).real; eye_dict['mu1'] = mu1
+    eye_dict["t_dist"] = t_dist = 1
+    eye_dict["t_opt"] = t_opt = 0
+    eye_dict["t_span0"] = t_span0 = t_opt - 0.05 * t_dist
+    eye_dict["t_span1"] = t_span1 = t_opt + 0.05 * t_dist
 
-    s0 = np.std(zeros_).real; eye_dict['s0'] = s0
-    s1 = np.std(unos_).real; eye_dict['s1'] = s1
+    ones_ = ones[(t1>t_span0) & (t1<t_span1)]
+    zeros_ = zeros[(t0>t_span0) & (t0<t_span1)]
 
+    eye_dict['mu0'] = mu0 = np.mean(zeros_).real
+    eye_dict['mu1'] = mu1 = np.mean(ones_).real
+
+    eye_dict['s0'] = s0 = np.std(zeros_).real
+    eye_dict['s1'] = s1 = np.std(ones_).real
+
+    # compute umbral
+    x = np.linspace(mu0, mu1, 500)
+    pdf = gaussian_kde(zeros_.tolist() + ones_.tolist()).evaluate(x)
+    eye_dict["threshold"] = x[np.argmin(pdf)]
+
+    # We obtain the extinction ratio
+    eye_dict["er"] = 10 * np.log10(mu1 / mu0) if mu0 > 0 else np.inf if mu0 == 0 else np.nan
+
+    # We obtain the eye opening
+    eye_dict["eye_h"] = mu1 - 3 * s1 - mu0 - 3 * s0
+    
+    eye_dict["execution_time"] = toc()
     return eye(**eye_dict)
 
 
