@@ -1417,8 +1417,7 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Analog-to-Digital Converter**</span>
 
-<span class="sd">    Converts an analog electrical signal into a quantized digital signal, sampled at a frequency `fs`</span>
-<span class="sd">    and filtered with a bandwidth BW.</span>
+<span class="sd">    Converts an analog electrical signal into a quantized :math:`2^n` bits digital signal, sampled at a frequency `fs`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1440,7 +1439,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    .. plot::</span>
 <span class="sd">        :include-source:</span>
-<span class="sd">        :alt: LPF example 1</span>
+<span class="sd">        :alt: ADC</span>
 <span class="sd">        :align: center</span>
 
 <span class="sd">        from opticomlib.devices import ADC</span>
@@ -1456,9 +1455,10 @@
 <span class="sd">        y.plot(</span>
 <span class="sd">            style=&#39;light&#39;, </span>
 <span class="sd">            grid=True, </span>
-<span class="sd">            lw=5</span>
+<span class="sd">            lw=5,</span>
+<span class="sd">            label = &#39;analog signal&#39;</span>
 <span class="sd">        )</span>
-<span class="sd">        yn.plot(&#39;.-&#39;, lw=2).show()</span>
+<span class="sd">        yn.plot(&#39;.-&#39;, style=&#39;light&#39;, lw=2, label=&#39; 2 bits quantized signal&#39;).show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tic</span><span class="p">()</span>
 

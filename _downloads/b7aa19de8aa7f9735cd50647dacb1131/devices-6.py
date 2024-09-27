@@ -11,6 +11,7 @@ yn = ADC(y, n=2)
 y.plot(
     style='light',
     grid=True,
-    lw=5
+    lw=5,
+    label = 'analog signal'
 )
-yn.plot('.-', lw=2).show()
+yn.plot('.-', style='light', lw=2, label=' 2 bits quantized signal').show()
