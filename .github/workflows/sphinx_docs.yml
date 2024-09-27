@@ -23,6 +23,7 @@ jobs:
           pip install .[opticomlib]
           pip install sphinx
           pip install renku-sphinx-theme
+          pip install sphinx-rtd-theme
 
       - name: Build HTML
         working-directory: docs
