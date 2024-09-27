@@ -15,11 +15,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -40,7 +40,7 @@
               <img src="_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.4.4
+                1.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -72,6 +72,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.global_variables.__call__"><code class="docutils literal notranslate"><span class="pre">global_variables.__call__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.global_variables.__str__"><code class="docutils literal notranslate"><span class="pre">global_variables.__str__()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.global_variables.print"><code class="docutils literal notranslate"><span class="pre">global_variables.print()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.typing.global_variables.clean"><code class="docutils literal notranslate"><span class="pre">global_variables.clean()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.typing.binary_sequence"><code class="docutils literal notranslate"><span class="pre">binary_sequence</span></code></a><ul>
@@ -194,12 +195,12 @@
            <div itemprop="articleBody">
              
   <section id="data-types">
-<h1>Data types<a class="headerlink" href="#data-types" title="Link to this heading"></a></h1>
+<h1>Data types<a class="headerlink" href="#data-types" title="Permalink to this heading"></a></h1>
 <p>Use this module to define the data types used in the library.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.typing</span> <span class="kn">import</span> <span class="n">binary_sequence</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">eye</span><span class="p">,</span> <span class="n">gv</span>
 </pre></div>
 </div>
-<p class="rubric" id="module-opticomlib.typing">Classes</p>
+<span class="target" id="module-opticomlib.typing"></span><p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.global_variables" title="opticomlib.typing.global_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">global_variables</span></code></a>()</p></td>
@@ -221,7 +222,7 @@
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">global_variables</span></span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">global_variables</span></span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables" title="Permalink to this definition"></a></dt>
 <dd><p><strong>Global Variables (gv)</strong></p>
 <p>This object is used to store global variables that are used in the simulation.
 The global variables are used mainly to define the sampling frequency, the slot rate,
@@ -326,67 +327,67 @@ Custom
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.sps">
-<span class="sig-name descname"><span class="pre">sps</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.sps" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sps</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.sps" title="Permalink to this definition"></a></dt>
 <dd><p>Number of samples per slot, <code class="docutils literal notranslate"><span class="pre">16</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.R">
-<span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.R" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.R" title="Permalink to this definition"></a></dt>
 <dd><p>Slot rate in Hz, <code class="docutils literal notranslate"><span class="pre">1e9</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.fs">
-<span class="sig-name descname"><span class="pre">fs</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.fs" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fs</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.fs" title="Permalink to this definition"></a></dt>
 <dd><p>Sampling frequency in Samples/s, <code class="docutils literal notranslate"><span class="pre">R*sps=16e9</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.dt">
-<span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.dt" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.dt" title="Permalink to this definition"></a></dt>
 <dd><p>Time step in seconds, <code class="docutils literal notranslate"><span class="pre">1/fs=62.5e-12</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.wavelength">
-<span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.wavelength" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.wavelength" title="Permalink to this definition"></a></dt>
 <dd><p>Optical communication central wavelength in meters, <code class="docutils literal notranslate"><span class="pre">1550e-9</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.f0">
-<span class="sig-name descname"><span class="pre">f0</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.f0" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">f0</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.f0" title="Permalink to this definition"></a></dt>
 <dd><p>Optical communication central frequency in Hz, <code class="docutils literal notranslate"><span class="pre">c/wavelength=193.4e12</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.N">
-<span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.N" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.N" title="Permalink to this definition"></a></dt>
 <dd><p>Number of slots to simulate (<code class="docutils literal notranslate"><span class="pre">None</span></code> by default), if provided, it will set the instance’s <cite>N</cite> attribute and calculate <cite>t</cite>, <cite>dw</cite>, and <cite>w</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.t">
-<span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.t" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.t" title="Permalink to this definition"></a></dt>
 <dd><p>Time array in seconds, <code class="docutils literal notranslate"><span class="pre">None</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.dw">
-<span class="sig-name descname"><span class="pre">dw</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.dw" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dw</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.dw" title="Permalink to this definition"></a></dt>
 <dd><p>Frequency step in Hz, <code class="docutils literal notranslate"><span class="pre">None</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.w">
-<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.w" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#opticomlib.typing.global_variables.w" title="Permalink to this definition"></a></dt>
 <dd><p>Frequency array in Hz, <code class="docutils literal notranslate"><span class="pre">None</span></code> by default.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.55e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.__call__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.55e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.__call__" title="Permalink to this definition"></a></dt>
 <dd><p>Configures the instance with the provided parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -415,13 +416,13 @@ If none of <cite>sps</cite>, <cite>R</cite>, or <cite>fs</cite> is provided, it 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.__str__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.__str__" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a formatted string with the global variables of the instance.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.global_variables.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.print" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.print" title="Permalink to this definition"></a></dt>
 <dd><p>Prints the global variables of the instance in a formatted manner.</p>
 <p>Prints the global variables including <cite>sps</cite>, <cite>R</cite>, <cite>fs</cite>, <cite>wavelength</cite>, <cite>f0</cite>, <cite>N</cite>, <cite>dt</cite>, <cite>dw</cite>, <cite>t</cite>, and <cite>w</cite>.
 If there are other attributes defined, they will be printed under the “Custom” section.</p>
@@ -429,11 +430,17 @@ If there are other attributes defined, they will be printed under the “Custom�
 <p>The variables are printed with a precision of 2 in scientific notation, except for <cite>sps</cite> and <cite>N</cite> which are integers.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.typing.global_variables.clean">
+<span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#global_variables.clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.global_variables.clean" title="Permalink to this definition"></a></dt>
+<dd><p>Return all attributes to default values.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">binary_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">binary_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence" title="Permalink to this definition"></a></dt>
 <dd><p><strong>Binary Sequence</strong></p>
 <p>This class provides methods and attributes to work with binary sequences.
 The binary sequence can be provided as a string, list, tuple, or numpy array.</p>
@@ -500,7 +507,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the binary sequence object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -511,25 +518,25 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#opticomlib.typing.binary_sequence.data" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#opticomlib.typing.binary_sequence.data" title="Permalink to this definition"></a></dt>
 <dd><p>The binary sequence data, a 1D numpy array of boolean values.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.execution_time">
-<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#opticomlib.typing.binary_sequence.execution_time" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#opticomlib.typing.binary_sequence.execution_time" title="Permalink to this definition"></a></dt>
 <dd><p>The execution time of the last operation performed on the binary sequence.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__str__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__str__" title="Permalink to this definition"></a></dt>
 <dd><p>Return a formatted string with the binary sequence data, length, size in bytes and time if available.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.print" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.print" title="Permalink to this definition"></a></dt>
 <dd><p>Print object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -546,13 +553,13 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__len__">
-<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__len__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__len__" title="Permalink to this definition"></a></dt>
 <dd><p>Get number of slots of the binary sequence. <code class="docutils literal notranslate"><span class="pre">len(self)</span></code></p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__getitem__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__getitem__" title="Permalink to this definition"></a></dt>
 <dd><p>Get a slice of the binary sequence (<code class="docutils literal notranslate"><span class="pre">self[slice]</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -569,7 +576,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__eq__">
-<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__eq__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__eq__" title="Permalink to this definition"></a></dt>
 <dd><p>Compare two binary sequences using <code class="docutils literal notranslate"><span class="pre">==</span></code> operator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -586,7 +593,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__add__">
-<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__add__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__add__" title="Permalink to this definition"></a></dt>
 <dd><p>Concatenate two binary sequences, adding to the end (<code class="docutils literal notranslate"><span class="pre">+</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -616,7 +623,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__radd__">
-<span class="sig-name descname"><span class="pre">__radd__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__radd__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__radd__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__radd__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__radd__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__radd__" title="Permalink to this definition"></a></dt>
 <dd><p>Concatenate two binary sequences, adding to the beginning (<code class="docutils literal notranslate"><span class="pre">+</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -646,7 +653,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.__invert__">
-<span class="sig-name descname"><span class="pre">__invert__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__invert__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__invert__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__invert__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.__invert__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.__invert__" title="Permalink to this definition"></a></dt>
 <dd><p>Invert the binary sequence using the <code class="docutils literal notranslate"><span class="pre">~</span></code> operator.</p>
 <p>Implement a bitwise not <code class="docutils literal notranslate"><span class="pre">~</span></code> operation on the binary sequence. Example: <code class="docutils literal notranslate"><span class="pre">~binary_sequence([1,0,1,0])</span></code> returns <code class="docutils literal notranslate"><span class="pre">binary_sequence([0,1,0,1])</span></code>.</p>
 <dl class="field-list simple">
@@ -661,7 +668,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.len">
-<span class="sig-name descname"><span class="pre">len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.len" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.len" title="Permalink to this definition"></a></dt>
 <dd><p>Get number of slots of the binary sequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -675,7 +682,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.ones">
-<span class="sig-name descname"><span class="pre">ones</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.ones"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.ones" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ones</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.ones"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.ones" title="Permalink to this definition"></a></dt>
 <dd><p>Return the number of ones in the binary sequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -689,7 +696,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.zeros">
-<span class="sig-name descname"><span class="pre">zeros</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.zeros"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.zeros" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">zeros</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.zeros"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.zeros" title="Permalink to this definition"></a></dt>
 <dd><p>Return the number of zeros in the binary sequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -703,7 +710,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.type">
-<span class="sig-name descname"><span class="pre">type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.type" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.type" title="Permalink to this definition"></a></dt>
 <dd><p>Return de object type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -717,7 +724,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.binary_sequence.sizeof">
-<span class="sig-name descname"><span class="pre">sizeof</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.sizeof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.sizeof" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sizeof</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#binary_sequence.sizeof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.binary_sequence.sizeof" title="Permalink to this definition"></a></dt>
 <dd><p>Get memory size of object in bytes.</p>
 </dd></dl>
 
@@ -725,7 +732,7 @@ The binary sequence can be provided as a string, list, tuple, or numpy array.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">electrical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">electrical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal" title="Permalink to this definition"></a></dt>
 <dd><p><strong>Electrical Signal</strong></p>
 <p>This class provides methods and attributes to work with electrical signals.
 It has overloaded operators necessary to properly interpret
@@ -814,7 +821,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the electrical signal object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -837,31 +844,31 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.signal">
-<span class="sig-name descname"><span class="pre">signal</span></span><a class="headerlink" href="#opticomlib.typing.electrical_signal.signal" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">signal</span></span><a class="headerlink" href="#opticomlib.typing.electrical_signal.signal" title="Permalink to this definition"></a></dt>
 <dd><p>The signal values, a 1D numpy array of complex values.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.noise">
-<span class="sig-name descname"><span class="pre">noise</span></span><a class="headerlink" href="#opticomlib.typing.electrical_signal.noise" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">noise</span></span><a class="headerlink" href="#opticomlib.typing.electrical_signal.noise" title="Permalink to this definition"></a></dt>
 <dd><p>The noise values, a 1D numpy array of complex values.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.execution_time">
-<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#opticomlib.typing.electrical_signal.execution_time" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#opticomlib.typing.electrical_signal.execution_time" title="Permalink to this definition"></a></dt>
 <dd><p>The execution time of the last operation performed on the electrical signal.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__str__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__str__" title="Permalink to this definition"></a></dt>
 <dd><p>Return a formatted string with the electrical_signal data, length, size in bytes and time if available.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.print" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.print" title="Permalink to this definition"></a></dt>
 <dd><p>Prints object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -878,7 +885,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__add__">
-<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__add__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__add__" title="Permalink to this definition"></a></dt>
 <dd><p>Add two electrical signals (<code class="docutils literal notranslate"><span class="pre">+</span></code> operator). Same that <code class="docutils literal notranslate"><span class="pre">__radd__</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -895,7 +902,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__sub__">
-<span class="sig-name descname"><span class="pre">__sub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__sub__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__sub__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__sub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__sub__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__sub__" title="Permalink to this definition"></a></dt>
 <dd><p>Substract two electrical signals (<code class="docutils literal notranslate"><span class="pre">-</span></code> operator).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -912,7 +919,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__mul__">
-<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__mul__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__mul__" title="Permalink to this definition"></a></dt>
 <dd><p>Multiply two electrical signals (<code class="docutils literal notranslate"><span class="pre">*</span></code> operator). Same that <code class="docutils literal notranslate"><span class="pre">__rmul__</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -929,7 +936,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__getitem__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__getitem__" title="Permalink to this definition"></a></dt>
 <dd><p>Slice the signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -946,7 +953,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'t'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__call__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'t'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__call__" title="Permalink to this definition"></a></dt>
 <dd><p>Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -969,7 +976,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__gt__">
-<span class="sig-name descname"><span class="pre">__gt__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__gt__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__gt__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__gt__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__gt__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__gt__" title="Permalink to this definition"></a></dt>
 <dd><p>Compare the signal+noise with a threshold (<code class="docutils literal notranslate"><span class="pre">&gt;</span></code> operator).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -992,7 +999,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.__lt__">
-<span class="sig-name descname"><span class="pre">__lt__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__lt__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__lt__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__lt__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.__lt__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.__lt__" title="Permalink to this definition"></a></dt>
 <dd><p>Compare the signal+noise with a threshold (<code class="docutils literal notranslate"><span class="pre">&lt;</span></code> operator).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1015,7 +1022,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.len">
-<span class="sig-name descname"><span class="pre">len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.len" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.len" title="Permalink to this definition"></a></dt>
 <dd><p>Get number of samples of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1029,7 +1036,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.type">
-<span class="sig-name descname"><span class="pre">type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.type" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.type" title="Permalink to this definition"></a></dt>
 <dd><p>Return de object type (<code class="docutils literal notranslate"><span class="pre">electrical_signal</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1043,7 +1050,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.sizeof">
-<span class="sig-name descname"><span class="pre">sizeof</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.sizeof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.sizeof" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sizeof</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.sizeof"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.sizeof" title="Permalink to this definition"></a></dt>
 <dd><p>Get memory size of object in bytes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1057,7 +1064,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.fs">
-<span class="sig-name descname"><span class="pre">fs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.fs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.fs" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.fs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.fs" title="Permalink to this definition"></a></dt>
 <dd><p>Get sampling frequency of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1071,7 +1078,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.sps">
-<span class="sig-name descname"><span class="pre">sps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.sps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.sps" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.sps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.sps" title="Permalink to this definition"></a></dt>
 <dd><p>Get samples per slot of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1085,7 +1092,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.dt">
-<span class="sig-name descname"><span class="pre">dt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.dt" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.dt" title="Permalink to this definition"></a></dt>
 <dd><p>Get time step of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1099,7 +1106,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.t">
-<span class="sig-name descname"><span class="pre">t</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.t" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.t" title="Permalink to this definition"></a></dt>
 <dd><p>Get time array for the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1113,7 +1120,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.w">
-<span class="sig-name descname"><span class="pre">w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.w"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.w" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.w"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.w" title="Permalink to this definition"></a></dt>
 <dd><p>Return angular frequency for spectrum representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1130,7 +1137,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.power">
-<span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'signal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'noise'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.power" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'signal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'noise'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.power" title="Permalink to this definition"></a></dt>
 <dd><p>Get power of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1147,7 +1154,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.phase">
-<span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.phase" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.phase" title="Permalink to this definition"></a></dt>
 <dd><p>Get phase of the <code class="docutils literal notranslate"><span class="pre">signal</span></code> + <cite>noise</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1161,7 +1168,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.apply">
-<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.apply" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.apply" title="Permalink to this definition"></a></dt>
 <dd><p>Apply a function to signal and noise.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1182,7 +1189,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.copy" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.copy" title="Permalink to this definition"></a></dt>
 <dd><p>Return a copy of the object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1199,7 +1206,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.abs">
-<span class="sig-name descname"><span class="pre">abs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'signal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'noise'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.abs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.abs" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">abs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'signal'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'noise'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.abs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.abs" title="Permalink to this definition"></a></dt>
 <dd><p>Get absolute value of <code class="docutils literal notranslate"><span class="pre">signal</span></code>, <code class="docutils literal notranslate"><span class="pre">noise</span></code> or <code class="docutils literal notranslate"><span class="pre">signal+noise</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1216,7 +1223,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.plot" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.plot" title="Permalink to this definition"></a></dt>
 <dd><p>Plot real part of electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1242,7 +1249,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.psd">
-<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.psd" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.psd" title="Permalink to this definition"></a></dt>
 <dd><p>Plot Power Spectral Density (PSD) of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1269,7 +1276,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.grid">
-<span class="sig-name descname"><span class="pre">grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.grid" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.grid" title="Permalink to this definition"></a></dt>
 <dd><p>Add grid to the plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1286,7 +1293,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.legend">
-<span class="sig-name descname"><span class="pre">legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.legend" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.legend" title="Permalink to this definition"></a></dt>
 <dd><p>Add a legend to the plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1306,7 +1313,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.electrical_signal.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.show" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#electrical_signal.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.electrical_signal.show" title="Permalink to this definition"></a></dt>
 <dd><p>Show plots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1322,7 +1329,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">optical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">optical_signal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal" title="Permalink to this definition"></a></dt>
 <dd><p><strong>Optical Signal</strong></p>
 <p>Bases: <a class="reference internal" href="#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code></a></p>
 <p>This class provides methods and attributes to work with optical signals.</p>
@@ -1410,7 +1417,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the optical signal object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1425,7 +1432,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__getitem__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">slice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.__getitem__" title="Permalink to this definition"></a></dt>
 <dd><p>Slice the optical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1442,7 +1449,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'abs'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'abs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.plot" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'abs'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'abs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.plot" title="Permalink to this definition"></a></dt>
 <dd><p>Plot intensity of optical signal for selected polarization mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1481,7 +1488,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.optical_signal.psd">
-<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.psd" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'both'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dbm'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dbm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#optical_signal.psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.optical_signal.psd" title="Permalink to this definition"></a></dt>
 <dd><p>Plot Power Spectral Density (PSD) of the electrical signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1527,7 +1534,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="opticomlib.typing.eye">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">eye</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.typing.</span></span><span class="sig-name descname"><span class="pre">eye</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye" title="Permalink to this definition"></a></dt>
 <dd><p><strong>Eye Diagram Parameters</strong>.</p>
 <p>This object contains the parameters of an eye diagram and methods to plot it.</p>
 <p class="rubric">Methods</p>
@@ -1542,7 +1549,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.eye.print" title="opticomlib.typing.eye.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>([msg])</p></td>
 <td><p>Print object parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.eye.plot" title="opticomlib.typing.eye.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([medias_, legend_, style, cmap, title, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.typing.eye.plot" title="opticomlib.typing.eye.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([show_options, hlines, vlines, style, ...])</p></td>
 <td><p>Plot eye diagram.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.typing.eye.show" title="opticomlib.typing.eye.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
@@ -1552,7 +1559,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 </table>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.t">
-<span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#opticomlib.typing.eye.t" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#opticomlib.typing.eye.t" title="Permalink to this definition"></a></dt>
 <dd><p>The time values resampled. Shape (Nx1).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1563,7 +1570,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.y">
-<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#opticomlib.typing.eye.y" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#opticomlib.typing.eye.y" title="Permalink to this definition"></a></dt>
 <dd><p>The signal values resampled. Shape (Nx1).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1574,7 +1581,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.dt">
-<span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#opticomlib.typing.eye.dt" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#opticomlib.typing.eye.dt" title="Permalink to this definition"></a></dt>
 <dd><p>Time between samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1585,7 +1592,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.sps">
-<span class="sig-name descname"><span class="pre">sps</span></span><a class="headerlink" href="#opticomlib.typing.eye.sps" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sps</span></span><a class="headerlink" href="#opticomlib.typing.eye.sps" title="Permalink to this definition"></a></dt>
 <dd><p>Samples per slot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1596,7 +1603,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.t_left">
-<span class="sig-name descname"><span class="pre">t_left</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_left" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t_left</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_left" title="Permalink to this definition"></a></dt>
 <dd><p>Cross time of left edge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1607,7 +1614,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.t_right">
-<span class="sig-name descname"><span class="pre">t_right</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_right" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t_right</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_right" title="Permalink to this definition"></a></dt>
 <dd><p>Cross time of right edge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1618,7 +1625,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.t_opt">
-<span class="sig-name descname"><span class="pre">t_opt</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_opt" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t_opt</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_opt" title="Permalink to this definition"></a></dt>
 <dd><p>Optimal time decision.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1629,7 +1636,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.t_dist">
-<span class="sig-name descname"><span class="pre">t_dist</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_dist" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t_dist</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_dist" title="Permalink to this definition"></a></dt>
 <dd><p>Time between slots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1640,7 +1647,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.t_span0">
-<span class="sig-name descname"><span class="pre">t_span0</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_span0" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t_span0</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_span0" title="Permalink to this definition"></a></dt>
 <dd><p>t_opt - t_dist*5%.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1651,7 +1658,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.t_span1">
-<span class="sig-name descname"><span class="pre">t_span1</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_span1" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">t_span1</span></span><a class="headerlink" href="#opticomlib.typing.eye.t_span1" title="Permalink to this definition"></a></dt>
 <dd><p>t_opt + t_dist*5%.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1662,7 +1669,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.y_top">
-<span class="sig-name descname"><span class="pre">y_top</span></span><a class="headerlink" href="#opticomlib.typing.eye.y_top" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">y_top</span></span><a class="headerlink" href="#opticomlib.typing.eye.y_top" title="Permalink to this definition"></a></dt>
 <dd><p>Samples of signal above threshold and within t_span0 and t_apan1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1673,7 +1680,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.y_bot">
-<span class="sig-name descname"><span class="pre">y_bot</span></span><a class="headerlink" href="#opticomlib.typing.eye.y_bot" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">y_bot</span></span><a class="headerlink" href="#opticomlib.typing.eye.y_bot" title="Permalink to this definition"></a></dt>
 <dd><p>Samples of signal below threshold and within t_span0 and t_apan1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1684,7 +1691,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.mu0">
-<span class="sig-name descname"><span class="pre">mu0</span></span><a class="headerlink" href="#opticomlib.typing.eye.mu0" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mu0</span></span><a class="headerlink" href="#opticomlib.typing.eye.mu0" title="Permalink to this definition"></a></dt>
 <dd><p>Mean of y_bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1695,7 +1702,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.mu1">
-<span class="sig-name descname"><span class="pre">mu1</span></span><a class="headerlink" href="#opticomlib.typing.eye.mu1" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mu1</span></span><a class="headerlink" href="#opticomlib.typing.eye.mu1" title="Permalink to this definition"></a></dt>
 <dd><p>Mean of y_top.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1706,7 +1713,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.s0">
-<span class="sig-name descname"><span class="pre">s0</span></span><a class="headerlink" href="#opticomlib.typing.eye.s0" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">s0</span></span><a class="headerlink" href="#opticomlib.typing.eye.s0" title="Permalink to this definition"></a></dt>
 <dd><p>Standard deviation of y_bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1717,7 +1724,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.s1">
-<span class="sig-name descname"><span class="pre">s1</span></span><a class="headerlink" href="#opticomlib.typing.eye.s1" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">s1</span></span><a class="headerlink" href="#opticomlib.typing.eye.s1" title="Permalink to this definition"></a></dt>
 <dd><p>Standard deviation of y_top.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1728,7 +1735,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.er">
-<span class="sig-name descname"><span class="pre">er</span></span><a class="headerlink" href="#opticomlib.typing.eye.er" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">er</span></span><a class="headerlink" href="#opticomlib.typing.eye.er" title="Permalink to this definition"></a></dt>
 <dd><p>Extinction ratio.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1739,7 +1746,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.eye_h">
-<span class="sig-name descname"><span class="pre">eye_h</span></span><a class="headerlink" href="#opticomlib.typing.eye.eye_h" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eye_h</span></span><a class="headerlink" href="#opticomlib.typing.eye.eye_h" title="Permalink to this definition"></a></dt>
 <dd><p>Eye height.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1750,7 +1757,7 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the eye diagram object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1761,13 +1768,13 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.__str__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.__str__" title="Permalink to this definition"></a></dt>
 <dd><p>Return a formatted string with the eye diagram data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.print">
-<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.print" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.print" title="Permalink to this definition"></a></dt>
 <dd><p>Print object parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1784,14 +1791,15 @@ the <code class="docutils literal notranslate"><span class="pre">+</span></code>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">medias_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'viridis'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'plasma'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'inferno'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cividis'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'magma'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'winter'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'winter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.plot" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_options:</span> <span class="pre">~opticomlib.typing.EyeShowOptions</span> <span class="pre">=</span> <span class="pre">&lt;opticomlib.typing.EyeShowOptions</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hlines:</span> <span class="pre">list</span> <span class="pre">=</span> <span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlines:</span> <span class="pre">list</span> <span class="pre">=</span> <span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style:</span> <span class="pre">~typing.Literal['dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'light']</span> <span class="pre">=</span> <span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap:</span> <span class="pre">~typing.Literal['viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'plasma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'inferno'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'cividis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'magma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'winter']</span> <span class="pre">=</span> <span class="pre">'winter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.plot" title="Permalink to this definition"></a></dt>
 <dd><p>Plot eye diagram.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>show_options</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">typing.EyeShowOptions</span></code>, optional) – Options to show in the plot. Default show all.</p></li>
+<li><p><strong>hlines</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – A list of time values in which hlines will be set.</p></li>
+<li><p><strong>vlines</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – A list of voltage values in which vlines will be set.</p></li>
 <li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Plot style. ‘dark’ or ‘light’.</p></li>
-<li><p><strong>means</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, plot mean values.</p></li>
-<li><p><strong>legend</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, show legend.</p></li>
 <li><p><strong>cmap</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Colormap to plot.</p></li>
 <li><p><strong>title</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Title of plot.</p></li>
 <li><p><strong>savefig</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Name of the file to save the plot. If None, the plot is not saved.
@@ -1809,7 +1817,7 @@ Input just the name of the file without extension (extension is .png by default)
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.typing.eye.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.show" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/typing.html#eye.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.typing.eye.show" title="Permalink to this definition"></a></dt>
 <dd><p>Show plot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>

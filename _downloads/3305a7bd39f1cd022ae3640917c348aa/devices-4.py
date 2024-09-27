@@ -1,20 +1,12 @@
-from opticomlib.devices import LPF
-from opticomlib import gv, electrical_signal
-import matplotlib.pyplot as plt
-import numpy as np
+from opticomlib.devices import FIBER, DAC
+from opticomlib import optical_signal, gv, idbm
 
-gv(N = 10, sps=128, R=1e9)
+gv(sps=32, R=10e9)
 
-t = gv.t
-c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
+signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
+input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2)
 
-input = electrical_signal( np.sin( np.pi*c*t**2) )
-output = LPF(input, 10e9)
+output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)
 
-input.psd('r', label='input', lw=2)
-output.psd('b', label='output', lw=2)
-
-plt.xlim(-30,30)
-plt.ylim(-20, 5)
-plt.annotate('-6 dB', xy=(10, -5), xytext=(10, 2), c='r', arrowprops=dict(arrowstyle='<->'), fontsize=12, ha='center', va='center')
-plt.show()
+input.plot('r-', label='input', lw=3)
+output.plot('b-', label='output', lw=3).show()

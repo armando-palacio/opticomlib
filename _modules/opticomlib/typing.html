@@ -14,11 +14,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.4.4
+                1.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -122,9 +122,7 @@
 <span class="n">Array_Like</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
 <span class="n">Number</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
 
-<div class="viewcode-block" id="global_variables">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables">[docs]</a>
-<span class="k">class</span> <span class="nc">global_variables</span><span class="p">():</span>
+<div class="viewcode-block" id="global_variables"><a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables">[docs]</a><span class="k">class</span> <span class="nc">global_variables</span><span class="p">():</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;**Global Variables (gv)**</span>
 
 <span class="sd">    This object is used to store global variables that are used in the simulation.</span>
@@ -230,9 +228,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Frequency array in Hz, ``None`` by default.&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="global_variables.__call__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables.__call__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1550e-9</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<div class="viewcode-block" id="global_variables.__call__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1550e-9</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Configures the instance with the provided parameters.</span>
 
@@ -264,23 +260,23 @@
 <span class="sd">        If none of `sps`, `R`, or `fs` is provided, it will use the instance&#39;s default values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">sps</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="n">sps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sps</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">R</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">sps</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span>
             <span class="k">elif</span> <span class="n">fs</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="n">fs</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">fs</span><span class="o">/</span><span class="n">sps</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">fs</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;`R` will be set to default value (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> Hz)&#39;</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">*</span><span class="n">sps</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span>
 
         <span class="k">elif</span> <span class="n">R</span><span class="p">:</span> 
             <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span>
             <span class="k">if</span> <span class="n">fs</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="n">fs</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fs</span><span class="o">/</span><span class="n">R</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">fs</span><span class="o">/</span><span class="n">R</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;`sps` will be set to default value (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="si">}</span><span class="s1"> samples per slot)&#39;</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -290,10 +286,10 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;`sps` will be set to default value (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="si">}</span><span class="s1"> samples per slot)&#39;</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="n">fs</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fs</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">fs</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">))</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;`sps`, `R` and `fs` will be set to default values (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="si">}</span><span class="s1"> samples per slot, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> Hz, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> Samples/s)&#39;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;`sps`, `R` and `fs` will be set to previous values (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="si">}</span><span class="s1"> samples per slot, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> Hz, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> Samples/s)&#39;</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span>
@@ -303,11 +299,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dw</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">fftshift</span><span class="p">(</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="p">))</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dw</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="kc">None</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f0</span> <span class="o">=</span> <span class="n">c</span><span class="o">/</span><span class="n">wavelength</span>
@@ -317,11 +308,8 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="bp">self</span></div>
-
         
-<div class="viewcode-block" id="global_variables.__str__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables.__str__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="global_variables.__str__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns a formatted string with the global variables of the instance.&quot;&quot;&quot;</span>
         <span class="n">title</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="s1">&#39;    Global Variables    &#39;</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;*&#39;</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">title</span><span class="p">)</span><span class="o">*</span><span class="s1">&#39;-&#39;</span>
@@ -333,6 +321,7 @@
             <span class="sa">f</span><span class="s1">&#39;sps :  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span><span class="si">}</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;R   :  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;fs  :  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> \
+            <span class="sa">f</span><span class="s1">&#39;dt  :  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;λ0  :  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> \
             <span class="sa">f</span><span class="s1">&#39;f0  :  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">f0</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
         
@@ -348,11 +337,8 @@
             <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;  Custom</span><span class="se">\n</span><span class="s1">  ------</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> : </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">others</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
         <span class="k">return</span> <span class="n">msg</span></div>
-
     
-<div class="viewcode-block" id="global_variables.print">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables.print">[docs]</a>
-    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="global_variables.print"><a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables.print">[docs]</a>    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Prints the global variables of the instance in a formatted manner.</span>
 
 <span class="sd">        Prints the global variables including `sps`, `R`, `fs`, `wavelength`, `f0`, `N`, `dt`, `dw`, `t`, and `w`.</span>
@@ -364,16 +350,32 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
-</div>
+    
+<div class="viewcode-block" id="global_variables.clean"><a class="viewcode-back" href="../../types.html#opticomlib.typing.global_variables.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return all attributes to default values.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sps</span> <span class="o">=</span> <span class="mi">16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="mf">1e9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f0</span> <span class="o">=</span> <span class="n">c</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dw</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">gv</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">gv</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;sps&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;fs&#39;</span><span class="p">,</span> <span class="s1">&#39;dt&#39;</span><span class="p">,</span> <span class="s1">&#39;wavelength&#39;</span><span class="p">,</span> <span class="s1">&#39;f0&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;dw&#39;</span><span class="p">])]</span>
+        
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div></div>
 
 
 <span class="n">gv</span> <span class="o">=</span> <span class="n">global_variables</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="binary_sequence">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence">[docs]</a>
-<span class="k">class</span> <span class="nc">binary_sequence</span><span class="p">():</span>
+<div class="viewcode-block" id="binary_sequence"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence">[docs]</a><span class="k">class</span> <span class="nc">binary_sequence</span><span class="p">():</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;**Binary Sequence**</span>
 
 <span class="sd">    This class provides methods and attributes to work with binary sequences. </span>
@@ -405,9 +407,7 @@
 <span class="sd">        sizeof</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="binary_sequence.__init__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">):</span> 
+<div class="viewcode-block" id="binary_sequence.__init__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the binary sequence object.</span>
 
 <span class="sd">        Parameters</span>
@@ -432,10 +432,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The execution time of the last operation performed on the binary sequence.&quot;&quot;&quot;</span></div>
 
-
-<div class="viewcode-block" id="binary_sequence.__str__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__str__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+<div class="viewcode-block" id="binary_sequence.__str__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a formatted string with the binary sequence data, length, size in bytes and time if available.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
@@ -455,15 +452,12 @@
             <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span>\
                 <span class="sa">f</span><span class="s1">&#39;time  :  </span><span class="si">{</span><span class="n">si</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;s&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">return</span> <span class="n">msg</span></div>
-
     
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;binary_sequence(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
     
-<div class="viewcode-block" id="binary_sequence.print">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.print">[docs]</a>
-    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+<div class="viewcode-block" id="binary_sequence.print"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.print">[docs]</a>    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Print object parameters.</span>
 
 <span class="sd">        Parameters</span>
@@ -478,18 +472,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-
     
-<div class="viewcode-block" id="binary_sequence.__len__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__len__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="binary_sequence.__len__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of slots of the binary sequence. ``len(self)``&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="binary_sequence.__getitem__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__getitem__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span>
+<div class="viewcode-block" id="binary_sequence.__getitem__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a slice of the binary sequence (``self[slice]``). </span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -503,11 +491,8 @@
 <span class="sd">            The value of the slot if `slice` is an integer, or a new binary sequence object with the result of the slice.</span>
 <span class="sd">        &quot;&quot;&quot;</span> 
         <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="nb">slice</span><span class="p">])</span></div>
-
     
-<div class="viewcode-block" id="binary_sequence.__eq__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__eq__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<div class="viewcode-block" id="binary_sequence.__eq__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__eq__">[docs]</a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two binary sequences using ``==`` operator.</span>
 
 <span class="sd">        Parameters</span>
@@ -534,10 +519,7 @@
         
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="binary_sequence.__add__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__add__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
+<div class="viewcode-block" id="binary_sequence.__add__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Concatenate two binary sequences, adding to the end (``+``).</span>
 
 <span class="sd">        Parameters</span>
@@ -577,11 +559,8 @@
         
         <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
-
     
-<div class="viewcode-block" id="binary_sequence.__radd__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__radd__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
+<div class="viewcode-block" id="binary_sequence.__radd__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__radd__">[docs]</a>    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Concatenate two binary sequences, adding to the beginning (``+``).</span>
 
 <span class="sd">        Parameters</span>
@@ -622,10 +601,7 @@
         <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="binary_sequence.__invert__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__invert__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="binary_sequence.__invert__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.__invert__">[docs]</a>    <span class="k">def</span> <span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Invert the binary sequence using the ``~`` operator. </span>
 <span class="sd">        </span>
 <span class="sd">        Implement a bitwise not ``~`` operation on the binary sequence. Example: ``~binary_sequence([1,0,1,0])`` returns ``binary_sequence([0,1,0,1])``.</span>
@@ -637,10 +613,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span></div>
 
-
-<div class="viewcode-block" id="binary_sequence.len">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.len">[docs]</a>
-    <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<div class="viewcode-block" id="binary_sequence.len"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.len">[docs]</a>    <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of slots of the binary sequence.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -649,11 +622,8 @@
 <span class="sd">            The number of slots of the binary sequence.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span></div>
-
     
-<div class="viewcode-block" id="binary_sequence.ones">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.ones">[docs]</a>
-    <span class="k">def</span> <span class="nf">ones</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="binary_sequence.ones"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.ones">[docs]</a>    <span class="k">def</span> <span class="nf">ones</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of ones in the binary sequence.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -662,11 +632,8 @@
 <span class="sd">            The number of ones in the binary sequence.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
-
     
-<div class="viewcode-block" id="binary_sequence.zeros">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.zeros">[docs]</a>
-    <span class="k">def</span> <span class="nf">zeros</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="binary_sequence.zeros"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.zeros">[docs]</a>    <span class="k">def</span> <span class="nf">zeros</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of zeros in the binary sequence.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -675,11 +642,8 @@
 <span class="sd">            The number of zeros in the binary sequence.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ones</span><span class="p">()</span></div>
-
     
-<div class="viewcode-block" id="binary_sequence.type">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.type">[docs]</a>
-    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<div class="viewcode-block" id="binary_sequence.type"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return de object type.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -688,20 +652,13 @@
 <span class="sd">            The object type :obj:`binary_sequence`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
-
     
-<div class="viewcode-block" id="binary_sequence.sizeof">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.sizeof">[docs]</a>
-    <span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="binary_sequence.sizeof"><a class="viewcode-back" href="../../types.html#opticomlib.typing.binary_sequence.sizeof">[docs]</a>    <span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get memory size of object in bytes.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
-</div>
+        <span class="k">return</span> <span class="n">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
 
 
-
-<div class="viewcode-block" id="electrical_signal">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal">[docs]</a>
-<span class="k">class</span> <span class="nc">electrical_signal</span><span class="p">():</span>
+<div class="viewcode-block" id="electrical_signal"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal">[docs]</a><span class="k">class</span> <span class="nc">electrical_signal</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;**Electrical Signal**</span>
 
 <span class="sd">    This class provides methods and attributes to work with electrical signals. </span>
@@ -741,9 +698,7 @@
 <span class="sd">        show</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="electrical_signal.__init__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">noise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="electrical_signal.__init__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">noise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the electrical signal object.</span>
 
 <span class="sd">        Parameters</span>
@@ -806,10 +761,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The execution time of the last operation performed on the electrical signal.&quot;&quot;&quot;</span></div>
 
-
-<div class="viewcode-block" id="electrical_signal.__str__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__str__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.__str__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a formatted string with the electrical_signal data, length, size in bytes and time if available.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
@@ -838,7 +790,6 @@
             <span class="n">msg</span> <span class="o">+=</span> <span class="n">tab</span> <span class="o">+</span> \
                 <span class="sa">f</span><span class="s1">&#39;time:      </span><span class="si">{</span><span class="n">si</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;s&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">return</span> <span class="n">msg</span></div>
-
     
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
@@ -847,9 +798,7 @@
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;electrical_signal(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;electrical_signal(signal=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span><span class="se">\n\t\t</span><span class="s1">   noise=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
 
-<div class="viewcode-block" id="electrical_signal.print">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.print">[docs]</a>
-    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.print"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.print">[docs]</a>    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Prints object parameters.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -865,13 +814,10 @@
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
     
-<div class="viewcode-block" id="electrical_signal.__add__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__add__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.__add__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Add two electrical signals (``+`` operator). Same that ``__radd__``.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -899,14 +845,11 @@
         <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
-
         
     <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
     
-<div class="viewcode-block" id="electrical_signal.__sub__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__sub__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.__sub__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__sub__">[docs]</a>    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Substract two electrical signals (``-`` operator).</span>
 
 <span class="sd">        Parameters</span>
@@ -934,7 +877,6 @@
         <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
-
         
     <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
@@ -953,9 +895,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         
-<div class="viewcode-block" id="electrical_signal.__mul__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__mul__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.__mul__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Multiply two electrical signals (``*`` operator). Same that ``__rmul__``.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -983,14 +923,11 @@
         <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
-
         
     <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         
-<div class="viewcode-block" id="electrical_signal.__getitem__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__getitem__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.__getitem__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice the signal.</span>
 
 <span class="sd">        Parameters</span>
@@ -1007,10 +944,7 @@
             <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span> 
         <span class="k">return</span> <span class="n">electrical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="nb">slice</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="electrical_signal.__call__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__call__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">],</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.__call__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">],</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.</span>
 
 <span class="sd">        Parameters</span>
@@ -1056,11 +990,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.__gt__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__gt__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.__gt__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__gt__">[docs]</a>    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Compare the signal+noise with a threshold (``&gt;`` operator).</span>
 
 <span class="sd">        Parameters</span>
@@ -1087,12 +1018,9 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span></div>
-
         
 
-<div class="viewcode-block" id="electrical_signal.__lt__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__lt__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.__lt__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.__lt__">[docs]</a>    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Compare the signal+noise with a threshold (``&lt;`` operator).</span>
 
 <span class="sd">        Parameters</span>
@@ -1119,11 +1047,8 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t compare electrical_signals with shapes </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span></div>
-
              
-<div class="viewcode-block" id="electrical_signal.len">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.len">[docs]</a>
-    <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.len"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.len">[docs]</a>    <span class="k">def</span> <span class="nf">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of samples of the electrical signal.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1135,10 +1060,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">size</span></div>
 
-
-<div class="viewcode-block" id="electrical_signal.type">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.type">[docs]</a>
-    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.type"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return de object type (``electrical_signal``).</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1148,10 +1070,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="electrical_signal.sizeof">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.sizeof">[docs]</a>
-    <span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.sizeof"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.sizeof">[docs]</a>    <span class="k">def</span> <span class="nf">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get memory size of object in bytes.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1161,10 +1080,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">sizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="electrical_signal.fs">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.fs">[docs]</a>
-    <span class="k">def</span> <span class="nf">fs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.fs"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.fs">[docs]</a>    <span class="k">def</span> <span class="nf">fs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get sampling frequency of the electrical signal.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1173,11 +1089,8 @@
 <span class="sd">            The sampling frequency of the electrical signal (``gv.fs``).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.sps">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.sps">[docs]</a>
-    <span class="k">def</span> <span class="nf">sps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.sps"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.sps">[docs]</a>    <span class="k">def</span> <span class="nf">sps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get samples per slot of the electrical signal.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1186,11 +1099,8 @@
 <span class="sd">            The samples per slot of the electrical signal (``gv.sps``).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.dt">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.dt">[docs]</a>
-    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.dt"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.dt">[docs]</a>    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get time step of the electrical signal.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1199,11 +1109,8 @@
 <span class="sd">            The time step of the electrical signal (``gv.dt``).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">gv</span><span class="o">.</span><span class="n">dt</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.t">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.t">[docs]</a>
-    <span class="k">def</span> <span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.t"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.t">[docs]</a>    <span class="k">def</span> <span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get time array for the electrical signal.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1212,11 +1119,8 @@
 <span class="sd">            The time array for the electrical signal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.w">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.w">[docs]</a>
-    <span class="k">def</span> <span class="nf">w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.w"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.w">[docs]</a>    <span class="k">def</span> <span class="nf">w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return angular frequency for spectrum representation.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -1233,11 +1137,8 @@
         <span class="k">if</span> <span class="n">shift</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">w</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.power">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.power">[docs]</a>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="s1">&#39;noise&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span> 
+<div class="viewcode-block" id="electrical_signal.power"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.power">[docs]</a>    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="s1">&#39;noise&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get power of the electrical signal.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -1253,11 +1154,8 @@
         <span class="k">if</span> <span class="n">by</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span> <span class="s1">&#39;noise&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`by` must be one of the following values (&quot;signal&quot;, &quot;noise&quot;, &quot;all&quot;)&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">by</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.phase">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.phase">[docs]</a>
-    <span class="k">def</span> <span class="nf">phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.phase"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.phase">[docs]</a>    <span class="k">def</span> <span class="nf">phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get phase of the ``signal`` + `noise`.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1268,11 +1166,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">))</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.apply">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.apply">[docs]</a>
-    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.apply"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Apply a function to signal and noise.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -1296,10 +1191,7 @@
         <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
-
-<div class="viewcode-block" id="electrical_signal.copy">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.copy">[docs]</a>
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.copy"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of the object.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -1316,10 +1208,7 @@
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span></div>
 
-
-<div class="viewcode-block" id="electrical_signal.abs">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.abs">[docs]</a>
-    <span class="k">def</span> <span class="nf">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="s1">&#39;noise&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.abs"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.abs">[docs]</a>    <span class="k">def</span> <span class="nf">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="s1">&#39;noise&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get absolute value of ``signal``, ``noise`` or ``signal+noise``.</span>
 
 <span class="sd">        Parameters</span>
@@ -1344,12 +1233,9 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`by` must be one of the following values (&quot;signal&quot;, &quot;noise&quot;, &quot;all&quot;)&#39;</span><span class="p">)</span></div>
-
     
 
-<div class="viewcode-block" id="electrical_signal.plot">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="electrical_signal.plot"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
              <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> 
              <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
              <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -1416,13 +1302,12 @@
         
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
 
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
     
 
-<div class="viewcode-block" id="electrical_signal.psd">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.psd">[docs]</a>
-    <span class="k">def</span> <span class="nf">psd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="electrical_signal.psd"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.psd">[docs]</a>    <span class="k">def</span> <span class="nf">psd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
             <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> 
             <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
             <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1497,12 +1382,11 @@
 
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
 
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
     
-<div class="viewcode-block" id="electrical_signal.grid">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.grid">[docs]</a>
-    <span class="k">def</span> <span class="nf">grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.grid"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.grid">[docs]</a>    <span class="k">def</span> <span class="nf">grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Add grid to the plot.</span>
 
 <span class="sd">        Parameters</span>
@@ -1518,11 +1402,8 @@
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.legend">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.legend">[docs]</a>
-    <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.legend"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.legend">[docs]</a>    <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Add a legend to the plot.</span>
 
 <span class="sd">        Parameters</span>
@@ -1539,11 +1420,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-
     
-<div class="viewcode-block" id="electrical_signal.show">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.show">[docs]</a>
-    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.show"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Show plots.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -1552,14 +1430,10 @@
 <span class="sd">            The same object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-</div>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
-
-<div class="viewcode-block" id="optical_signal">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal">[docs]</a>
-<span class="k">class</span> <span class="nc">optical_signal</span><span class="p">(</span><span class="n">electrical_signal</span><span class="p">):</span>
+<div class="viewcode-block" id="optical_signal"><a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal">[docs]</a><span class="k">class</span> <span class="nc">optical_signal</span><span class="p">(</span><span class="n">electrical_signal</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;**Optical Signal**</span>
 <span class="sd">    </span>
 <span class="sd">    Bases: :obj:`electrical_signal`</span>
@@ -1599,9 +1473,7 @@
 <span class="sd">        show</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="optical_signal.__init__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="optical_signal.__init__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">signal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">,</span> 
                  <span class="n">noise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">n_pol</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1690,7 +1562,6 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">=</span> <span class="n">n_pol</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span> <span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>  </div>
-
     
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
@@ -1704,9 +1575,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;optical_signal(signal=</span><span class="si">{</span><span class="n">signal</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="mi">16</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;noise=</span><span class="si">{</span><span class="n">noise</span><span class="si">}</span><span class="s1">)&#39;</span>
 
     
-<div class="viewcode-block" id="optical_signal.__getitem__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__getitem__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span> 
+<div class="viewcode-block" id="optical_signal.__getitem__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice the optical signal.</span>
 
 <span class="sd">        Parameters</span>
@@ -1732,7 +1601,6 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">optical_signal</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[:,</span><span class="nb">slice</span><span class="p">]</span> <span class="p">)</span></div>
-
     
     <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;The &gt; operator is not implemented for optical_signal objects.&#39;</span><span class="p">)</span>
@@ -1740,9 +1608,7 @@
     <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;The &lt; operator is not implemented for optical_signal objects.&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="optical_signal.plot">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="optical_signal.plot"><a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
              <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> 
              <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="s1">&#39;abs&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;abs&#39;</span><span class="p">,</span> 
              <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -1865,13 +1731,12 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
 
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
     
 
-<div class="viewcode-block" id="optical_signal.psd">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.psd">[docs]</a>
-    <span class="k">def</span> <span class="nf">psd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="optical_signal.psd"><a class="viewcode-back" href="../../types.html#opticomlib.typing.optical_signal.psd">[docs]</a>    <span class="k">def</span> <span class="nf">psd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
             <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> 
             <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> 
             <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -2001,14 +1866,25 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-</div>
 
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
     
+<span class="k">class</span> <span class="nc">EyeShowOptions</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+            <span class="n">averages</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">threshold</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">cross_points</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">legends</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">t_opt</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">averages</span> <span class="o">=</span> <span class="n">averages</span> <span class="k">if</span> <span class="n">averages</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span> <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cross_points</span> <span class="o">=</span> <span class="n">cross_points</span> <span class="k">if</span> <span class="n">cross_points</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legends</span> <span class="o">=</span> <span class="n">legends</span> <span class="k">if</span> <span class="n">legends</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_opt</span> <span class="o">=</span> <span class="n">t_opt</span> <span class="k">if</span> <span class="n">t_opt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="eye">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.eye">[docs]</a>
-<span class="k">class</span> <span class="nc">eye</span><span class="p">():</span>
+<div class="viewcode-block" id="eye"><a class="viewcode-back" href="../../types.html#opticomlib.typing.eye">[docs]</a><span class="k">class</span> <span class="nc">eye</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;**Eye Diagram Parameters**.</span>
 
 <span class="sd">    This object contains the parameters of an eye diagram and methods to plot it.</span>
@@ -2062,9 +1938,7 @@
 <span class="sd">        Eye height.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="eye.__init__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="eye.__init__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Initialize the eye diagram object.</span>
 
 <span class="sd">        Parameters</span>
@@ -2079,11 +1953,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">empty</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">empty</span> <span class="o">=</span> <span class="kc">True</span></div>
-
         
-<div class="viewcode-block" id="eye.__str__">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.__str__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+<div class="viewcode-block" id="eye.__str__"><a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a formatted string with the eye diagram data.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Empty eye diagram object.&#39;</span><span class="p">)</span>
@@ -2101,11 +1972,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> time  :  </span><span class="si">{</span><span class="n">si</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;s&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">return</span> <span class="n">msg</span></div>
-
     
-<div class="viewcode-block" id="eye.print">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.print">[docs]</a>
-    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+<div class="viewcode-block" id="eye.print"><a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.print">[docs]</a>    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Print object parameters.</span>
 
 <span class="sd">        Parameters</span>
@@ -2120,27 +1988,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-
     
-<div class="viewcode-block" id="eye.plot">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-             <span class="n">medias_</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-             <span class="n">legend_</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+<div class="viewcode-block" id="eye.plot"><a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+             <span class="n">show_options</span><span class="p">:</span> <span class="n">EyeShowOptions</span><span class="o">=</span><span class="n">EyeShowOptions</span><span class="p">(),</span>
+             <span class="n">hlines</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[],</span>
+             <span class="n">vlines</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[],</span> 
              <span class="n">style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span> <span class="s1">&#39;light&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span> 
              <span class="n">cmap</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="s1">&#39;plasma&#39;</span><span class="p">,</span> <span class="s1">&#39;inferno&#39;</span><span class="p">,</span> <span class="s1">&#39;cividis&#39;</span><span class="p">,</span> <span class="s1">&#39;magma&#39;</span><span class="p">,</span> <span class="s1">&#39;winter&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;winter&#39;</span><span class="p">,</span>
              <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-             <span class="n">savefig</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+             <span class="n">savefig</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Plot eye diagram.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+<span class="sd">        show_options : :obj:`typing.EyeShowOptions`, optional</span>
+<span class="sd">            Options to show in the plot. Default show all.</span>
+<span class="sd">        hlines : :obj:`list`, optional</span>
+<span class="sd">            A list of time values in which hlines will be set.</span>
+<span class="sd">        vlines : :obj:`list`, optional</span>
+<span class="sd">            A list of voltage values in which vlines will be set.</span>
 <span class="sd">        style : :obj:`str`, optional</span>
 <span class="sd">            Plot style. &#39;dark&#39; or &#39;light&#39;.</span>
-<span class="sd">        means_ : :obj:`bool`, optional</span>
-<span class="sd">            If True, plot mean values.</span>
-<span class="sd">        legend_ : :obj:`bool`, optional</span>
-<span class="sd">            If True, show legend.</span>
 <span class="sd">        cmap : :obj:`str`, optional</span>
 <span class="sd">            Colormap to plot.</span>
 <span class="sd">        title : :obj:`str`, optional</span>
@@ -2182,25 +2051,51 @@
         
         <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">dt</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">s0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu1</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">s1</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Amplitude [mV]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Amplitude [V]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
         <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Time [$t/T_</span><span class="si">{slot}</span><span class="s1">$]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-        <span class="n">t_line1</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_opt</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">t_opt_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span>
-        <span class="n">t_line_span0</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_span0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">t_opt_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
-        <span class="n">t_line_span1</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_span1</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">t_opt_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">legend_</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">show_options</span><span class="o">.</span><span class="n">t_opt</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_opt</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">t_opt_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_span0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">t_opt_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_span1</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">t_opt_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+
+        <span class="c1"># crossing points</span>
+        <span class="k">if</span> <span class="n">show_options</span><span class="o">.</span><span class="n">cross_points</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_right</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_left</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">t_left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_right</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_right</span><span class="p">],</span> <span class="s1">&#39;xr&#39;</span><span class="p">)</span>
+
+        <span class="c1"># threshold</span>
+        <span class="k">if</span> <span class="n">show_options</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;th&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_options</span><span class="o">.</span><span class="n">legends</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        
+        <span class="c1"># horizontal lines</span>
+        <span class="k">for</span> <span class="n">hl</span> <span class="ow">in</span> <span class="n">hlines</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">hl</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">hl</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># vertical lines</span>
+        <span class="k">for</span> <span class="n">vl</span> <span class="ow">in</span> <span class="n">vlines</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">vl</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span> <span class="p">(</span><span class="n">vl</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># legend</span>
+        <span class="k">if</span> <span class="n">show_options</span><span class="o">.</span><span class="n">legends</span><span class="p">:</span> 
             <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="sa">r</span><span class="s1">&#39;$t_</span><span class="si">{opt}</span><span class="s1">$&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">medias_</span><span class="p">:</span>
+        <span class="c1"># means</span>
+        <span class="k">if</span> <span class="n">show_options</span><span class="o">.</span><span class="n">averages</span><span class="p">:</span>
             <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu1</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">means_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span>
             <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">means_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span>
 
-            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu1</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">means_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span>
-            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">means_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">legend_</span><span class="p">:</span>
-                <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="sa">r</span><span class="s1">&#39;$\mu_1$&#39;</span><span class="p">,</span><span class="sa">r</span><span class="s1">&#39;$\mu_0$&#39;</span><span class="p">])</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu1</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">means_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\mu_1$&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">means_color</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\mu_0$&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_options</span><span class="o">.</span><span class="n">legends</span><span class="p">:</span>
+                <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
         <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sharey</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -2231,57 +2126,16 @@
             <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1">## ADD SLIDERS</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
-        <span class="n">t_slider_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span><span class="n">p</span><span class="o">.</span><span class="n">y1</span><span class="o">+</span><span class="mf">0.01</span><span class="p">,</span><span class="n">p</span><span class="o">.</span><span class="n">x1</span><span class="o">-</span><span class="n">p</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span><span class="mf">0.02</span><span class="p">])</span>
-
-        <span class="n">t_slider</span> <span class="o">=</span> <span class="n">Slider</span><span class="p">(</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">t_slider_ax</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-            <span class="n">valmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> 
-            <span class="n">valmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">valstep</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> 
-            <span class="n">valinit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t_opt</span><span class="p">,</span> 
-            <span class="n">initcolor</span><span class="o">=</span><span class="n">t_opt_color</span><span class="p">,</span>
-            <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">bgcolor</span><span class="p">,</span>
-            <span class="n">track_color</span><span class="o">=</span><span class="n">bgcolor</span><span class="p">,</span>
-            <span class="n">handle_style</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">t_opt_color</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">bgcolor</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="c1">## PLOTS UPDATE</span>
-        <span class="k">def</span> <span class="nf">update_t_line</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-            <span class="n">t_line1</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-
-            <span class="n">t_line_span0</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">val</span><span class="o">-</span><span class="mf">0.05</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">t_dist</span><span class="p">)</span>
-            <span class="n">t_line_span1</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">val</span><span class="o">+</span><span class="mf">0.05</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">t_dist</span><span class="p">)</span>
-
-            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">patches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
-
-            <span class="n">n</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-                <span class="n">y_</span><span class="p">[(</span><span class="n">t_</span><span class="o">&gt;</span><span class="n">val</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t_</span><span class="o">&lt;</span><span class="n">val</span><span class="o">+</span><span class="mf">0.01</span><span class="p">)],</span> 
-                <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> 
-                <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                <span class="n">orientation</span> <span class="o">=</span> <span class="s1">&#39;horizontal&#39;</span><span class="p">,</span> 
-                <span class="n">color</span> <span class="o">=</span> <span class="n">t_opt_color</span><span class="p">,</span> 
-                <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
-                <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
-
-        <span class="n">t_slider</span><span class="o">.</span><span class="n">on_changed</span><span class="p">(</span><span class="n">update_t_line</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">savefig</span><span class="p">:</span> 
             <span class="k">if</span> <span class="n">savefig</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">):</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savefig</span><span class="p">)</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-
-<div class="viewcode-block" id="eye.show">
-<a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.show">[docs]</a>
-    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="eye.show"><a class="viewcode-back" href="../../types.html#opticomlib.typing.eye.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Show plot</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -2290,8 +2144,7 @@
 <span class="sd">            The same object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-</div>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 </pre></div>
 

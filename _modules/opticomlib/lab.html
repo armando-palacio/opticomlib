@@ -14,11 +14,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.4.4
+                1.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -102,6 +102,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">sg</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
 
 <span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">binary_sequence</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">eye</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">,</span> <span class="n">Number</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
@@ -112,9 +113,7 @@
 <span class="kn">import</span> <span class="nn">time</span>
 
 
-<div class="viewcode-block" id="search_inst">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.search_inst">[docs]</a>
-<span class="k">def</span> <span class="nf">search_inst</span><span class="p">():</span>
+<div class="viewcode-block" id="search_inst"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.search_inst">[docs]</a><span class="k">def</span> <span class="nf">search_inst</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;**Intruments search**</span>
 <span class="sd">    </span>
 <span class="sd">    Search for the available instruments in the system and print the IDs.</span>
@@ -122,13 +121,19 @@
     <span class="n">rm</span> <span class="o">=</span> <span class="n">visa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">rm</span><span class="o">.</span><span class="n">list_resources</span><span class="p">())</span></div>
 
+<span class="k">def</span> <span class="nf">connect_inst</span><span class="p">(</span><span class="n">addr_ID</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">inst</span> <span class="o">=</span> <span class="n">visa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">()</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="n">addr_ID</span><span class="p">)</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">10000</span> <span class="c1"># timeout in milliseconds</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;*IDN?&#39;</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No identification received!!&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inst</span>
 
 
-<div class="viewcode-block" id="SYNC">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.SYNC">[docs]</a>
-<span class="k">def</span> <span class="nf">SYNC</span><span class="p">(</span><span class="n">signal_rx</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> 
-         <span class="n">slots_tx</span><span class="p">:</span> <span class="n">binary_sequence</span><span class="p">,</span> 
-         <span class="n">sps</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="SYNC"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.SYNC">[docs]</a><span class="k">def</span> <span class="nf">SYNC</span><span class="p">(</span><span class="n">signal_rx</span><span class="p">:</span> <span class="n">electrical_signal</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+         <span class="n">slots_tx</span><span class="p">:</span> <span class="n">binary_sequence</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+         <span class="n">sps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;**Signal Synchronizer**</span>
 
 <span class="sd">    Synchronizes the received signal with the transmitted signal to determine the starting position in the received signal for further processing. </span>
@@ -137,11 +142,11 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    signal_rx : :obj:`electrical_signal`</span>
+<span class="sd">    signal_rx : :obj:`electrical_signal` | :obj:`np.ndarray`</span>
 <span class="sd">        The received digital signal (from the oscilloscope or an ADC).</span>
-<span class="sd">    slots_tx : :obj:`binary_sequence`</span>
+<span class="sd">    slots_tx : :obj:`binary_sequence` | :obj:`np.ndarray`</span>
 <span class="sd">        The transmitted slots sequence.</span>
-<span class="sd">    sps : :obj:`int`</span>
+<span class="sd">    sps : :obj:`int`, optional</span>
 <span class="sd">        Number of samples per slot of the digitalized signal ``signal_rx``.</span>
 
 <span class="sd">    Returns</span>
@@ -160,16 +165,26 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">tic</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sps</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The &quot;sps&quot; must be an integer to perform synchronization.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal_rx</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+        <span class="n">sps</span> <span class="o">=</span> <span class="n">signal_rx</span><span class="o">.</span><span class="n">sps</span><span class="p">()</span>
+        <span class="n">signal_rx</span> <span class="o">=</span> <span class="n">signal_rx</span><span class="o">.</span><span class="n">signal</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal_rx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;&quot;sps&quot; must be provided to perform synchronization.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The &quot;signal_rx&quot; must be of type `electrical_signal` or `np.ndarray`.&#39;</span><span class="p">)</span>
 
-    <span class="n">signal_tx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">slots_tx</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">sps</span><span class="p">))</span>
-    <span class="n">signal_rx</span> <span class="o">=</span> <span class="n">signal_rx</span><span class="o">.</span><span class="n">signal</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slots_tx</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+        <span class="n">slots_tx</span> <span class="o">=</span> <span class="n">slots_tx</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slots_tx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The &quot;slots_tx&quot; must be of type `binary_sequence` or `np.ndarray`.&#39;</span><span class="p">)</span>
+
+    <span class="n">signal_tx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">slots_tx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">sps</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal_rx</span><span class="p">)</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">signal_tx</span><span class="p">):</span> 
         <span class="k">raise</span> <span class="ne">BufferError</span><span class="p">(</span><span class="s1">&#39;The length of the received vector must be greater than the transmitted vector!!&#39;</span><span class="p">)</span>
 
-    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal_tx</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">signal_tx</span><span class="o">.</span><span class="n">size</span>
     <span class="n">corr</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">signal_rx</span><span class="p">[:</span><span class="mi">2</span><span class="o">*</span><span class="n">l</span><span class="p">],</span> <span class="n">signal_tx</span><span class="p">[</span><span class="n">l</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span> <span class="c1"># Correlation of the transmitted signal with the received signal in a window of 2*l (sufficient to find a maximum)</span>
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">corr</span><span class="p">):</span> 
@@ -182,15 +197,17 @@
     <span class="k">return</span> <span class="n">signal_sync</span><span class="p">,</span> <span class="n">i</span></div>
 
 
-
-<div class="viewcode-block" id="GET_EYE_v2">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.GET_EYE_v2">[docs]</a>
-<span class="k">def</span> <span class="nf">GET_EYE_v2</span><span class="p">(</span><span class="n">sync_signal</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">slots_tx</span><span class="p">:</span> <span class="n">binary_sequence</span><span class="p">,</span> <span class="n">sps</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">nslots</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">8192</span><span class="p">):</span>
+<div class="viewcode-block" id="GET_EYE_v2"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.GET_EYE_v2">[docs]</a><span class="k">def</span> <span class="nf">GET_EYE_v2</span><span class="p">(</span>
+        <span class="n">sync_signal</span><span class="p">:</span> <span class="n">electrical_signal</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+        <span class="n">slots_tx</span><span class="p">:</span> <span class="n">binary_sequence</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+        <span class="n">nslots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;**Eye diagram parameters v2**</span>
 
 <span class="sd">    Estimate the means and standard deviations of levels 0 and 1 in the ``sync_signal`` </span>
-<span class="sd">    knowing the transmitted sequence ``slots_tx``. It separates the received signal levels</span>
-<span class="sd">    corresponding to transmitted level 0 and 1 and estimates the means and standard deviations. </span>
+<span class="sd">    by knowing the transmitted sequence ``slots_tx``. It separates the received signal levels</span>
+<span class="sd">    corresponding to transmitted level 0 and 1 and estimates the means and standard deviations,</span>
+<span class="sd">    different to ``devices.GET_EYE()`` that assume transmitted bits are not known. </span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -198,8 +215,6 @@
 <span class="sd">        Synchronized digital signal in time with the transmitted signal.</span>
 <span class="sd">    slots_tx : binary_sequence</span>
 <span class="sd">        Transmitted bit sequence.</span>
-<span class="sd">    sps : int</span>
-<span class="sd">        Number of samples per slot of the digitalized signal ``sync_signal``.</span>
 <span class="sd">    nslots : int, default: 8192</span>
 <span class="sd">        Number of slots to use for estimation.</span>
 
@@ -220,40 +235,87 @@
 <span class="sd">            - ``s0``: Standard deviation of level 0.</span>
 <span class="sd">            - ``s1``: Standard deviation of level 1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sps</span> <span class="o">=</span> <span class="n">sync_signal</span><span class="o">.</span><span class="n">sps</span><span class="p">()</span>
+    <span class="n">tic</span><span class="p">()</span>
+
+    <span class="c1">#########################</span>
+    <span class="c1">## Preprocessing input ##</span>
+    <span class="c1">#########################</span>
+    
+    <span class="nb">input</span> <span class="o">=</span> <span class="n">sync_signal</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slots_tx</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
+        <span class="n">slots_tx</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span><span class="n">slots_tx</span><span class="p">)</span>
 
     <span class="n">eye_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;sps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sps</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;sps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sps</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">sps</span><span class="p">()</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">dt</span><span class="p">()</span>
 
+    <span class="c1"># truncate</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sps</span><span class="p">)</span>  <span class="c1"># we obtain the rest %(2*sps)</span>
+    <span class="k">if</span> <span class="n">n</span><span class="p">:</span> <span class="c1"># if rest is not zero</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:</span><span class="o">-</span><span class="n">n</span><span class="p">]</span> <span class="c1"># ignore last &#39;n&#39; samples</span>
 
-    <span class="n">rx</span> <span class="o">=</span> <span class="n">sync_signal</span><span class="p">[:</span><span class="n">nslots</span><span class="o">*</span><span class="n">sps</span><span class="p">]</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="n">sync_signal</span><span class="p">[:</span><span class="n">nslots</span><span class="o">*</span><span class="n">sps</span><span class="p">]</span><span class="o">.</span><span class="n">noise</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rx</span>
-    <span class="n">tx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">slots_tx</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="n">nslots</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">sps</span><span class="p">))</span>
+    <span class="n">nslots</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">//</span> <span class="n">sps</span><span class="p">),</span> <span class="n">nslots</span><span class="p">)</span> <span class="c1"># determine the minimum between slots of signal and &#39;nslots&#39; parameter</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:</span> <span class="n">nslots</span> <span class="o">*</span> <span class="n">sps</span><span class="p">]</span> <span class="c1"># truncate signal</span>
 
-    <span class="n">unos</span> <span class="o">=</span> <span class="n">rx</span><span class="p">[</span><span class="n">tx</span><span class="o">==</span><span class="mi">1</span><span class="p">];</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;unos&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">unos</span>
-    <span class="n">zeros</span> <span class="o">=</span> <span class="n">rx</span><span class="p">[</span><span class="n">tx</span><span class="o">==</span><span class="mi">0</span><span class="p">];</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;zeros&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">zeros</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">real</span> <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">real</span> <span class="c1"># add noise to signal, if there is noise</span>
 
-    <span class="n">t0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">zeros</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="n">sps</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">));</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t0&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">t0</span>
-    <span class="n">t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">unos</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="n">sps</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">));</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t1&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">t1</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="o">-</span><span class="n">sps</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nslots</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">sps</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sps</span><span class="p">),</span> <span class="p">)</span>
+    
+    <span class="c1">###############</span>
+    <span class="c1">## Algorithm ##</span>
+    <span class="c1">###############</span>
+
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">slots_tx</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="n">nslots</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">sps</span><span class="p">))</span>
+
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;ones&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ones</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">ref</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;zeros&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">ref</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">zeros</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="n">sps</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;t1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ones</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="n">sps</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 
     <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;i&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sps</span><span class="o">//</span><span class="mi">2</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
 
-    <span class="n">unos_</span> <span class="o">=</span> <span class="n">unos</span><span class="p">[(</span><span class="n">t1</span><span class="o">&lt;</span><span class="mf">0.05</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t1</span><span class="o">&gt;-</span><span class="mf">0.05</span><span class="p">)]</span>
-    <span class="n">zeros_</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">[(</span><span class="n">t0</span><span class="o">&lt;</span><span class="mf">0.05</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t0</span><span class="o">&gt;-</span><span class="mf">0.05</span><span class="p">)]</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">mu0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">zeros_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;mu0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu0</span>
-    <span class="n">mu1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">unos_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;mu1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu1</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_dist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_dist</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_opt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_opt</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_span0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_span0</span> <span class="o">=</span> <span class="n">t_opt</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">t_dist</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_span1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_span1</span> <span class="o">=</span> <span class="n">t_opt</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">t_dist</span>
 
-    <span class="n">s0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">zeros_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;s0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s0</span>
-    <span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">unos_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">;</span> <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;s1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s1</span>
+    <span class="n">ones_</span> <span class="o">=</span> <span class="n">ones</span><span class="p">[(</span><span class="n">t1</span><span class="o">&gt;</span><span class="n">t_span0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t1</span><span class="o">&lt;</span><span class="n">t_span1</span><span class="p">)]</span>
+    <span class="n">zeros_</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">[(</span><span class="n">t0</span><span class="o">&gt;</span><span class="n">t_span0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t0</span><span class="o">&lt;</span><span class="n">t_span1</span><span class="p">)]</span>
 
-    <span class="k">return</span> <span class="n">eye</span><span class="p">(</span><span class="n">eye_dict</span><span class="p">)</span></div>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;mu0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">zeros_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;mu1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ones_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;s0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">zeros_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s1">&#39;s1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ones_</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+
+    <span class="c1"># compute umbral</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu0</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">zeros_</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">ones_</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">pdf</span><span class="p">)]</span>
+
+    <span class="c1"># We obtain the extinction ratio</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;er&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mu1</span> <span class="o">/</span> <span class="n">mu0</span><span class="p">)</span> <span class="k">if</span> <span class="n">mu0</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">if</span> <span class="n">mu0</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="c1"># We obtain the eye opening</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;eye_h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu1</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s1</span> <span class="o">-</span> <span class="n">mu0</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s0</span>
+    
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;execution_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">eye</span><span class="p">(</span><span class="o">**</span><span class="n">eye_dict</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204">[docs]</a>
-<span class="k">class</span> <span class="nc">PPG3204</span><span class="p">():</span>
+<div class="viewcode-block" id="PPG3204"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204">[docs]</a><span class="k">class</span> <span class="nc">PPG3204</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;**Tektronix Programmable Pattern Generator PPG3204**</span>
 <span class="sd">    </span>
 <span class="sd">    The `PPG3204 &lt;https://download.tek.com/manual/PPG1600-PPG3000-PPG3200-Pattern-Generator-User-Manual-077109001.pdf&gt;`_ </span>
@@ -345,9 +407,7 @@
     <span class="n">MAX_SKEW</span> <span class="o">=</span> <span class="mf">25e-12</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Maximum skew, 25 ps&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PPG3204.__init__">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr_ID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.__init__"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr_ID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the PPG3204.</span>
 <span class="sd">        </span>
 <span class="sd">        If ``addr_ID`` is not passed as argument, methods will print the commands </span>
@@ -363,7 +423,6 @@
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;A connection (session) to the PPG instrument (if `addr_ID` is provided).&quot;&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inst</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">10000</span> <span class="c1"># timeout in milliseconds</span>
             <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s1">&#39;*IDN?&#39;</span><span class="p">))</span></div>
-
         
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -409,17 +468,12 @@
         <span class="k">return</span> <span class="n">channels</span>
 
 
-<div class="viewcode-block" id="PPG3204.reset">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.reset">[docs]</a>
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.reset"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the PPG to its default state.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s1">&#39;*RST&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.set_patt_len">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_patt_len">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_patt_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patt_len</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_patt_len"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_patt_len">[docs]</a>    <span class="k">def</span> <span class="nf">set_patt_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patt_len</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the length of the pattern</span>
 
 <span class="sd">        Fix a pattern length for each channel passed as argument. </span>
@@ -463,10 +517,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:LENG </span><span class="si">{</span><span class="n">pl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.get_patt_len">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_patt_len">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_patt_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_patt_len"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_patt_len">[docs]</a>    <span class="k">def</span> <span class="nf">get_patt_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the current length of pattern for specified channels</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -483,10 +534,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:LENG?&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">CHs</span><span class="p">])</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.set_mode">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_mode">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;prbs&#39;</span><span class="p">],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_mode"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;prbs&#39;</span><span class="p">],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set mode of the PPG3204 for each channels specified.</span>
 
 <span class="sd">        Parameters</span>
@@ -507,10 +555,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:TYPE </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.get_mode">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_mode">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_mode"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_mode">[docs]</a>    <span class="k">def</span> <span class="nf">get_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get mode of the PPG3204 for each channels specified, can be &#39;DATA&#39; or &#39;PRBS&#39;</span>
 
 <span class="sd">        Parameters</span>
@@ -525,12 +570,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">CHs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_channels</span><span class="p">(</span><span class="n">CHs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:TYPE?&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">CHs</span><span class="p">])</span></div>
-
     
 
-<div class="viewcode-block" id="PPG3204.set_prbs_order">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_prbs_order">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_prbs_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_prbs_order"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_prbs_order">[docs]</a>    <span class="k">def</span> <span class="nf">set_prbs_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the order of polynomial generator for PRBS mode.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -575,11 +617,8 @@
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:PLEN </span><span class="si">{</span><span class="nb">ord</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
-
     
-<div class="viewcode-block" id="PPG3204.get_prbs_order">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_prbs_order">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_prbs_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_prbs_order"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_prbs_order">[docs]</a>    <span class="k">def</span> <span class="nf">get_prbs_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prbs polynomial order for each channel specified</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -594,12 +633,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">CHs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_channels</span><span class="p">(</span><span class="n">CHs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:PLEN?&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">CHs</span><span class="p">])</span></div>
-
     
 
-<div class="viewcode-block" id="PPG3204.set_data">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">start_addrs</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_data"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">start_addrs</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the data of the pattern.</span>
 
 <span class="sd">        Programs the pattern data memory. Each byte of pattern data is a character (0 or 1)</span>
@@ -684,10 +720,7 @@
                 <span class="n">addr</span> <span class="o">+=</span> <span class="n">n</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.get_data">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">start_addrs</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_data"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">start_addrs</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the data of the pattern for each specified channel </span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -751,10 +784,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.set_bits_shift">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_bits_shift">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_bits_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bsh</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_bits_shift"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_bits_shift">[docs]</a>    <span class="k">def</span> <span class="nf">set_bits_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bsh</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Set the bits shift of the pattern</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -789,10 +819,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:BSH </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.get_bits_shift">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_bits_shift">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_bits_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_bits_shift"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_bits_shift">[docs]</a>    <span class="k">def</span> <span class="nf">get_bits_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the bits shift of the pattern for each specified channel</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -809,10 +836,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:DIG</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:PATT:BSH?&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">CHs</span><span class="p">])</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.enable_outputs">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.enable_outputs">[docs]</a>
-    <span class="k">def</span> <span class="nf">enable_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.enable_outputs"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.enable_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">enable_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable the output of the channels</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -825,10 +849,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:OUTP</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1"> ON&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.disable_outputs">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.disable_outputs">[docs]</a>
-    <span class="k">def</span> <span class="nf">disable_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.disable_outputs"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.disable_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">disable_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Disable the output of the channels.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -841,10 +862,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:OUTP</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1"> OFF&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.set_freq">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_freq">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_freq"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_freq">[docs]</a>    <span class="k">def</span> <span class="nf">set_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Set the bit rate of the pattern</span>
 
 <span class="sd">        - *Range*: 1.5 GHz to 32 GHz</span>
@@ -867,12 +885,9 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:FREQ </span><span class="si">{</span><span class="n">freq</span><span class="si">:</span><span class="s1">.5e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
-
     
 
-<div class="viewcode-block" id="PPG3204.get_freq">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_freq">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_freq"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_freq">[docs]</a>    <span class="k">def</span> <span class="nf">get_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the frequency of the pattern.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -881,12 +896,9 @@
 <span class="sd">            Bit Rate of the pattern in bits/s.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s1">&#39;:FREQ?&#39;</span><span class="p">))</span></div>
-
     
 
-<div class="viewcode-block" id="PPG3204.set_skew">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_skew">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_skew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skew</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_skew"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_skew">[docs]</a>    <span class="k">def</span> <span class="nf">set_skew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skew</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the skew of the channels</span>
 <span class="sd">        </span>
 <span class="sd">        The channel skew is the timing of the data output. </span>
@@ -925,10 +937,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:SKEW</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.get_skew">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_skew">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_skew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_skew"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_skew">[docs]</a>    <span class="k">def</span> <span class="nf">get_skew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the skew of the channels</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -945,10 +954,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:SKEW</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">?&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">CHs</span><span class="p">])</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.set_output_voltage">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_output_voltage">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_output_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_output_voltage"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_output_voltage">[docs]</a>    <span class="k">def</span> <span class="nf">set_output_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the peak-to-peak output voltage of each channel, in volts.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -976,10 +982,7 @@
         <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">amp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CHs</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:VOLT</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:POS </span><span class="si">{</span><span class="n">amp</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">v&#39;</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="PPG3204.get_output_voltage">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_output_voltage">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_output_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_output_voltage"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_output_voltage">[docs]</a>    <span class="k">def</span> <span class="nf">get_output_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the peak-to-peak output voltage of each channel, in volts.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -996,10 +999,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:VOLT</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:POS?&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">CHs</span><span class="p">])</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.set_offset">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_offset">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.set_offset"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.set_offset">[docs]</a>    <span class="k">def</span> <span class="nf">set_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the offset of the channels</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -1047,10 +1047,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:VOLT</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:POS:OFFS </span><span class="si">{</span><span class="n">off</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">v&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.get_offset">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_offset">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PPG3204.get_offset"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.get_offset">[docs]</a>    <span class="k">def</span> <span class="nf">get_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CHs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the offset of the channels</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -1067,10 +1064,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;:VOLT</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:OFFS?&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">CHs</span><span class="p">])</span></div>
 
 
-
-<div class="viewcode-block" id="PPG3204.__call__">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.__call__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="PPG3204.__call__"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                <span class="n">patt_len</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                <span class="n">Vout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1152,11 +1146,8 @@
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;DATA&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">CHs</span><span class="o">=</span><span class="n">CHs</span><span class="p">)</span>
         <span class="k">return</span> <span class="s1">&#39;Done&#39;</span></div>
-
     
-<div class="viewcode-block" id="PPG3204.config">
-<a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.config">[docs]</a>
-    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="PPG3204.config"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.config">[docs]</a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                <span class="n">patt_len</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                <span class="n">Vout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1211,9 +1202,7 @@
 <span class="sd">            :DIG2:PATT:TYPE PRBS</span>
 <span class="sd">            :DIG2:PATT:PLEN 7</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">patt_len</span><span class="p">,</span> <span class="n">Vout</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">bsh</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">CHs</span><span class="p">)</span></div>
-</div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">patt_len</span><span class="p">,</span> <span class="n">Vout</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">bsh</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">CHs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

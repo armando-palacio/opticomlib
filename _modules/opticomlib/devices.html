@@ -14,11 +14,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.4.4
+                1.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -109,8 +109,9 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">sg</span>
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
 <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">k</span> <span class="k">as</span> <span class="n">kB</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">c</span>
 <span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">fft</span><span class="p">,</span> <span class="n">ifft</span><span class="p">,</span> <span class="n">fftshift</span><span class="p">,</span> <span class="n">ifftshift</span>
 <span class="kn">import</span> <span class="nn">sklearn.cluster</span> <span class="k">as</span> <span class="nn">sk</span>
@@ -140,9 +141,7 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;serif&quot;</span>
 
 
-<div class="viewcode-block" id="PRBS">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.PRBS">[docs]</a>
-<span class="k">def</span> <span class="nf">PRBS</span><span class="p">(</span>
+<div class="viewcode-block" id="PRBS"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.PRBS">[docs]</a><span class="k">def</span> <span class="nf">PRBS</span><span class="p">(</span>
     <span class="n">order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">31</span><span class="p">],</span>
     <span class="nb">len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -266,10 +265,7 @@
     <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">lfsr</span></div>
 
 
-
-<div class="viewcode-block" id="DAC">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.DAC">[docs]</a>
-<span class="k">def</span> <span class="nf">DAC</span><span class="p">(</span>
+<div class="viewcode-block" id="DAC"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.DAC">[docs]</a><span class="k">def</span> <span class="nf">DAC</span><span class="p">(</span>
     <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">binary_sequence</span><span class="p">,</span>
     <span class="n">bias</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">Vout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -426,10 +422,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="PM">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.PM">[docs]</a>
-<span class="k">def</span> <span class="nf">PM</span><span class="p">(</span>
+<div class="viewcode-block" id="PM"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.PM">[docs]</a><span class="k">def</span> <span class="nf">PM</span><span class="p">(</span>
     <span class="n">op_input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span>
     <span class="n">el_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">],</span>
     <span class="n">Vpi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
@@ -553,10 +546,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="MZM">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.MZM">[docs]</a>
-<span class="k">def</span> <span class="nf">MZM</span><span class="p">(</span>
+<div class="viewcode-block" id="MZM"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.MZM">[docs]</a><span class="k">def</span> <span class="nf">MZM</span><span class="p">(</span>
     <span class="n">op_input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span>
     <span class="n">el_input</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">electrical_signal</span><span class="p">,</span>
     <span class="n">bias</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -710,7 +700,7 @@
         <span class="p">)</span>
 
     <span class="n">loss</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">loss_dB</span><span class="p">)</span>  <span class="c1"># Propagation losses</span>
-    <span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">ER_dB</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>  <span class="c1"># armsdesvalance factor</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">idb</span><span class="p">(</span><span class="o">-</span><span class="n">ER_dB</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>  <span class="c1"># arms desbalance factor</span>
 
     <span class="n">output</span> <span class="o">=</span> <span class="n">op_input</span><span class="p">[:]</span>
 
@@ -741,10 +731,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="BPF">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.BPF">[docs]</a>
-<span class="k">def</span> <span class="nf">BPF</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="BPF"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.BPF">[docs]</a><span class="k">def</span> <span class="nf">BPF</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Optical Band-Pass Filter**</span>
 
@@ -785,14 +772,11 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="EDFA">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.EDFA">[docs]</a>
-<span class="k">def</span> <span class="nf">EDFA</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">G</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NF</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="EDFA"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.EDFA">[docs]</a><span class="k">def</span> <span class="nf">EDFA</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">G</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NF</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Erbium Doped Fiber**</span>
 
-<span class="sd">    Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise.</span>
+<span class="sd">    Amplifies the optical signal at the input, adding amplified spontaneous emission (ASE) noise in two polarizations at the output.</span>
 <span class="sd">    Simplest model (no saturation output power).</span>
 
 <span class="sd">    Parameters</span>
@@ -803,8 +787,8 @@
 <span class="sd">        The gain of the amplifier, in dB.</span>
 <span class="sd">    NF : float</span>
 <span class="sd">        The noise figure of the amplifier, in dB.</span>
-<span class="sd">    BW : float</span>
-<span class="sd">        The bandwidth of the amplifier, in Hz.</span>
+<span class="sd">    BW : float, optional</span>
+<span class="sd">        The bandwidth of the amplifier, in Hz. If ``None`` bandwidth will be ``gv.fs``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -816,40 +800,98 @@
 <span class="sd">    TypeError</span>
 <span class="sd">        If ``input`` is not an optical_signal.</span>
 
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    ASE noise power must be theoretically:</span>
+
+<span class="sd">    .. math:: </span>
+<span class="sd">        P_\text{ase} = \text{NF} h f_0 (G-1) BW</span>
+
+<span class="sd">    where :math:`h` is the Planck constant and :math:`f_0` is the central frequency of communication </span>
+<span class="sd">    (by default ``gv.f0`` is taken, if you wish change this value, you can change ``wavelength`` </span>
+<span class="sd">    parameter in ``gv()``). Noise is generated for two polarizations xy as a complex signal, with a</span>
+<span class="sd">    distribution :math:`\mathcal{N}(0, P_\text{ase}/4)` for real and imaginary parts.  </span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Following picture show the input-output of EDFA from a sinusoidal signal. For values of example, the output noise power </span>
+<span class="sd">    must be :math:`P_{ase} \approx -27` dBm.</span>
+
+<span class="sd">    .. plot::</span>
+<span class="sd">        :include-source:</span>
+<span class="sd">        :alt: DM example 1</span>
+<span class="sd">        :align: center</span>
+
+<span class="sd">        from opticomlib.devices import EDFA</span>
+<span class="sd">        from opticomlib import optical_signal, gv, np, plt</span>
+
+<span class="sd">        gv(sps=256, R=1e9, N=5, G=20, NF=5, BW=50e9)</span>
+
+<span class="sd">        x = optical_signal(</span>
+<span class="sd">            signal=[</span>
+<span class="sd">                (1e-3)*np.sin(2*np.pi*gv.R*gv.t), </span>
+<span class="sd">                np.zeros_like(gv.t)</span>
+<span class="sd">            ], </span>
+<span class="sd">            n_pol=2</span>
+<span class="sd">        )</span>
+
+<span class="sd">        y = EDFA(x, G=gv.G, NF=gv.NF, BW=gv.BW)</span>
+
+<span class="sd">        fig, axs = plt.subplots(2,1, sharex=True, figsize=(8,6))</span>
+<span class="sd">        plt.suptitle(f&quot;EDFA input-output (G={gv.G} dB, NF={gv.NF} dB, BW={gv.BW*1e-9} GHz)&quot;)</span>
+
+<span class="sd">        axs[0].set_title(&#39;Input&#39;)</span>
+<span class="sd">        axs[0].plot(gv.t*1e9, x.signal.T)</span>
+<span class="sd">        axs[0].set_ylim(-0.015, 0.015)</span>
+
+<span class="sd">        axs[1].set_title(&#39;Output&#39;)</span>
+<span class="sd">        axs[1].plot(gv.t*1e9, y.signal.T + y.noise.T.real)</span>
+<span class="sd">        axs[1].set_ylim(-0.015, 0.015)</span>
+
+<span class="sd">        plt.legend([&#39;x-pol&#39;, &#39;y-pol&#39;])</span>
+<span class="sd">        plt.xlabel(&#39;t [ns]&#39;)</span>
+<span class="sd">        plt.show()</span>
+
+<span class="sd">    &gt;&gt;&gt; from opticomlib import dbm</span>
+<span class="sd">    &gt;&gt;&gt; print(dbm(y.power(&#39;noise&#39;).sum())) # print sum of power of two polarizations</span>
+<span class="sd">    -28.068263005828555</span>
+
+<span class="sd">    We can see that noise power is a little less than theoretical prediction, this is because </span>
+<span class="sd">    the filter used in the EDFA is not a rectangular response filter (it&#39;s a 4th order Bessel filter).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tic</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">optical_signal</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` must be of type (optical_signal).&quot;</span><span class="p">)</span>
 
-    <span class="n">output</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="nb">input</span> <span class="o">*</span> <span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
-    <span class="c1"># ase = BPF( optical_signal( np.zeros_like(input.signal), np.exp(-1j*np.random.uniform(0, 2*pi, input.noise.shape)) ), BW )</span>
-    <span class="n">ase</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span>
-        <span class="n">optical_signal</span><span class="p">(</span>
-            <span class="n">noise</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="p">),</span>
-        <span class="n">BW</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">t_</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+</span> <span class="n">ase</span><span class="o">.</span><span class="n">execution_time</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">n_pol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># y-polarization of signal is set to zeros.</span>
 
-    <span class="n">tic</span><span class="p">()</span>
-    <span class="n">P_ase</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">NF</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">f0</span> <span class="o">*</span> <span class="p">(</span><span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">BW</span>
+    <span class="c1"># generate ASE noise (2-polarizations with real and imaginary parts)</span>
+    <span class="c1"># gv.fs is taken as initial bandwidth of noise </span>
+    <span class="n">P_ase</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">NF</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">f0</span> <span class="o">*</span> <span class="p">(</span><span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span>
 
-    <span class="n">norm_x</span><span class="p">,</span> <span class="n">norm_y</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">power</span><span class="p">(</span>
-        <span class="s2">&quot;noise&quot;</span>
-    <span class="p">)</span>  <span class="c1"># power of ASE noise in [W] for each polarization</span>
+    <span class="c1"># generate 4 vectors for, x-polarization real and imaginary parts and y-polarization real and imaginary parts</span>
+    <span class="n">ase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">P_ase</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>
+    <span class="n">ase</span> <span class="o">=</span> <span class="n">ase</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">ase</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
 
-    <span class="n">ase</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="n">norm_x</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">/</span> <span class="p">(</span><span class="n">P_ase</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-    <span class="n">ase</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">norm_y</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">/</span> <span class="p">(</span><span class="n">P_ase</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">+=</span> <span class="n">ase</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">ase</span>
 
-    <span class="n">output</span> <span class="o">+=</span> <span class="n">ase</span>
+    <span class="n">t_</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
 
-    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">t_</span> <span class="o">+</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">BW</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">BPF</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
+
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">t_</span> 
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="DM">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.DM">[docs]</a>
-<span class="k">def</span> <span class="nf">DM</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">retH</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DM"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.DM">[docs]</a><span class="k">def</span> <span class="nf">DM</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">retH</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Dispersive Medium**</span>
 
@@ -944,10 +986,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="FIBER">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.FIBER">[docs]</a>
-<span class="k">def</span> <span class="nf">FIBER</span><span class="p">(</span>
+<div class="viewcode-block" id="FIBER"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.FIBER">[docs]</a><span class="k">def</span> <span class="nf">FIBER</span><span class="p">(</span>
     <span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span>
     <span class="n">length</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -1078,10 +1117,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="LPF">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.LPF">[docs]</a>
-<span class="k">def</span> <span class="nf">LPF</span><span class="p">(</span>
+<div class="viewcode-block" id="LPF"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.LPF">[docs]</a><span class="k">def</span> <span class="nf">LPF</span><span class="p">(</span>
     <span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">],</span>
     <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
@@ -1155,31 +1191,28 @@
         <span class="n">noise</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">signal</span> <span class="o">=</span> <span class="nb">input</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="p">:</span>
         <span class="n">fs</span> <span class="o">=</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span>
 
     <span class="n">sos_band</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">bessel</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">Wn</span><span class="o">=</span><span class="n">BW</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;sos&quot;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;mag&quot;</span><span class="p">)</span>
 
-    <span class="n">output</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:]</span>
 
-    <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="n">signal</span><span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="n">signal</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
 
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">noise</span><span class="p">):</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
 
-    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">retH</span><span class="p">:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfreqz</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="n">worN</span><span class="o">=</span><span class="n">signal</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">whole</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="PD">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.PD">[docs]</a>
-<span class="k">def</span> <span class="nf">PD</span><span class="p">(</span>
+<div class="viewcode-block" id="PD"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.PD">[docs]</a><span class="k">def</span> <span class="nf">PD</span><span class="p">(</span>
     <span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span>
     <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">r</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -1234,7 +1267,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    electrical_signal</span>
-<span class="sd">        The detected electrical signal.</span>
+<span class="sd">        The detected electrical signal, in [v].</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -1261,8 +1294,8 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        P_{in} &amp;= |E_x + n_x|^2 + |E_y + n_y|^2 \\</span>
-<span class="sd">        P_{in} &amp;= |E_x|^2 + |E_y|^2 + 2\Re\{E_x n_x^* + E_y n_y^*\} + |n_x|^2 + |n_y|^2 \\</span>
-<span class="sd">        P_{in} &amp;= P_{sig} + P_{sig-noise} + P_{noise} \\</span>
+<span class="sd">        P_{in} &amp;= |E_x|^2 + |E_y|^2 + E_x n_x^* + E_x^* n_x + E_y n_y^*+E_y^* n_y + |n_x|^2 + |n_y|^2 \\</span>
+<span class="sd">        P_{in} &amp;= P_\text{sig} + P_\text{sig-ase} + P_\text{ase-ase} \\</span>
 
 <span class="sd">    where :math:`E_x` and :math:`E_y` are the amplitudes of x-polarization and y-polarization modes respectively</span>
 <span class="sd">    and :math:`n_x` and :math:`n_y` are the noise of x-polarization and y-polarization modes respectively.</span>
@@ -1271,14 +1304,19 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \sigma_{th}^2 &amp;= \frac{4k_B T}{R_L}F_n \Delta f \\</span>
-<span class="sd">        \sigma_{sh}^2 &amp;= 2e\left( r(P_{sig}^2 + P_{noise}^2) + i_{dark} \right)\Delta f</span>
+<span class="sd">        \sigma_{sh}^2 &amp;= 2e\left[ r(P_\text{sig} + P_\text{ase-ase}) + i_{dark} \right]\Delta f</span>
 
 <span class="sd">    where :math:`k_B` is the Boltzmann constant, :math:`T` is the temperature of the photodetector, :math:`R_L` is the load resistance,</span>
 <span class="sd">    :math:`F_n` is the noise figure of the photodetector, :math:`\Delta f` is the bandwidth of the photodetector, :math:`e` is the electron charge.</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        i_{ph} &amp;= \mathcal{R}P_{sig} + \mathcal{R}P_{sig-noise} + \mathcal{R}P_{noise} + i_{th} + i_{sh} + i_{dark} \\</span>
-<span class="sd">        i_{ph} &amp;= i_{sig} + i_{sig-noise} + i_{noise-noise} + i_{th} + i_{sh} + i_{dark}</span>
+<span class="sd">        i_{ph} &amp;= \mathcal{R}P_{sig} + \mathcal{R}P_{sig-ase} + \mathcal{R}P_{ase-ase} + i_{th} + i_{sh} + i_{dark} \\</span>
+<span class="sd">        i_{ph} &amp;= i_\text{sig} + i_\text{sig-ase} + i_\text{ase-ase} + i_{th} + i_{sh} + i_{dark}</span>
+<span class="sd">    </span>
+<span class="sd">    Finally, the output voltage is given by:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        v_{ph} = i_{ph}R_L</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -1312,80 +1350,69 @@
     <span class="n">i_sig</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="s2">&quot;signal&quot;</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
     <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">i_sig</span> <span class="o">=</span> <span class="n">i_sig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_sig</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">i_sig</span> <span class="o">=</span> <span class="n">i_sig</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">include_noise</span> <span class="o">=</span> <span class="n">include_noise</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c1"># This allow write in upper or lower case</span>
 
     <span class="k">if</span> <span class="s2">&quot;thermal&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span> <span class="ow">or</span> <span class="s2">&quot;all&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span><span class="p">:</span>
-        <span class="n">S_T</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">BW</span> <span class="o">*</span> <span class="n">idb</span><span class="p">(</span><span class="n">Fn</span><span class="p">)</span> <span class="o">/</span> <span class="n">R_load</span>  <span class="c1"># thermal noise variance, in [A^2]</span>
-        <span class="n">i_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-            <span class="mi">0</span><span class="p">,</span> <span class="n">S_T</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
-        <span class="p">)</span>  <span class="c1"># thermal noise current, in [A]</span>
+        <span class="n">S_T</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idb</span><span class="p">(</span><span class="n">Fn</span><span class="p">)</span> <span class="o">/</span> <span class="n">R_load</span>  <span class="c1"># thermal noise variance, in [V^2]</span>
+        <span class="n">i_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">S_T</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>  <span class="c1"># thermal noise current, in [A]</span>
 
     <span class="k">if</span> <span class="s2">&quot;shot&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span> <span class="ow">or</span> <span class="s2">&quot;all&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ase</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="s2">&quot;noise&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">ase</span> <span class="o">=</span> <span class="n">ase</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ase</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">i_ase</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="s2">&quot;noise&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ase</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">i_ase</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">S_N</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">i_sig</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ase</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">i_dark</span><span class="p">)</span> <span class="o">*</span> <span class="n">BW</span>
-        <span class="p">)</span>  <span class="c1"># shot noise variance, in [A^2]</span>
-        <span class="n">i_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">))(</span>
-            <span class="n">S_N</span><span class="o">**</span><span class="mf">0.5</span>
-        <span class="p">)</span>  <span class="c1"># shot noise current, in [A]</span>
+        <span class="n">S_N</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="p">(</span><span class="n">i_sig</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="n">i_ase</span> <span class="o">+</span> <span class="n">i_dark</span><span class="p">)</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span><span class="o">/</span><span class="mi">2</span>  <span class="c1"># shot noise variance, in [A^2]</span>
+        <span class="n">i_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">S_N</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>  <span class="c1"># shot noise current, in [A]</span>
 
     <span class="k">if</span> <span class="s2">&quot;ase&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span> <span class="ow">or</span> <span class="s2">&quot;all&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">i_s_n</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">conj</span><span class="p">())</span><span class="o">.</span><span class="n">real</span>
-            <span class="p">)</span>  <span class="c1"># SIG-Noise term</span>
+            <span class="n">i_s_n</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">conj</span><span class="p">())</span><span class="o">.</span><span class="n">real</span>  <span class="c1"># SIG-Noise term</span>
             <span class="n">i_n_n</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="s2">&quot;noise&quot;</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># Noise-Noise term</span>
 
             <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">n_pol</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">i_s_n</span> <span class="o">=</span> <span class="n">i_s_n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_s_n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">i_n_n</span> <span class="o">=</span> <span class="n">i_n_n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_n_n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">i_s_n</span> <span class="o">=</span> <span class="n">i_s_n</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">i_n_n</span> <span class="o">=</span> <span class="n">i_n_n</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">i_s_n</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">i_n_n</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">i_s_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>
+            <span class="n">i_n_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="n">include_noise</span> <span class="o">==</span> <span class="s2">&quot;ase-only&quot;</span><span class="p">:</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_dark</span>
+        <span class="n">i_noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_dark</span>
     <span class="k">elif</span> <span class="n">include_noise</span> <span class="o">==</span> <span class="s2">&quot;thermal-only&quot;</span><span class="p">:</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_dark</span>
+        <span class="n">i_noise</span> <span class="o">=</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_dark</span>
     <span class="k">elif</span> <span class="n">include_noise</span> <span class="o">==</span> <span class="s2">&quot;shot-only&quot;</span><span class="p">:</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_dark</span>
+        <span class="n">i_noise</span> <span class="o">=</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_dark</span>
     <span class="k">elif</span> <span class="n">include_noise</span> <span class="o">==</span> <span class="s2">&quot;ase-shot&quot;</span><span class="p">:</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_dark</span>
+        <span class="n">i_noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_dark</span>
     <span class="k">elif</span> <span class="n">include_noise</span> <span class="o">==</span> <span class="s2">&quot;ase-thermal&quot;</span><span class="p">:</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_dark</span>
+        <span class="n">i_noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_dark</span>
     <span class="k">elif</span> <span class="n">include_noise</span> <span class="o">==</span> <span class="s2">&quot;thermal-shot&quot;</span><span class="p">:</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_dark</span>
+        <span class="n">i_noise</span> <span class="o">=</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_dark</span>
     <span class="k">elif</span> <span class="n">include_noise</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_dark</span>
+        <span class="n">i_noise</span> <span class="o">=</span> <span class="n">i_s_n</span> <span class="o">+</span> <span class="n">i_n_n</span> <span class="o">+</span> <span class="n">i_N</span> <span class="o">+</span> <span class="n">i_T</span> <span class="o">+</span> <span class="n">i_dark</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;The argument `noise` must be one of the following: &#39;ase-only&#39;,&#39;thermal-only&#39;,&#39;shot-only&#39;,&#39;ase-thermal&#39;,&#39;ase-shot&#39;,&#39;thermal-shot&#39;,&#39;all&#39;.&quot;</span>
+            <span class="s2">&quot;The argument `include_noise` must be one of the following: &#39;ase-only&#39;,&#39;thermal-only&#39;,&#39;shot-only&#39;,&#39;ase-thermal&#39;,&#39;ase-shot&#39;,&#39;thermal-shot&#39;,&#39;all&#39;.&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">sos_band</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">bessel</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">Wn</span><span class="o">=</span><span class="n">BW</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">gv</span><span class="o">.</span><span class="n">fs</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;sos&quot;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;mag&quot;</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">=</span><span class="n">i_sig</span><span class="o">*</span><span class="n">R_load</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">i_noise</span><span class="o">*</span><span class="n">R_load</span><span class="p">)</span>
+    
+    <span class="n">t_</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
 
-    <span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="n">i_sig</span><span class="p">)</span>
-    <span class="n">noise</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">sos_band</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">LPF</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">BW</span><span class="p">)</span>
 
-    <span class="n">output</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>
-
-    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">t_</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="ADC">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.ADC">[docs]</a>
-<span class="k">def</span> <span class="nf">ADC</span><span class="p">(</span>
-    <span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nbits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+<div class="viewcode-block" id="ADC"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.ADC">[docs]</a><span class="k">def</span> <span class="nf">ADC</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+    <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="n">otype</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;v&#39;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Analog-to-Digital Converter**</span>
@@ -1395,84 +1422,87 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    input : electrical_signal</span>
+<span class="sd">    input : electrical_signal | np.array</span>
 <span class="sd">        Electrical signal to be quantized.</span>
 <span class="sd">    fs : float, default: None</span>
-<span class="sd">        Sampling frequency of the output signal.</span>
-<span class="sd">    BW : float, default: None</span>
-<span class="sd">        ADC bandwidth in Hz.</span>
-<span class="sd">    nbits : int, default: 8</span>
-<span class="sd">        Vertical resolution of the ADC, in bits.</span>
+<span class="sd">        Sampling frequency of the output signal. If None, signal is not sampled.</span>
+<span class="sd">    n : int, default: 8</span>
+<span class="sd">        Bits of quantization. Default is 8 bits.</span>
+<span class="sd">    otype : str, default: &#39;v&#39;</span>
+<span class="sd">        Signal output type. If &#39;v&#39; discrete amplitudes are return, if &#39;n&#39; integer amplitudes between 0 and 2**n-1 are return. </span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    electrical_signal</span>
 <span class="sd">        Quantized digital signal.</span>
 
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    TypeError</span>
-<span class="sd">        If the ``input`` is not of type `electrical_signal`.</span>
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. plot::</span>
+<span class="sd">        :include-source:</span>
+<span class="sd">        :alt: LPF example 1</span>
+<span class="sd">        :align: center</span>
+
+<span class="sd">        from opticomlib.devices import ADC</span>
+<span class="sd">        from opticomlib import gv, electrical_signal</span>
+<span class="sd">        import numpy as np</span>
+
+<span class="sd">        gv(sps=64, R=1e9, N=2)</span>
+
+<span class="sd">        y = electrical_signal( np.sin(2*np.pi*gv.R*gv.t) )</span>
+
+<span class="sd">        yn = ADC(y, n=2)</span>
+
+<span class="sd">        y.plot(</span>
+<span class="sd">            style=&#39;light&#39;, </span>
+<span class="sd">            grid=True, </span>
+<span class="sd">            lw=5</span>
+<span class="sd">        )</span>
+<span class="sd">        yn.plot(&#39;.-&#39;, lw=2).show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tic</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`input` debe ser del tipo (electrical_signal).&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="p">:</span>
-        <span class="n">fs</span> <span class="o">=</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span>
-
-    <span class="k">if</span> <span class="n">BW</span><span class="p">:</span>
-        <span class="n">filt</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">bessel</span><span class="p">(</span>
-            <span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">Wn</span><span class="o">=</span><span class="n">BW</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">fs</span><span class="p">(),</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;sos&quot;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;mag&quot;</span>
-        <span class="p">)</span>
-        <span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">filt</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">signal</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="nb">input</span>
 
-    <span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">/</span> <span class="nb">input</span><span class="o">.</span><span class="n">fs</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">fs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">/</span> <span class="nb">input</span><span class="o">.</span><span class="n">fs</span><span class="p">()))</span>
 
     <span class="n">V_min</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
     <span class="n">V_max</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
     <span class="n">dig_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">signal</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">V_max</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">)</span>  <span class="c1"># normalizo la señal entre 0 y 2**nbits-1</span>
-    <span class="n">dig_signal</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">dig_signal</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">V_max</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">+</span> <span class="n">V_min</span>
-    <span class="p">)</span>  <span class="c1"># vuelvo a la amplitud original</span>
+        <span class="p">(</span><span class="n">signal</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">V_max</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># quantize signal between 0 and 2**n-1</span>
+    
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">:</span>
+        <span class="n">dig_signal</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">dig_signal</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">V_max</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">+</span> <span class="n">V_min</span>
+        <span class="p">)</span>  <span class="c1"># back to discrete amplitude </span>
+    <span class="k">elif</span> <span class="n">otype</span> <span class="o">!=</span> <span class="s1">&#39;n&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`otype` must be &#39;v&#39; or &#39;n&#39;.&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">):</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">sosfiltfilt</span><span class="p">(</span><span class="n">filt</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">//</span> <span class="nb">input</span><span class="o">.</span><span class="n">fs</span><span class="p">()))</span>
-        <span class="n">V_min</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="n">V_max</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">dig_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">noise</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">V_max</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">)</span>  <span class="c1"># normalizo la señal entre 0 y 2**nbits-1</span>
-        <span class="n">dig_noise</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">dig_noise</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">V_max</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">+</span> <span class="n">V_min</span>
-        <span class="p">)</span>  <span class="c1"># vuelvo a la amplitud original</span>
-
-        <span class="n">output</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">dig_signal</span><span class="p">,</span> <span class="n">dig_noise</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">dig_signal</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="n">dig_signal</span><span class="p">)</span>
 
     <span class="n">output</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="GET_EYE">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.GET_EYE">[docs]</a>
-<span class="k">def</span> <span class="nf">GET_EYE</span><span class="p">(</span>
-    <span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">electrical_signal</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<div class="viewcode-block" id="GET_EYE"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.GET_EYE">[docs]</a><span class="k">def</span> <span class="nf">GET_EYE</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">nslots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span>
     <span class="n">sps_resamp</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Get Eye Parameters Estimator**</span>
 
-<span class="sd">    Estimates all the fundamental parameters and metrics of the eye diagram of the input electrical signal.</span>
+<span class="sd">    Estimates all fundamental parameters and metrics of the eye diagram </span>
+<span class="sd">    of the input electrical signal.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1481,7 +1511,7 @@
 <span class="sd">    nslots : :obj:`int`, default: 4096</span>
 <span class="sd">        Number of slots to consider for eye reconstruction.</span>
 <span class="sd">    sps_resamp : :obj:`int`, default: None</span>
-<span class="sd">        Number of samples per slot to interpolate the original signal.</span>
+<span class="sd">        Number of samples per slot to interpolate the original signal. If None the signal is not interpolated.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1506,16 +1536,16 @@
 
 <span class="sd">        gv(sps=64, R=1e9)</span>
 
-<span class="sd">        y = DAC( PRBS(), pulse_shape=&#39;gaussian&#39;)</span>
+<span class="sd">        y = DAC( PRBS(order=7), pulse_shape=&#39;gaussian&#39;)</span>
 <span class="sd">        y.noise = np.random.normal(0, 0.05, y.len())</span>
 
-<span class="sd">        GET_EYE(y, sps_resamp=512).plot() # with interpolation</span>
+<span class="sd">        GET_EYE(y, sps_resamp=512).plot().show() # with interpolation</span>
 
 <span class="sd">    .. image:: /_images/GET_EYE_example1.png</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tic</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">shorth_int</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">shorth_int</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">percent</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimation of the shortest interval containing 50% of the samples in &#39;data&#39;.</span>
 
@@ -1534,16 +1564,16 @@
         <span class="p">)</span>  <span class="c1"># Difference between two elements of an array separated by a distance &#39;lag&#39;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">lag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="n">percent</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">diff_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lag</span><span class="p">)</span>
         <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">lag</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">lag</span><span class="p">]))</span>
 
     <span class="k">def</span> <span class="nf">find_nearest</span><span class="p">(</span>
-        <span class="n">levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the element in &#39;levels&#39; that is closest to each value in &#39;data&#39;.</span>
 
@@ -1572,54 +1602,60 @@
                 <span class="p">)</span>
             <span class="p">]</span>
 
+    <span class="c1">#########################</span>
+    <span class="c1">## Preprocessing input ##</span>
+    <span class="c1">#########################</span>
+
     <span class="n">eye_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 
-    <span class="n">sps</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">sps</span><span class="p">()</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;sps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sps</span>
-    <span class="n">dt</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">dt</span><span class="p">()</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;sps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sps</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">sps</span><span class="p">()</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">dt</span><span class="p">()</span>
 
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">sps</span><span class="p">:]</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">sps</span><span class="p">())</span>
-    <span class="k">if</span> <span class="n">n</span><span class="p">:</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">sps</span><span class="p">:</span><span class="o">-</span><span class="n">n</span><span class="p">]</span>
-
-    <span class="n">nslots</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">//</span> <span class="n">sps</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nslots</span><span class="p">)</span>
-    <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:</span> <span class="n">nslots</span> <span class="o">*</span> <span class="n">sps</span><span class="p">]</span>
+    <span class="c1"># truncate</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sps</span><span class="p">)</span>  <span class="c1"># we obtain the rest %(2*sps)</span>
+    <span class="k">if</span> <span class="n">n</span><span class="p">:</span> <span class="c1"># if rest is not zero</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:</span><span class="o">-</span><span class="n">n</span><span class="p">]</span> <span class="c1"># ignore last &#39;n&#39; samples</span>
+                              
+    <span class="n">nslots</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">//</span> <span class="n">sps</span><span class="p">),</span> <span class="n">nslots</span><span class="p">)</span> <span class="c1"># determine the minimum between slots of signal and &#39;nslots&#39; parameter</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:</span> <span class="n">nslots</span> <span class="o">*</span> <span class="n">sps</span><span class="p">]</span> <span class="c1"># truncate signal</span>
 
     <span class="nb">input</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">signal</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
         <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">else</span> <span class="nb">input</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">real</span>
-    <span class="p">)</span>
+    <span class="p">)</span> <span class="c1"># add noise to signal, if there is noise</span>
 
-    <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="o">-</span><span class="n">sps</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># To focus the eye on the chart</span>
-    <span class="n">y_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="o">-</span><span class="n">sps</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># roll (-sps/2) to focus the eye in center of figure</span>
+    <span class="n">y_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="c1"># take a set of signal values</span>
 
     <span class="c1"># resampled the signal to obtain a higher resolution in both axes</span>
     <span class="k">if</span> <span class="n">sps_resamp</span><span class="p">:</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">nslots</span> <span class="o">*</span> <span class="n">sps_resamp</span><span class="p">)</span>
         <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">input</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nslots</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">dt</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sps_resamp</span><span class="p">))</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;sps_resamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sps_resamp</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nslots</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">sps_resamp</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sps_resamp</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">input</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">//</span> <span class="n">sps</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">dt</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sps</span><span class="p">))</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nslots</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">sps</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sps</span><span class="p">))</span>
 
-    <span class="c1"># We obtain the centroid of the samples on the Y axis</span>
-    <span class="n">vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
-        <span class="n">sk</span><span class="o">.</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">cluster_centers_</span>
-    <span class="p">)</span>
+    <span class="c1">###############</span>
+    <span class="c1">## Algorithm ##</span>
+    <span class="c1">###############</span>
+
+    <span class="n">kmeans</span> <span class="o">=</span> <span class="n">sk</span><span class="o">.</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># A model of sklearn to separete clusters</span>
+
+    <span class="c1"># Obtain centroide of data (y)</span>
+    <span class="n">vm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">)</span>
 
     <span class="c1"># we obtain the shortest interval of the upper half that contains 50% of the samples</span>
-    <span class="n">top_int</span> <span class="o">=</span> <span class="n">shorth_int</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="nb">input</span> <span class="o">&gt;</span> <span class="n">vm</span><span class="p">])</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;top_int&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_int</span> <span class="o">=</span> <span class="n">shorth_int</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="nb">input</span> <span class="o">&gt;</span> <span class="n">vm</span><span class="p">],</span> <span class="n">percent</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
     <span class="c1"># We obtain the LMS of level 1</span>
     <span class="n">state_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">top_int</span><span class="p">)</span>
     <span class="c1"># we obtain the shortest interval of the lower half that contains 50% of the samples</span>
-    <span class="n">bot_int</span> <span class="o">=</span> <span class="n">shorth_int</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="nb">input</span> <span class="o">&lt;</span> <span class="n">vm</span><span class="p">])</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;bot_int&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bot_int</span> <span class="o">=</span> <span class="n">shorth_int</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="nb">input</span> <span class="o">&lt;</span> <span class="n">vm</span><span class="p">],</span> <span class="n">percent</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
     <span class="c1"># We obtain the LMS of level 0</span>
     <span class="n">state_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bot_int</span><span class="p">)</span>
 
@@ -1632,49 +1668,49 @@
     <span class="c1"># We take 25% threshold level</span>
     <span class="n">v25</span> <span class="o">=</span> <span class="n">state_0</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">d01</span>
 
-    <span class="n">t_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
+    <span class="n">t_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># The following vector will be used only to determine the crossing times</span>
-        <span class="n">tt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[(</span><span class="nb">input</span> <span class="o">&gt;</span> <span class="n">v25</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">input</span> <span class="o">&lt;</span> <span class="n">v75</span><span class="p">)]</span>
+        <span class="c1"># The following vectors will be used only to determine the crossing times</span>
+        <span class="c1"># and crossing amplitude</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="nb">input</span> <span class="o">&gt;</span> <span class="n">v25</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">input</span> <span class="o">&lt;</span> <span class="n">v75</span><span class="p">)</span>
 
-        <span class="c1"># We get the centroid of the time data</span>
-        <span class="n">tm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
-            <span class="n">sk</span><span class="o">.</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">tt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">cluster_centers_</span>
-        <span class="p">)</span>
+        <span class="n">ty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="n">cond</span><span class="p">],</span> <span class="nb">input</span><span class="p">[</span><span class="n">cond</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
 
-        <span class="c1"># We obtain the left crossing time</span>
-        <span class="n">t_left</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">tt</span> <span class="o">&lt;</span> <span class="n">tm</span><span class="p">]))</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_left</span>
+        <span class="c1"># We get centroids of 2 clusters for t,y</span>
+        <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ty</span><span class="p">)</span>
+        <span class="n">ty_c</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">cluster_centers_</span>
 
-        <span class="c1"># We obtain the crossing time from the right</span>
-        <span class="n">t_right</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">tt</span> <span class="o">&gt;</span> <span class="n">tm</span><span class="p">]))</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_right</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">ty_c</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ty_c</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="c1"># Determine the center of the eye</span>
-        <span class="n">t_center</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="p">(</span><span class="n">t_left</span> <span class="o">+</span> <span class="n">t_right</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_opt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_center</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_left</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">ty_c</span><span class="p">[</span><span class="n">left</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_right</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">ty_c</span><span class="p">[</span><span class="n">right</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_opt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_center</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">t_set</span><span class="p">,</span> <span class="n">ty_c</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">y_set</span><span class="p">,</span> <span class="n">ty_c</span><span class="p">[</span><span class="n">left</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">y_set</span><span class="p">,</span> <span class="n">ty_c</span><span class="p">[</span><span class="n">right</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_25_75&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_25_75</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">y_25_75</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="n">t_left</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_left</span>
-        <span class="n">t_right</span> <span class="o">=</span> <span class="mf">0.5</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_right</span>
-        <span class="n">t_center</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_opt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_center</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_left</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_right</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_opt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_center</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">e</span>
 
-    <span class="c1"># For 20% of the center of the eye diagram</span>
-    <span class="n">t_dist</span> <span class="o">=</span> <span class="n">t_right</span> <span class="o">-</span> <span class="n">t_left</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_dist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_dist</span>
-    <span class="n">t_span0</span> <span class="o">=</span> <span class="n">t_center</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">t_dist</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_span0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_span0</span>
-    <span class="n">t_span1</span> <span class="o">=</span> <span class="n">t_center</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">t_dist</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_span1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_span1</span>
+    <span class="c1"># For 10% of the center of the eye diagram</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_dist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_dist</span> <span class="o">=</span> <span class="n">t_right</span> <span class="o">-</span> <span class="n">t_left</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_span0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_span0</span> <span class="o">=</span> <span class="n">t_center</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">t_dist</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;t_span1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_span1</span> <span class="o">=</span> <span class="n">t_center</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">t_dist</span>
 
-    <span class="c1"># Within the 20% of the data in the center of the eye diagram, we separate into two clusters top and bottom</span>
+    <span class="c1"># Within the 10% of the data in the center of the eye diagram, we separate into two clusters top and bottom</span>
     <span class="n">y_center</span> <span class="o">=</span> <span class="n">find_nearest</span><span class="p">(</span><span class="n">y_set</span><span class="p">,</span> <span class="p">(</span><span class="n">state_0</span> <span class="o">+</span> <span class="n">state_1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># We obtain the optimum time for down sampling</span>
@@ -1686,39 +1722,39 @@
     <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;i&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">instant</span>
 
     <span class="c1"># We obtain the upper cluster</span>
-    <span class="n">y_top</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[(</span><span class="nb">input</span> <span class="o">&gt;</span> <span class="n">y_center</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">t_span0</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_span1</span><span class="p">))]</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="nb">input</span> <span class="o">&gt;</span> <span class="n">y_center</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">t_span0</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_span1</span><span class="p">))</span>
+    <span class="n">y_top</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">y_top</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_top</span>
 
     <span class="c1"># We obtain the lower cluster</span>
-    <span class="n">y_bot</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[(</span><span class="nb">input</span> <span class="o">&lt;</span> <span class="n">y_center</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">t_span0</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_span1</span><span class="p">))]</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="nb">input</span> <span class="o">&lt;</span> <span class="n">y_center</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">t_span0</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_span1</span><span class="p">))</span>
+    <span class="n">y_bot</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">y_bot</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;y_bot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_bot</span>
 
     <span class="c1"># For each cluster we calculated the means and standard deviations</span>
-    <span class="n">mu1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_top</span><span class="p">)</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;mu1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu1</span>
-    <span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y_top</span><span class="p">)</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;s1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s1</span>
-    <span class="n">mu0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_bot</span><span class="p">)</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;mu0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu0</span>
-    <span class="n">s0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y_bot</span><span class="p">)</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;s0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s0</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;mu1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_top</span><span class="p">,</span> <span class="n">where</span><span class="o">=~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y_top</span><span class="p">))</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;s1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y_top</span><span class="p">,</span> <span class="n">where</span><span class="o">=~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y_top</span><span class="p">))</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;mu0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_bot</span><span class="p">,</span> <span class="n">where</span><span class="o">=~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y_bot</span><span class="p">))</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;s0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y_bot</span><span class="p">,</span> <span class="n">where</span><span class="o">=~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y_bot</span><span class="p">))</span>
+
+    <span class="c1"># compute umbral</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu0</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span> <span class="p">((</span><span class="n">t_span0</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_span1</span><span class="p">))</span> <span class="p">])</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">pdf</span><span class="p">)]</span>
 
     <span class="c1"># We obtain the extinction ratio</span>
-    <span class="n">er</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mu1</span> <span class="o">/</span> <span class="n">mu0</span><span class="p">)</span> <span class="k">if</span> <span class="n">mu0</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;er&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">er</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;er&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mu1</span> <span class="o">/</span> <span class="n">mu0</span><span class="p">)</span> <span class="k">if</span> <span class="n">mu0</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">if</span> <span class="n">mu0</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     <span class="c1"># We obtain the eye opening</span>
-    <span class="n">eye_h</span> <span class="o">=</span> <span class="n">mu1</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s1</span> <span class="o">-</span> <span class="n">mu0</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s0</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;eye_h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eye_h</span>
+    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;eye_h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu1</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s1</span> <span class="o">-</span> <span class="n">mu0</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">s0</span>
 
     <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;execution_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">toc</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">eye</span><span class="p">(</span><span class="o">**</span><span class="n">eye_dict</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="SAMPLER">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.SAMPLER">[docs]</a>
-<span class="k">def</span> <span class="nf">SAMPLER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">_eye_</span><span class="p">:</span> <span class="n">eye</span><span class="p">):</span>
+<div class="viewcode-block" id="SAMPLER"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.SAMPLER">[docs]</a><span class="k">def</span> <span class="nf">SAMPLER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">_eye_</span><span class="p">:</span> <span class="n">eye</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;**Digital sampler**</span>
 
 <span class="sd">    Receives an electrical signal and an eye object and performs the sampling of the signal</span>
@@ -1738,10 +1774,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="FBG">
-<a class="viewcode-back" href="../../devices.html#opticomlib.devices.FBG">[docs]</a>
-<span class="k">def</span> <span class="nf">FBG</span><span class="p">(</span>
+<div class="viewcode-block" id="FBG"><a class="viewcode-back" href="../../devices.html#opticomlib.devices.FBG">[docs]</a><span class="k">def</span> <span class="nf">FBG</span><span class="p">(</span>
     <span class="nb">input</span><span class="p">:</span> <span class="n">optical_signal</span><span class="p">,</span>
     <span class="n">neff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.45</span><span class="p">,</span>
     <span class="n">v</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -2169,7 +2202,6 @@
     <span class="k">if</span> <span class="n">retH</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">H</span>
     <span class="k">return</span> <span class="n">output</span></div>
-
 
 
 <span class="c1"># algunas funciones de prueba</span>

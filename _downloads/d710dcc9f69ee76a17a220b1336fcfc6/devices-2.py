@@ -1,30 +1,29 @@
-from opticomlib.devices import DM, DAC
-from opticomlib import optical_signal, gv, idbm, bode
+from opticomlib.devices import EDFA
+from opticomlib import optical_signal, gv, np, plt
 
-import matplotlib.pyplot as plt
-import numpy as np
+gv(sps=256, R=1e9, N=5, G=20, NF=5, BW=50e9)
 
-gv(N=7, sps=32, R=10e9)
+x = optical_signal(
+    signal=[
+        (1e-3)*np.sin(2*np.pi*gv.R*gv.t),
+        np.zeros_like(gv.t)
+    ],
+    n_pol=2
+)
 
-signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2 )
+y = EDFA(x, G=gv.G, NF=gv.NF, BW=gv.BW)
 
-output, H = DM(input, D=4000, retH=True)
+fig, axs = plt.subplots(2,1, sharex=True, figsize=(8,6))
+plt.suptitle(f"EDFA input-output (G={gv.G} dB, NF={gv.NF} dB, BW={gv.BW*1e-9} GHz)")
 
-t = gv.t*1e9
+axs[0].set_title('Input')
+axs[0].plot(gv.t*1e9, x.signal.T)
+axs[0].set_ylim(-0.015, 0.015)
 
-plt.style.use('dark_background')
-fig, ax = plt.subplots(2, 1, sharex=True, gridspec_kw={'hspace': 0.05})
+axs[1].set_title('Output')
+axs[1].plot(gv.t*1e9, y.signal.T + y.noise.T.real)
+axs[1].set_ylim(-0.015, 0.015)
 
-ax[0].plot(t, input.abs()[0], 'r-', lw=3, label='input')
-ax[0].plot(t, output.abs()[0], 'b-', lw=3, label='output')
-
-ax[0].set_ylabel(r'$|E(t)|$')
-
-ax[1].plot(t[:-1], np.diff(input.phase()[0])/gv.dt*1e-9, 'r-', lw=3)
-ax[1].plot(t[:-1], np.diff(output.phase()[0])/gv.dt*1e-9, 'b-', lw=3)
-
-plt.xlabel('Time (ns)')
-plt.ylabel(r'$f_i(t)$ (GHz)')
-plt.ylim(-150, 150)
+plt.legend(['x-pol', 'y-pol'])
+plt.xlabel('t [ns]')
 plt.show()

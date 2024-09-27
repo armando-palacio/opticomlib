@@ -14,11 +14,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.4.4
+                1.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -133,9 +133,7 @@
 
 
 
-<div class="viewcode-block" id="dec2bin">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.dec2bin">[docs]</a>
-<span class="k">def</span> <span class="nf">dec2bin</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+<div class="viewcode-block" id="dec2bin"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.dec2bin">[docs]</a><span class="k">def</span> <span class="nf">dec2bin</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts an integer to its binary representation.</span>
 
@@ -173,7 +171,6 @@
         <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">binary</span></div>
 
-
 <span class="k">def</span> <span class="nf">_get_type_array_from_str</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
     <span class="c1"># just 0 and 1 without +/- --&gt; bool</span>
     <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[0-1,;\s]+$&#39;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
@@ -189,9 +186,7 @@
         <span class="k">return</span> <span class="nb">complex</span>
     <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="str2array">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.str2array">[docs]</a>
-<span class="k">def</span> <span class="nf">str2array</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
+<div class="viewcode-block" id="str2array"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.str2array">[docs]</a><span class="k">def</span> <span class="nf">str2array</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a string to array of numbers. Use comma (``,``) or whitespace (`` ``) as element separators and semicolon (``;``) as row separator.</span>
 <span class="sd">    Also, ``i`` or ``j`` can be used to represent the imaginary unit.</span>
@@ -285,10 +280,7 @@
 
 
 
-
-<div class="viewcode-block" id="get_time">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.get_time">[docs]</a>
-<span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="n">line_of_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span> 
+<div class="viewcode-block" id="get_time"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.get_time">[docs]</a><span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="n">line_of_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span> 
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the average time of execution of a line of code.</span>
 
@@ -315,10 +307,7 @@
 
 
 
-
-<div class="viewcode-block" id="tic">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.tic">[docs]</a>
-<span class="k">def</span> <span class="nf">tic</span><span class="p">():</span> 
+<div class="viewcode-block" id="tic"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.tic">[docs]</a><span class="k">def</span> <span class="nf">tic</span><span class="p">():</span> 
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start a timer. Create a global variable with the current time.</span>
 <span class="sd">    Then you can use toc() to get the elapsed time.</span>
@@ -334,10 +323,7 @@
     <span class="k">global</span> <span class="n">__</span>
     <span class="n">__</span> <span class="o">=</span> <span class="n">tm</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="toc">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.toc">[docs]</a>
-<span class="k">def</span> <span class="nf">toc</span><span class="p">():</span>
+<div class="viewcode-block" id="toc"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.toc">[docs]</a><span class="k">def</span> <span class="nf">toc</span><span class="p">():</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Stop a timer. Get the elapsed time since the last call to tic().</span>
 
 <span class="sd">    Returns</span>
@@ -358,10 +344,7 @@
 
 
 
-
-<div class="viewcode-block" id="db">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.db">[docs]</a>
-<span class="k">def</span> <span class="nf">db</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="db"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.db">[docs]</a><span class="k">def</span> <span class="nf">db</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculates the logarithm in base 10 of the input x and multiplies it by 10.</span>
 
 <span class="sd">    .. math:: \text{db} = 10\log_{10}{x}</span>
@@ -404,10 +387,7 @@
     <span class="k">return</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> </div>
 
 
-
-<div class="viewcode-block" id="dbm">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.dbm">[docs]</a>
-<span class="k">def</span> <span class="nf">dbm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="dbm"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.dbm">[docs]</a><span class="k">def</span> <span class="nf">dbm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculates dBm from Watts.</span>
 
 <span class="sd">    .. math:: \text{dbm} = 10\log_{10}{x}+30</span>
@@ -449,10 +429,7 @@
     <span class="k">return</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mf">1e3</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="idb">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.idb">[docs]</a>
-<span class="k">def</span> <span class="nf">idb</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="idb"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.idb">[docs]</a><span class="k">def</span> <span class="nf">idb</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculates the number value from a dB value.</span>
 
 <span class="sd">    .. math:: y = 10^{\frac{x}{10}}</span>
@@ -480,10 +457,7 @@
     <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="idbm">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.idbm">[docs]</a>
-<span class="k">def</span> <span class="nf">idbm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="idbm"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.idbm">[docs]</a><span class="k">def</span> <span class="nf">idbm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculates the power value in Watts from a dBm value.</span>
 
 <span class="sd">    .. math:: y = 10^{(\frac{x}{10}-3)}</span>
@@ -511,10 +485,7 @@
     <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="gaus">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.gaus">[docs]</a>
-<span class="k">def</span> <span class="nf">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">std</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="gaus"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.gaus">[docs]</a><span class="k">def</span> <span class="nf">gaus</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">std</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Gaussian function.</span>
 
 <span class="sd">    .. math:: \text{gaus}(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}</span>
@@ -568,10 +539,7 @@
 
     <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="n">std</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">std</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="Q">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.Q">[docs]</a>
-<span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="Q"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.Q">[docs]</a><span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Q-function.</span>
 
@@ -620,10 +588,7 @@
     <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">sp</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> </div>
 
 
-
-<div class="viewcode-block" id="phase">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.phase">[docs]</a>
-<span class="k">def</span> <span class="nf">phase</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<div class="viewcode-block" id="phase"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.phase">[docs]</a><span class="k">def</span> <span class="nf">phase</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the unwrapped phase of a frequency response.</span>
 
@@ -661,10 +626,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">H</span><span class="p">))</span></div>
 
-
-<div class="viewcode-block" id="tau_g">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.tau_g">[docs]</a>
-<span class="k">def</span> <span class="nf">tau_g</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="tau_g"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.tau_g">[docs]</a><span class="k">def</span> <span class="nf">tau_g</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the group delay of a frequency response.</span>
 
@@ -705,10 +667,7 @@
     <span class="n">dw</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">fs</span><span class="o">/</span><span class="n">H</span><span class="o">.</span><span class="n">size</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">phase</span><span class="p">(</span><span class="n">H</span><span class="p">))</span><span class="o">/</span><span class="n">dw</span> <span class="o">*</span> <span class="mf">1e12</span></div>
 
-
-<div class="viewcode-block" id="dispersion">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.dispersion">[docs]</a>
-<span class="k">def</span> <span class="nf">dispersion</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f0</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="dispersion"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.dispersion">[docs]</a><span class="k">def</span> <span class="nf">dispersion</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f0</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the dispersion of a frequency response.</span>
 
@@ -733,10 +692,7 @@
 
 
 
-
-<div class="viewcode-block" id="bode">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.bode">[docs]</a>
-<span class="k">def</span> <span class="nf">bode</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+<div class="viewcode-block" id="bode"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.bode">[docs]</a><span class="k">def</span> <span class="nf">bode</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
          <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
          <span class="n">f0</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
          <span class="n">xaxis</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> 
@@ -874,10 +830,7 @@
         <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">tau_g</span></div>
 
 
-
-<div class="viewcode-block" id="rcos">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.rcos">[docs]</a>
-<span class="k">def</span> <span class="nf">rcos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<div class="viewcode-block" id="rcos"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.rcos">[docs]</a><span class="k">def</span> <span class="nf">rcos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Raised cosine spectrum function.</span>
 
@@ -942,10 +895,7 @@
     <span class="k">return</span> <span class="n">H</span></div>
 
 
-
-<div class="viewcode-block" id="si">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.si">[docs]</a>
-<span class="k">def</span> <span class="nf">si</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="si"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.si">[docs]</a><span class="k">def</span> <span class="nf">si</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unit of measure classifier.</span>
 
@@ -994,12 +944,9 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="o">*</span><span class="mf">1e15</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">f</span><span class="si">}</span><span class="s1"> f</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;0 </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span></div>
-
     
 
-<div class="viewcode-block" id="norm">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.norm">[docs]</a>
-<span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="norm"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.norm">[docs]</a><span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Normalize an array by dividing each element by the maximum value in the array.</span>
 
@@ -1026,10 +973,7 @@
     <span class="k">return</span> <span class="n">x</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
 
 
-
-<div class="viewcode-block" id="nearest">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.nearest">[docs]</a>
-<span class="k">def</span> <span class="nf">nearest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+<div class="viewcode-block" id="nearest"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.nearest">[docs]</a><span class="k">def</span> <span class="nf">nearest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the nearest value in an array.</span>
 
@@ -1062,14 +1006,12 @@
     <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span></div>
 
 
-
-<div class="viewcode-block" id="theory_BER">
-<a class="viewcode-back" href="../../utils.html#opticomlib.utils.theory_BER">[docs]</a>
-<span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span>
+<div class="viewcode-block" id="theory_BER"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.theory_BER">[docs]</a><span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span>
     <span class="n">P_avg</span><span class="p">,</span> 
     <span class="n">modulation</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;ook&#39;</span><span class="p">,</span> <span class="s1">&#39;ppm&#39;</span><span class="p">],</span> 
     <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
     <span class="n">decision</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+    <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">ER</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> 
     <span class="n">amplify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
     <span class="n">f0</span><span class="o">=</span><span class="mf">193.4145e12</span><span class="p">,</span> 
@@ -1094,7 +1036,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    P_avg: float</span>
-<span class="sd">        Average Received input optical Power (in [dB]).</span>
+<span class="sd">        Average Received input optical Power (in [dBm]).</span>
 <span class="sd">    modulation: Literal[&#39;ook&#39;, &#39;ppm&#39;]</span>
 <span class="sd">        Kind of modulation format {&#39;ook&#39;, &#39;ppm&#39;}, more modulations in future...</span>
 <span class="sd">    M: int</span>
@@ -1102,6 +1044,9 @@
 <span class="sd">    decision: Literal[&#39;hard&#39;, &#39;soft&#39;]</span>
 <span class="sd">        Kind of PPM decision. &#39;hard&#39; decision use the optimum threshold to separate ON and OFF slots. &#39;soft&#39; decision</span>
 <span class="sd">        use the Maximum a Posteriori (MAP) and it outperform &#39;hard&#39; decision. Only needed if `modulation=&#39;ppm&#39;`.</span>
+<span class="sd">    threshold: float </span>
+<span class="sd">        Threshold for decision. Only needed if (`modulation=&#39;ook&#39;`) or (`modulation=&#39;ppm` and `decision=&#39;hard&#39;`). Value</span>
+<span class="sd">        must be in (0, 1), without include edges. By default optimum threshold is used.</span>
 <span class="sd">    ER: float</span>
 <span class="sd">        Extinction Ratio of the input optical signal, in [dB].</span>
 <span class="sd">    amplify: bool</span>
@@ -1171,7 +1116,8 @@
         <span class="n">P_avg</span><span class="p">,</span> 
         <span class="n">modulation</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;ook&#39;</span><span class="p">,</span> <span class="s1">&#39;ppm&#39;</span><span class="p">],</span> 
         <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="n">decision</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="n">decision</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
         <span class="n">ER</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> 
         <span class="n">amplify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
         <span class="n">f0</span><span class="o">=</span><span class="mf">193.4145e12</span><span class="p">,</span> 
@@ -1226,29 +1172,46 @@
         <span class="k">if</span> <span class="n">modulation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ppm&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Enter a value for &quot;M&quot;.&#39;</span><span class="p">)</span>
+    
             <span class="k">if</span> <span class="n">M</span><span class="o">&lt;</span><span class="mi">2</span> <span class="ow">or</span> <span class="p">(</span><span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The parameter &quot;M&quot; must be a power of 2 greater than or equal to 2.&#39;</span><span class="p">)</span>
             
             <span class="k">if</span> <span class="n">decision</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;hard&#39;</span><span class="p">:</span>
                 <span class="n">SER</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">Q</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">mu_ON</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">mu_OFF</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">**</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># hard decision</span>
-                <span class="n">SER</span> <span class="o">=</span> <span class="n">SER</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu_OFF</span><span class="p">,</span> <span class="n">mu_ON</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+                
+                <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">threshold</span><span class="o">&lt;=</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">threshold</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The threshold value must be in the range (0, 1).&#39;</span><span class="p">)</span>
+                    
+                    <span class="n">SER</span> <span class="o">=</span> <span class="n">SER</span><span class="p">(</span><span class="n">threshold</span> <span class="o">*</span> <span class="n">mu_ON</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">*</span> <span class="n">mu_OFF</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">SER</span> <span class="o">=</span> <span class="n">SER</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu_OFF</span><span class="p">,</span> <span class="n">mu_ON</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    
             <span class="k">elif</span> <span class="n">decision</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;soft&#39;</span><span class="p">:</span>
                 <span class="n">SER</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Q</span><span class="p">((</span><span class="n">mu_ON</span><span class="o">-</span><span class="n">mu_OFF</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">**</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;decision must be &quot;hard&quot; or &quot;soft&quot;&#39;</span><span class="p">)</span>
+    
             <span class="n">BER</span> <span class="o">=</span> <span class="n">SER</span> <span class="o">*</span> <span class="n">M</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         
         <span class="k">elif</span> <span class="n">modulation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ook&#39;</span><span class="p">:</span>
             <span class="n">BER</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">Q</span><span class="p">((</span><span class="n">mu_ON</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">Q</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">mu_OFF</span><span class="p">)</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="n">BER</span> <span class="o">=</span> <span class="n">BER</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu_OFF</span><span class="p">,</span> <span class="n">mu_ON</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        
+
+            <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">threshold</span><span class="o">&lt;=</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">threshold</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The threshold value must be in the range (0, 1).&#39;</span><span class="p">)</span>
+                
+                <span class="n">BER</span> <span class="o">=</span> <span class="n">BER</span><span class="p">(</span><span class="n">threshold</span> <span class="o">*</span> <span class="n">mu_ON</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">*</span> <span class="n">mu_OFF</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">BER</span> <span class="o">=</span> <span class="n">BER</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu_OFF</span><span class="p">,</span> <span class="n">mu_ON</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The modulation type &quot;</span><span class="si">{</span><span class="n">modulation</span><span class="si">}</span><span class="s1">&quot; is invalid.&#39;</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="n">BER</span>
     
-    <span class="k">return</span> <span class="n">temp</span><span class="p">(</span><span class="n">P_avg</span><span class="p">,</span> <span class="n">modulation</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">decision</span><span class="p">,</span> <span class="n">ER</span><span class="p">,</span> <span class="n">amplify</span><span class="p">,</span> <span class="n">f0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">NF</span><span class="p">,</span> <span class="n">BW_opt</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">BW_el</span><span class="p">,</span> <span class="n">R_L</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">NF_el</span><span class="p">)</span></div>
-
+    <span class="k">return</span> <span class="n">temp</span><span class="p">(</span><span class="n">P_avg</span><span class="p">,</span> <span class="n">modulation</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">decision</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">ER</span><span class="p">,</span> <span class="n">amplify</span><span class="p">,</span> <span class="n">f0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">NF</span><span class="p">,</span> <span class="n">BW_opt</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">BW_el</span><span class="p">,</span> <span class="n">R_L</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">NF_el</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

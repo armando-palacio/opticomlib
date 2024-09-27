@@ -14,11 +14,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.4.4
+                1.5.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -113,9 +113,7 @@
 
 
 
-<div class="viewcode-block" id="PPM_ENCODER">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.PPM_ENCODER">[docs]</a>
-<span class="k">def</span> <span class="nf">PPM_ENCODER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
+<div class="viewcode-block" id="PPM_ENCODER"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.PPM_ENCODER">[docs]</a><span class="k">def</span> <span class="nf">PPM_ENCODER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;PPM Encoder</span>
 
 <span class="sd">    Converts an input binary sequence into a binary sequence PPM encoded.</span>
@@ -171,10 +169,7 @@
 
 
 
-
-<div class="viewcode-block" id="PPM_DECODER">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.PPM_DECODER">[docs]</a>
-<span class="k">def</span> <span class="nf">PPM_DECODER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
+<div class="viewcode-block" id="PPM_DECODER"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.PPM_DECODER">[docs]</a><span class="k">def</span> <span class="nf">PPM_DECODER</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;PPM Decoder</span>
 
 <span class="sd">    Receives a binary sequence encoded in PPM and decodes it.</span>
@@ -219,10 +214,7 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-
-<div class="viewcode-block" id="HDD">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.HDD">[docs]</a>
-<span class="k">def</span> <span class="nf">HDD</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="HDD"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.HDD">[docs]</a><span class="k">def</span> <span class="nf">HDD</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Hard Decision Decoder</span>
 
 <span class="sd">    Estimates the most probable PPM symbols from the given binary sequence.</span>
@@ -292,10 +284,7 @@
 
 
 
-
-<div class="viewcode-block" id="SDD">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.SDD">[docs]</a>
-<span class="k">def</span> <span class="nf">SDD</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
+<div class="viewcode-block" id="SDD"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.SDD">[docs]</a><span class="k">def</span> <span class="nf">SDD</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">binary_sequence</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Soft Decision Decoder</span>
 
 <span class="sd">    Estimates the most probable PPM symbols from the given electrical signal without sampling.</span>
@@ -357,10 +346,7 @@
 
 
 
-
-<div class="viewcode-block" id="THRESHOLD_EST">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.THRESHOLD_EST">[docs]</a>
-<span class="k">def</span> <span class="nf">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">:</span> <span class="n">eye</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="THRESHOLD_EST"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.THRESHOLD_EST">[docs]</a><span class="k">def</span> <span class="nf">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">:</span> <span class="n">eye</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Threshold Estimator</span>
 <span class="sd">    </span>
 <span class="sd">    Estimates the decision threshold for M-PPM from means and standard deviations of ``eye_obj``.</span>
@@ -408,10 +394,7 @@
 
 
 
-
-<div class="viewcode-block" id="DSP">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.DSP">[docs]</a>
-<span class="k">def</span> <span class="nf">DSP</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">M</span> <span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">decision</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span><span class="s1">&#39;soft&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DSP"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.DSP">[docs]</a><span class="k">def</span> <span class="nf">DSP</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">M</span> <span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">decision</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span><span class="s1">&#39;soft&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="n">BW</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;PPM Digital Signal Processor</span>
 <span class="sd">    </span>
 <span class="sd">    Performs the decision task of the photodetected electrical signal. </span>
@@ -521,10 +504,7 @@
 
 
 
-
-<div class="viewcode-block" id="BER_analizer">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.BER_analizer">[docs]</a>
-<span class="k">def</span> <span class="nf">BER_analizer</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">,</span> <span class="s1">&#39;estimator&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BER_analizer"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.BER_analizer">[docs]</a><span class="k">def</span> <span class="nf">BER_analizer</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">,</span> <span class="s1">&#39;estimator&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;BER Analizer</span>
 <span class="sd">    </span>
 <span class="sd">    Calculates the bit error rate (BER), either by error counting (comparing the received sequence with the transmitted one) </span>
@@ -614,10 +594,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid mode. Use `counter` or `estimator`.&#39;</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="theory_BER">
-<a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.theory_BER">[docs]</a>
-<span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">decision</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;soft&#39;</span><span class="p">,</span><span class="s1">&#39;hard&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="theory_BER"><a class="viewcode-back" href="../../ppm.html#opticomlib.ppm.theory_BER">[docs]</a><span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">s1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">],</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">decision</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;soft&#39;</span><span class="p">,</span><span class="s1">&#39;hard&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the theoretical bit error probability for a PPM system.</span>
 
@@ -685,7 +662,6 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`decision` must be `soft` or `hard`.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">mu1</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="o">*</span><span class="n">M</span><span class="o">/</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
-
 
 </pre></div>
 
