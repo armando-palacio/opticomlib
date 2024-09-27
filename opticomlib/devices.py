@@ -1328,8 +1328,7 @@ def ADC(
     r"""
     **Analog-to-Digital Converter**
 
-    Converts an analog electrical signal into a quantized digital signal, sampled at a frequency `fs`
-    and filtered with a bandwidth BW.
+    Converts an analog electrical signal into a quantized :math:`2^n` bits digital signal, sampled at a frequency `fs`.
 
     Parameters
     ----------
@@ -1351,7 +1350,7 @@ def ADC(
     -------
     .. plot::
         :include-source:
-        :alt: LPF example 1
+        :alt: ADC
         :align: center
 
         from opticomlib.devices import ADC
@@ -1367,9 +1366,10 @@ def ADC(
         y.plot(
             style='light', 
             grid=True, 
-            lw=5
+            lw=5,
+            label = 'analog signal'
         )
-        yn.plot('.-', lw=2).show()
+        yn.plot('.-', style='light', lw=2, label=' 2 bits quantized signal').show()
     """
     tic()
 
