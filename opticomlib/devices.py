@@ -47,6 +47,7 @@ from .utils import (
     si,
     tau_g,
     dispersion,
+    shortest_int,
 )
 
 plt.rcParams["font.family"] = "serif"
@@ -1266,7 +1267,7 @@ def PD(
     include_noise = include_noise.lower()  # This allow write in upper or lower case
 
     if "thermal" in include_noise or "all" in include_noise:
-        S_T = 4 * kB * T * gv.fs/2 * idb(Fn) / R_load  # thermal noise variance, in [V^2]
+        S_T = 4 * kB * T * gv.fs/2 * idb(Fn) / R_load  # thermal noise variance, in [A^2]
         i_T = np.random.normal(0, S_T**0.5, input.len())  # thermal noise current, in [A]
 
     if "shot" in include_noise or "all" in include_noise:
@@ -1384,8 +1385,7 @@ def ADC(
     if fs is not None:
         signal = sg.resample(signal, int(input.len() * fs / input.fs()))
 
-    V_min = signal.min()
-    V_max = signal.max()
+    V_min, V_max = shortest_int(signal, 99.99)
     
     dig_signal = np.round(
         (signal - V_min) / (V_max - V_min) * (2**n - 1)
@@ -1652,8 +1652,13 @@ def GET_EYE(
 
     # compute umbral
     x = np.linspace(mu0, mu1, 500)
-    pdf = gaussian_kde(input[ ((t_span0 < t) & (t < t_span1)) ]).evaluate(x)
-    eye_dict["threshold"] = x[np.argmin(pdf)]
+    y = input[ ((t_span0 < t) & (t < t_span1)) ]
+    
+    if len(y) > 1:
+        pdf = gaussian_kde(y).evaluate(x)
+        eye_dict["threshold"] = x[np.argmin(pdf)]
+    else:
+        eye_dict["threshold"] = None
 
     # We obtain the extinction ratio
     eye_dict["er"] = 10 * np.log10(mu1 / mu0) if mu0 > 0 else np.inf if mu0 == 0 else np.nan
