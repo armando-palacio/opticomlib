@@ -1,5 +1,5 @@
 from .typing import *
 from .utils import *
 
-__version__ = '1.5.9'
+__version__ = '1.5.10'
 
