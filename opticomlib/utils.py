@@ -21,7 +21,12 @@
     si                     
     norm                   
     nearest  
-    theory_BER               
+    theory_BER
+    p_ase
+    average_voltages
+    noise_variances
+    optimum_threshold
+    shortest_int              
 """
 
 import re
@@ -32,7 +37,7 @@ import scipy.signal as sg # type: ignore
 
 from typing import Literal, Union
 
-from scipy.constants import pi, c # type: ignore
+from scipy.constants import pi, c, h, e, k as kB # type: ignore
 
 import matplotlib.pyplot as plt
 from numpy.fft import fft, ifft, fftfreq, fftshift
@@ -916,6 +921,206 @@ def nearest(x, a):
     
     return x[np.abs(x-a).argmin()]
 
+def p_ase(
+        amplify=True, 
+        wavelength=1550e-9, 
+        G=None, 
+        NF=None, 
+        BW_opt=None,
+):
+    """
+    Calculate the ASE noise power [Watts].
+    
+    Parameters
+    ----------
+    amplify : bool, default: True
+        If use an EDFA or not at the receiver (before PIN).
+    wavelength : float, default: 1550e-9
+        Wavelength of the signal.
+    G : float
+        Gain of EDFA, in [dB]. Only used if `amplify=True`. This parameter is mandatory.
+    NF : float
+        Noise Figure of EDFA, in [dB]. Only used if `amplify=True`. Mandatory.
+    BW_opt : float
+        Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if `amplify=True`. Mandatory.
+
+    Returns
+    -------
+    p_ase : float
+        ASE optical noise power, in [W].
+    """
+    if amplify:
+        if not (G is not None and NF is not None and BW_opt is not None):
+            raise ValueError('`G`, `NF` and `BW_opt` must be specify.')
+        
+        nf = idb(NF)
+        g = idb(G)
+        f0 = c/wavelength
+
+        p_ase = nf * h * f0 * (g - 1) * BW_opt # ASE optical noise 
+    else:
+        p_ase = 0
+    return p_ase
+    
+def average_voltages(
+        P_avg, 
+        modulation: Literal['ook', 'ppm'], 
+        M=None, 
+        ER=np.inf,
+        amplify=True, 
+        wavelength=1550e-9, 
+        G=None, 
+        NF=None, 
+        BW_opt=None,
+        r=1.0,
+        R_L=50,
+):
+    """
+    Calculate the average voltages of the ON and OFF slots [Voltages].
+
+    Parameters
+    ----------
+    P_avg : float
+        Average Received input optical Power (in [dBm]).
+    modulation : Literal['ook', 'ppm']
+        Kind of modulation format {'ook', 'ppm'}, more modulations in future...
+    M : int
+        Order of M-ary PPM (a power of 2). Only needed if `modulation='ppm'`.
+    ER : float, default: np.inf
+        Extinction Ratio of the input optical signal, in [dB].
+    amplify : bool, default: True
+        If use an EDFA or not at the receiver (before PIN).
+    wavelength : float, default: 1550e-9
+        Wavelength of the signal.
+    G : float
+        Gain of EDFA, in [dB]. Only used if `amplify=True`. This parameter is mandatory.
+    NF : float
+        Noise Figure of EDFA, in [dB]. Only used if `amplify=True`. Mandatory.
+    BW_opt : float
+        Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if `amplify=True`. Mandatory.
+    r : float, default: 1.0
+        Responsivity of photo-detector.
+    R_L : float, default: 50
+        Load resistance of photo-detector, in [Ω].
+
+    Returns
+    -------
+    mu: np.ndarray
+        Average voltage of ON and OFF slots. mu[0] is the OFF slot and mu[1] is the ON slot.
+    mu_ASE: float
+        ASE voltage offset.
+    """ 
+    M = 2 if modulation.lower() == 'ook' else M
+
+    er = idb(ER)  # extinction ratio
+    p_avg = idbm(P_avg)  # average input power, in [W]
+    g = idb(G)  # gain of EDFA
+
+    p_ON = p_avg * M / (1 + (M-1)/er) # ON slot average optical power, without amplification
+    p_OFF = p_ON/er   # OFF slot average optical power, without amplification
+
+    mu_ASE = r * p_ase(amplify, wavelength, G, NF, BW_opt) * R_L  # ASE voltage offset
+    
+    mu = r * g * np.array([p_OFF, p_ON]) * R_L + mu_ASE  # average voltage of ON and OFF slots
+    return mu, mu_ASE
+
+def noise_variances(
+        P_avg,
+        modulation: Literal['ook', 'ppm'], 
+        M=None,
+        ER=np.inf,
+        amplify=True,
+        wavelength=1550e-9,
+        G=None,
+        NF=None,
+        BW_opt=None,
+        r=1.0,
+        BW_el=5e9,
+        R_L=50,
+        T=300,
+        NF_el = 0
+    ):
+    """
+    Calculate the theoretical noise variances for OFF and ON slots, include sig-ase, ase-ase, thermal and shot noises [V^2].
+    If ``amplify=False`` only thermal and shot are calculated.
+
+    Parameters
+    ----------
+    P_avg: float
+        Average Received input optical Power (in [dBm]).
+    modulation: Literal['ook', 'ppm']
+        Kind of modulation format {'ook', 'ppm'}, more modulations in future...
+    M: int
+        Order of M-ary PPM (a power of 2). Only needed if `modulation='ppm'`. 
+    ER: float
+        Extinction Ratio of the input optical signal, in [dB].
+    amplify: bool
+        If use an EDFA or not at the receiver (before PIN). Default: `False`.
+    wavelength: float
+        Central frequency of communication, in [Hz]. Only used if `amplify=True`. Default: `1550 nm`.
+    G: float
+        Gain of EDFA, in [dB]. Only used if `amplify=True`. This parameter is mandatory.
+    NF: float
+        Noise Figure of EDFA, in [dB]. Only used if `amplify=True`. Mandatory.
+    BW_opt: float
+        Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if `amplify=True`. Mandatory.
+    r: float
+        Responsivity of photo-detector. Default: 1.0 [A/W]
+    BW_el: float
+        Bandwidth of photo-detector or electrical filter, in [Hz]. Default: 5e9 [Hz].
+    R_L: float
+        Load resistance of photo-detector, in [Ω]. Default: 50 [Ω].
+    T: float
+        Temperature of photo-detector, in [K]. Default: 300 [K].
+    NF_el: float
+        Equivalent Noise Figure of electric circuit, in [dB]. Default: 0 [dB]
+    """
+    mu, mu_ASE = average_voltages(P_avg, modulation, M, ER, amplify, wavelength, G, NF, BW_opt, r, R_L)
+
+    l = BW_el/BW_opt
+    nf_el = idb(NF_el)
+
+    S_sig_ase_i = 2 * mu_ASE * (mu-mu_ASE) * l  # signal-ase beating noise variance, in [V^2]
+    S_ase_ase = mu_ASE**2 * (1 - l/2) * l       # ase-ase beating noise variance, in [V^2]
+
+    S_th = 4 * kB * T * BW_el * R_L   # thermal noise variance, in [V^2]
+    S_sh_i = 2 * e * mu * BW_el * R_L   # shot noise variance, in [V^2]
+    
+    S = (S_th + S_sig_ase_i + S_ase_ase + S_sh_i) * nf_el   # variance of ON and OFF slots
+    return S
+
+def optimum_threshold(mu0,mu1,S0,S1, modulation: Literal['ook', 'ppm'], M=None):
+    """
+    Calculate the optimum threshold for binary modulation formats.
+
+    Parameters
+    ----------
+    mu0: float
+        Average voltage of OFF slot.
+    mu1: float
+        Average voltage of ON slot.
+    S0: float
+        Noise variance of OFF slot.
+    S1: float
+        Noise variance of ON slot.
+    modulation: str
+        Modulation format
+    M: int
+        PPM order
+
+    Returns
+    -------
+    threshold: float
+        Optimum threshold value.
+    """
+
+    M = 2 if modulation.lower() == 'ook' else M
+
+    s1=S1**0.5
+    s0=S0**0.5
+
+    threshold = 1/(S1-S0)*(mu0*S1 - mu1*S0 + s1*s0*np.sqrt((mu1-mu0)**2 + 2*(S1-S0)*np.log(s1/s0*(M-1))))
+    return threshold
 
 def theory_BER(
     P_avg, 
@@ -1123,3 +1328,31 @@ def theory_BER(
         return BER
     
     return temp(P_avg, modulation, M, decision, threshold, ER, amplify, f0, G, NF, BW_opt, r, BW_el, R_L, T, NF_el)
+
+
+
+def shortest_int(data: np.ndarray, percent: float=50) -> tuple[float, float]:
+        r"""
+        Estimation of the shortest interval containing ``percent`` of the samples in 'data'.
+
+        Parameters
+        ----------
+        data : ndarray
+            Array of data.
+
+        Returns
+        -------
+        tuple[float, float]
+            The shortest interval containing 50% of the samples in 'data'.
+        """
+        diff_lag = (
+            lambda data, lag: data[lag:] - data[:-lag]
+        )  # Difference between two elements of an array separated by a distance 'lag'
+
+        data = np.sort(data)
+        lag = int(len(data) * percent/100)
+        diff = diff_lag(data, lag)
+        i = np.where(np.abs(diff - np.min(diff)) < 1e-10)[0]
+        if len(i) > 1:
+            i = int(np.mean(i))
+        return np.array((data[i], data[i + lag]))
