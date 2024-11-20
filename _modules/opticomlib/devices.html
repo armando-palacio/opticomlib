@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.5.8
+                1.5.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -136,6 +136,7 @@
     <span class="n">si</span><span class="p">,</span>
     <span class="n">tau_g</span><span class="p">,</span>
     <span class="n">dispersion</span><span class="p">,</span>
+    <span class="n">shortest_int</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;serif&quot;</span>
@@ -1355,7 +1356,7 @@
     <span class="n">include_noise</span> <span class="o">=</span> <span class="n">include_noise</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c1"># This allow write in upper or lower case</span>
 
     <span class="k">if</span> <span class="s2">&quot;thermal&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span> <span class="ow">or</span> <span class="s2">&quot;all&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span><span class="p">:</span>
-        <span class="n">S_T</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idb</span><span class="p">(</span><span class="n">Fn</span><span class="p">)</span> <span class="o">/</span> <span class="n">R_load</span>  <span class="c1"># thermal noise variance, in [V^2]</span>
+        <span class="n">S_T</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">gv</span><span class="o">.</span><span class="n">fs</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">idb</span><span class="p">(</span><span class="n">Fn</span><span class="p">)</span> <span class="o">/</span> <span class="n">R_load</span>  <span class="c1"># thermal noise variance, in [A^2]</span>
         <span class="n">i_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">S_T</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">())</span>  <span class="c1"># thermal noise current, in [A]</span>
 
     <span class="k">if</span> <span class="s2">&quot;shot&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span> <span class="ow">or</span> <span class="s2">&quot;all&quot;</span> <span class="ow">in</span> <span class="n">include_noise</span><span class="p">:</span>
@@ -1473,8 +1474,7 @@
     <span class="k">if</span> <span class="n">fs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">signal</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">/</span> <span class="nb">input</span><span class="o">.</span><span class="n">fs</span><span class="p">()))</span>
 
-    <span class="n">V_min</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-    <span class="n">V_max</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">V_min</span><span class="p">,</span> <span class="n">V_max</span> <span class="o">=</span> <span class="n">shortest_int</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mf">99.99</span><span class="p">)</span>
     
     <span class="n">dig_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
         <span class="p">(</span><span class="n">signal</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">V_max</span> <span class="o">-</span> <span class="n">V_min</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
@@ -1741,8 +1741,13 @@
 
     <span class="c1"># compute umbral</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mu0</span><span class="p">,</span> <span class="n">mu1</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
-    <span class="n">pdf</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span> <span class="p">((</span><span class="n">t_span0</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_span1</span><span class="p">))</span> <span class="p">])</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">pdf</span><span class="p">)]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span> <span class="p">((</span><span class="n">t_span0</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_span1</span><span class="p">))</span> <span class="p">]</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">pdf</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">pdf</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># We obtain the extinction ratio</span>
     <span class="n">eye_dict</span><span class="p">[</span><span class="s2">&quot;er&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mu1</span> <span class="o">/</span> <span class="n">mu0</span><span class="p">)</span> <span class="k">if</span> <span class="n">mu0</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">if</span> <span class="n">mu0</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>

@@ -37,7 +37,7 @@
               <img src="../../_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.5.8
+                1.5.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -110,7 +110,12 @@
 <span class="sd">    si                     </span>
 <span class="sd">    norm                   </span>
 <span class="sd">    nearest  </span>
-<span class="sd">    theory_BER               </span>
+<span class="sd">    theory_BER</span>
+<span class="sd">    p_ase</span>
+<span class="sd">    average_voltages</span>
+<span class="sd">    noise_variances</span>
+<span class="sd">    optimum_threshold</span>
+<span class="sd">    shortest_int              </span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
@@ -121,7 +126,7 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">c</span> <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">k</span> <span class="k">as</span> <span class="n">kB</span> <span class="c1"># type: ignore</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">fft</span><span class="p">,</span> <span class="n">ifft</span><span class="p">,</span> <span class="n">fftfreq</span><span class="p">,</span> <span class="n">fftshift</span>
@@ -1005,6 +1010,206 @@
     
     <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span></div>
 
+<div class="viewcode-block" id="p_ase"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.p_ase">[docs]</a><span class="k">def</span> <span class="nf">p_ase</span><span class="p">(</span>
+        <span class="n">amplify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+        <span class="n">wavelength</span><span class="o">=</span><span class="mf">1550e-9</span><span class="p">,</span> 
+        <span class="n">G</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="n">NF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="n">BW_opt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the ASE noise power [Watts].</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplify : bool, default: True</span>
+<span class="sd">        If use an EDFA or not at the receiver (before PIN).</span>
+<span class="sd">    wavelength : float, default: 1550e-9</span>
+<span class="sd">        Wavelength of the signal.</span>
+<span class="sd">    G : float</span>
+<span class="sd">        Gain of EDFA, in [dB]. Only used if `amplify=True`. This parameter is mandatory.</span>
+<span class="sd">    NF : float</span>
+<span class="sd">        Noise Figure of EDFA, in [dB]. Only used if `amplify=True`. Mandatory.</span>
+<span class="sd">    BW_opt : float</span>
+<span class="sd">        Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if `amplify=True`. Mandatory.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p_ase : float</span>
+<span class="sd">        ASE optical noise power, in [W].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">amplify</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">G</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">NF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">BW_opt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`G`, `NF` and `BW_opt` must be specify.&#39;</span><span class="p">)</span>
+        
+        <span class="n">nf</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">NF</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">f0</span> <span class="o">=</span> <span class="n">c</span><span class="o">/</span><span class="n">wavelength</span>
+
+        <span class="n">p_ase</span> <span class="o">=</span> <span class="n">nf</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">f0</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">BW_opt</span> <span class="c1"># ASE optical noise </span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p_ase</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">p_ase</span></div>
+    
+<div class="viewcode-block" id="average_voltages"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.average_voltages">[docs]</a><span class="k">def</span> <span class="nf">average_voltages</span><span class="p">(</span>
+        <span class="n">P_avg</span><span class="p">,</span> 
+        <span class="n">modulation</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;ook&#39;</span><span class="p">,</span> <span class="s1">&#39;ppm&#39;</span><span class="p">],</span> 
+        <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="n">ER</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">amplify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+        <span class="n">wavelength</span><span class="o">=</span><span class="mf">1550e-9</span><span class="p">,</span> 
+        <span class="n">G</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="n">NF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="n">BW_opt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">r</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">R_L</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the average voltages of the ON and OFF slots [Voltages].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    P_avg : float</span>
+<span class="sd">        Average Received input optical Power (in [dBm]).</span>
+<span class="sd">    modulation : Literal[&#39;ook&#39;, &#39;ppm&#39;]</span>
+<span class="sd">        Kind of modulation format {&#39;ook&#39;, &#39;ppm&#39;}, more modulations in future...</span>
+<span class="sd">    M : int</span>
+<span class="sd">        Order of M-ary PPM (a power of 2). Only needed if `modulation=&#39;ppm&#39;`.</span>
+<span class="sd">    ER : float, default: np.inf</span>
+<span class="sd">        Extinction Ratio of the input optical signal, in [dB].</span>
+<span class="sd">    amplify : bool, default: True</span>
+<span class="sd">        If use an EDFA or not at the receiver (before PIN).</span>
+<span class="sd">    wavelength : float, default: 1550e-9</span>
+<span class="sd">        Wavelength of the signal.</span>
+<span class="sd">    G : float</span>
+<span class="sd">        Gain of EDFA, in [dB]. Only used if `amplify=True`. This parameter is mandatory.</span>
+<span class="sd">    NF : float</span>
+<span class="sd">        Noise Figure of EDFA, in [dB]. Only used if `amplify=True`. Mandatory.</span>
+<span class="sd">    BW_opt : float</span>
+<span class="sd">        Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if `amplify=True`. Mandatory.</span>
+<span class="sd">    r : float, default: 1.0</span>
+<span class="sd">        Responsivity of photo-detector.</span>
+<span class="sd">    R_L : float, default: 50</span>
+<span class="sd">        Load resistance of photo-detector, in [Ω].</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mu: np.ndarray</span>
+<span class="sd">        Average voltage of ON and OFF slots. mu[0] is the OFF slot and mu[1] is the ON slot.</span>
+<span class="sd">    mu_ASE: float</span>
+<span class="sd">        ASE voltage offset.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="n">M</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">modulation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ook&#39;</span> <span class="k">else</span> <span class="n">M</span>
+
+    <span class="n">er</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">ER</span><span class="p">)</span>  <span class="c1"># extinction ratio</span>
+    <span class="n">p_avg</span> <span class="o">=</span> <span class="n">idbm</span><span class="p">(</span><span class="n">P_avg</span><span class="p">)</span>  <span class="c1"># average input power, in [W]</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>  <span class="c1"># gain of EDFA</span>
+
+    <span class="n">p_ON</span> <span class="o">=</span> <span class="n">p_avg</span> <span class="o">*</span> <span class="n">M</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">er</span><span class="p">)</span> <span class="c1"># ON slot average optical power, without amplification</span>
+    <span class="n">p_OFF</span> <span class="o">=</span> <span class="n">p_ON</span><span class="o">/</span><span class="n">er</span>   <span class="c1"># OFF slot average optical power, without amplification</span>
+
+    <span class="n">mu_ASE</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">p_ase</span><span class="p">(</span><span class="n">amplify</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">NF</span><span class="p">,</span> <span class="n">BW_opt</span><span class="p">)</span> <span class="o">*</span> <span class="n">R_L</span>  <span class="c1"># ASE voltage offset</span>
+    
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p_OFF</span><span class="p">,</span> <span class="n">p_ON</span><span class="p">])</span> <span class="o">*</span> <span class="n">R_L</span> <span class="o">+</span> <span class="n">mu_ASE</span>  <span class="c1"># average voltage of ON and OFF slots</span>
+    <span class="k">return</span> <span class="n">mu</span><span class="p">,</span> <span class="n">mu_ASE</span></div>
+
+<div class="viewcode-block" id="noise_variances"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.noise_variances">[docs]</a><span class="k">def</span> <span class="nf">noise_variances</span><span class="p">(</span>
+        <span class="n">P_avg</span><span class="p">,</span>
+        <span class="n">modulation</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;ook&#39;</span><span class="p">,</span> <span class="s1">&#39;ppm&#39;</span><span class="p">],</span> 
+        <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ER</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">amplify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">wavelength</span><span class="o">=</span><span class="mf">1550e-9</span><span class="p">,</span>
+        <span class="n">G</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">NF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">BW_opt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">r</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">BW_el</span><span class="o">=</span><span class="mf">5e9</span><span class="p">,</span>
+        <span class="n">R_L</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">T</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+        <span class="n">NF_el</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the theoretical noise variances for OFF and ON slots, include sig-ase, ase-ase, thermal and shot noises [V^2].</span>
+<span class="sd">    If ``amplify=False`` only thermal and shot are calculated.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    P_avg: float</span>
+<span class="sd">        Average Received input optical Power (in [dBm]).</span>
+<span class="sd">    modulation: Literal[&#39;ook&#39;, &#39;ppm&#39;]</span>
+<span class="sd">        Kind of modulation format {&#39;ook&#39;, &#39;ppm&#39;}, more modulations in future...</span>
+<span class="sd">    M: int</span>
+<span class="sd">        Order of M-ary PPM (a power of 2). Only needed if `modulation=&#39;ppm&#39;`. </span>
+<span class="sd">    ER: float</span>
+<span class="sd">        Extinction Ratio of the input optical signal, in [dB].</span>
+<span class="sd">    amplify: bool</span>
+<span class="sd">        If use an EDFA or not at the receiver (before PIN). Default: `False`.</span>
+<span class="sd">    wavelength: float</span>
+<span class="sd">        Central frequency of communication, in [Hz]. Only used if `amplify=True`. Default: `1550 nm`.</span>
+<span class="sd">    G: float</span>
+<span class="sd">        Gain of EDFA, in [dB]. Only used if `amplify=True`. This parameter is mandatory.</span>
+<span class="sd">    NF: float</span>
+<span class="sd">        Noise Figure of EDFA, in [dB]. Only used if `amplify=True`. Mandatory.</span>
+<span class="sd">    BW_opt: float</span>
+<span class="sd">        Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if `amplify=True`. Mandatory.</span>
+<span class="sd">    r: float</span>
+<span class="sd">        Responsivity of photo-detector. Default: 1.0 [A/W]</span>
+<span class="sd">    BW_el: float</span>
+<span class="sd">        Bandwidth of photo-detector or electrical filter, in [Hz]. Default: 5e9 [Hz].</span>
+<span class="sd">    R_L: float</span>
+<span class="sd">        Load resistance of photo-detector, in [Ω]. Default: 50 [Ω].</span>
+<span class="sd">    T: float</span>
+<span class="sd">        Temperature of photo-detector, in [K]. Default: 300 [K].</span>
+<span class="sd">    NF_el: float</span>
+<span class="sd">        Equivalent Noise Figure of electric circuit, in [dB]. Default: 0 [dB]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">mu_ASE</span> <span class="o">=</span> <span class="n">average_voltages</span><span class="p">(</span><span class="n">P_avg</span><span class="p">,</span> <span class="n">modulation</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">ER</span><span class="p">,</span> <span class="n">amplify</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">NF</span><span class="p">,</span> <span class="n">BW_opt</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">R_L</span><span class="p">)</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">BW_el</span><span class="o">/</span><span class="n">BW_opt</span>
+    <span class="n">nf_el</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">NF_el</span><span class="p">)</span>
+
+    <span class="n">S_sig_ase_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu_ASE</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span><span class="o">-</span><span class="n">mu_ASE</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span>  <span class="c1"># signal-ase beating noise variance, in [V^2]</span>
+    <span class="n">S_ase_ase</span> <span class="o">=</span> <span class="n">mu_ASE</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">l</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span>       <span class="c1"># ase-ase beating noise variance, in [V^2]</span>
+
+    <span class="n">S_th</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">BW_el</span> <span class="o">*</span> <span class="n">R_L</span>   <span class="c1"># thermal noise variance, in [V^2]</span>
+    <span class="n">S_sh_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">BW_el</span> <span class="o">*</span> <span class="n">R_L</span>   <span class="c1"># shot noise variance, in [V^2]</span>
+    
+    <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">S_th</span> <span class="o">+</span> <span class="n">S_sig_ase_i</span> <span class="o">+</span> <span class="n">S_ase_ase</span> <span class="o">+</span> <span class="n">S_sh_i</span><span class="p">)</span> <span class="o">*</span> <span class="n">nf_el</span>   <span class="c1"># variance of ON and OFF slots</span>
+    <span class="k">return</span> <span class="n">S</span></div>
+
+<div class="viewcode-block" id="optimum_threshold"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.optimum_threshold">[docs]</a><span class="k">def</span> <span class="nf">optimum_threshold</span><span class="p">(</span><span class="n">mu0</span><span class="p">,</span><span class="n">mu1</span><span class="p">,</span><span class="n">S0</span><span class="p">,</span><span class="n">S1</span><span class="p">,</span> <span class="n">modulation</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;ook&#39;</span><span class="p">,</span> <span class="s1">&#39;ppm&#39;</span><span class="p">],</span> <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the optimum threshold for binary modulation formats.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mu0: float</span>
+<span class="sd">        Average voltage of OFF slot.</span>
+<span class="sd">    mu1: float</span>
+<span class="sd">        Average voltage of ON slot.</span>
+<span class="sd">    S0: float</span>
+<span class="sd">        Noise variance of OFF slot.</span>
+<span class="sd">    S1: float</span>
+<span class="sd">        Noise variance of ON slot.</span>
+<span class="sd">    modulation: str</span>
+<span class="sd">        Modulation format</span>
+<span class="sd">    M: int</span>
+<span class="sd">        PPM order</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    threshold: float</span>
+<span class="sd">        Optimum threshold value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">M</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">modulation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ook&#39;</span> <span class="k">else</span> <span class="n">M</span>
+
+    <span class="n">s1</span><span class="o">=</span><span class="n">S1</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">s0</span><span class="o">=</span><span class="n">S0</span><span class="o">**</span><span class="mf">0.5</span>
+
+    <span class="n">threshold</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">S1</span><span class="o">-</span><span class="n">S0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">mu0</span><span class="o">*</span><span class="n">S1</span> <span class="o">-</span> <span class="n">mu1</span><span class="o">*</span><span class="n">S0</span> <span class="o">+</span> <span class="n">s1</span><span class="o">*</span><span class="n">s0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">mu1</span><span class="o">-</span><span class="n">mu0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">S1</span><span class="o">-</span><span class="n">S0</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s1</span><span class="o">/</span><span class="n">s0</span><span class="o">*</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">threshold</span></div>
 
 <div class="viewcode-block" id="theory_BER"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.theory_BER">[docs]</a><span class="k">def</span> <span class="nf">theory_BER</span><span class="p">(</span>
     <span class="n">P_avg</span><span class="p">,</span> 
@@ -1212,6 +1417,34 @@
         <span class="k">return</span> <span class="n">BER</span>
     
     <span class="k">return</span> <span class="n">temp</span><span class="p">(</span><span class="n">P_avg</span><span class="p">,</span> <span class="n">modulation</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">decision</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">ER</span><span class="p">,</span> <span class="n">amplify</span><span class="p">,</span> <span class="n">f0</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">NF</span><span class="p">,</span> <span class="n">BW_opt</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">BW_el</span><span class="p">,</span> <span class="n">R_L</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">NF_el</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="shortest_int"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.shortest_int">[docs]</a><span class="k">def</span> <span class="nf">shortest_int</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">percent</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimation of the shortest interval containing ``percent`` of the samples in &#39;data&#39;.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : ndarray</span>
+<span class="sd">            Array of data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple[float, float]</span>
+<span class="sd">            The shortest interval containing 50% of the samples in &#39;data&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">diff_lag</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">data</span><span class="p">,</span> <span class="n">lag</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">lag</span><span class="p">:]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="n">lag</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># Difference between two elements of an array separated by a distance &#39;lag&#39;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="n">percent</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lag</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">lag</span><span class="p">]))</span></div>
 </pre></div>
 
            </div>

@@ -40,7 +40,7 @@
               <img src="_static/logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.5.8
+                1.5.10
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -82,7 +82,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.si"><code class="docutils literal notranslate"><span class="pre">si()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.norm"><code class="docutils literal notranslate"><span class="pre">norm()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.nearest"><code class="docutils literal notranslate"><span class="pre">nearest()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.p_ase"><code class="docutils literal notranslate"><span class="pre">p_ase()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.average_voltages"><code class="docutils literal notranslate"><span class="pre">average_voltages()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.noise_variances"><code class="docutils literal notranslate"><span class="pre">noise_variances()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.optimum_threshold"><code class="docutils literal notranslate"><span class="pre">optimum_threshold()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.shortest_int"><code class="docutils literal notranslate"><span class="pre">shortest_int()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -179,6 +184,21 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.theory_BER" title="opticomlib.utils.theory_BER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">theory_BER</span></code></a>(P_avg, modulation[, M, decision, ...])</p></td>
 <td><p>This function calculates the bit error rate (BER) for an OPTICAL RECEIVER, based on a PIN photodetector, from the average input power.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.p_ase" title="opticomlib.utils.p_ase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">p_ase</span></code></a>([amplify, wavelength, G, NF, BW_opt])</p></td>
+<td><p>Calculate the ASE noise power [Watts].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.average_voltages" title="opticomlib.utils.average_voltages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average_voltages</span></code></a>(P_avg, modulation[, M, ER, ...])</p></td>
+<td><p>Calculate the average voltages of the ON and OFF slots [Voltages].</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.noise_variances" title="opticomlib.utils.noise_variances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noise_variances</span></code></a>(P_avg, modulation[, M, ER, ...])</p></td>
+<td><p>Calculate the theoretical noise variances for OFF and ON slots, include sig-ase, ase-ase, thermal and shot noises [V^2].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.optimum_threshold" title="opticomlib.utils.optimum_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimum_threshold</span></code></a>(mu0, mu1, S0, S1, modulation)</p></td>
+<td><p>Calculate the optimum threshold for binary modulation formats.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.shortest_int" title="opticomlib.utils.shortest_int"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shortest_int</span></code></a>(data[, percent])</p></td>
+<td><p>Estimation of the shortest interval containing <code class="docutils literal notranslate"><span class="pre">percent</span></code> of the samples in 'data'.</p></td>
 </tr>
 </tbody>
 </table>
@@ -786,6 +806,110 @@ Then you can use toc() to get the elapsed time.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.p_ase">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">p_ase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amplify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.55e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#p_ase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.p_ase" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the ASE noise power [Watts].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>amplify</strong> (<em>bool</em><em>, </em><em>default: True</em>) – If use an EDFA or not at the receiver (before PIN).</p></li>
+<li><p><strong>wavelength</strong> (<em>float</em><em>, </em><em>default: 1550e-9</em>) – Wavelength of the signal.</p></li>
+<li><p><strong>G</strong> (<em>float</em>) – Gain of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. This parameter is mandatory.</p></li>
+<li><p><strong>NF</strong> (<em>float</em>) – Noise Figure of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+<li><p><strong>BW_opt</strong> (<em>float</em>) – Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>p_ase</strong> – ASE optical noise power, in [W].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.average_voltages">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">average_voltages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_avg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modulation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ook'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ppm'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ER</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.55e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#average_voltages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.average_voltages" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the average voltages of the ON and OFF slots [Voltages].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P_avg</strong> (<em>float</em>) – Average Received input optical Power (in [dBm]).</p></li>
+<li><p><strong>modulation</strong> (<em>Literal</em><em>[</em><em>'ook'</em><em>, </em><em>'ppm'</em><em>]</em>) – Kind of modulation format {‘ook’, ‘ppm’}, more modulations in future…</p></li>
+<li><p><strong>M</strong> (<em>int</em>) – Order of M-ary PPM (a power of 2). Only needed if <cite>modulation=’ppm’</cite>.</p></li>
+<li><p><strong>ER</strong> (<em>float</em><em>, </em><em>default: np.inf</em>) – Extinction Ratio of the input optical signal, in [dB].</p></li>
+<li><p><strong>amplify</strong> (<em>bool</em><em>, </em><em>default: True</em>) – If use an EDFA or not at the receiver (before PIN).</p></li>
+<li><p><strong>wavelength</strong> (<em>float</em><em>, </em><em>default: 1550e-9</em>) – Wavelength of the signal.</p></li>
+<li><p><strong>G</strong> (<em>float</em>) – Gain of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. This parameter is mandatory.</p></li>
+<li><p><strong>NF</strong> (<em>float</em>) – Noise Figure of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+<li><p><strong>BW_opt</strong> (<em>float</em>) – Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+<li><p><strong>r</strong> (<em>float</em><em>, </em><em>default: 1.0</em>) – Responsivity of photo-detector.</p></li>
+<li><p><strong>R_L</strong> (<em>float</em><em>, </em><em>default: 50</em>) – Load resistance of photo-detector, in [Ω].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mu</strong> (<em>np.ndarray</em>) – Average voltage of ON and OFF slots. mu[0] is the OFF slot and mu[1] is the ON slot.</p></li>
+<li><p><strong>mu_ASE</strong> (<em>float</em>) – ASE voltage offset.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.noise_variances">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">noise_variances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_avg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modulation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ook'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ppm'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ER</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.55e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_el</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF_el</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#noise_variances"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.noise_variances" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the theoretical noise variances for OFF and ON slots, include sig-ase, ase-ase, thermal and shot noises [V^2].
+If <code class="docutils literal notranslate"><span class="pre">amplify=False</span></code> only thermal and shot are calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P_avg</strong> (<em>float</em>) – Average Received input optical Power (in [dBm]).</p></li>
+<li><p><strong>modulation</strong> (<em>Literal</em><em>[</em><em>'ook'</em><em>, </em><em>'ppm'</em><em>]</em>) – Kind of modulation format {‘ook’, ‘ppm’}, more modulations in future…</p></li>
+<li><p><strong>M</strong> (<em>int</em>) – Order of M-ary PPM (a power of 2). Only needed if <cite>modulation=’ppm’</cite>.</p></li>
+<li><p><strong>ER</strong> (<em>float</em>) – Extinction Ratio of the input optical signal, in [dB].</p></li>
+<li><p><strong>amplify</strong> (<em>bool</em>) – If use an EDFA or not at the receiver (before PIN). Default: <cite>False</cite>.</p></li>
+<li><p><strong>wavelength</strong> (<em>float</em>) – Central frequency of communication, in [Hz]. Only used if <cite>amplify=True</cite>. Default: <cite>1550 nm</cite>.</p></li>
+<li><p><strong>G</strong> (<em>float</em>) – Gain of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. This parameter is mandatory.</p></li>
+<li><p><strong>NF</strong> (<em>float</em>) – Noise Figure of EDFA, in [dB]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+<li><p><strong>BW_opt</strong> (<em>float</em>) – Bandwidth of optical filter that is placed after the EDFA, in [Hz]. Only used if <cite>amplify=True</cite>. Mandatory.</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – Responsivity of photo-detector. Default: 1.0 [A/W]</p></li>
+<li><p><strong>BW_el</strong> (<em>float</em>) – Bandwidth of photo-detector or electrical filter, in [Hz]. Default: 5e9 [Hz].</p></li>
+<li><p><strong>R_L</strong> (<em>float</em>) – Load resistance of photo-detector, in [Ω]. Default: 50 [Ω].</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature of photo-detector, in [K]. Default: 300 [K].</p></li>
+<li><p><strong>NF_el</strong> (<em>float</em>) – Equivalent Noise Figure of electric circuit, in [dB]. Default: 0 [dB]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.optimum_threshold">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">optimum_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modulation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ook'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ppm'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#optimum_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.optimum_threshold" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the optimum threshold for binary modulation formats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu0</strong> (<em>float</em>) – Average voltage of OFF slot.</p></li>
+<li><p><strong>mu1</strong> (<em>float</em>) – Average voltage of ON slot.</p></li>
+<li><p><strong>S0</strong> (<em>float</em>) – Noise variance of OFF slot.</p></li>
+<li><p><strong>S1</strong> (<em>float</em>) – Noise variance of ON slot.</p></li>
+<li><p><strong>modulation</strong> (<em>str</em>) – Modulation format</p></li>
+<li><p><strong>M</strong> (<em>int</em>) – PPM order</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>threshold</strong> – Optimum threshold value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.theory_BER">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">theory_BER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_avg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modulation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ook'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ppm'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ER</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">193414500000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW_el</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NF_el</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#theory_BER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.theory_BER" title="Permalink to this definition"></a></dt>
 <dd><p>This function calculates the bit error rate (BER) for an OPTICAL RECEIVER, based on a PIN photodetector, from the average input power.
@@ -852,6 +976,23 @@ not considered to affect the transmitted signal.</p>
 <figure class="align-center">
 <img alt="Raised cosine function" class="plot-directive" src="_images/utils-6.png" />
 </figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.shortest_int">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">shortest_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/opticomlib/utils.html#shortest_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.shortest_int" title="Permalink to this definition"></a></dt>
+<dd><p>Estimation of the shortest interval containing <code class="docutils literal notranslate"><span class="pre">percent</span></code> of the samples in ‘data’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>ndarray</em>) – Array of data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The shortest interval containing 50% of the samples in ‘data’.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[float, float]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
