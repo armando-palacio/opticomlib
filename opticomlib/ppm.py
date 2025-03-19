@@ -305,28 +305,27 @@ def THRESHOLD_EST(eye_obj: eye, M: int):
 
 
 
-def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard', BW: float=None):
+def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard', threshold=None):
     """PPM Digital Signal Processor
     
     Performs the decision task of the photodetected electrical signal. 
 
-    1. If ``BW`` is provided bessel filter will be applied to the signal (:func:`opticomlib.devices.LPF`)
-    2. eye diagram parameters are estimated from the input electrical signal with function :func:`opticomlib.devices.GET_EYE`.
-    3. it subsamples the electrical signal to 1 sample per slot using function :func:`opticomlib.devices.SAMPLER`. 
-    4. if ``decision='hard'`` it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function :func:`opticomlib.ppm.THRESHOLD_EST`. 
-    5. then, it make the decision (:func:`opticomlib.ppm.HDD` if ``decision='hard'`` or :func:`opticomlib.ppm.SDD` if ``decision='soft'``).
-    6. Finally, it returns the received binary sequence, eye object and optimal threshold.
+    1. eye diagram parameters are estimated from the input electrical signal with function :func:`opticomlib.devices.GET_EYE`.
+    2. it subsamples the electrical signal to 1 sample per slot using function :func:`opticomlib.devices.SAMPLER`. 
+    3. if ``decision='hard'`` it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function :func:`opticomlib.ppm.THRESHOLD_EST`. 
+    4. then, it make the decision (:func:`opticomlib.ppm.HDD` if ``decision='hard'`` or :func:`opticomlib.ppm.SDD` if ``decision='soft'``).
+    5. Finally, it returns the received binary sequence, eye object and optimal threshold.
 
     Parameters
     ----------
     input : :obj:`electrical_signal`
-        Photodetected electrical signal.
+        Filtered and digitalized electrical signal.
     M : :obj:`int`
         Order of PPM modulation.
     decision : :obj:`str`, optional
         Type of decision to make. Default is 'hard'.
-    BW : :obj:`float`, optional
-        Bandwidth of DSP filter. If not specified, signal won't be filtered.
+    threshold: :obj:`float`, optional
+        Threshold for PPM-HDD. If not provided, optimal threshold is estimated.
 
     Returns
     -------
@@ -371,6 +370,8 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
 
         DAC(y).plot(c='r', lw=3, label='Received sequence').show()
     """
+    tic()
+
     if not isinstance(input, (electrical_signal,) + Array_Like):
         raise TypeError("`input` must be of type `electrical_signal` or `Array_Like`.")
     
@@ -383,35 +384,34 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
     if not M & (M-1) == 0:
         raise ValueError("`M` must be a power of 2.")
 
-    if BW is not None:
-        x = LPF(input, BW)
-    else:
-        x = input
-        x.execution_time = 0
+    x = input
 
     if decision.lower() == 'hard':
-        eye_obj = GET_EYE(x, nslots=8192, sps_resamp=128); time = eye_obj.execution_time + x.execution_time
-        rth = THRESHOLD_EST(eye_obj, M)
-        x = SAMPLER(x, eye_obj); time += x.execution_time
+        
+        if threshold is not None:
+            rth = threshold
+        else:
+            eye_obj = GET_EYE(x, nslots=8192)
+            if eye_obj.threshold is not None:
+                rth = eye_obj.threshold
+            else:
+                rth = THRESHOLD_EST(eye_obj, M)
+        
+        y = SAMPLER(x, gv.sps//2)
 
-        tic()
-        output = x > rth
-        simbols = HDD(output, M); simbols.execution_time += toc() + time
-
+        output = y > rth
+        simbols = HDD(output, M)
         output = PPM_DECODER(simbols, M)
-        output.execution_time += simbols.execution_time
-
-        return output, eye_obj, rth
     
     elif decision.lower() == 'soft':
-        tic()
-        simbols = SDD(x, M); simbols.execution_time += toc() + x.execution_time
+        simbols = SDD(x, M)
         output = PPM_DECODER(simbols, M)
-        output.execution_time += simbols.execution_time
-        return output
-    
+
     else:
         raise ValueError('`decision` must be "hard" or "soft"')
+    
+    output.execution_time = toc()
+    return output
 
 
 
