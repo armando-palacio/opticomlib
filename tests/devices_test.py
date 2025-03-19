@@ -24,6 +24,7 @@ from opticomlib.devices import (
     PRBS,
     DAC,
     MZM,
+    PD,
 )
 
 gv = global_variables()
@@ -91,11 +92,6 @@ class TestDevices(unittest.TestCase):
         assert_equal(dac.len(), 3*gv.sps)
 
 
-
-        
-
-
-    
     def test_MZM(self):
         assert_raises(TypeError, MZM, op_input=electrical_signal(np.ones(5)), el_input=3) # op_input must be an optical_signal
         assert_raises(ValueError, MZM, op_input=optical_signal(np.ones(5)), el_input=[1,2,3]) # el_input must be a scalar or an array_like with the same length as op_input
@@ -161,6 +157,25 @@ class TestDevices(unittest.TestCase):
 
                 assert_equal(mzm.signal[0], 0)
                 
+
+    def test_PD(self):
+        input = optical_signal(np.ones(100), np.random.normal(0,0.1,100), n_pol=2)
+
+        assert_raises(TypeError, PD, input=electrical_signal([1,2,3]), BW=5e9) # op_input must be an optical_signal
+        assert_raises(ValueError, PD, input, BW=5e9, r=0) # r must be greater than 0
+        assert_raises(ValueError, PD, input, BW=5e9, T=-10) # T must be greater than 0
+        assert_raises(ValueError, PD, input, BW=5e9, R_load=-50) # R_load must be greater than 0
+        assert_raises(TypeError, PD, input, BW=5e9, include_noise=True) # include_noise must be a string
+        
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='all')
+        assert_(pd.type() == electrical_signal)
+        assert_equal(pd.len(), input.len())
+
+        # pd = PD(op_input, BW=10e9)
+        # assert_(pd.type() == electrical_signal)
+        # assert_equal(pd.len(), op_input.len())
+        # assert_allclose(pd.signal, op_input.power() * 0.5)
+
 
 if __name__ == '__main__':
     unittest.main()
