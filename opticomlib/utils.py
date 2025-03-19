@@ -221,7 +221,21 @@ def get_time(line_of_code: str, n:int):
     """
     return timeit.timeit(line_of_code, number=n)/n
 
+class _Timer:
+    def __init__(self):
+        self.tic_stack = []
 
+    def tic(self):
+        self.tic_stack.append(tm.time())
+
+    def toc(self):
+        if not self.tic_stack:
+            raise Exception("toc() called without a matching tic()")
+        start_time = self.tic_stack.pop()
+        return tm.time() - start_time
+
+# Crear una instancia singleton de Timer
+_timer_instance = _Timer()
 
 def tic(): 
     r"""
@@ -236,8 +250,7 @@ def tic():
         >>> toc()
         2.687533378601074
     """
-    global __
-    __ = tm.time()
+    _timer_instance.tic()
 
 def toc():
     r"""Stop a timer. Get the elapsed time since the last call to tic().
@@ -255,9 +268,7 @@ def toc():
         >>> toc()
         2.687533378601074
     """
-    global __
-    return tm.time()-__ 
-
+    return _timer_instance.toc()
 
 
 def db(x):
