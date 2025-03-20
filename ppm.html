@@ -1,26 +1,29 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PPM Devices &mdash; opticomlib  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
-      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-      <link rel="stylesheet" href="_static/fonts.css" type="text/css" />
-    <link rel="shortcut icon" href="_static/favicon_laser.ico"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="_static/fonts.css" />
+
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="_static/favicon_laser.ico"/>
+      <script src="_static/jquery.js"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+      <script src="_static/doctools.js"></script>
+      <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/clipboard.min.js"></script>
+      <script src="_static/copybutton.js"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -40,9 +43,6 @@
             opticomlib
               <img src="_static/logo.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1.5.10
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -103,7 +103,7 @@
   <section id="ppm-devices">
 <h1>PPM Devices<a class="headerlink" href="#ppm-devices" title="Permalink to this heading"></a></h1>
 <p>Use this module to simulate the PPM modulation optical systems.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">opticomlib.ppm</span> <span class="k">as</span> <span class="nn">ppm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ppm</span>
 </pre></div>
 </div>
 <span class="target" id="module-opticomlib.ppm"></span><p class="rubric">Functions</p>
@@ -124,7 +124,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ppm.THRESHOLD_EST" title="opticomlib.ppm.THRESHOLD_EST"><code class="xref py py-obj docutils literal notranslate"><span class="pre">THRESHOLD_EST</span></code></a>(eye_obj, M)</p></td>
 <td><p>Threshold Estimator</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ppm.DSP" title="opticomlib.ppm.DSP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DSP</span></code></a>(input, M[, decision, BW])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.ppm.DSP" title="opticomlib.ppm.DSP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DSP</span></code></a>(input, M[, decision, threshold])</p></td>
 <td><p>PPM Digital Signal Processor</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.ppm.BER_analizer" title="opticomlib.ppm.BER_analizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BER_analizer</span></code></a>(mode, **kwargs)</p></td>
@@ -159,7 +159,7 @@
 and converting them into decimal. Then, the decimal values are the positions of ON slots into the PPM symbols of
 length <span class="math notranslate nohighlight">\(M\)</span>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">PPM_ENCODER</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPM_ENCODER</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">PPM_ENCODER</span><span class="p">(</span><span class="s1">&#39;01111000&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 <span class="go">array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0])</span>
 </pre></div>
@@ -186,7 +186,7 @@ length <span class="math notranslate nohighlight">\(M\)</span>.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">PPM_DECODER</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPM_DECODER</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">PPM_DECODER</span><span class="p">(</span><span class="s1">&#39;0100000100101000&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 <span class="go">array([0, 1, 1, 1, 1, 0, 0, 0])</span>
 </pre></div>
@@ -221,7 +221,7 @@ length <span class="math notranslate nohighlight">\(M\)</span>.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">HDD</span><span class="p">,</span> <span class="n">binary_sequence</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="kn">import</span> <span class="n">HDD</span><span class="p">,</span> <span class="n">binary_sequence</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">HDD</span><span class="p">(</span><span class="n">binary_sequence</span><span class="p">(</span><span class="s1">&#39;0100 0111 0000&#39;</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 <span class="go">array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])</span>
@@ -253,8 +253,8 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">SDD</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">gv</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="kn">import</span> <span class="n">SDD</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">,</span> <span class="n">gv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">1.2</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.1</span><span class="p">,</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.1</span><span class="p">,</span>  <span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">SDD</span><span class="p">(</span><span class="n">electrical_signal</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">M</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -289,7 +289,7 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">THRESHOLD_EST</span><span class="p">,</span> <span class="n">eye</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="kn">import</span> <span class="n">THRESHOLD_EST</span><span class="p">,</span> <span class="n">eye</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">eye_obj</span> <span class="o">=</span> <span class="n">eye</span><span class="p">({</span><span class="s1">&#39;mu0&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;mu1&#39;</span><span class="p">:</span><span class="mf">1.1</span><span class="p">,</span> <span class="s1">&#39;s0&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;s1&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">THRESHOLD_EST</span><span class="p">(</span><span class="n">eye_obj</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -299,11 +299,10 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.ppm.DSP">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BW</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.DSP" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.ppm.</span></span><span class="sig-name descname"><span class="pre">DSP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="types.html#opticomlib.typing.electrical_signal" title="opticomlib.typing.electrical_signal"><span class="pre">electrical_signal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'hard'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'soft'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/ppm.html#DSP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.ppm.DSP" title="Permalink to this definition"></a></dt>
 <dd><p>PPM Digital Signal Processor</p>
 <p>Performs the decision task of the photodetected electrical signal.</p>
 <ol class="arabic simple">
-<li><p>If <code class="docutils literal notranslate"><span class="pre">BW</span></code> is provided bessel filter will be applied to the signal (<a class="reference internal" href="devices.html#opticomlib.devices.LPF" title="opticomlib.devices.LPF"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.LPF()</span></code></a>)</p></li>
 <li><p>eye diagram parameters are estimated from the input electrical signal with function <a class="reference internal" href="devices.html#opticomlib.devices.GET_EYE" title="opticomlib.devices.GET_EYE"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.GET_EYE()</span></code></a>.</p></li>
 <li><p>it subsamples the electrical signal to 1 sample per slot using function <a class="reference internal" href="devices.html#opticomlib.devices.SAMPLER" title="opticomlib.devices.SAMPLER"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.devices.SAMPLER()</span></code></a>.</p></li>
 <li><p>if <code class="docutils literal notranslate"><span class="pre">decision='hard'</span></code> it compares the amplitude of the subsampled signal with optimal threshold. The optimal threshold is obtained from function <a class="reference internal" href="#opticomlib.ppm.THRESHOLD_EST" title="opticomlib.ppm.THRESHOLD_EST"><code class="xref py py-func docutils literal notranslate"><span class="pre">opticomlib.ppm.THRESHOLD_EST()</span></code></a>.</p></li>
@@ -313,10 +312,10 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) – Photodetected electrical signal.</p></li>
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">electrical_signal</span></code>) – Filtered and digitalized electrical signal.</p></li>
 <li><p><strong>M</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Order of PPM modulation.</p></li>
 <li><p><strong>decision</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Type of decision to make. Default is ‘hard’.</p></li>
-<li><p><strong>BW</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Bandwidth of DSP filter. If not specified, signal won’t be filtered.</p></li>
+<li><p><strong>threshold</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Threshold for PPM-HDD. If not provided, optimal threshold is estimated.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -337,11 +336,11 @@ It integrate the signal in slots and then, it selects the slot with the highest 
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">opticomlib.devices</span> <span class="kn">import</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">gv</span>
-<span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">DSP</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">gv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DSP</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e9</span><span class="p">)</span>
 
@@ -432,7 +431,7 @@ or by estimation (using estimated means and variances from the eye diagram and s
 <div class="math notranslate nohighlight">
 \[P_{e_{sym}} = 1 - Q\left( \frac{r_{th}-\mu_1}{s_1} \right) \left( 1-Q\left( \frac{r_{th}}{s_0} \right) \right)^{M-1}\]</div>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">opticomlib.ppm</span> <span class="kn">import</span> <span class="n">theory_BER</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.ppm</span><span class="w"> </span><span class="kn">import</span> <span class="n">theory_BER</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">decision</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">)</span>
 <span class="go">8.515885763544466e-07</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">theory_BER</span><span class="p">(</span><span class="n">mu1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">decision</span><span class="o">=</span><span class="s1">&#39;soft&#39;</span><span class="p">)</span>
