@@ -31,7 +31,7 @@ jobs:
       - name: Build Sphinx Docs
         working-directory: docs
         run: |
-          pip install sphinx
+          pip install sphinx==6.2.1
           pip install renku-sphinx-theme
           pip install sphinx-copybutton
           make html
