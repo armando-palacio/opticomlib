@@ -66,6 +66,9 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     install_requires=REQUIREMENTS,
+    extras_require={
+        "opticomlib": REQUIREMENTS,
+    },
     long_description=LONG_DESCRIPTION[LONG_DESCRIPTION.find("#"):],
     long_description_content_type="text/markdown",
     python_requires='>=3.10',
