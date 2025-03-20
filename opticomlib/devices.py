@@ -4,6 +4,7 @@
 
    PRBS
    DAC
+   LASER
    PM
    MZM
    BPF
@@ -41,6 +42,8 @@ from .typing import (
 from .utils import (
     idb,
     db,
+    idbm,
+    dbm,
     tic,
     toc,
     rcos,
@@ -324,14 +327,178 @@ def DAC(
         x = x + bias
 
     output = electrical_signal(x)
-    output.execution_time += toc()
 
     if BW is not None:
-        t_ = output.execution_time
         output = LPF(output, BW)
-        output.execution_time += t_
 
+    output.execution_time = toc()
     return output
+
+
+def LASER(t, p, lw=None, rin=None,  df=None):
+    r"""
+    **Continuous Wave Laser**
+
+    Simple model of Laser with phase and RIN noises. Baseband equivalent (complex envelope).
+
+    Parameters
+    ----------
+    t : :obj:`ndarray`
+        Time vector.
+    p : :obj:`float`
+        Optical Power of laser, in dBm.
+    lw : :obj:`float`
+        LineWidth of laser, in Hz.
+    rin : :obj:`float`
+        Relative Intensity Noise power density, in dB/Hz.
+    df : :obj:`float`
+        Frequency offset of the laser, in Hz.
+
+    Returns
+    -------
+    op_output : :obj:`optical_signal`
+        Complex envolve of laser optical signal.
+
+    Notes
+    -----
+    
+    *Base-band equivalent (Complex Envelope)*
+
+    Simulate a laser in band-pass is impossible in practice due to THz frequencies. So that base-band equivalent is used to simulate the complex envelop
+    of optical signal:
+
+    .. math:: E_{BB}(t) = \sqrt{P_0[1+\text{rin}(t)]} \cdot e^{j\phi_N(t)}e^{j\Delta\omega t}
+
+    where :math:`P_0` is the optical power of laser, :math:`rin(t)` is the relative intensity noise, :math:`\phi_N(t)` is the phase noise, :math:`\Delta\omega` is the optical frequency offset respect of central frequency of simulation ``gv.f0``. It can be converted to a band-pass signal by making:
+
+    .. math:: E(t) = \sqrt{2} \cdot Re\{E_{BB}(t)e^{j\omega_0 t}\}
+
+
+    *Phase Noise as Wiener Random Process*
+    
+    In the active laser medium (atoms, molecules or carriers), photons can be emitted spontaneously when electrons decay from an excited to a fundamental state. These photons have random phases, which introduces phase noise in the emitted light.
+    The phase noise is modeled as a Wiener process, where the phase at time :math:`t_{n+1}` is given by:
+
+    .. math:: W(t_{n+1}) = W(t_n) + \Delta W
+    
+    where:
+
+    1. :math:`\Delta W \sim \mathcal{N}(0,\sigma^2)`, is a gaussian increment of zero mean and variance :math:`\sigma^2`.
+    2. :math:`\sigma^2` depend of Laser Linewidth :math:`\Delta \nu`:
+
+    .. math:: \sigma^2 = 2\pi\Delta \nu \cdot \delta t
+    
+    where :math:`\delta t` is the sampling interval. Phase noise :math:`\phi_N(t)` is proportional to :math:`W(t)`.
+
+    
+    *Relative Intensity Noise (RIN)*
+
+    The RIN is the relative fluctuations in laser intensity or optical power due to variations in the output number of photons. It is modeled as gaussian noise :math:`\mathcal{N}(0, \sigma_{RIN}^2)`, where:
+
+    .. math:: \sigma_{RIN}^2 = 10^{\text{RIN}_\text{dB}/10} \cdot f_s 
+
+    where :math:`f_s` is the sampling frequency and :math:`\text{RIN}_\text{dB}` is the RIN spectral density in dB/Hz.
+
+    
+    Examples
+    --------
+    For an ideal Laser with linewidth zero (without phase noise), we set parameter ``lw=None`` or just ignore it when call the laser function. Lets try a little offset frequency of 1 GHz as well.
+    We can see tha optical signal is a continuous wave with 1000 mW of power (1 W), and the spectrum is a delta at frequency 1 GHz with a floor noise due to RIN, as expected. 
+    
+    .. code-block:: python
+        :linenos:
+
+        from opticomlib.devices import LASER, gv
+        from opticomlib import gv, np, plt
+
+        t = np.arange(0, 100e-9, gv.dt)
+
+        P = 30       # 30 dBm (1 W)
+        RIN = -140   # -140 dB/Hz Spectral density of RIN
+        df = 1e9     # 1 GHz frequency offset   
+        
+        l = LASER(t, p=P, rin=RIN, df=df) 
+
+        plt.subplot(211)
+        l.plot('b',  style='light').grid()
+        plt.title('Time Domain')
+        plt.ylim(0, 2000)
+        plt.xlim(0, 100)
+
+        plt.subplot(212)
+        l.psd('r', style='light').grid()
+        plt.title('Frequency domain')
+        plt.ylim(-50, 40)
+        plt.tight_layout()
+        plt.show()
+
+    .. image:: _images/LASER_example1.svg
+        :width: 100%
+        :align: center
+
+    In a more practical situation, active medium of laser have spontaneous emissions that cause phase noise and therefore an spread in bandwidth. 
+    The follow example show this spread.  
+
+    .. code-block:: python
+        :linenos:
+
+        from opticomlib.devices import LASER, gv
+        from opticomlib import gv, np, plt
+
+        t = np.arange(0, 100e-9, gv.dt)
+
+        P = 30       # 30 dBm (1 W)
+        LW = 10e6    # 10 MHz laser linewidth
+        RIN = -140   # -140 dB/Hz Spectral density of RIN
+        
+        l = LASER(t, p=P, lw=LW, rin=RIN) 
+
+        plt.subplot(211)
+        l.plot('b',  style='light').grid()
+        plt.title('Time Domain')
+        plt.ylim(0, 2000)
+        plt.xlim(0, 100)
+
+        plt.subplot(212)
+        l.psd('r', style='light').grid()
+        plt.title('Frequency domain')
+        plt.ylim(-50, 40)
+        plt.tight_layout()
+        plt.show()
+
+    .. image:: _images/LASER_example2.svg
+        :width: 100%
+        :align: center
+    """
+    tic()
+    op_output = np.ones_like(t) * np.sqrt( idbm(p) )
+
+    if lw is not None: 
+        # generate phase noise (random walk - wiener)
+        phase_noise = np.cumsum( np.random.normal(0, np.sqrt(2*pi * lw * gv.dt), t.size) )
+
+        # add the phase noise to the signal
+        op_output = op_output * np.exp( 1j * phase_noise ) 
+
+    if rin is not None:  
+        # generate rin noise
+        rin_noise = np.random.normal(0, np.sqrt( idb(rin) * gv.fs ) , t.size)
+        
+        if rin_noise.min() < -1:
+            raise ValueError('Noise power is to high, try decrease RIN parameter.')
+        
+        # add rin noise to the signal
+        op_output = op_output * np.sqrt(1 + rin_noise)
+    
+    if df is not None:
+        if np.abs(df) > gv.fs/2:
+            raise ValueError('The laser frequency is out of the Nyquist range. Try increase the sampling frequency.')
+
+        op_output = op_output * np.exp(1j * 2*pi*df * t)
+
+    op_output = optical_signal(op_output)
+    op_output.execution_time = toc()
+    return op_output
 
 
 def PM(
@@ -632,14 +799,12 @@ def MZM(
         if output.noise is not None:
             output.noise[0] = 0
 
-    t_ = toc()
-    output.execution_time += t_
-
     if BW is not None:
         output = BPF(
             output, BW
         )  # Filter the modulated optical signal and add the execution time of the filter
 
+    output.execution_time = toc()
     return output
 
 
@@ -680,7 +845,7 @@ def BPF(input: optical_signal, BW: float, n: int = 4):
     if output.noise is not None:
         output.noise = sg.sosfiltfilt(sos_band, input.noise, axis=-1)
 
-    output.execution_time += toc()
+    output.execution_time = toc()
     return output
 
 
@@ -794,12 +959,10 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float=None):
     else:
         output.noise = ase
 
-    t_ = toc()
-
     if BW is not None:
         output = BPF(output, BW)
 
-    output.execution_time += t_ 
+    output.execution_time = toc()
     return output
 
 
@@ -890,11 +1053,11 @@ def DM(input: optical_signal, D: float, retH: bool = False):
 
     output = (input("w") * H)("t")
 
-    output.execution_time = toc()
-
     if retH:
         H = np.exp(-1j * input.w() ** 2 * D / 2)
         return output, fftshift(H)
+    
+    output.execution_time = toc()
     return output
 
 
@@ -1102,7 +1265,8 @@ def LPF(
         signal = input.signal
         noise = input.noise
     else:
-        signal = input
+        input = electrical_signal(input)
+        signal = input.signal
         noise = None
 
     if not fs:
@@ -1117,10 +1281,11 @@ def LPF(
     if noise is not None:
         output.noise = sg.sosfiltfilt(sos_band, noise).real
 
-    output.execution_time = toc()
     if retH:
         _, H = sg.sosfreqz(sos_band, worN=signal.size, fs=fs, whole=True)
         return output, fftshift(H)
+    
+    output.execution_time = toc()
     return output
 
 
@@ -1312,11 +1477,9 @@ def PD(
 
     output = electrical_signal(signal=i_sig*R_load, noise=i_noise*R_load)
     
-    t_ = toc()
-
     output = LPF(output, BW)
 
-    output.execution_time += t_
+    output.execution_time = toc()
     return output
 
 
@@ -1456,32 +1619,6 @@ def GET_EYE(
     """
     tic()
 
-    def shorth_int(data: np.ndarray, percent: float=50) -> tuple[float, float]:
-        r"""
-        Estimation of the shortest interval containing 50% of the samples in 'data'.
-
-        Parameters
-        ----------
-        data : ndarray
-            Array of data.
-
-        Returns
-        -------
-        tuple[float, float]
-            The shortest interval containing 50% of the samples in 'data'.
-        """
-        diff_lag = (
-            lambda data, lag: data[lag:] - data[:-lag]
-        )  # Difference between two elements of an array separated by a distance 'lag'
-
-        data = np.sort(data)
-        lag = int(len(data) * percent/100)
-        diff = diff_lag(data, lag)
-        i = np.where(np.abs(diff - np.min(diff)) < 1e-10)[0]
-        if len(i) > 1:
-            i = int(np.mean(i))
-        return np.array((data[i], data[i + lag]))
-
     def find_nearest(
         levels: np.ndarray, data: np.ndarray | float
     ) -> np.ndarray | float:
@@ -1562,11 +1699,11 @@ def GET_EYE(
     vm = np.mean(kmeans.fit(input.reshape(-1,1)).cluster_centers_)
 
     # we obtain the shortest interval of the upper half that contains 50% of the samples
-    eye_dict["top_int"] = top_int = shorth_int(input[input > vm], percent=50)
+    eye_dict["top_int"] = top_int = shortest_int(input[input > vm], percent=50)
     # We obtain the LMS of level 1
     state_1 = np.mean(top_int)
     # we obtain the shortest interval of the lower half that contains 50% of the samples
-    eye_dict["bot_int"] = bot_int = shorth_int(input[input < vm], percent=50)
+    eye_dict["bot_int"] = bot_int = shortest_int(input[input < vm], percent=50)
     # We obtain the LMS of level 0
     state_0 = np.mean(bot_int)
 
@@ -1654,10 +1791,10 @@ def GET_EYE(
     x = np.linspace(mu0, mu1, 500)
     y = input[ ((t_span0 < t) & (t < t_span1)) ]
     
-    if len(y) > 1:
+    try:
         pdf = gaussian_kde(y).evaluate(x)
         eye_dict["threshold"] = x[np.argmin(pdf)]
-    else:
+    except:
         eye_dict["threshold"] = None
 
     # We obtain the extinction ratio
@@ -1670,7 +1807,7 @@ def GET_EYE(
     return eye(**eye_dict)
 
 
-def SAMPLER(input: electrical_signal, _eye_: eye):
+def SAMPLER(input: electrical_signal, instant: int):
     """**Digital sampler**
 
     Receives an electrical signal and an eye object and performs the sampling of the signal
@@ -1678,13 +1815,13 @@ def SAMPLER(input: electrical_signal, _eye_: eye):
 
     Args:
         input: The electrical signal to be sampled.
-        _eye_: The eye object that contains the eye diagram information.
+        instant: slot instant to take the sample [0, gv.sps].
 
     Returns:
         electrical_signal: The sampled electrical signal at one sample per slot.
     """
     tic()
-    output = input[_eye_.i :: _eye_.sps]
+    output = input[instant :: gv.sps]
 
     output.execution_time = toc()
     return output
@@ -2111,12 +2248,12 @@ def FBG(
 
     # apply to input optical signal
     output = ifft(fft(input.signal) * ifftshift(H))
-
     output = optical_signal(output)
-    output.execution_time = toc()
 
     if retH:
         return output, H
+    
+    output.execution_time = toc()
     return output
 
 

@@ -26,13 +26,14 @@ jobs:
       - name: Run Unit Tests
         run: |
           pip install pytest
-          pytest
+          pytest -v
 
       - name: Build Sphinx Docs
         working-directory: docs
         run: |
-          pip install sphinx
+          pip install sphinx==6.2.1
           pip install renku-sphinx-theme
+          pip install sphinx-copybutton
           make html
 
       - name: Build Package

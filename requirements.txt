@@ -1,7 +1,7 @@
-scipy
-numpy
-matplotlib
-scikit-learn
-tqdm
-pympler
-pyvisa
+scipy==1.12.0
+numpy==1.26.4
+matplotlib==3.10.1
+scikit-learn==1.6.1
+tqdm==4.67.1
+pympler==1.1
+pyvisa==1.14.1

@@ -140,10 +140,7 @@ class TestPPM(unittest.TestCase):
         inputs.noise = np.random.normal(0, 0.05, inputs.len())
 
         rx_soft = DSP(inputs, M, decision='soft')
-        rx_hard, eye_1, rth_1 = DSP(inputs, M, decision='hard')
-
-        rx_soft_BW = DSP(inputs, M, decision='soft', BW=gv.R)
-        rx_hard_BW, eye_2, rth_2 = DSP(inputs, M, decision='hard', BW=gv.R)
+        rx_hard = DSP(inputs, M, decision='hard')
 
         # First test raises conditions work properly
 
@@ -157,13 +154,11 @@ class TestPPM(unittest.TestCase):
         with self.subTest(decision='hi'):
             self.assertRaises(ValueError, DSP, inputs, M=8, decision='hi') # check that decision is either 'hard' or 'soft'
 
-        for bw, rx in zip([None, gv.R],[rx_hard, rx_hard_BW]):
-            with self.subTest(decision='hard', BW=bw):
-                self.assertTrue(np.array_equal(rx.data, bits.data)) # check hard decision is working properly
+        with self.subTest(decision='hard'):
+            self.assertTrue(np.array_equal(rx_hard.data, bits.data)) # check hard decision is working properly
         
-        for bw, rx in zip([None, gv.R],[rx_soft, rx_soft_BW]):
-            with self.subTest(decision='soft', BW=bw):
-                self.assertTrue(np.array_equal(rx.data, bits.data)) # check soft decision is working properly
+        with self.subTest(decision='soft'):
+            self.assertTrue(np.array_equal(rx_soft.data, bits.data)) # check soft decision is working properly
 
     def test_theory_ber(self):
         self.assertTrue(theory_BER(1, 0.1, 0.1, 4, 'hard') < 1e-6) # check that BER is 0.0

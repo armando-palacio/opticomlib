@@ -23,7 +23,7 @@ jobs:
     - name: Run Unit Tests
       run: |
         pip install pytest
-        pytest
+        pytest -v
   
   package:
     runs-on: ubuntu-latest
@@ -66,8 +66,9 @@ jobs:
     
     - name: Install Sphinx
       run: |
-        pip install sphinx
+        pip install sphinx==6.2.1
         pip install renku-sphinx-theme
+        pip install sphinx-copybutton
 
     - name: Build docs
       working-directory: docs

@@ -23,6 +23,7 @@ jobs:
           pip install .[opticomlib]
           pip install sphinx==6.2.1
           pip install renku-sphinx-theme
+          pip install sphinx-copybutton
 
       - name: Build HTML
         working-directory: docs
