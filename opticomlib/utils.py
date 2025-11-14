@@ -26,7 +26,12 @@
     average_voltages
     noise_variances
     optimum_threshold
-    shortest_int              
+    shortest_int  
+    eyediagram
+    rcos
+    gauss
+    upfirdn
+    phase_estimator      
 """
 
 import re
@@ -44,9 +49,64 @@ from numpy.fft import fft, ifft, fftfreq, fftshift
 
 import warnings
 
-Array_Like = (list, tuple, np.ndarray)
-Number = (int, float)
+Array_Like = (set, list, tuple, np.ndarray)
+from numbers import Integral as IntegerNumber
+from numbers import Real as RealNumber # inlude integer numbers
+from numbers import Complex as ComplexNumber # inlcude real numbers, is not exclusive
 
+
+def _is_iterable_and_numpy_compatible(obj):
+    """
+    Check if an object is iterable, can be converted into a NumPy array, 
+    and contains only numeric values (complex or real values).
+
+    Parameters
+    ----------
+    obj : any
+        The input object to be checked.
+
+    Returns
+    -------
+    bool
+        True if the object is iterable, can be transformed into a NumPy array, 
+        and contains only numeric values. False otherwise.
+
+    Notes
+    -----
+    - The function first verifies if `obj` is iterable.
+    - If it is not iterable, the function returns False immediately.
+    - If `obj` can be converted into a NumPy array (`np.array(obj)`), 
+      it proceeds to check the numerical validity.
+    - `numbers.Complex` is used to ensure all elements are numeric.
+    - The function supports various iterable types like lists, tuples, and NumPy arrays.
+    - It excludes non-numeric elements such as strings and mixed-type collections.
+    """
+    # Check if the object is iterable
+    from collections.abc import Iterable
+    is_iterable = isinstance(obj, Iterable)
+    
+    if not is_iterable:
+        return False
+    
+    try:
+        array = np.array(obj)  # Try to convert it into a NumPy array
+    except Exception:
+        return False
+
+    # Check if all elements are numeric
+    from numbers import Complex
+    result = all(isinstance(x, Complex) for x in array.flatten())
+
+    return result
+
+def _is_numeric(obj):
+    return isinstance(obj, ComplexNumber)
+
+def _is_real(obj):
+    return isinstance(obj, RealNumber)
+
+def _is_integer(obj):
+    return isinstance(obj, IntegerNumber)
 
 
 def dec2bin(num: int, digits: int=8):
@@ -68,6 +128,8 @@ def dec2bin(num: int, digits: int=8):
     Raises
     ------
     ValueError
+        If ``num`` is not an integer number.
+    ValueError
         If ``num`` is too large to be represented with ``digits`` bits.
 
     Example
@@ -77,6 +139,8 @@ def dec2bin(num: int, digits: int=8):
         >>> dec2bin(5, 4)
         array([0, 1, 0, 1], dtype=uint8)
     """
+    if not _is_integer(num):
+        raise ValueError('`num` debe ser un número entero.')
 
     binary = np.zeros(digits, np.uint8)
     if num > 2**digits-1: raise ValueError(f'The number is too large to be represented with {digits} bits.')
@@ -302,14 +366,16 @@ def db(x):
         >>> db([1,2,3,4])
         array([0.        , 3.01029996, 4.77121255, 6.02059991])
     """
-    if not isinstance(x, (Number + Array_Like)):
-        raise TypeError('The input value must be a number, list, tuple or ndarray.')
+    if _is_iterable_and_numpy_compatible(x):
+        x = np.array(x)
+        if (x<0).any():
+            raise ValueError('Some values of input array are negative.')
+    elif _is_numeric(x):
+        if x<0:
+            raise ValueError('`x` must be positive.')
+    else:   
+        raise TypeError('`x` must be a number or an array_like with positive values.')
     
-    x = np.array(x)
-    
-    if (x<0).any():
-        raise ValueError('Some values of input array are negative.')
-
     warnings.filterwarnings("ignore", category=RuntimeWarning) # to avoid warning when x=0
     return 10*np.log10(x) 
 
@@ -345,15 +411,7 @@ def dbm(x):
         >>> dbm([1,2,3,4])
         array([30.        , 33.01029996, 34.77121255, 36.02059991])
     """
-    if not isinstance(x, (Number + Array_Like)):
-        raise TypeError('The input value must be a number, list, tuple or ndarray.')
-    
-    x = np.array(x)
-
-    if (x<0).any():
-        raise ValueError('Some values of input array are negative.')
-    
-    return 10*np.log10(x*1e3)
+    return db(x) + 30
 
 
 def idb(x):
@@ -380,7 +438,11 @@ def idb(x):
         >>> idb([0,3,6,9])
         array([1.        , 1.99526231, 3.98107171, 7.94328235])
     """
-    x = np.array(x)
+    if _is_iterable_and_numpy_compatible(x):
+        x = np.array(x)
+    elif not _is_numeric(x):
+        raise TypeError('The input value must be a number or an array_like.')
+    
     return 10**(x/10)
 
 
@@ -408,7 +470,11 @@ def idbm(x):
         >>> idbm([0,3,6,9])
         array([0.001     , 0.00199526, 0.00398107, 0.00794328])
     """
-    x = np.array(x)
+    if _is_iterable_and_numpy_compatible(x):
+        x = np.array(x)
+    elif not _is_numeric(x):
+        raise TypeError('The input value must be a number or an array_like.')
+    
     return 10**(x/10-3)
 
 
@@ -459,7 +525,10 @@ def gaus(x, mu: float=None, std: float=None):
         plt.grid(alpha=0.3)
         plt.show()
     """
-    x = np.array(x)
+    if _is_iterable_and_numpy_compatible(x):
+        x = np.array(x)
+    elif not _is_numeric(x):
+        raise TypeError('The input value must be a number or an array_like.')
 
     if mu is None: mu = 0
     if std is None: std = 1
@@ -511,18 +580,24 @@ def Q(x):
         plt.grid()
         plt.show()
     """
-    x = np.array(x)
+    if _is_iterable_and_numpy_compatible(x):
+        x = np.array(x)
+    elif not _is_numeric(x):
+        raise TypeError('The input value must be a number or an array_like.')
+    
     return 0.5*sp.erfc(x/2**0.5) 
 
 
-def phase(H: np.ndarray):
+def phase(x: np.ndarray, zero_ref_index: int=None):
     r"""
-    Calculate the unwrapped phase of a frequency response.
+    Calculate the unwrapped phase the signal.
 
     Parameters
     ----------
-    H : :obj:`np.ndarray`
-        Frequency response of a system.
+    x : :obj:`np.ndarray`
+        Signal to calculate the phase
+    zero_ref_index : int, default: ``None``
+        Position of signal to take zero phase reference. By default zero phase reference is set to position 0 of x.
 
     Returns
     -------
@@ -551,15 +626,25 @@ def phase(H: np.ndarray):
         plt.grid(alpha=0.3)
         plt.show()
     """
-    return np.unwrap(np.angle(H))
+    if not _is_iterable_and_numpy_compatible(x):
+        raise TypeError('The input value must be an array_like.')
 
-def tau_g(H: np.ndarray, fs: float):
+    phase_ = np.angle(x)
+    
+    if zero_ref_index is not None:
+        offset = phase_[zero_ref_index]
+    else:
+        offset = 0
+
+    return np.unwrap(phase_) - offset
+
+def tau_g(x: np.ndarray, fs: float):
     r"""
     Calculate the group delay of a frequency response.
 
     Parameters
     ----------
-    H : :obj:`np.ndarray`
+    x : :obj:`np.ndarray`
         Frequency response of a system.
     fs : :obj:`float`
         Sampling frequency of the system.
@@ -591,16 +676,20 @@ def tau_g(H: np.ndarray, fs: float):
         plt.grid(alpha=0.3)
         plt.show()
     """
-    dw = 2*pi*fs/H.size
-    return np.diff(phase(H))/dw * 1e12
+    if not _is_iterable_and_numpy_compatible(x):
+        raise TypeError('The input value must be an array_like.')
+    
+    dw = 2*pi*fs/x.size
+    phase_ = phase(x)
+    return np.diff(phase_, prepend=phase_[0])/dw * 1e12
 
-def dispersion(H: np.ndarray, fs: float, f0: float):
+def dispersion(x: np.ndarray, fs: float, f0: float):
     """
     Calculate the dispersion of a frequency response.
 
     Parameters
     ----------
-    H : :obj:`np.ndarray`
+    x : :obj:`np.ndarray`
         Frequency response of a system.
     fs : :obj:`float`
         Sampling frequency of the system.
@@ -612,9 +701,13 @@ def dispersion(H: np.ndarray, fs: float, f0: float):
     D : :obj:`np.ndarray`
         Cumulative dispersion of the system, in [ps/nm].
     """
-    f = fftshift(fftfreq(H.size, d=1/fs))
+    if not _is_iterable_and_numpy_compatible(x):
+        raise TypeError('The input value must be an array_like.')
+    
+    f = fftshift(fftfreq(x.size, d=1/fs))
     dλ = np.diff(c/(f+f0))[0]*1e9
-    D = np.diff(tau_g(H, fs))/dλ
+    tau_g_ = tau_g(x, fs)
+    D = np.diff(tau_g_, prepend=tau_g_[0])/dλ
     return D
 
 
@@ -628,7 +721,6 @@ def bode(H: np.ndarray,
          ret: bool=False, 
          retAxes: bool=False,
          show_: bool=True, 
-         style: Literal['dark', 'light']='dark',
          xlim: tuple=None):
     r"""
     Plot the Bode plot of a given transfer function H (magnitude, phase and group delay).
@@ -687,13 +779,6 @@ def bode(H: np.ndarray,
         x = (c/(f+f0) - c/f0)*1e9
         xlabel = r'$\lambda$ [nm]'
 
-    if style == 'dark':
-        plt.style.use('dark_background')
-    elif style == 'light':
-        plt.style.use('default')
-    else:
-        raise ValueError('`style` must be "dark" or "light".')
-
     nplots = 4 if disp and f0 else 3
 
     if yscale=='db':
@@ -725,7 +810,7 @@ def bode(H: np.ndarray,
     axs[1].yaxis.set_label_position("left")
     axs[1].yaxis.tick_right()
 
-    axs[2].plot(x[1:], sg.medfilt(tau_g(H, fs), 7), 'g', lw=2)
+    axs[2].plot(x, sg.medfilt(tau_g(H, fs), 7), 'g', lw=2)
     axs[2].set_ylabel(r'$\tau_g$ [ps]', rotation=0, labelpad=pad)
     axs[2].grid(alpha=0.3)
     axs[2].yaxis.set_label_position("left")
@@ -735,7 +820,7 @@ def bode(H: np.ndarray,
         if not f0:
             raise ValueError('`f0` must be specify to determine dispersion.')
 
-        axs[3].plot(x[:-2], sg.medfilt(dispersion(H, fs, f0), 7), 'm', lw=2)
+        axs[3].plot(x, sg.medfilt(dispersion(H, fs, f0), 7), 'm', lw=2)
         axs[3].set_ylabel(r'D [ps/nm]', rotation=0, labelpad=28)
         axs[3].set_xlabel(xlabel)
         axs[3].grid(alpha=0.3)
@@ -807,19 +892,19 @@ def rcos(x, alpha, T):
     second_condition = (np.abs(x)>(1-alpha)/(2*T)) & (np.abs(x)<=(1+alpha)/(2*T))
     third_condition = np.abs(x) > (1+alpha)/(2*T)
 
-    if isinstance(x, Number):
+    if _is_numeric(x):
         return 1 if first_condition else 0 if third_condition else 0.5*(1+np.cos(pi*T/alpha*(np.abs(x)-(1-alpha)/(2*T))))
     
-    if not isinstance(x, Array_Like):
+    if not _is_iterable_and_numpy_compatible(x):
         raise ValueError('`x` must be a number or an array_like.')
     
     x = np.array(x)
-    H = np.zeros_like(x)
+    y = np.zeros_like(x)
 
-    H[ first_condition ] = 1
+    y[ first_condition ] = 1
     if alpha != 0:
-        H[ second_condition ] = 0.5*(1+np.cos(pi*T/alpha*(np.abs(x[second_condition])-(1-alpha)/(2*T))))
-    return H
+        y[ second_condition ] = 0.5*(1+np.cos(pi*T/alpha*(np.abs(x[second_condition])-(1-alpha)/(2*T))))
+    return y
 
 
 def si(x, unit: Literal['m','s']='s', k: int=1):
@@ -849,6 +934,9 @@ def si(x, unit: Literal['m','s']='s', k: int=1):
         >>> si(1e9, 'Hz')
         '1.0 GHz'
     """
+    if not _is_numeric(x):
+        raise TypeError('`x` must be a numeric value.')
+
     if 1e12<= x:
         return f'{x*1e-9:.{k}f} T{unit}' 
     if 1e9<= x <1e12:
@@ -870,7 +958,7 @@ def si(x, unit: Literal['m','s']='s', k: int=1):
     if 1e-15<= x <1e-12:
         return f'{x*1e15:.{k}f} f{unit}'
     if x == 0:
-        return f'0 {unit}'
+        return f'{x:.{k}f} {unit}'
     
 
 def norm(x):
@@ -892,24 +980,24 @@ def norm(x):
     ValueError
         If ``x`` is not an `array_like`.
     """
-    if isinstance(x, Array_Like):
+    if _is_iterable_and_numpy_compatible(x):
         x = np.array(x)
     else:
-        raise ValueError('`x` must be an array_like.')
+        raise TypeError('`x` must be an array_like.')
     
     return x/x.max()
 
 
 def nearest(x, a):
     """
-    Find the nearest value in an array.
+    Find the value of X closest to a.
 
     Parameters
     ----------
-    x : Array_Like
+    X : Array_Like
         Input array.
-    a : Number
-        Value to find.
+    A : Number or Array_Like
+        Reference value or values to find in X.
 
     Returns
     -------
@@ -922,15 +1010,65 @@ def nearest(x, a):
         If ``x`` is not an `array_like`.
         If ``a`` is not a `number`.
     """
-    if isinstance(x, Array_Like):
+    if _is_iterable_and_numpy_compatible(x):
         x = np.array(x)
     else:
         raise ValueError('`x` must be an array_like.')
 
-    if not isinstance(a, Number):
-        raise ValueError('`a` must be a number.')
+    if _is_iterable_and_numpy_compatible(a):
+        return x[np.argmin(
+                np.abs(
+                    np.repeat([x], len(a), axis=0) - np.reshape(a, (-1, 1))
+                ),
+                axis=1,
+            )]
     
-    return x[np.abs(x-a).argmin()]
+    if _is_numeric(a):
+        return x[np.argmin(np.abs(x - a))]
+    
+    raise ValueError('`A` must be a number or an array_like')
+
+
+def nearest_index(X, A):
+    """
+    Find the indices of X for the values of X closest to the values of A.
+
+    Parameters
+    ----------
+    X : Array_Like
+        Input array.
+    A : Number or Array_Like
+        Value or values to find in X.
+
+    Returns
+    -------
+    out : Number or np.ndarray
+        Indices of the nearest values in the array.
+
+    Raises
+    ------
+    ValueError
+        If ``X`` is not an `array_like`.
+    """
+    if _is_iterable_and_numpy_compatible(X):
+        X = np.array(X)
+    else:
+        raise ValueError('`X` must be an array_like.')
+
+    if _is_iterable_and_numpy_compatible(A):
+        return np.argmin(
+                np.abs(
+                    np.repeat([X], len(A), axis=0) - np.reshape(A, (-1, 1))
+                ),
+                axis=1,
+            )
+    
+    if _is_numeric(A):
+        return np.argmin(np.abs(X - A))
+    
+    raise ValueError('`A` must be a number or an array_like')
+    
+    
 
 def p_ase(
         amplify=True, 
@@ -1342,28 +1480,494 @@ def theory_BER(
 
 
 
-def shortest_int(data: np.ndarray, percent: float=50) -> tuple[float, float]:
-        r"""
-        Estimation of the shortest interval containing ``percent`` of the samples in 'data'.
+def shortest_int(x: np.ndarray, percent: float=50) -> tuple[float, float]:
+    r"""
+    Estimation of the shortest interval of x values, containing {``percent``}% of the samples in 'x'.
 
-        Parameters
-        ----------
-        data : ndarray
-            Array of data.
+    Parameters
+    ----------
+    x : ndarray
+        Data of not complex values. If data is complex, real part will be taken.
+    percent : real number
+        percent of of data.
 
-        Returns
-        -------
-        tuple[float, float]
-            The shortest interval containing 50% of the samples in 'data'.
-        """
-        diff_lag = (
-            lambda data, lag: data[lag:] - data[:-lag]
-        )  # Difference between two elements of an array separated by a distance 'lag'
+    Returns
+    -------
+    tuple[float, float]
+        The shortest interval containing 50% of the samples in 'data'.
+    """
+    if not _is_iterable_and_numpy_compatible(x):
+        raise TypeError('`x` must be an array_like.')
+    if not _is_real(percent) or percent <= 0 or percent >100:
+        raise ValueError('`percent` must be a real number between (0, 100].')
 
-        data = np.sort(data)
-        lag = int(len(data) * percent/100)
-        diff = diff_lag(data, lag)
-        i = np.where(np.abs(diff - np.min(diff)) < 1e-10)[0]
-        if len(i) > 1:
-            i = int(np.mean(i))
-        return np.array((data[i], data[i + lag]))
+    diff_lag = (
+        lambda data, lag: data[lag:] - data[:-lag]
+    )  # Difference between two elements of an array separated by a distance 'lag'
+
+    x = np.sort(x.real)
+    lag = int(len(x) * percent/100)
+    diff = diff_lag(x, lag)
+    i = np.where(np.abs(diff - np.min(diff)) < 1e-10)[0]
+    if len(i) > 1:
+        i = int(np.mean(i))
+    return np.array((x[i], x[i + lag]))
+
+
+# --- Función para Aplicar el Filtro Gaussiano Optimizado ---
+def apply_optimized_gaussian_filter(t, signal, T_bit):
+    """
+    Applies a Gaussian filter to a NRZ signal. The filter is optimized based on the bit duration, to a sigma of 0.139 * T_bit.
+
+    Args:
+        t (np.ndarray): Time vector corresponding to signal_in.
+        signal (np.ndarray): NRZ input signal.
+        T_bit (float): Bit duration, used as a reference for sigma.
+
+    Returns:
+        np.ndarray: The filtered signal with scaled amplitude.
+    """
+    dt = t[1] - t[0]
+    if dt <= 0:
+         raise ValueError("El paso de tiempo dt debe ser positivo.")
+
+    # Calcular parámetros del kernel basados en el sigma óptimo
+    std_dev_points = T_bit * 0.139 / dt
+
+    # Determinar el tamaño del kernel. Debe ser impar y lo suficientemente grande.
+    # Un tamaño basado en 6*sigma_en_puntos cubre >99.7% de la gaussiana.
+    kernel_size = int(6 * std_dev_points)
+    if kernel_size % 2 == 0:
+        kernel_size += 1 # Asegurar que es impar para un centro claro
+    if kernel_size < 3: # Asegurar un tamaño mínimo para el kernel
+        kernel_size = 3
+
+    # Asegurar que el kernel no sea más grande que la señal de entrada (menos un pequeño margen)
+    max_possible_kernel_size = len(signal) - 2
+    if kernel_size > max_possible_kernel_size:
+         print(f"Advertencia: El tamaño calculado del kernel ({kernel_size}) es mayor que la señal ({len(signal)}). Reduciendo a {max_possible_kernel_size}.")
+         kernel_size = max_possible_kernel_size
+         if kernel_size < 3:
+             print("Error: El tamaño de la señal es demasiado pequeño para aplicar un filtro significativo.")
+             return np.zeros_like(signal) # Devolver ceros si no se puede filtrar
+
+    # Crear el kernel gaussiano usando la función corregida
+    from scipy.signal.windows import gaussian
+    gaussian_kernel = gaussian(kernel_size, std=std_dev_points)
+
+    # Normalizar el kernel para preservar el área (o nivel DC) de la señal
+    kernel_sum = np.sum(gaussian_kernel)
+    gaussian_kernel /= kernel_sum
+
+    # Realizar la convolución
+    # mode='same' asegura que la salida tenga el mismo tamaño y esté centrada
+    from scipy.signal import convolve
+    convolved_signal = convolve(signal, gaussian_kernel, mode='same')
+
+    return convolved_signal
+
+
+def eyediagram(y, sps, n_traces=None, cmap='viridis', 
+             N_grid_bins=350, grid_sigma=3, ax=None, **plot_kw):
+    """Plots a colored eye diagram, internally calculating color density.
+
+    Parameters
+    ----------
+    y : np.ndarray
+        Full amplitude array (1D).
+    sps : int
+        Samples per symbol. Used to segment the eye traces.
+    n_traces : int, optional
+        Maximum number of traces to plot. If None, all available traces
+        will be plotted. Defaults to None.
+    cmap : str, optional
+        Name of the matplotlib colormap. Defaults to 'viridis'.
+    N_grid_bins : int, optional
+        Number of bins for the density histogram. Defaults to 350.
+    grid_sigma : float, optional
+        Sigma for the Gaussian filter applied to the density. Defaults to 3.
+    ax : matplotlib.axes.Axes, optional
+        Axes object to plot on. If None, creates new figure and axes.
+        Defaults to None.
+    **plot_kw : dict, optional
+        Additional plotting parameters:
+        
+        Figure parameters (used only if ax is None):
+        - figsize : tuple, default (10, 6)
+        - dpi : int, default 100
+        
+        Line collection parameters:
+        - linewidth : float, default 0.75
+        - alpha : float, default 0.25
+        - capstyle : str, default 'round'
+        - joinstyle : str, default 'round'
+        
+        Axes formatting parameters:
+        - xlabel : str, default "Time (2-symbol segment)"
+        - ylabel : str, default "Amplitude"
+        - title : str, default "Eye Diagram ({num_traces} traces)"
+        - grid : bool, default True
+        - grid_alpha : float, default 0.3
+        - xlim : tuple, optional (xmin, xmax)
+        - ylim : tuple, optional (ymin, ymax)
+        - tight_layout : bool, default True
+        
+        Display parameters:
+        - show : bool, default False (whether to call plt.show())
+    
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes object containing the eye diagram plot.
+    """
+    # Truncate signals to avoid edge artifacts
+    # Remove sps//2 samples from each end
+    start_idx = sps // 2
+    end_idx = len(y) - sps // 2
+    
+    if start_idx >= end_idx or end_idx <= start_idx:
+        raise ValueError(f"Signal too short for truncation. Need at least {sps} samples, got {len(y)}.")
+    
+    Y_truncated = y[start_idx:end_idx]
+    
+    # Eye diagram parameters
+    num_points_per_trace = 2 * sps
+    if len(Y_truncated) < num_points_per_trace:
+        raise ValueError(f"Need at least {num_points_per_trace} points for eye diagram, got {len(Y_truncated)} after truncation.")
+    
+    available_traces = len(Y_truncated) // num_points_per_trace
+    num_traces_to_plot = min(available_traces, n_traces) if n_traces is not None else available_traces
+    
+    if num_traces_to_plot == 0:
+        raise ValueError(f"Not enough points to form even one trace of {num_points_per_trace} points after truncation.")
+    
+    X_truncated = np.kron(np.ones(num_traces_to_plot), np.linspace(-1, 1 - 1/sps, num_points_per_trace))
+    Y_truncated = Y_truncated[:num_traces_to_plot * num_points_per_trace]
+    
+    # Get colormap
+    try:
+        cmap_obj = getattr(plt.cm, cmap)
+    except AttributeError:
+        print(f"Warning: Colormap '{cmap}' not found. Using 'viridis' by default.")
+        cmap_obj = plt.cm.viridis
+
+    # Extract plotting parameters with defaults
+    # Figure parameters
+    figsize = plot_kw.get('figsize', None)
+    dpi = plot_kw.get('dpi', 100)
+    
+    # Line collection parameters
+    linewidth = plot_kw.get('linewidth', 1)
+    alpha = plot_kw.get('alpha', 0.05)
+    capstyle = plot_kw.get('capstyle', 'round')
+    joinstyle = plot_kw.get('joinstyle', 'round')
+    
+    # Axes formatting parameters
+    xlabel = plot_kw.get('xlabel', "Time (2-symbol segment)")
+    ylabel = plot_kw.get('ylabel', "Amplitude")
+    title_template = plot_kw.get('title', "Eye Diagram ({num_traces} traces)")
+    grid = plot_kw.get('grid', True)
+    grid_alpha = plot_kw.get('grid_alpha', 0.3)
+    xlim = plot_kw.get('xlim', None)
+    ylim = plot_kw.get('ylim', None)
+    tight_layout = plot_kw.get('tight_layout', True)
+    
+    # Display parameters
+    show = plot_kw.get('show', False)
+
+    # Calculate ranges using truncated signals
+    min_x, max_x = X_truncated.min(), X_truncated.max()
+    min_y, max_y = Y_truncated.min(), Y_truncated.max()
+    
+    # Normalize coordinates (handle edge cases)
+    X_norm = np.zeros_like(X_truncated) if max_x == min_x else (X_truncated - min_x) / (max_x - min_x)
+    Y_norm = np.zeros_like(Y_truncated) if max_y == min_y else (Y_truncated - min_y) / (max_y - min_y)
+
+    # Create density grid using truncated signals
+    from scipy.ndimage import gaussian_filter
+    grid_density, _, _ = np.histogram2d(X_truncated, Y_truncated, bins=N_grid_bins)
+    grid_density = gaussian_filter(grid_density, sigma=grid_sigma)
+
+    # Map points to grid indices
+    ix_grid = np.clip((X_norm * (N_grid_bins - 1)).astype(int), 0, N_grid_bins - 1)
+    iy_grid = np.clip((Y_norm * (N_grid_bins - 1)).astype(int), 0, N_grid_bins - 1)
+
+    # Get and normalize color values
+    color_values = grid_density[ix_grid, iy_grid]
+    color_range = color_values.max() - color_values.min()
+    color_values_norm = np.zeros_like(color_values) if color_range == 0 else (color_values - color_values.min()) / color_range
+    
+
+    # Prepare data for plotting using truncated signals
+    x_eye_trace = X_truncated[:num_points_per_trace]
+
+    Y_reshaped = Y_truncated.reshape(num_traces_to_plot, num_points_per_trace)
+    color_reshaped = color_values_norm.reshape(num_traces_to_plot, num_points_per_trace)
+
+    # Create plot or use existing axes
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+        created_fig = True
+    else:
+        created_fig = False
+
+    # Plot eye traces
+    from matplotlib.collections import LineCollection
+    for i in range(num_traces_to_plot):
+        # Create line segments
+        points = np.array([x_eye_trace, Y_reshaped[i]]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([points[:-1], points[1:]], axis=1)
+        
+        if len(segments) > 0:
+            colors = cmap_obj(color_reshaped[i][:len(segments)])
+            lc = LineCollection(segments, colors=colors, linewidth=linewidth, 
+                              alpha=alpha, capstyle=capstyle, joinstyle=joinstyle)
+            ax.add_collection(lc)
+
+    # Format plot
+    ax.set_xlim(xlim if xlim is not None else (-1,1))
+    ax.set_ylim(ylim if ylim is not None else (min_y, max_y))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    
+    # Format title with number of traces
+    title_formatted = title_template.format(num_traces=num_traces_to_plot)
+    ax.set_title(title_formatted)
+    
+    if grid:
+        ax.grid(True, alpha=grid_alpha)
+    
+    if created_fig and tight_layout:
+        plt.tight_layout()
+    
+    if created_fig and show:
+        plt.show()
+    
+    return ax
+
+
+
+def rcos(beta, span, sps, shape='sqrt'):
+    """Generate a raised cosine or root raised cosine filter impulse response.
+
+    This function replicates the MATLAB `rcosdesign()` function, generating the impulse response
+    of a raised cosine or root raised cosine filter used in digital communications for
+    pulse shaping.
+
+    Parameters
+    ----------
+    beta : float
+        Roll-off factor, must be between 0 and 1.
+    span : int
+        Number of symbols. The filter length will be span * sps + 1.
+    sps : int
+        Samples per symbol.
+    shape : str, optional
+        Filter shape, either 'normal' for raised cosine or 'sqrt' for root raised cosine.
+        Default is 'sqrt'.
+
+    Returns
+    -------
+    numpy.ndarray
+        The filter impulse response, normalized to unit energy.
+
+    Raises
+    ------
+    ValueError
+        If beta is not in [0, 1] or shape is not 'normal' or 'sqrt'.
+
+    Notes
+    -----
+    The filter is normalized such that the sum of squares of the coefficients is 1.
+    For beta=0, it reduces to a `sinc()` function.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> h = rcos(0.5, 6, 64, 'sqrt')
+    >>> h.shape
+    (49,)
+    """
+    if not (0 <= beta <= 1):
+        raise ValueError("beta debe estar en [0, 1]")
+    if shape.lower() not in ('sqrt', 'normal'):
+        raise ValueError("shape debe ser 'sqrt' o 'normal'")
+    
+    N = span * sps
+    t = np.linspace(-span/2, span/2, N+1)
+    
+    if beta == 0:
+        p = np.sinc(t)
+    
+    elif shape.lower() == 'normal':
+        sinc_t = np.sinc(t)
+        cos_term = np.cos(np.pi * beta * t)
+        den = 1 - (2 * beta * t)**2
+        p = np.divide(sinc_t * cos_term, den, out=np.zeros_like(den), where=den != 0)
+        
+        # Handle the singularity at t = 1/(2*beta)
+        special_mask = np.abs(den) < 1e-8
+        if np.any(special_mask):
+            p[special_mask] = (np.pi / 4) * np.sinc(1 / (2 * beta))
+    
+    else:  # sqrt
+        t_abs = np.abs(t)
+        p = np.zeros_like(t)
+        
+        # Special case at t=0
+        mask_zero = t_abs < 1e-8
+        p[mask_zero] = (1 - beta) + 4 * beta / np.pi
+        
+        # Special case at t = 1/(4*beta)
+        special_t_sqrt = 1 / (4 * beta)
+        mask_special = np.abs(t_abs - special_t_sqrt) < 1e-8
+        if np.any(mask_special):
+            p[mask_special] = (beta / np.sqrt(2)) * (
+                (1 + 2 / np.pi) * np.sin(np.pi / (4 * beta)) +
+                (1 - 2 / np.pi) * np.cos(np.pi / (4 * beta))
+            )
+        
+        # General case
+        mask_general = ~mask_zero & ~mask_special
+        if np.any(mask_general):
+            ti = t[mask_general]
+            num = np.sin(np.pi * ti * (1 - beta)) + 4 * beta * ti * np.cos(np.pi * ti * (1 + beta))
+            den = np.pi * ti * (1 - (4 * beta * ti)**2)
+            p[mask_general] = num / den
+    
+    # Normalización de energía
+    p = p / np.sqrt(np.sum(p**2))
+    return p
+
+
+def gauss(span, sps, T=1, m=1):
+    """Generate a Gaussian or Super-Gaussian filter.
+
+    This function generates the impulse response of a Gaussian filter used in digital
+    communications to reduce bandwidth and minimize intersymbol interference.
+
+    Parameters
+    ----------
+    span : int
+        Number of symbols. The filter length will be span * sps + 1.
+    sps : int
+        Samples per symbol.
+    T : float
+        Full Width at Half Maximum (FWHM) of the pulse in symbols. Default is 1.
+    m : int
+        Super-Gaussian order. Default is 1 (standard Gaussian).
+
+    Returns
+    -------
+    numpy.ndarray
+        The impulse response of the Gaussian filter, normalized to unit energy.
+
+    Notes
+    -----
+    The filter is normalized such that the sum of squares of the coefficients is 1.
+    The Gaussian shape helps reduce intersymbol interference in modulation systems.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> h = gauss(6, 8, 1.0)
+    >>> print(h.shape)
+    (49,)
+    >>> print('Energy:', np.sum(h**2))
+    1.0
+    """
+    N = span * sps
+    t = np.linspace(-span/2, span/2, N+1)
+    alpha = 2*np.sqrt(np.log(2)) / T
+    p = np.exp(- (alpha * t)**(2*m))
+    p = p / np.sqrt(np.sum(p**2))
+    return p
+
+
+def upfirdn(x, h, up=1, dn=1):
+    """Replicate MATLAB's upfirdn function for upsampling and FIR filtering.
+
+    This function performs upsampling of the input signal and then applies an FIR filter,
+    partially replicating the functionality of MATLAB's `upfirdn`.
+
+    Parameters
+    ----------
+    x : array_like
+        Input signal to process.
+    h : array_like
+        Impulse response of the FIR filter.
+    up : int, optional
+        Upsampling factor. Default is 1 (no upsampling).
+    dn : int, optional
+        Downsampling factor. Default is 1 (no downsampling).
+
+    Returns
+    -------
+    numpy.ndarray
+        The filtered signal after upsampling, convolution and downsampling.
+
+    Notes
+    -----
+    Upsampling is performed by inserting zeros between the input signal samples.
+    Convolution is then applied with the filter using `mode='same'` to maintain length. Finally,
+    downsampling is performed by selecting every `dn`-th sample from the filtered signal.
+    """
+    # Upsample
+    xu = np.zeros(len(x) * up)
+    xu[::up] = x
+
+    # Filtrado
+    y = np.convolve(xu, h, mode='same')
+    
+    # Downsample
+    y = y[::dn]
+    return y
+
+
+def phase_estimator(*signals):
+    """
+    Estimate the initial phase of a signal using the Hilbert transform.
+    This function applies the Hilbert transform to the input signal(s) to obtain their
+    analytic representation, computes the instantaneous phase, and performs a linear
+    fit to estimate the initial phase offset. It processes multiple signals if provided,
+    but returns the initial phase estimate for the last signal.
+
+    Parameters
+    ----------
+    *signals : array_like
+        The input signal(s), each a 1-D array of real or complex values.
+
+    Returns
+    -------
+    float
+        Estimated initial phase in radians for each input signal.
+
+    Notes
+    -----
+    The initial phase is the intercept of the linear fit of the unwrapped phase versus time.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> t = np.linspace(0, 1, 1000)
+    >>> y = np.sin(2 * np.pi * 10 * t + np.pi/4)  # 10 Hz signal with phase offset
+    >>> phase = phase_estimator(y)
+    >>> print(f"Estimated phase: {phase:.2f} rad")
+    """
+    from scipy.signal import hilbert
+
+    phis = []
+
+    for y in signals:
+        y_hilb = hilbert(y)
+        
+        t = np.arange(y.size)
+        inst_phase = np.unwrap(np.angle(y_hilb))
+
+        # Perform linear fit of phase vs time to estimate initial phase
+        _, phi0 = np.polyfit(t, inst_phase, 1)
+        phis.append(phi0)
+    
+    if len(phis) == 1:
+        return phis[0]
+    return np.array(phis)
