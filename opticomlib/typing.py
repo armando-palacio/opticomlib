@@ -14,11 +14,9 @@ from pympler.asizeof import asizeof as sizeof
 
 import numpy as np
 from scipy.constants import c, pi
+import scipy.signal as sg
 
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'serif' 
-
-from matplotlib.widgets import Slider
 
 from typing import Literal, Any, Iterable
 
@@ -28,17 +26,20 @@ from .utils import (
     str2array, 
     dbm, 
     si, 
+    upfirdn,
+    eyediagram,
+    ComplexNumber,
+    RealNumber
 )
 
 Array_Like = (list, tuple, np.ndarray)
-Number = (int, float)
 
 class global_variables():
     r"""**Global Variables (gv)**
 
     This object is used to store global variables that are used in the simulation.
     The global variables are used mainly to define the sampling frequency, the slot rate, 
-    the number of samples per slot and the optical wavelength or frequency.
+    the number of samples per slot, the number of bits of simulation and the optical wavelength or frequency.
 
     .. Note:: 
         
@@ -61,6 +62,7 @@ class global_variables():
         ~global_variables.t
         ~global_variables.dw
         ~global_variables.w
+        ~global_variables.plot_style
 
         
     .. rubric:: Methods
@@ -69,6 +71,7 @@ class global_variables():
         __call__
         __str__
         print
+        default
 
     Examples
     --------
@@ -82,10 +85,10 @@ class global_variables():
             sps :   8
             R   :   1.00e+10
             fs  :   8.00e+10
+            dt  :   1.25e-11
             λ0  :   1.55e-06
             f0  :   1.93e+14
             N   :   100
-            dt  :   1.25e-11
             dw  :   6.28e+08
             t   :   [0.e+00 1.e-11 3.e-11 ... 1.e-08 1.e-08 1.e-08]
             w   :   [-3.e+11 -3.e+11 -3.e+11 ...  2.e+11  3.e+11  3.e+11]
@@ -106,8 +109,13 @@ class global_variables():
                 sps :  16
                 R   :  1.00e+09
                 fs  :  1.60e+10
+                dt  :   1.25e-11
                 λ0  :  1.55e-06
                 f0  :  1.93e+14
+                N   :   128
+                t   :   [0.e+00 1.e-11 3.e-11 ... 1.e-08 1.e-08 1.e-08]
+                dw  :   6.28e+08
+                w   :   [-3.e+11 -3.e+11 -3.e+11 ...  2.e+11  3.e+11  3.e+11]
         
         Custom
         ------
@@ -129,17 +137,50 @@ class global_variables():
         """Optical communication central wavelength in meters, ``1550e-9`` by default."""
         self.f0 = c/self.wavelength
         """Optical communication central frequency in Hz, ``c/wavelength=193.4e12`` by default."""
-        self.N = None
-        """Number of slots to simulate (``None`` by default), if provided, it will set the instance's `N` attribute and calculate `t`, `dw`, and `w`."""
-        self.t = None
-        """Time array in seconds, ``None`` by default."""
-        self.dw = None
-        """Frequency step in Hz, ``None`` by default."""
-        self.w = None
-        """Frequency array in Hz, ``None`` by default."""
+        self.N = 128
+        """Number of slots to simulate (128 by default)."""
+        self.t = np.linspace(0, self.N*self.sps*self.dt, self.N*self.sps, endpoint=True)
+        """Time array in seconds"""
+        self.dw = 2*pi*self.fs/(self.N*self.sps)
+        """Frequency step in Hz"""
+        self.w = 2*pi*fftshift(fftfreq(self.N*self.sps))*self.fs
+        """Frequency array in Hz"""
+        self.plt_style = 'fast'
+        plt.style.use(self.plt_style)
+
+    def default(self):
+        """ Return all attributes to default values.
+        
+        """
+        self.sps = 16
+        self.R = 1e9
+        self.fs = self.R*self.sps
+        self.dt = 1/self.fs
+        self.wavelength = 1550e-9
+        self.f0 = c/self.wavelength
+        self.N = 128
+        self._set_t_dw_w()
+        self.plt_style = 'fast'
+        plt.style.use(self.plt_style)
+
+        attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw', 'plt_style'])]
+        
+        for attr in attrs:
+            delattr(self, attr)
+        return self
 
 
-    def __call__(self, sps: int=None, R: float=None, fs: float=None, wavelength: float=1550e-9, N: int=None, **kargs) -> Any:
+    def __call__(
+            self, 
+            sps: int=None, 
+            R: float=None, 
+            fs: float=None, 
+            wavelength: float=1550e-9, 
+            N: int=None, 
+            plt_style : Literal['ggplot', 'bmh', 'dark_background', 'fast', 'default']='fast', 
+            verbose=True, 
+            **kargs
+        ) -> Any:
         """
         Configures the instance with the provided parameters.
 
@@ -179,8 +220,9 @@ class global_variables():
                 self.fs = fs
                 self.R = fs/self.sps
             else:
-                msg = f'`R` will be set to default value ({self.R:.2e} Hz)'
-                warnings.warn(msg)
+                if verbose:
+                    msg = f'`R` will be set to default value ({self.R:.2e} Hz)'
+                    warnings.warn(msg)
                 self.fs = self.R*self.sps
 
         elif R: 
@@ -189,30 +231,32 @@ class global_variables():
                 self.fs = fs
                 self.sps = int(np.round(fs/R))
             else:
-                msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
-                warnings.warn(msg)
+                if verbose:
+                    msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
+                    warnings.warn(msg)
                 self.fs = R*self.sps
 
         elif fs:
-            msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
-            warnings.warn(msg)
+            if verbose:
+                msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
+                warnings.warn(msg)
             self.fs = fs
             self.sps = int(np.round(fs/self.R))
 
-        else:
+        elif verbose:
             msg = f'`sps`, `R` and `fs` will be set to previous values ({self.sps} samples per slot, {self.R:.2e} Hz, {self.fs:.2e} Samples/s)'
             warnings.warn(msg)
 
         self.dt = 1/self.fs
 
-        if N is not None:
-            self.N = N
-            self.t = np.linspace(0, N*self.sps*self.dt, N*self.sps, endpoint=True)
-            self.dw = 2*pi*self.fs/(N*self.sps)
-            self.w = 2*pi*fftshift(fftfreq(N*self.sps))*self.fs
+        self.N = N if N is not None else self.N
+        self._set_t_dw_w()
         
         self.wavelength = wavelength
         self.f0 = c/wavelength
+
+        self.plt_style = plt_style
+        plt.style.use(self.plt_style)
 
         if kargs:
             for key, value in kargs.items():
@@ -234,15 +278,12 @@ class global_variables():
             f'fs  :  {self.fs:.2e}\n\t' + \
             f'dt  :  {self.dt:.2e}\n\t' + \
             f'λ0  :  {self.wavelength:.2e}\n\t' + \
-            f'f0  :  {self.f0:.2e}\n'
-        
-        if self.N is not None:
-            msg += '\t' + \
-                f'N   :  {self.N}\n\t' + \
-                f'dt  :  {self.dt:.2e}\n\t' + \
-                f'dw  :  {self.dw:.2e}\n\t' + \
-                f't   :  {self.t}\n\t' + \
-                f'w   :  {self.w}\n'
+            f'f0  :  {self.f0:.2e}\n\t' + \
+            f'N   :  {self.N}\n\t' + \
+            f'dt  :  {self.dt:.2e}\n\t' + \
+            f't   :  {self.t}\n\t' + \
+            f'dw  :  {self.dw:.2e}\n\t' + \
+            f'w   :  {self.w}\n'
             
         if others:
             msg += '  Custom\n  ------\n\t' + '\n\t'.join([f'{name} : {getattr(self, name)}' for name in others]) + '\n'
@@ -257,30 +298,16 @@ class global_variables():
 
         Notes
         -----
-        The variables are printed with a precision of 2 in scientific notation, except for `sps` and `N` which are integers.
+        The array variables are printed with a precision of 2 in scientific notation, and are presented in a compact from if length exceeds 20 elements.
         """
-        np.set_printoptions(precision=0, threshold=10)
+        np.set_printoptions(precision=2, threshold=20)
         print(self)
-    
-    def clean(self):
-        """ Return all attributes to default values.
-        
-        """
-        self.sps = 16
-        self.R = 1e9
-        self.fs = self.R*self.sps
-        self.dt = 1/self.fs
-        self.wavelength = 1550e-9
-        self.f0 = c/self.wavelength
-        self.N = None
-        self.t = None
-        self.dw = None
-        self.w = None
 
-        attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw'])]
-        
-        for attr in attrs:
-            delattr(self, attr)
+    def _set_t_dw_w(self):
+        """ Calculate time array, frequency step and frequency array based on current `N`, `sps`, and `fs` values and set them as attributes."""
+        self.t = np.linspace(0, self.N*self.sps/self.fs, self.N*self.sps, endpoint=True)
+        self.dw = 2*pi*self.fs/(self.N*self.sps)
+        self.w = 2*pi*fftshift(fftfreq(self.N*self.sps))*self.fs
 
 
 gv = global_variables()
@@ -340,7 +367,7 @@ class binary_sequence():
         
         self.data = data.astype(np.uint8)
         """The binary sequence data, a 1D numpy array of boolean values."""
-        self.execution_time = 0
+        self.execution_time = 0.
         """The execution time of the last operation performed on the binary sequence."""
 
     def __str__(self, title: str=None): 
@@ -355,13 +382,11 @@ class binary_sequence():
         data = str(self.data)
 
         msg = f'\n{sub}\n{title}\n{sub}\n\t' + \
-            f'data  :  {data}\n\t' + \
-            f'len   :  {self.len()}\n\t' + \
-            f'size  :  {self.sizeof()} bytes\n'
-        
-        if self.execution_time is not None:
-            msg += '\t' +\
-                f'time  :  {si(self.execution_time, "s", 1)}\n'
+            f'data  :  {data} (shape: {self.data.shape})\n\t' + \
+            f'ones  :  {self.ones()}\n\t' + \
+            f'zeros :  {self.zeros()}\n\t' + \
+            f'size  :  {self.sizeof()} bytes\n\t' + \
+            f'time  :  {si(self.execution_time, "s", 2)}\n'
         return msg
     
     def __repr__(self):
@@ -386,7 +411,7 @@ class binary_sequence():
     
     def __len__(self):
         """Get number of slots of the binary sequence. ``len(self)``"""
-        return self.len()
+        return self.size
 
     def __getitem__(self, slice: int | slice):
         """Get a slice of the binary sequence (``self[slice]``). 
@@ -552,7 +577,24 @@ class binary_sequence():
         :obj:`int`
             The number of zeros in the binary sequence.
         """
-        return self.len() - self.ones()
+        return self.size - self.ones()
+    
+    def dac(self, h: np.ndarray):
+        """Apply upsampling and FIR filtering to the binary sequence for digital-to-analog conversion.
+
+        This method upsamples the binary sequence by the global samples per slot (gv.sps) and applies the provided FIR filter to produce an electrical signal.
+
+        Parameters
+        ----------
+        h : :obj:`np.ndarray`
+            The FIR filter coefficients used for shaping the signal.
+
+        Returns
+        -------
+        :obj:`electrical_signal`
+            The resulting electrical signal after upsampling, filtering, and downsampling.
+        """
+        return electrical_signal(upfirdn(x=self.data, h=h, up=gv.sps, dn=1))
     
     def type(self): 
         """Return de object type.
@@ -589,21 +631,25 @@ class electrical_signal():
         __init__
         __call__
         print
-        len
+        size
+        shape
         type
-        sizeof
         fs
         sps
         dt
         t
         w
+        f
         abs
+        sum
         power
         phase
+        normalize
         apply
-        copy
+        filter
         plot
         psd
+        plot_eye
         grid
         legend
         show
@@ -669,8 +715,12 @@ class electrical_signal():
         """The signal values, a 1D numpy array of complex values."""
         self.noise = noise
         """The noise values, a 1D numpy array of complex values."""
-        self.execution_time = 0
+        self.execution_time = 0.
         """The execution time of the last operation performed on the electrical signal."""
+        self.dtype = signal.dtype
+        self.size = signal.size
+        self.shape = signal.shape
+
 
     def __str__(self, title: str=None): 
         """Return a formatted string with the electrical_signal data, length, size in bytes and time if available."""
@@ -681,7 +731,7 @@ class electrical_signal():
         sub = len(title)*'-'
         tab = 3*' '
 
-        np.set_printoptions(precision=1, threshold=10)
+        np.set_printoptions(precision=3, threshold=20)
 
         if self.signal.ndim == 1:
             signal = str(self.signal)
@@ -691,15 +741,15 @@ class electrical_signal():
             noise = str(self.noise).replace('\n', '\n'+tab + 11*' ')
         
         msg = f'\n{sub}\n{title}\n{sub}\n'+ tab + \
-            f'signal:    {signal}\n'+ tab + \
-            f'noise:     {noise}\n'+ tab + \
-            f'len:       {self.len()}\n' + tab + \
-            f'elem_type: {self.signal.dtype}\n' + tab + \
-            f'mem_size:  {self.sizeof()} bytes\n'
-        
-        if self.execution_time is not None:
-            msg += tab + \
-                f'time:      {si(self.execution_time, "s", 1)}\n'
+            f'signal:     {signal} (shape: {self.shape})\n'+ tab + \
+            f'noise:      {noise} (shape: {self.shape if self.noise is not None else None})\n'+ tab + \
+            f'pow_signal: {si(self.power('W', 'signal'), 'W', 1)} ({self.power('dbm', 'signal'):.1f} dBm)\n'+ tab + \
+            f'pow_noise:  {si(self.power('W', 'noise'), 'W', 1)} ({self.power('dbm', 'noise'):.1f} dBm)\n'+ tab + \
+            f'pow_total:  {si(self.power('W', 'all'), 'W', 1)} ({self.power('dbm', 'all'):.1f} dBm)\n'+ tab + \
+            f'len:        {self.size}\n' + tab + \
+            f'elem_type:  {self.dtype}\n' + tab + \
+            f'mem_size:   {self.sizeof()} bytes\n' + tab + \
+            f'time:       {si(self.execution_time, "s", 2)}\n'
         return msg
     
     def __repr__(self):
@@ -726,135 +776,105 @@ class electrical_signal():
         return self
 
     def __len__(self): 
-        return self.len()
+        return self.size
     
-    def __add__(self, other):
-        """ Add two electrical signals (``+`` operator). Same that ``__radd__``.
-        
-        Parameters
-        ----------
-        other : :obj:`electrical_signal` or :obj:`Array_Like` or :obj:`Number`
-            The signal to add.
-        
-        Returns
-        -------
-        :obj:`electrical_signal`
-            A new electrical signal object with the result of the addition.
-        """
+    def _parse(self, other):
         if not isinstance(other, self.type()):
-            other = self.__class__(other) # only signal is considered
+            other = self.__class__(other)
+        else:
+            other = other[:]
+
+        if other.noise is None:
+            other.noise = np.zeros_like(other.signal)
         
-        if self.len() != other.len() and other.len() != 1:
-            raise ValueError(f"Can't add {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
+        if self.size != other.size:
+            l_min = min(self.size, other.size)
+            l_max = max(self.size, other.size)
+            
+            if l_min != 1 and l_min != l_max: 
+                raise ValueError(f"Can't add {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
         
         dtype = np.result_type(self.signal, other.signal)
+        return other, dtype
+    
+    def __add__(self, other):
+        other, dtype = self._parse(other)
+        self_, _ = self._parse(self)
 
-        if self.noise is None and other.noise is None:
-            return self.__class__(self.signal + other.signal, dtype=dtype)
-        elif self.noise is None:
-            return self.__class__(self.signal + other.signal, other.noise, dtype=dtype)
-        elif other.noise is None:
-            return self.__class__(self.signal + other.signal, self.noise, dtype=dtype)
-        return self.__class__(self.signal + other.signal, self.noise + other.noise, dtype=dtype)
+        sig = self_.signal + other.signal
+        noi = self_.noise + other.noise
+
+        return self.__class__(sig, noi if all(noi) != 0 else None, dtype=dtype)
         
     def __radd__(self, other):
         return self.__add__(other)
     
+    def __neg__(self):
+        sig = -self.signal
+        noi = -self.noise if self.noise is not None else None
+        return self.__class__(sig, noi)
+
     def __sub__(self, other):
-        """ Substract two electrical signals (``-`` operator).
-
-        Parameters
-        ----------
-        other : :obj:`electrical_signal` or :obj:`Array_Like` or :obj:`Number`
-            The signal to substract.
-
-        Returns
-        -------
-        :obj:`electrical_signal`
-            A new electrical signal object with the result of the substraction.        
-        """
-        if not isinstance(other, self.__class__):
-            other = self.__class__(other) # only signal is considered
-        
-        if self.len() != other.len() and other.len() != 1:
-            raise ValueError(f"Can't substract {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
-        
-        dtype = np.result_type(self.signal, other.signal)
-
-        if self.noise is None and other.noise is None:
-            return self.__class__(self.signal - other.signal, dtype=dtype)
-        elif self.noise is None:
-            return self.__class__(self.signal - other.signal, -other.noise, dtype=dtype)
-        elif other.noise is None:
-            return self.__class__(self.signal - other.signal, self.noise, dtype=dtype)
-        return self.__class__(self.signal - other.signal, self.noise - other.noise, dtype=dtype)
+        return self + (-other)
         
     def __rsub__(self, other):
-        if not isinstance(other, self.__class__):
-            other = self.__class__(other) # only signal is considered
-        
-        if self.len() != other.len() and other.len() != 1:
-            raise ValueError(f"Can't substract {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
-        
-        dtype = np.result_type(self.signal, other.signal)
-
-        if self.noise is None and other.noise is None:
-            return self.__class__(-self.signal + other.signal, dtype=dtype)
-        elif self.noise is None:
-            return self.__class__(-self.signal + other.signal, other.noise, dtype=dtype)
-        elif other.noise is None:
-            return self.__class__(-self.signal + other.signal, -self.noise, dtype=dtype)
-        return self.__class__(-self.signal + other.signal, -self.noise + other.noise, dtype=dtype)
-        
+        return (-self) + other
+    
     def __mul__(self, other):
-        """ Multiply two electrical signals (``*`` operator). Same that ``__rmul__``.
-        
-        Parameters
-        ----------
-        other : :obj:`electrical_signal` or :obj:`Array_Like` or :obj:`Number`
-            The signal to multiply.
+        other, dtype = self._parse(other)
+        self_, _ = self._parse(self)
 
-        Returns
-        -------
-        :obj:`electrical_signal`
-            A new electrical signal object with the result of the multiplication.
-        """
-        if not isinstance(other, self.__class__):
-            other = self.__class__(other) # only signal is considered
-        
-        if self.len() != other.len() and other.len() != 1:
-            raise ValueError(f"Can't add {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
-        
-        dtype = np.result_type(self.signal, other.signal)
+        sig = self_.signal*other.signal
+        noi = self_.signal*other.noise + self_.noise*other.signal + self_.noise*other.noise
 
-        if self.noise is None and other.noise is None:
-            return self.__class__(self.signal * other.signal, dtype=dtype)
-        elif self.noise is None:
-            return self.__class__(self.signal * other.signal, other.noise, dtype=dtype)
-        elif other.noise is None:
-            return self.__class__(self.signal * other.signal, self.noise, dtype=dtype)
-        return self.__class__(self.signal * other.signal, self.noise * other.noise, dtype=dtype)
+        return self.__class__(sig, noi if all(noi) !=0 else None, dtype=dtype)
         
     def __rmul__(self, other):
         return self.__mul__(other)
         
-    def __getitem__(self, slice: int | slice):
-        """Slice the signal.
+    def __truediv__(self, number: int):
+        if not isinstance(number, ComplexNumber):
+            raise TypeError(f"Can't divide electrical_signal by type {type(number)}")
+        if number == 0:
+            raise ZeroDivisionError("Can't divide electrical_signal by zero")
 
-        Parameters
-        ----------
-        slice : :obj:`int` or :obj:`slice`
-            Index or slice to get.
-
-        Returns
-        -------
-        out : :obj:`optical_signal`
-            A new object with the result of the slicing.
-        """
         if self.noise is None:
-            return electrical_signal( self.signal[slice] ) 
-        return electrical_signal( self.signal[slice], self.noise[slice] )
+            return self.__class__(self.signal / number)
+        return self.__class__(self.signal / number, self.noise / number)
+    
+    def __floordiv__(self, other):
+        x = (self/other)
+        if x.noise is None:
+            return self.__class__( np.floor(x.signal) )
+        return self.__class__( np.floor(x.signal), np.floor(x.noise) )
+        
+    def __getitem__(self, slice: int | slice):
+        if self.noise is None:
+            return self.__class__( self.signal[slice] ) 
+        return self.__class__( self.signal[slice], self.noise[slice] )
+    
+    def __gt__(self, other): 
+        other, _ = self._parse(other)
+        self_, _ = self._parse(self)
+        
+        x_r = self_.signal + self_.noise
+        x_l = other.signal + other.noise
 
+        return binary_sequence(x_r > x_l)
+        
+    def __lt__(self, other):
+        return other - self > 0 
+    
+    def __pow__(self, other):
+        if not isinstance(other, RealNumber):
+            raise TypeError(f"Can't exponentiate electrical_signal by type {type(other)}")
+        
+        self_, _ = self._parse(self)
+
+        sig = (self_.signal + self_.noise) ** other 
+        
+        return self.__class__( sig , dtype=self_.dtype)
+    
     def __call__(self, domain: Literal['t','w', 'f'], shift: bool=False):
         """ Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.
 
@@ -875,15 +895,15 @@ class electrical_signal():
         TypeError
             If ``domain`` is not one of the following values ('t', 'w', 'f').
         """
+        self_, _ = self._parse(self)
+
         if domain == 'w' or domain == 'f':
-            signal = fft(self.signal, axis=-1)
-            if self.noise is not None:
-                noise = fft(self.noise, axis=-1)
+            signal = fft(self_.signal, axis=-1)
+            noise = fft(self_.noise, axis=-1)
               
         elif domain == 't':
-            signal = ifft(self.signal, axis=-1)
-            if self.noise is not None:
-                noise = ifft(self.noise, axis=-1)
+            signal = ifft(self_.signal, axis=-1)
+            noise = ifft(self_.noise, axis=-1)
         
         else:
             raise ValueError("`domain` must be one of the following values ('t', 'w', 'f')")
@@ -891,85 +911,13 @@ class electrical_signal():
         if shift:
             if domain == 'w' or domain == 'f':
                 signal = fftshift(signal, axes=-1)
-                if self.noise is not None:
-                    noise = fftshift(noise, axes=-1)
+                noise = fftshift(noise, axes=-1)
             else: 
                 signal = ifftshift(signal, axes=-1)
-                if self.noise is not None:
-                    noise = ifftshift(noise, axes=-1)
+                noise = ifftshift(noise, axes=-1)
 
-        if self.noise is None:
-            return self.__class__(signal)
-        return self.__class__(signal, noise)
-    
-    def __gt__(self, other): 
-        """ Compare the signal+noise with a threshold (``>`` operator).
+        return self.__class__(signal, noise if all(noise) !=0 else None)
 
-        Parameters
-        ----------
-        other : array_like or :obj:`float`    
-            The threshold to compare with. If other is an array, the comparison is element-wise.
-        
-        Returns
-        -------
-        out: binary_sequence
-            A new binary sequence object with the result of the comparison.
-
-        Raises
-        ------
-        ValueError
-            If the arrays must have the same length.
-        TypeError
-            If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.
-        """
-        if not isinstance(other, electrical_signal):
-            other = electrical_signal(other) # only signal is considered
-        
-        if self.len() != other.len() and other.len() != 1:
-            raise ValueError(f"Can't compare electrical_signals with shapes {self.signal.shape} and {other.signal.shape}")
-
-        return binary_sequence(self.abs() > other.abs())
-        
-
-    def __lt__(self, other):
-        """ Compare the signal+noise with a threshold (``<`` operator).
-
-        Parameters
-        ----------
-        other : array_like or :obj:`float`    
-            The threshold to compare with. If other is an array, the comparison is element-wise.
-        
-        Returns
-        -------
-        out: binary_sequence
-            A new binary sequence object with the result of the comparison.
-
-        Raises
-        ------
-        ValueError
-            If the arrays must have the same length.
-        TypeError
-            If `other` is not of type :obj:`electrical_signal`, :obj:`list`, :obj:`tuple`, :obj:`numpy.array`, :obj:`int` or :obj:`float`.
-        """
-        if not isinstance(other, electrical_signal):
-            other = electrical_signal(other) # only signal is considered
-        
-        if self.len() != other.len() and other.len() != 1:
-            raise ValueError(f"Can't compare electrical_signals with shapes {self.signal.shape} and {other.signal.shape}")
-
-        return binary_sequence(self.abs() < other.abs())
-             
-    def len(self): 
-        """Get number of samples of the electrical signal.
-        
-        Returns
-        -------
-        :obj:`int`
-            The number of samples of the electrical signal.
-        """
-        if self.signal.ndim > 1:
-            return self.signal.shape[1]
-        return self.signal.size
 
     def type(self): 
         """Return de object type (``electrical_signal``).
@@ -1029,7 +977,7 @@ class electrical_signal():
         :obj:`np.ndarray`
             The time array for the electrical signal.
         """
-        return np.linspace(0, self.len()*gv.dt, self.len(), endpoint=True)
+        return gv.t
     
     def w(self, shift: bool=False): 
         """Return angular frequency for spectrum representation.
@@ -1044,17 +992,76 @@ class electrical_signal():
         :obj:`np.ndarray`
             The angular frequency array for signals simulation.
         """
-        w = 2*pi*fftfreq(self.len())*self.fs()
+        w = gv.w
         if shift:
             return fftshift(w)
         return w
     
-    def power(self, by: Literal['signal','noise','all']='all'): 
+    def f(self, shift: bool=False):
+        return self.w(shift)/(2*pi)
+
+    def sum(self, of: Literal['signal','noise','all']='all'):
+        """Get sum of ``signal``, ``noise`` or ``signal+noise``.
+
+        Parameters
+        ----------
+        of : :obj:`str`, optional
+            Defines from which attribute to obtain the sum. If 'all', sum of ``signal+noise`` is determined.
+        
+        Returns
+        -------
+        out : :obj:`np.ndarray`, (1D or 2D, float)
+            The sum of the object.
+        """
+        self_,_ = self._parse(self)
+
+        if not isinstance(of, str):
+            raise TypeError('`of` must be a string.')
+        of = of.lower()
+        
+        if of == 'signal':
+            return np.sum(self_.signal, axis=-1)
+        elif of == 'noise':
+            return np.sum(self_.noise, axis=-1) 
+        elif of == 'all':
+            return np.sum(self_.signal + self_.noise, axis=-1)
+        else:
+            raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
+
+    def abs(self, of: Literal['signal','noise','all']='all'):
+        """Get absolute value of ``signal``, ``noise`` or ``signal+noise``.
+
+        Parameters
+        ----------
+        of : :obj:`str`, optional
+            Defines from which attribute to obtain the absolute value. If 'all', absolute value of ``signal+noise`` is determined.
+        
+        Returns
+        -------
+        out : :obj:`np.ndarray`, (1D or 2D, float)
+            The absolute value of the object.
+        """
+        self_,_ = self._parse(self)
+
+        if not isinstance(of, str):
+            raise TypeError('`of` must be a string.')
+        of = of.lower()
+        
+        if of == 'signal':
+            return np.abs(self_.signal)
+        elif of == 'noise':
+            return np.abs(self_.noise)
+        elif of == 'all':
+            return np.abs(self_.signal + self_.noise)
+        else:
+            raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
+    
+    def power(self, unit : Literal['W', 'dBm']='W', of: Literal['signal','noise','all']='all'): 
         """Get power of the electrical signal.
         
         Parameters
         ----------
-        by : :obj:`str`, optional
+        of : :obj:`str`, optional
             Defines from which attribute to obtain the power. If 'all', power of signal+noise is determined.
         
         Returns
@@ -1062,9 +1069,29 @@ class electrical_signal():
         :obj:`float`
             The power of the electrical signal.
         """
-        if by.lower() not in ['signal', 'noise', 'all']:
-            raise ValueError('`by` must be one of the following values ("signal", "noise", "all")')
-        return np.mean(self.abs(by)**2, axis=-1)
+        if of.lower() not in ['signal', 'noise', 'all']:
+            raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
+        p = np.mean(self.abs(of)**2, axis=-1)
+        unit = unit.lower()
+        if unit == 'w':
+            return p
+        elif unit == 'dbm':
+            return dbm(p)
+        else:
+            raise ValueError('`unit` must be one of the following values ("W", "dBm")')
+    
+    def normalize(self, by: Literal['power', 'amplitude']='power'):
+        """Return the power-normalized signal
+        """
+        x = self[:]
+        if by == 'power':
+            pw = x.power('W', 'signal')
+            return x / pw**0.5
+        elif by == 'amplitude':
+            amp = x.abs('signal').max()
+            return x / amp
+        else:
+            raise ValueError('`by` must be one of the following values ("power", "amplitude")')
     
     def phase(self):
         """Get phase of the ``signal`` + `noise`.
@@ -1074,9 +1101,8 @@ class electrical_signal():
         :obj:`np.ndarray`
             The phase of the electrical signal.
         """
-        if self.noise is None:
-            return np.unwrap(np.angle(self.signal))
-        return np.unwrap(np.angle(self.signal + self.noise))
+        self_, _ = self._parse(self)
+        return np.unwrap(np.angle(self_.signal + self_.noise))
     
     def apply(self, function, *args, **kargs):
         r"""Apply a function to signal and noise.
@@ -1095,65 +1121,38 @@ class electrical_signal():
         out : :obj:`electrical_signal`
             A new electrical signal object with the result of the function applied to the signal and noise.
         """
-        output = self.copy()
-        output.signal = function(self.signal, *args, **kargs)
-        if self.noise is not None:
-            output.noise = function(self.noise, *args, **kargs)
-        output.execution_time = self.execution_time
-        return output
-
-    def copy(self, n: int=None):
-        """Return a copy of the object.
+        self_, _ = self._parse(self)
         
-        Parameters
-        ----------
-        n : :obj:`int`, optional
-            Index to truncate original object. If None, the whole object is copied.
-
-        Returns
-        -------
-        cp : :obj:`electrical_signal`
-            A copy of the object.
-        """
-        if n is None: 
-            n = self.len()
-        return self[:n]
-
-    def abs(self, by: Literal['signal','noise','all']='all'):
-        """Get absolute value of ``signal``, ``noise`` or ``signal+noise``.
-
-        Parameters
-        ----------
-        by : :obj:`str`, optional
-            Defines from which attribute to obtain the absolute value. If 'all', absolute value of ``signal+noise`` is determined.
-        
-        Returns
-        -------
-        out : :obj:`np.ndarray`, (1D or 2D, float)
-            The absolute value of the object.
-        """
-        if not isinstance(by, str):
-            raise TypeError('`by` must be a string.')
-        by = by.lower()
-        
-        if by == 'signal':
-            return np.abs(self.signal)
-        elif by == 'noise':
-            return np.abs(self.noise) if self.noise is not None else np.zeros(self.signal.shape, dtype=self.signal.dtype)
-        elif by == 'all':
-            return np.abs(self.signal + self.noise) if self.noise is not None else np.abs(self.signal)
-        else:
-            raise ValueError('`by` must be one of the following values ("signal", "noise", "all")')
+        return self.__class__( function(self_.signal + self_.noise, *args, **kargs) )
     
+    def filter(self, h: np.ndarray):
+        """Apply FIR filter to the electrical signal.
+
+        Parameters
+        ----------
+        h : :obj:`np.ndarray`
+            The FIR filter coefficients used for filtering the signal.
+
+        Returns
+        -------
+        self : :obj:`electrical_signal`
+            The same object with the filtered signal and noise.
+        """
+        self_, _ = self._parse(self)
+        
+        sig = np.convolve(self_.signal, h, mode='same')
+        noi = np.convolve(self_.noise, h, mode='same')
+
+        return self.__class__(sig, noi if all(noi) !=0 else None, dtype=self_.dtype) 
 
     def plot(self, 
              fmt: str='-', 
              n: int=None, 
              xlabel: str=None, 
              ylabel: str=None, 
-             style: Literal['dark', 'light'] = 'dark',
              grid: bool=False,
              hold: bool=True,
+             show: bool=False,
              **kwargs: dict): 
         r"""Plot real part of electrical signal.
 
@@ -1181,25 +1180,15 @@ class electrical_signal():
         self : :obj:`electrical_signal`
             The same object.
         """
-        n = self.len() if not n else n
-        t = self.t()[:n]*1e9
+        self_, _ = self._parse(self)
 
-        if style == 'dark':
-            plt.style.use('dark_background')
-            c = 'white'
-        elif style == 'light':
-            plt.style.use('default')
-            c = 'black'
-        else:
-            raise ValueError('`style` must be "dark" or "light".')
+        n = self_.size if not n else n
+        t = self_.t()[:n]*1e9
         
         if not hold:
             plt.figure()
 
-        if self.noise is None:
-            y = self[:n].signal.real
-        else:
-            y = (self[:n].signal + self[:n].noise).real
+        y = (self_[:n].signal + self_[:n].noise)
         
         plt.plot(t, y, fmt, **kwargs)
         plt.xlabel(xlabel if xlabel else 'Time [ns]')
@@ -1214,9 +1203,9 @@ class electrical_signal():
         if 'label' in kwargs.keys():
             plt.legend()
 
-        plt.style.use('default')
+        if show:
+            plt.show()
         return self
-    
 
     def psd(self, 
             fmt: str='-', 
@@ -1224,9 +1213,9 @@ class electrical_signal():
             xlabel: str=None,
             ylabel: str=None,
             yscale: Literal['linear','dbm']='dbm', 
-            style: Literal['dark', 'light'] = 'dark',
             grid: bool=True,
             hold: bool=True,
+            show: bool=False,
             **kwargs: dict):
         """Plot Power Spectral Density (PSD) of the electrical signal.
 
@@ -1256,19 +1245,10 @@ class electrical_signal():
         self : :obj:`electrical_signal`
             The same object.
         """
-        n = self.len() if not n else n
-        f = self[:n].w(shift=True)/2/pi * 1e-9
+        n = self.size if not n else n
 
-        psd = fftshift(self[:n]('w').abs('all')**2/n**2)
-
-        if style == 'dark':
-            plt.style.use('dark_background')
-            c = 'white'
-        elif style == 'light':
-            plt.style.use('default')
-            c = 'black'
-        else:
-            raise ValueError('`style` must be "dark" or "light".')
+        f, psd = sg.welch(self[:n].signal, fs=gv.fs*1e-9, nperseg=2048, scaling='spectrum', return_onesided=False, detrend=False)
+        f, psd = np.fft.fftshift(f), np.fft.fftshift(psd)
         
         if yscale == 'linear':
             args = (f, psd*1e3, fmt)
@@ -1294,8 +1274,63 @@ class electrical_signal():
         if 'label' in kwargs.keys():
             plt.legend()
 
-        plt.style.use('default')
+        if show:
+            plt.show()
         return self
+    
+    def plot_eye(self, n_traces=None, cmap='viridis', 
+             N_grid_bins=350, grid_sigma=3, ax=None, **plot_kw):
+        r"""Plots a colored eye diagram, internally calculating color density.
+
+        Parameters
+        ----------
+        n_traces : int, optional
+            Maximum number of traces to plot. If None, all available traces
+            will be plotted. Defaults to None.
+        cmap : str, optional
+            Name of the matplotlib colormap. Defaults to 'viridis'.
+        N_grid_bins : int, optional
+            Number of bins for the density histogram. Defaults to 350.
+        grid_sigma : float, optional
+            Sigma for the Gaussian filter applied to the density. Defaults to 3.
+        ax : matplotlib.axes.Axes, optional
+            Axes object to plot on. If None, creates new figure and axes.
+            Defaults to None.
+        \*\*plot_kw : dict, optional
+            Additional plotting parameters:
+            
+            Figure parameters (used only if ax is None):
+            - figsize : tuple, default (10, 6)
+            - dpi : int, default 100
+            
+            Line collection parameters:
+            - linewidth : float, default 0.75
+            - alpha : float, default 0.25
+            - capstyle : str, default 'round'
+            - joinstyle : str, default 'round'
+            
+            Axes formatting parameters:
+            - xlabel : str, default "Time (2-symbol segment)"
+            - ylabel : str, default "Amplitude"
+            - title : str, default "Eye Diagram ({num_traces} traces)"
+            - grid : bool, default True
+            - grid_alpha : float, default 0.3
+            - xlim : tuple, optional (xmin, xmax)
+            - ylim : tuple, optional (ymin, ymax)
+            - tight_layout : bool, default True
+            
+            Display parameters:
+            - show : bool, default True (whether to call plt.show())
+        
+        Returns
+        -------
+        self
+            The same object with the plotted eye diagram.
+        """
+
+        eyediagram(self.signal, self.sps(), n_traces, cmap, N_grid_bins, grid_sigma, ax, **plot_kw)
+        return self
+
     
     def grid(self, **kwargs):
         r"""Add grid to the plot.
@@ -1364,21 +1399,25 @@ class optical_signal(electrical_signal):
         __init__
         __call__
         print
-        len
+        size
+        shape
         type
-        sizeof
         fs
         sps
         dt
         t
         w
+        f
+        abs
+        sum
         power
         phase
+        normalize
         apply
-        copy
-        abs
+        filter
         plot
         psd
+        plot_eye
         grid
         legend
         show
@@ -1525,8 +1564,8 @@ class optical_signal(electrical_signal):
              n=None, 
              xlabel: str=None,
              ylabel: str=None,
-             style: Literal['dark', 'light'] = 'dark',
              grid: bool=False,
+             M: int=None,
              hold: bool=True,
              **kwargs): 
         r"""
@@ -1568,17 +1607,8 @@ class optical_signal(electrical_signal):
         self : :obj:`optical_signal`
             The same object.
         """
-        n = self.len() if not n else n
+        n = self.size if not n else n
         t = self.t()[:n]*1e9
-
-        if style == 'dark':
-            plt.style.use('dark_background')
-            c = 'white'
-        elif style == 'light':
-            plt.style.use('default')
-            c = 'black'
-        else:
-            raise ValueError('`style` must be "dark" or "light".')
         
         I = self[:n].abs('all')**2 *1e3
 
@@ -1625,8 +1655,10 @@ class optical_signal(electrical_signal):
         plt.ylabel(ylabel if ylabel else 'Power [mW]')
         
         if grid:
-            for i in t[:n*gv.sps][::gv.sps]:
-                plt.axvline(i, color=c, ls='--', alpha=0.3, lw=1)
+            for i,t_ in enumerate(t[:n*gv.sps][::gv.sps]):
+                plt.axvline(t_, color=c, ls='--', alpha=0.3, lw=1)
+                if M is not None and i%M == 0:
+                    plt.axvline(t_, color=c, ls='--', alpha=0.7, lw=1)
             plt.axvline(t[-1] + gv.dt*1e9, color=c, ls='--', alpha=0.3, lw=1)
             plt.grid(alpha=0.3, axis='y')
 
@@ -1643,7 +1675,6 @@ class optical_signal(electrical_signal):
         if 'label' in kwargs.keys():
             plt.legend()
 
-        plt.style.use('default')
         return self
     
 
@@ -1654,7 +1685,6 @@ class optical_signal(electrical_signal):
             xlabel: str=None,
             ylabel: str=None, 
             yscale: Literal['linear', 'dbm']='dbm', 
-            style: Literal['dark', 'light'] = 'dark',
             grid: bool=True,
             hold: bool=True,
             **kwargs: dict):
@@ -1701,20 +1731,11 @@ class optical_signal(electrical_signal):
         self : :obj:`optical_signal`
             The same object.
         """
-        n = self.len() if not n else n
-        f = self[:n].w(shift=True)/2/pi * 1e-9
-
-        psd = fftshift(self[:n]('w').abs('all')**2/n**2, axes=-1)
-
-        if style == 'dark':
-            plt.style.use('dark_background')
-            c = 'white'
-        elif style == 'light':
-            plt.style.use('default')
-            c = 'black'
-        else:
-            raise ValueError('`style` should be ("dark" or "light")')
+        n = self.size if not n else n
         
+        f, psd = sg.welch(self[:n].signal, fs=gv.fs*1e-9, nperseg=2048, scaling='spectrum', return_onesided=False, detrend=False)
+        f, psd = np.fft.fftshift(f), np.fft.fftshift(psd)
+
         if yscale == 'linear':
             psd = psd*1e3
             ylabel = ylabel if ylabel else 'Power [mW]'
@@ -1778,7 +1799,6 @@ class optical_signal(electrical_signal):
         if 'label' in kwargs.keys():
             plt.legend()
 
-        plt.style.use('default')
         return self
     
 class EyeShowOptions():
@@ -1787,13 +1807,17 @@ class EyeShowOptions():
             threshold : bool = None, 
             cross_points : bool = None, 
             legends : bool = None, 
-            t_opt : bool = None
+            t_opt : bool = None,
+            histogram : bool = None,
+            all_none : bool = False
         ):
-        self.averages = averages if averages is not None else True
-        self.threshold = threshold if threshold is not None else True
-        self.cross_points = cross_points if cross_points is not None else True
-        self.legends = legends if legends is not None else True
-        self.t_opt = t_opt if t_opt is not None else True
+
+        self.averages = averages if averages is not None else all_none
+        self.threshold = threshold if threshold is not None else all_none
+        self.cross_points = cross_points if cross_points is not None else all_none
+        self.legends = legends if legends is not None else all_none
+        self.t_opt = t_opt if t_opt is not None else all_none
+        self.histogram = histogram if histogram is not None else all_none
 
 class eye():
     """**Eye Diagram Parameters**.
@@ -1906,8 +1930,10 @@ class eye():
              vlines: list=[], 
              style: Literal['dark', 'light']='dark', 
              cmap: Literal['viridis', 'plasma', 'inferno', 'cividis', 'magma', 'winter']='winter',
+             smooth: bool=True,
              title: str = '',
-             savefig: str=None
+             savefig: str=None,
+             ax = None
         ):
         """ Plot eye diagram.
 
@@ -1940,12 +1966,14 @@ class eye():
         ## SETTINGS
 
         if style == 'dark':
-            plt.style.use('dark_background')
+            if ax is None:
+                plt.style.use('dark_background')
             t_opt_color = '#60FF86'
             means_color = 'white'
             bgcolor='black'
         elif style == 'light':
-            plt.style.use('default')
+            if ax is None:
+                plt.style.use('default')
             t_opt_color = 'green'#'#229954'
             means_color = '#5A5A5A'
             bgcolor='white'
@@ -1954,9 +1982,16 @@ class eye():
         
         dt = self.dt
 
-        fig, ax = plt.subplots(1,2, gridspec_kw={'width_ratios': [4,1],  
-                                                'wspace': 0.03},
-                                                figsize=(8,5))
+        if show_options.histogram:
+            fig, ax = plt.subplots(1,2, gridspec_kw={'width_ratios': [4,1],  
+                                                    'wspace': 0.03},
+                                                    figsize=(8,5))
+        elif ax is None:
+            fig, ax = plt.subplots(1,1)
+            ax = [ax, ax]
+        else:
+            ax = [ax, ax]
+            
         if title:
             plt.suptitle(f'Eye diagram {title}')
         
@@ -1980,19 +2015,25 @@ class eye():
         # threshold
         if show_options.threshold:
             ax[0].axhline(self.threshold, c='r', ls='--')
-            ax[1].axhline(self.threshold, c='r', ls='--', label='th')
-            if show_options.legends:
-                ax[1].legend()
+            
+            if show_options.histogram:
+                ax[1].axhline(self.threshold, c='r', ls='--', label='th')
+                if show_options.legends:
+                    ax[1].legend()
         
         # horizontal lines
         for hl in hlines:
             ax[0].axhline(hl, c='y')
-            ax[1].axhline(hl, c='y')
+            
+            if show_options.histogram:
+                ax[1].axhline(hl, c='y')
         
         # vertical lines
         for vl in vlines:
             ax[0].axvline(vl, c='y')
-            ax[1].axvline (vl, c='y')
+            
+            if show_options.histogram:
+                ax[1].axvline (vl, c='y')
         
         # legend
         if show_options.legends: 
@@ -2003,39 +2044,95 @@ class eye():
             ax[0].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
             ax[0].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
 
-            ax[1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7, label=r'$\mu_1$')
-            ax[1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7, label=r'$\mu_0$')
-            if show_options.legends:
-                ax[1].legend()
+            if show_options.histogram:
+                ax[1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7, label=r'$\mu_1$')
+                ax[1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7, label=r'$\mu_0$')
+                if show_options.legends:
+                    ax[1].legend()
 
-        ax[1].sharey(ax[0])
-        ax[1].tick_params(axis='x', which='both', length=0, labelbottom=False)
-        ax[1].tick_params(axis='y', which='both', length=0, labelleft=False)
-        ax[1].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
+        if show_options.histogram:
+            ax[1].sharey(ax[0])
+            ax[1].tick_params(axis='x', which='both', length=0, labelbottom=False)
+            ax[1].tick_params(axis='y', which='both', length=0, labelleft=False)
+            ax[1].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
 
 
         ## ADD PLOTS
-        y_ = self.y
-        t_ = self.t
+        y_ = np.roll(self.y, -self.sps//2)[self.sps//2 : -self.sps//2]  # shift signal to center
+        t_ = self.t[:-self.sps]
 
-        ax[0].hexbin( # plot eye
-            x = t_, 
-            y = y_, 
-            gridsize=500, 
-            bins='log',
-            alpha=0.7, 
-            cmap=cmap 
-        )
-        
-        ax[1].hist(  # plot vertical histogram 
-            y_[(t_>self.t_opt-0.05*self.t_dist) & (t_<self.t_opt+0.05*self.t_dist)], 
-            bins=200, 
-            density=True, 
-            orientation = 'horizontal', 
-            color = t_opt_color, 
-            alpha = 0.9,
-            histtype='step',
-        )
+        from scipy.ndimage import gaussian_filter
+        from scipy.special import expit
+        from matplotlib.collections import LineCollection
+
+        N = 350  # number of bins
+        heatmap, xedges, yedges = np.histogram2d(t_, y_, bins=N)
+        heatmap_smooth = gaussian_filter(heatmap, sigma=3)
+
+        if smooth:
+            extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+            vmin, vmax = heatmap.min(), heatmap.max()
+            alpha_values = expit((heatmap_smooth - (vmin + 0.05 * (vmax - vmin))) * 100 / (vmax - vmin)).T*0.8
+
+            img = ax[0].imshow(
+                heatmap_smooth.T, 
+                extent=extent, 
+                origin='lower', 
+                aspect='auto', 
+                alpha=alpha_values,
+                cmap=cmap,
+                interpolation='bicubic',
+                resample=True,
+            )
+            # fig.colorbar(img, ax=ax[0])
+        else:
+            # ax[0].hexbin( # plot eye
+            #     x = t_, 
+            #     y = y_, 
+            #     gridsize=500, 
+            #     bins='log',
+            #     alpha=0.7, 
+            #     cmap=cmap 
+            # )
+            t_norm = (t_ - t_.min()) / (t_.max() - t_.min())
+            y_norm = (y_ - y_.min()) / (y_.max() - y_.min())
+
+            it = np.clip((t_norm * (N - 1)).astype(int), 0, N - 1)
+            iy = np.clip((y_norm * (N - 1)).astype(int), 0, N - 1)
+
+            color_values = heatmap_smooth[it, iy]
+            color_values = (color_values - color_values.min()) / (color_values.max() - color_values.min())
+
+            t = t_[:2*self.sps]
+
+            n_traces = len(y_) // (2*self.sps)
+
+            Y_reshaped = y_[:n_traces * 2*self.sps].reshape(-1, 2*self.sps)
+            color_values_reshaped = color_values[:n_traces * 2*self.sps].reshape(-1, 2*self.sps)
+
+            for c, y in zip(color_values_reshaped, Y_reshaped):
+                points = np.array([t, y]).T.reshape(-1, 1, 2)
+                segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+                # Asignar color a cada segmento según la grilla
+                colors = getattr(plt.cm, cmap)(c[:-1])
+
+                lc = LineCollection(segments, colors=colors, linewidth=1, alpha=0.05)
+                ax[0].add_collection(lc)
+
+        if show_options.histogram:
+            if smooth:
+                ax[1].plot(heatmap_smooth[170:180].sum(axis=0), np.linspace(y_.min(), y_.max(), 350), color=t_opt_color)
+            else:
+                ax[1].hist(  # plot vertical histogram 
+                    y_[(t_>self.t_opt-0.05*self.t_dist) & (t_<self.t_opt+0.05*self.t_dist)], 
+                    bins=200, 
+                    density=True, 
+                    orientation = 'horizontal', 
+                    color = t_opt_color, 
+                    alpha = 0.9,
+                    histtype='step',
+                )
 
         if savefig: 
             if savefig.endswith('.png'):
@@ -2043,7 +2140,8 @@ class eye():
             else:
                 plt.savefig(savefig)
         
-        plt.style.use('default')
+        if ax is None:
+            plt.style.use('default')
         return self
 
     def show(self):
