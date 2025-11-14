@@ -677,31 +677,8 @@ class electrical_signal():
                               noise=[0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j])
             >>> electrical_signal('1+2j, 3+4j, 5+6j') # complex values
         """    
-        if isinstance(signal, str):
-            signal = str2array(signal)
-        else: 
-            signal = np.array(signal, dtype=dtype)
+        signal, noise = self._prepare_arrays(signal, noise, dtype)
         
-        if noise is not None:
-            if isinstance(noise, str):
-                noise = str2array(noise)
-            else: 
-                noise = np.array(noise, dtype=dtype)
-            
-            if dtype is None:
-                arrays_type = np.result_type(signal, noise) # obtain the most comprehensive type
-            else:
-                arrays_type = dtype
-
-            signal = signal.astype(arrays_type)
-            noise = noise.astype(arrays_type) 
-
-            if signal.shape != noise.shape:
-                raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
-        
-        if noise is None and dtype is not None:
-            signal = signal.astype(dtype)
-            
         if self.__class__ == electrical_signal:
             if signal.ndim > 1 or signal.size < 1:
                 raise ValueError(f"Signal must be scalar or 1D array for electrical_signal, invalid shape {signal.shape}")
@@ -717,9 +694,35 @@ class electrical_signal():
         """The noise values, a 1D numpy array of complex values."""
         self.execution_time = 0.
         """The execution time of the last operation performed on the electrical signal."""
-        self.dtype = signal.dtype
-        self.size = signal.size
-        self.shape = signal.shape
+
+    @staticmethod
+    def _prepare_arrays(signal, noise, dtype):
+        """Prepare signal and noise arrays with common conversions and dtype handling."""
+        def _convert_to_array(value, dtype):
+            if isinstance(value, str):
+                return str2array(value)
+            return np.array(value, dtype=dtype)
+        
+        signal = _convert_to_array(signal, dtype)
+        
+        if noise is not None:
+            noise = _convert_to_array(noise, dtype)
+            
+            if dtype is None:
+                arrays_type = np.result_type(signal, noise)  # obtain the most comprehensive type
+            else:
+                arrays_type = dtype
+
+            signal = signal.astype(arrays_type)
+            noise = noise.astype(arrays_type) 
+
+            if signal.shape != noise.shape:
+                raise ValueError(f"`signal` and `noise` must have the same shape, mismatch shapes {signal.shape} and {noise.shape}!")
+        else:
+            if dtype is not None:
+                signal = signal.astype(dtype)
+        
+        return signal, noise
 
 
     def __str__(self, title: str=None): 
@@ -753,7 +756,7 @@ class electrical_signal():
         return msg
     
     def __repr__(self):
-        np.set_printoptions(precision=1, threshold=20)
+        np.set_printoptions(precision=3, threshold=20)
         
         if self.noise is not None:
             return f'electrical_signal({str(self.signal)})'
@@ -777,6 +780,175 @@ class electrical_signal():
 
     def __len__(self): 
         return self.size
+    
+    def __iter__(self):
+        """Return an iterator over the signal values (signal + noise)."""
+        return iter(self.__array__())
+    
+    def __array__(self, dtype=None):
+        """Return the array representation of the electrical signal.
+        
+        This method provides the basic array conversion for NumPy compatibility.
+        It returns the signal + noise.
+        This is the fundamental protocol that allows the object to be converted to a NumPy array
+        when needed, enabling direct use in NumPy functions that expect array-like objects.
+        
+        Unlike __array_ufunc__ and __array_function__, this method is called for basic array
+        conversion and does not handle specific NumPy operations - it simply provides the
+        underlying data as an array.
+        
+        Parameters
+        ----------
+        dtype : np.dtype, optional
+            Desired data type of the array.
+            
+        Returns
+        -------
+        np.ndarray
+            The array representation of the signal data.
+        """
+        arr = self.signal + self.noise if self.noise is not None else self.signal
+        return arr
+    
+    def __getattr__(self, name):
+        """Delegate attribute access to the underlying NumPy array for array-like methods.
+        
+        This method allows instances of electrical_signal to access NumPy array methods
+        (like max, min, sum, etc.) directly as if they were arrays. If the requested attribute
+        is a method or property of np.ndarray, it will be called on the array representation
+        of this object.
+        
+        Parameters
+        ----------
+        name : str
+            The name of the attribute being accessed.
+            
+        Returns
+        -------
+        result
+            The result of calling the attribute on the array representation.
+            
+        Raises
+        ------
+        AttributeError
+            If the attribute is not found in np.ndarray.
+        """
+        # Check if the attribute exists in np.ndarray and is not a private/internal attribute
+        if hasattr(np.ndarray, name) and not name.startswith('__'):
+            return getattr(np.array(self), name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+    
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        """Handle NumPy universal functions (ufuncs) by converting the object to an array.
+        
+        This method is specifically designed for NumPy's universal functions, which are
+        element-wise operations like np.add, np.sin, np.multiply, etc. When a ufunc is
+        called on an instance of this class, this method intercepts the call, converts
+        any instances of this class in the inputs to arrays using __array__(), and then
+        applies the ufunc to the converted arrays.
+        
+        Unlike __array__, which provides basic array conversion, this method handles
+        the execution of specific ufunc operations. Unlike __array_function__, which
+        handles higher-level array functions, this focuses on element-wise operations.
+        
+        Parameters
+        ----------
+        ufunc : numpy.ufunc
+            The NumPy universal function being called.
+        method : str
+            The method of the ufunc (e.g., '__call__', 'reduce').
+        *inputs : tuple
+            The input arguments to the ufunc.
+        **kwargs : dict
+            Keyword arguments passed to the ufunc.
+            
+        Returns
+        -------
+        result
+            The result of applying the ufunc to the converted inputs, wrapped in the
+            appropriate class if the result is an array with compatible shape.
+        """
+        # Convert inputs that are instances of this class to arrays
+        new_inputs = []
+        for inp in inputs:
+            if isinstance(inp, self.__class__):
+                new_inputs.append(np.array(inp))
+            else:
+                new_inputs.append(inp)
+        
+        # Call the ufunc
+        result = getattr(ufunc, method)(*new_inputs, **kwargs)
+        
+        # If the result is an array with compatible shape, wrap it in the class
+        if isinstance(result, np.ndarray):
+            if self.__class__ == electrical_signal and result.ndim == 1:
+                return self.__class__(result)
+            elif self.__class__ == optical_signal and result.ndim in [1, 2]:
+                return self.__class__(result)
+            else:
+                return result
+        return result
+    
+    def __array_function__(self, func, types, args, kwargs):
+        """Handle NumPy array functions by converting the object to an array.
+        
+        This method is called for NumPy array functions that are not universal functions (ufuncs).
+        It handles higher-level array operations like np.sum, np.mean, np.concatenate, np.fft.fft,
+        and other array manipulation functions. When such a function is called on an instance of
+        this class, this method converts any instances in the arguments to arrays and then calls
+        the function with the converted arguments.
+        
+        Key differences from other protocols:
+        - __array__: Provides basic array conversion without handling specific operations
+        - __array_ufunc__: Handles element-wise universal functions (ufuncs) like np.add, np.sin
+        - __array_function__: Handles higher-level array functions and transformations
+        
+        This enables seamless integration with NumPy's array function ecosystem, allowing
+        instances to be used directly in functions like np.sum(x), np.mean(x), np.concatenate([x, y]),
+        etc., without manual conversion.
+        
+        Parameters
+        ----------
+        func : callable
+            The NumPy array function being called (e.g., np.sum, np.mean).
+        types : tuple
+            The types of all arguments passed to the function.
+        args : tuple
+            The positional arguments passed to the function.
+        kwargs : dict
+            The keyword arguments passed to the function.
+        
+        Returns
+        -------
+        result
+            The result of applying the NumPy array function to the converted arguments, wrapped in the
+            appropriate class if the result is an array with compatible shape.
+        """
+        def _convert(obj):
+            if isinstance(obj, self.__class__):
+                return np.array(obj)
+            elif isinstance(obj, (list, tuple)):
+                return type(obj)(_convert(item) for item in obj)
+            elif isinstance(obj, dict):
+                return {k: _convert(v) for k, v in obj.items()}
+            else:
+                return obj
+        
+        # Convert args and kwargs that contain instances to arrays
+        new_args = _convert(args)
+        new_kwargs = _convert(kwargs)
+        
+        result = func(*new_args, **new_kwargs)
+        
+        # If the result is an array with compatible shape, wrap it in the class
+        if isinstance(result, np.ndarray):
+            if self.__class__ == electrical_signal and result.ndim == 1:
+                return self.__class__(result)
+            elif self.__class__ == optical_signal and result.ndim in [1, 2]:
+                return self.__class__(result)
+            else:
+                return result
+        return result
     
     def _parse(self, other):
         if not isinstance(other, self.type()):
@@ -804,7 +976,7 @@ class electrical_signal():
         sig = self_.signal + other.signal
         noi = self_.noise + other.noise
 
-        return self.__class__(sig, noi if all(noi) != 0 else None, dtype=dtype)
+        return self.__class__(sig, noi if noi.any() != 0 else None)
         
     def __radd__(self, other):
         return self.__add__(other)
@@ -827,7 +999,7 @@ class electrical_signal():
         sig = self_.signal*other.signal
         noi = self_.signal*other.noise + self_.noise*other.signal + self_.noise*other.noise
 
-        return self.__class__(sig, noi if all(noi) !=0 else None, dtype=dtype)
+        return self.__class__(sig, noi if noi.any() !=0 else None)
         
     def __rmul__(self, other):
         return self.__mul__(other)
@@ -848,10 +1020,14 @@ class electrical_signal():
             return self.__class__( np.floor(x.signal) )
         return self.__class__( np.floor(x.signal), np.floor(x.noise) )
         
-    def __getitem__(self, slice: int | slice):
-        if self.noise is None:
-            return self.__class__( self.signal[slice] ) 
-        return self.__class__( self.signal[slice], self.noise[slice] )
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            if self.noise is None:
+                return self.__class__( self.signal[key] ) 
+            return self.__class__( self.signal[key], self.noise[key] )
+        elif isinstance(key, int):
+            return self.signal[key] + (self.noise[key] if self.noise is not None else 0)
+        raise TypeError(f"Invalid argument type. {key} of type {type(key)}")
     
     def __gt__(self, other): 
         other, _ = self._parse(other)
@@ -871,9 +1047,21 @@ class electrical_signal():
         
         self_, _ = self._parse(self)
 
-        sig = (self_.signal + self_.noise) ** other 
-        
-        return self.__class__( sig , dtype=self_.dtype)
+        if other == 0:
+            sig = np.ones_like(self_.signal)
+            noi = None
+        elif other == 1:
+            sig = self_.signal
+            noi = self_.noise if self_.noise.any() !=0 else None
+        elif other == 2:
+            sig = self_.signal**2
+            noi = 2*self_.signal*self_.noise + self_.noise**2
+            noi = noi if noi.any() !=0 else None
+        else:
+            sig = (self_.signal + self_.noise) ** other 
+            noi = None
+
+        return self.__class__(sig, noi)
     
     def __call__(self, domain: Literal['t','w', 'f'], shift: bool=False):
         """ Return a new object with Fast Fourier Transform (FFT) of signal and noise of input object.
@@ -916,7 +1104,7 @@ class electrical_signal():
                 signal = ifftshift(signal, axes=-1)
                 noise = ifftshift(noise, axes=-1)
 
-        return self.__class__(signal, noise if all(noise) !=0 else None)
+        return self.__class__(signal, noise if noise.any() !=0 else None)
 
 
     def type(self): 
@@ -1000,34 +1188,6 @@ class electrical_signal():
     def f(self, shift: bool=False):
         return self.w(shift)/(2*pi)
 
-    def sum(self, of: Literal['signal','noise','all']='all'):
-        """Get sum of ``signal``, ``noise`` or ``signal+noise``.
-
-        Parameters
-        ----------
-        of : :obj:`str`, optional
-            Defines from which attribute to obtain the sum. If 'all', sum of ``signal+noise`` is determined.
-        
-        Returns
-        -------
-        out : :obj:`np.ndarray`, (1D or 2D, float)
-            The sum of the object.
-        """
-        self_,_ = self._parse(self)
-
-        if not isinstance(of, str):
-            raise TypeError('`of` must be a string.')
-        of = of.lower()
-        
-        if of == 'signal':
-            return np.sum(self_.signal, axis=-1)
-        elif of == 'noise':
-            return np.sum(self_.noise, axis=-1) 
-        elif of == 'all':
-            return np.sum(self_.signal + self_.noise, axis=-1)
-        else:
-            raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
-
     def abs(self, of: Literal['signal','noise','all']='all'):
         """Get absolute value of ``signal``, ``noise`` or ``signal+noise``.
 
@@ -1048,11 +1208,11 @@ class electrical_signal():
         of = of.lower()
         
         if of == 'signal':
-            return np.abs(self_.signal)
+            return self.__class__(np.abs(self_.signal))
         elif of == 'noise':
-            return np.abs(self_.noise)
+            return self.__class__(np.abs(self_.noise))
         elif of == 'all':
-            return np.abs(self_.signal + self_.noise)
+            return np.abs(self_)
         else:
             raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
     
@@ -1072,6 +1232,7 @@ class electrical_signal():
         if of.lower() not in ['signal', 'noise', 'all']:
             raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
         p = np.mean(self.abs(of)**2, axis=-1)
+        
         unit = unit.lower()
         if unit == 'w':
             return p
@@ -1102,28 +1263,8 @@ class electrical_signal():
             The phase of the electrical signal.
         """
         self_, _ = self._parse(self)
-        return np.unwrap(np.angle(self_.signal + self_.noise))
-    
-    def apply(self, function, *args, **kargs):
-        r"""Apply a function to signal and noise.
-        
-        Parameters
-        ----------
-        function : :obj:`callable`
-            The function to apply.
-        \*args : :obj:`iterable`
-            Variable length argument list to pass to the function.
-        \*\*kargs : :obj:`dict`
-            Arbitrary keyword arguments to pass to the function.
+        return np.unwrap(np.angle(self_))
 
-        Returns
-        -------
-        out : :obj:`electrical_signal`
-            A new electrical signal object with the result of the function applied to the signal and noise.
-        """
-        self_, _ = self._parse(self)
-        
-        return self.__class__( function(self_.signal + self_.noise, *args, **kargs) )
     
     def filter(self, h: np.ndarray):
         """Apply FIR filter to the electrical signal.
@@ -1143,10 +1284,10 @@ class electrical_signal():
         sig = np.convolve(self_.signal, h, mode='same')
         noi = np.convolve(self_.noise, h, mode='same')
 
-        return self.__class__(sig, noi if all(noi) !=0 else None, dtype=self_.dtype) 
+        return self.__class__(sig, noi if noi.any() !=0 else None) 
 
     def plot(self, 
-             fmt: str='-', 
+             fmt: str | list='-', 
              n: int=None, 
              xlabel: str=None, 
              ylabel: str=None, 
@@ -1154,52 +1295,58 @@ class electrical_signal():
              hold: bool=True,
              show: bool=False,
              **kwargs: dict): 
-        r"""Plot real part of electrical signal.
+        r"""Plot signal in time domain.
+
+        For electrical_signal: plots the real part of the signal.
+        For optical_signal: plots the intensity/power.
 
         Parameters
         ----------
-        fmt : :obj:`str`
+        fmt : :obj:`str` or :obj:`list`, optional
             Format style of line. Example 'b-.', Defaults to '-'.
         n : :obj:`int`, optional
             Number of samples to plot. Defaults to the length of the signal.
         xlabel : :obj:`str`, optional
             X-axis label. Defaults to 'Time [ns]'.
         ylabel : :obj:`str`, optional
-            Y-axis label. Defaults to 'Amplitude [V]'.
-        style : :obj:`str`, optional
-            Style of plot. Defaults to 'dark'.
+            Y-axis label. Defaults to 'Amplitude [V]' for electrical, 'Power [mW]' for optical.
         grid : :obj:`bool`, optional
             If show grid. Defaults to False.
         hold : :obj:`bool`, optional
             If hold the current plot. Defaults to True.
-        \*\*kwargs : :obj:`dict`
-            Aditional keyword arguments compatible with matplotlib.pyplot.plot().
+        **kwargs : :obj:`dict`
+            Additional keyword arguments compatible with matplotlib.pyplot.plot().
 
         Returns
         -------
-        self : :obj:`electrical_signal`
+        self : electrical_signal or optical_signal
             The same object.
         """
-        self_, _ = self._parse(self)
-
-        n = self_.size if not n else n
-        t = self_.t()[:n]*1e9
+        n = self.size if not n else n
+        t = self.t()[:n]*1e9
+        y = self[:n]
         
+        args = (t, y, fmt)
+        ylabel = ylabel if ylabel else 'Amplitude [V]'
+        xlabel = xlabel if xlabel else 'Time [ns]'
+
+        label = kwargs.pop('label', None)
+
         if not hold:
             plt.figure()
 
-        y = (self_[:n].signal + self_[:n].noise)
+        plt.plot(*args, **kwargs)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         
-        plt.plot(t, y, fmt, **kwargs)
-        plt.xlabel(xlabel if xlabel else 'Time [ns]')
-        plt.ylabel(ylabel if ylabel else 'Amplitude [V]')
-
         if grid:
-            for i in t[:n*gv.sps][::gv.sps]:
-                plt.axvline(i, color=c, ls='--', alpha=0.3, lw=1)
-            plt.axvline(t[-1] + gv.dt*1e9, color=c, ls='--', alpha=0.3, lw=1)
+            for i, t_ in enumerate(t[:n*gv.sps][::gv.sps]):
+                plt.axvline(t_, color='gray', ls='--', alpha=0.3, lw=1)
+            plt.axvline(t[-1] + gv.dt*1e9, color='gray', ls='--', alpha=0.3, lw=1)
             plt.grid(alpha=0.3, axis='y')
-        
+
+        if label is not None:
+            plt.legend()
         if 'label' in kwargs.keys():
             plt.legend()
 
@@ -1208,74 +1355,119 @@ class electrical_signal():
         return self
 
     def psd(self, 
-            fmt: str='-', 
-            n: int=None, 
+            fmt: str | list='-', 
+            mode: Literal['x','y','both']='x', 
+            n: int=None,
             xlabel: str=None,
-            ylabel: str=None,
-            yscale: Literal['linear','dbm']='dbm', 
+            ylabel: str=None, 
+            yscale: Literal['linear', 'dbm']='dbm', 
             grid: bool=True,
             hold: bool=True,
             show: bool=False,
             **kwargs: dict):
-        """Plot Power Spectral Density (PSD) of the electrical signal.
+        """Plot Power Spectral Density (PSD) of the electrical/optical signal.
 
         Parameters
         ----------
-        fmt : :obj:`str`
+        fmt : :obj:`str` or :obj:`list`
             Format style of line. Example 'b-.'. Defaults to '-'.
+        mode : :obj:`str`, optional
+            Polarization mode to show (for optical signals). Defaults to 'x'.
+            - 'x' plot polarization x.
+            - 'y' plot polarization y.
+            - 'both' plot both polarizations x and y in the same figure.
         n : :obj:`int`, optional
             Number of samples to plot. Defaults to the length of the signal.
         xlabel : :obj:`str`, optional
             X-axis label. Defaults to 'Frequency [GHz]'.
         ylabel : :obj:`str`, optional
-            Y-axis label. Defaults to 'Power [dBm]' if ``yscale='dbm'`` or 'Power [W]' if ``yscale='linear'``.
+            Y-axis label. Defaults to 'Power [dBm]' if ``yscale='dbm'`` or 'Power [mW]' if ``yscale='linear'``.
         yscale : :obj:`str`, {'linear', 'dbm'}, optional
             Kind of Y-axis plot. Defaults to 'dbm'.
-        style : :obj:`str`, {'dark', 'light'}, optional
-            Style of plot. Defaults to 'dark'.
         grid : :obj:`bool`, optional
             If show grid. Defaults to True.
         hold : :obj:`bool`, optional
             If hold the current plot. Defaults to True.
         **kwargs : :obj:`dict`
-            Aditional matplotlib arguments.
+            Additional matplotlib arguments.
 
         Returns
         -------
-        self : :obj:`electrical_signal`
+        self : electrical_signal or optical_signal
             The same object.
         """
         n = self.size if not n else n
-
-        f, psd = sg.welch(self[:n].signal, fs=gv.fs*1e-9, nperseg=2048, scaling='spectrum', return_onesided=False, detrend=False)
-        f, psd = np.fft.fftshift(f), np.fft.fftshift(psd)
         
+        f, psd = sg.welch(self[:n].signal, fs=gv.fs*1e-9, nperseg=2048, scaling='spectrum', return_onesided=False, detrend=False)
+        f, psd = fftshift(f), fftshift(psd, axes=-1)
+
         if yscale == 'linear':
-            args = (f, psd*1e3, fmt)
+            psd = psd*1e3
             ylabel = ylabel if ylabel else 'Power [mW]'
             ylim = (-0.1,)
         elif yscale == 'dbm':
-            args = (f, dbm(psd), fmt)
+            psd = dbm(psd)
             ylabel = ylabel if ylabel else 'Power [dBm]'
             ylim = (-100,)
         else:
             raise TypeError('`yscale` must be one of the following values ("linear", "dbm")')
         
+        n_pol = getattr(self, 'n_pol', 1)
+        
+        if n_pol == 1:
+            if not isinstance(fmt, str):
+                warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                fmt = '-'
+            args = (f, psd, fmt)
+        else:
+            if mode == 'x':
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (f, psd[0], fmt)
+            elif mode == 'y':
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (f, psd[1], fmt)
+            elif mode == 'both':
+                if isinstance(fmt, (list, tuple)):
+                    args = (f, psd[0], fmt[0], f, psd[1], fmt[1])
+                elif isinstance(fmt, str):
+                    args = (f, psd[0], fmt, f, psd[1], fmt)
+                else:
+                    warnings.warn('`fmt` must be a string or a list of strings for both polarizations signals, using default value.')
+                    args = (f, psd[0], '-', f, psd[1], '-')
+            else:
+                raise TypeError('argument `mode` should be ("x", "y" or "both")')    
+        
+        label = kwargs.pop('label', None) if mode == 'both' and n_pol > 1 else None
+
         if not hold:
             plt.figure()
 
-        plt.plot( *args, **kwargs )
-        plt.ylabel( ylabel )
-        plt.xlabel( xlabel if xlabel else 'Frequency [GHz]')
-        plt.xlim(-3.5*gv.R*1e-9, 3.5*gv.R*1e-9)
+        ls = plt.plot( *args, **kwargs)
+        plt.ylabel(ylabel)
+        plt.xlabel(xlabel if xlabel else 'Frequency [GHz]')
+        plt.xlim( -3.5*gv.R*1e-9, 3.5*gv.R*1e-9 )
         plt.ylim( *ylim )
-        if grid: plt.grid(alpha=0.3, color=c)
-
+        if grid: plt.grid(alpha=0.3)
+        
+        if label is not None:
+            if isinstance(label, str):
+                ls[0].set_label(label + ' X')
+                ls[1].set_label(label + ' Y')
+            elif isinstance(label, (list, tuple)):
+                ls[0].set_label(label[0])
+                ls[1].set_label(label[1])
+            else:
+                raise ValueError('`label` must be a string or a list of strings.')
+            plt.legend()
         if 'label' in kwargs.keys():
             plt.legend()
-
         if show:
             plt.show()
+
         return self
     
     def plot_eye(self, n_traces=None, cmap='viridis', 
@@ -1328,7 +1520,7 @@ class electrical_signal():
             The same object with the plotted eye diagram.
         """
 
-        eyediagram(self.signal, self.sps(), n_traces, cmap, N_grid_bins, grid_sigma, ax, **plot_kw)
+        eyediagram(self, gv.sps, n_traces, cmap, N_grid_bins, grid_sigma, ax, **plot_kw)
         return self
 
     
@@ -1409,7 +1601,6 @@ class optical_signal(electrical_signal):
         w
         f
         abs
-        sum
         power
         phase
         normalize
@@ -1439,73 +1630,48 @@ class optical_signal(electrical_signal):
         n_pol : :obj:`int`, optional
             Number of polarizations. Defaults to 1.
         """
-        if isinstance(signal, str):
-            signal = str2array(signal)
-        else:
-            signal = np.array(signal, dtype=dtype)
-
-        if noise is not None:
-            if isinstance(noise, str):
-                noise = str2array(noise)
-            else:
-                noise = np.array(noise, dtype=dtype)
-
-            if dtype is None:
-                arrays_type = np.result_type(signal, noise) # obtain the most comprehensive type
-            else:
-                arrays_type = dtype
-            
-            signal = signal.astype(arrays_type)
-            noise = noise.astype(arrays_type) 
-
-            if signal.shape != noise.shape:
-                raise ValueError(f"`signal` and `noise` must have the same shape, missmatch shapes {signal.shape} and {noise.shape}!")
-            
-        if noise is None and dtype is not None:
-            signal = signal.astype(dtype)
+        signal, noise = self._prepare_arrays(signal, noise, dtype)
 
         if self.__class__ == optical_signal:
             if signal.ndim>2 or (signal.ndim>1 and signal.shape[0]>2) or signal.size<1:
                 raise ValueError(f"Signal must be a scalar, 1D or 2D array for optical_signal, invalid shape {signal.shape}")
+            if n_pol is not None and n_pol not in [1, 2]:
+                raise ValueError("n_pol must be either 1 or 2")
             
             if signal.ndim == 0:
-                if n_pol is None:
-                    n_pol = 1
-                
-                if n_pol == 1:
+                if n_pol is None or n_pol == 1: 
                     signal = signal[np.newaxis]
                     if noise is not None:
                         noise = noise[np.newaxis]
+                    n_pol=1
                 else:
                     signal = np.array([[signal], [signal]])
+                    if noise is not None:
+                        noise = np.array([[noise], [noise]])
             
             elif signal.ndim == 1:
-                if n_pol is None:
+                if n_pol is None or n_pol == 1: 
                     n_pol = 1
-                
-                if n_pol == 2:
+                else:
                     signal = np.array([signal, signal])
                     if noise is not None:
                         noise = np.array([noise, noise])
             
             elif signal.ndim == 2 and signal.shape[0] == 1:
-                if n_pol is None:
+                if n_pol is None or n_pol == 2:
+                    signal = np.tile(signal, (2, 1))
+                    if noise is not None:
+                        noise = np.tile(noise, (2, 1))
                     n_pol = 2
-                
-                if n_pol == 1:
+                else:
                     signal = signal[0]
                     if noise is not None:
                         noise = noise[0]
-                else:
-                    signal = np.array([signal[0], signal[0]])
-                    if noise is not None:
-                        noise = np.array([noise[0], noise[0]])
-            
+                    
             elif signal.ndim == 2 and signal.shape[0] == 2:
-                if n_pol is None:
+                if n_pol is None or n_pol == 2:
                     n_pol = 2
-                
-                if n_pol == 1:
+                else:
                     signal = signal[0]
                     if noise is not None:
                         noise = noise[0]
@@ -1524,282 +1690,223 @@ class optical_signal(electrical_signal):
         noise = str(self.noise).replace('\n', '\n' + 22*' ')
         return f'optical_signal(signal={signal}\n' + 16*' '+ f'noise={noise})'
 
+    def __str__(self, title: str=None): 
+        """Return a formatted string with the optical_signal data, length, size in bytes and time if available."""
+        if title is None:
+            title = self.__class__.__name__
+        
+        title = 3*'*' + f'    {title}    ' + 3*'*'
+        sub = len(title)*'-'
+        tab = 3*' '
+
+        np.set_printoptions(precision=3, threshold=20)
+
+        if self.signal.ndim == 1:
+            signal = str(self.signal)
+            noise = str(self.noise)
+        else:
+            signal = str(self.signal).replace('\n', '\n'+tab + 11*' ')
+            noise = str(self.noise).replace('\n', '\n'+tab + 11*' ')
+        
+        # Get power values
+        pw_sig_w = self.power('W', 'signal')
+        pw_sig_dbm = self.power('dbm', 'signal')
+        pw_noise_w = self.power('W', 'noise')
+        pw_noise_dbm = self.power('dbm', 'noise')
+        pw_all_w = self.power('W', 'all')
+        pw_all_dbm = self.power('dbm', 'all')
+
+        # Format power strings
+        if np.isscalar(pw_sig_w):
+            pow_sig_str = f"{si(pw_sig_w, 'W', 1)} ({pw_sig_dbm:.1f} dBm)"
+            pow_noise_str = f"{si(pw_noise_w, 'W', 1)} ({pw_noise_dbm:.1f} dBm)"
+            pow_all_str = f"{si(pw_all_w, 'W', 1)} ({pw_all_dbm:.1f} dBm)"
+        else:
+            # For multi-polarization
+            pow_sig_str = ', '.join([f"Pol{i}: {si(pw_sig_w[i], 'W', 1)} ({pw_sig_dbm[i]:.1f} dBm)" for i in range(len(pw_sig_w))])
+            pow_noise_str = ', '.join([f"Pol{i}: {si(pw_noise_w[i], 'W', 1)} ({pw_noise_dbm[i]:.1f} dBm)" for i in range(len(pw_noise_w))])
+            pow_all_str = ', '.join([f"Pol{i}: {si(pw_all_w[i], 'W', 1)} ({pw_all_dbm[i]:.1f} dBm)" for i in range(len(pw_all_w))])
+
+        msg = f'\n{sub}\n{title}\n{sub}\n'+ tab + \
+            f'signal:     {signal} (shape: {self.shape})\n'+ tab + \
+            f'noise:      {noise} (shape: {self.shape if self.noise is not None else None})\n'+ tab + \
+            f'pow_signal: {pow_sig_str}\n'+ tab + \
+            f'pow_noise:  {pow_noise_str}\n'+ tab + \
+            f'pow_total:  {pow_all_str}\n'+ tab + \
+            f'len:        {self.size}\n' + tab + \
+            f'elem_type:  {self.dtype}\n' + tab + \
+            f'mem_size:   {self.sizeof()} bytes\n' + tab + \
+            f'time:       {si(self.execution_time, "s", 2)}\n'
+        return msg
+
     
-    def __getitem__(self, slice: int | slice): 
+    def __getitem__(self, key): 
         """Slice the optical signal.
 
         Parameters
         ----------
-        slice : :obj:`int` or :obj:`slice`
-            Index or slice to get the new optical signal.
+        key : :obj:`int`, :obj:`slice`, or :obj:`tuple`
+            Index, slice, or advanced index to get the new optical signal.
 
         Returns
         -------
         out : :obj:`optical_signal`
-            A new optical signal object with the result of the slicing.
+            A new optical signal object with the result of the indexing.
         """
-        if self.n_pol == 1:
-            if self.noise is None:
-                return optical_signal( self.signal[slice] )
-            return optical_signal( self.signal[slice], self.noise[slice] )
-        
-        elif isinstance(slice, int):
-            if self.noise is None:
-                return optical_signal( self.signal[:,slice,np.newaxis] )
-            return optical_signal( self.signal[:,slice,np.newaxis], self.noise[:,slice,np.newaxis] )
-        
-        if self.noise is None:
-            return optical_signal( self.signal[:,slice] )
-        return optical_signal( self.signal[:,slice], self.noise[:,slice] )
-    
+        if isinstance(key, tuple):
+            if len(key) != 2:
+                raise IndexError('Too many indices for optical_signal object.')
+            pol_idx, time_idx = key
+            if self.n_pol == 1 and pol_idx not in [0, -1, slice(None)]:
+                raise IndexError('Optical signal has only one polarization (index 0).')
+            sig = self.signal[pol_idx, time_idx] if self.n_pol == 2 else self.signal[time_idx]
+            if self.noise is not None:
+                noi = self.noise[pol_idx, time_idx] if self.n_pol == 2 else self.noise[time_idx]
+            elif isinstance(time_idx, int):
+                return sig
+            else:
+                noi = None
+            return self.__class__(sig, noi, n_pol=1 if sig.ndim!=2 else self.n_pol)
+        elif isinstance(key, slice):
+            if self.n_pol == 1:
+                sig = self.signal[key]
+                if self.noise is not None:
+                    noi = self.noise[key]
+                else:
+                    noi = None
+            else:
+                sig = self.signal[:, key]
+                if self.noise is not None:
+                    noi = self.noise[:, key]
+                else:
+                    noi = None
+            return self.__class__(sig, noi, n_pol=self.n_pol)
+        else:
+            if self.n_pol == 1:
+                sig = self.signal[key]
+                if self.noise is not None:
+                    noi = self.noise[key]
+                else:
+                    return sig
+            else:
+                sig = self.signal[key, :]
+                if self.noise is not None:
+                    noi = self.noise[key, :]
+                else:   
+                    noi = None
+            return self.__class__(sig, noi, n_pol=1 if sig.ndim!=2 else self.n_pol)            
+            
     def __gt__(self, other): 
         raise NotImplementedError('The > operator is not implemented for optical_signal objects.')
     
     def __lt__(self, other):
         raise NotImplementedError('The < operator is not implemented for optical_signal objects.')
 
+    
     def plot(self, 
              fmt: str | list='-', 
-             mode: Literal['x','y','both','abs']='abs', 
-             n=None, 
-             xlabel: str=None,
-             ylabel: str=None,
+             mode: Literal['field', 'power'] = 'power', 
+             n: int=None, 
+             xlabel: str=None, 
+             ylabel: str=None, 
              grid: bool=False,
-             M: int=None,
              hold: bool=True,
-             **kwargs): 
-        r"""
-        Plot intensity of optical signal for selected polarization mode.
+             show: bool=False,
+             **kwargs: dict): 
+        r"""Plot signal in time domain.
+
+        For optical_signal: plots the intensity/power or field.
 
         Parameters
         ----------
-        fmt : :obj:`str`, optional
-            Format style of line. Example 'b-.'. Default is '-'.
-        mode : :obj:`str`
-            Polarization mode to show. Default is 'abs'.
-
-            - ``'x'`` plot polarization x.
-            - ``'y'`` plot polarization y.
-            - ``'both'`` plot both polarizations x and y in the same figure
-            - ``'abs'`` plot intensity sum of both polarizations I(x) + I(y).
-
+        fmt : :obj:`str` or :obj:`list`, optional
+            Format style of line. Example 'b-.', Defaults to '-'.
+        mode : :obj:`str`, optional
+            Plot mode. 'field', 'power' (default).
+            - 'field' plot real and imaginary parts of the field.
+            - 'power' plot power/intensity.
         n : :obj:`int`, optional
-            Number of samples to plot. Default is the length of the signal.  
+            Number of samples to plot. Defaults to the length of the signal.
         xlabel : :obj:`str`, optional
-            X-axis label. Default is 'Time [ns]'.
+            X-axis label. Defaults to 'Time [ns]'.
         ylabel : :obj:`str`, optional
-            Y-axis label. Default is 'Power [mW]'.
-        style : :obj:`str`, optional
-            Style of plot. Default is 'dark'.
-
-            - ``'dark'`` use dark background.
-            - ``'light'`` use light background.
-        
+            Y-axis label. Defaults to 'Power [mW]' for power, 'Field [V]' for field.
         grid : :obj:`bool`, optional
-            If show grid. Default is ``False``.
+            If show grid. Defaults to False.
         hold : :obj:`bool`, optional
-            If hold the current figure. Default is ``True``.
-        \*\*kwargs: :obj:`dict`
-            Aditional matplotlib arguments.
+            If hold the current plot. Defaults to True.
+        **kwargs : :obj:`dict`
+            Additional keyword arguments compatible with matplotlib.pyplot.plot().
 
         Returns
         -------
-        self : :obj:`optical_signal`
+        self : optical_signal
             The same object.
         """
-        n = self.size if not n else n
-        t = self.t()[:n]*1e9
-        
-        I = self[:n].abs('all')**2 *1e3
+        n = self.shape[0] if not n and self.n_pol==1 else self.shape[1] if not n and self.n_pol==2 else n
 
-        if self.n_pol == 1:
-            if not isinstance(fmt, str):
-                warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
-                fmt = '-'
-            args = (t, I, fmt)
-        else: 
-            if mode == 'x':
-                if not isinstance(fmt, str):
-                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
-                    fmt = '-'
-                args = (t, I[0], fmt)
-            elif mode == 'y':
-                if not isinstance(fmt, str):
-                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
-                    fmt = '-'
-                args = (t, I[1], fmt)
-            elif mode == 'both':
-                if isinstance(fmt, (list, tuple)):
-                    args = (t, I[0], fmt[0], t, I[1], fmt[1])
-                elif isinstance(fmt, str):
-                    args = (t, I[0], fmt, t, I[1], fmt)
-                else:
-                    warnings.warn('`fmt` must be a string or a list of strings for both polarizations signals, using default value.')
-                    args = (t, I[0], '-', t, I[1], '-')
-                    
-            elif mode == 'abs':
-                if not isinstance(fmt, str):
-                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
-                    fmt = '-'
-                args = (t, I[0] + I[1], fmt)
-            else:
-                raise TypeError('argument `mode` must to be one of the following values ("x","y","both","abs").')
-        
-        label = kwargs.pop('label', None) if mode == 'both' else None
+        t = self.t()[:n]*1e9
+        y = self[:n]
 
         if not hold:
             plt.figure()
+        xlabel = xlabel if xlabel else 'Time [ns]'
+        
+        # Optical signal: plot intensity or field
+        if mode == 'power':
+            I = np.array(y.abs('all')**2 * 1e3)  # mW
+            if y.n_pol == 1:
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
+                    fmt = '-'
+                args = (t, I, fmt)
+                label = kwargs.pop('label', None)
+                plt.plot(*args, **kwargs, label=label)
+                legend = True if label is not None else False
+            else:
+                if not isinstance(fmt, str):
+                    warnings.warn('`fmt` must be a string for multi-polarization signals, using default value.')
+                    fmt = '-'
+                args0 = (t, I[0], fmt)  # total power
+                args1 = (t, I[1], fmt)  # total power
+                label = kwargs.pop('label', None) 
+                plt.plot(*args0, **kwargs, label='Pol X' if label is None else label + ' Pol X')
+                plt.plot(*args1, **kwargs, label='Pol Y' if label is None else label + ' Pol Y')
+                legend = True
+                
+            ylabel = ylabel if ylabel else 'Power [mW]'
+    
+        elif mode == 'field':
+            if y.n_pol > 1:
+                raise ValueError('`field` mode is only supported for single polarization signals.')
+            if not isinstance(fmt, str):
+                warnings.warn('`fmt` must be a string for field mode, using default value.')
+                fmt = '-'
+            label = kwargs.pop('label', None)
+            plt.plot(t, y.real, fmt, label='Real' if label is None else label + 'Real')
+            plt.plot(t, y.imag, fmt, label='Imag' if label is None else label + 'Imag')
+            legend = True
+            ylabel = ylabel if ylabel else r'Field [$\sqrt{W}$]'
 
-        ls = plt.plot( *args, **kwargs)
-        plt.xlabel(xlabel if xlabel else 'Time [ns]')
-        plt.ylabel(ylabel if ylabel else 'Power [mW]')
+        else:
+            raise ValueError('`mode` must be one of ("power", "field") for optical signals.')
+
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         
         if grid:
-            for i,t_ in enumerate(t[:n*gv.sps][::gv.sps]):
-                plt.axvline(t_, color=c, ls='--', alpha=0.3, lw=1)
-                if M is not None and i%M == 0:
-                    plt.axvline(t_, color=c, ls='--', alpha=0.7, lw=1)
-            plt.axvline(t[-1] + gv.dt*1e9, color=c, ls='--', alpha=0.3, lw=1)
+            for i, t_ in enumerate(t[:n*gv.sps][::gv.sps]):
+                plt.axvline(t_, color='gray', ls='--', alpha=0.3, lw=1)
+            plt.axvline(t[-1] + gv.dt*1e9, color='gray', ls='--', alpha=0.3, lw=1)
             plt.grid(alpha=0.3, axis='y')
 
-        if label is not None:
-            if isinstance(label, str):
-                ls[0].set_label(label)
-                ls[1].set_label(label)
-            elif isinstance(label, (list, tuple)):
-                ls[0].set_label(label[0])
-                ls[1].set_label(label[1])
-            else:
-                raise ValueError('`label` must be a string or a list of strings.')
-            plt.legend()
-        if 'label' in kwargs.keys():
+        if legend:
             plt.legend()
 
+        if show:
+            plt.show()
         return self
-    
 
-    def psd(self, 
-            fmt: str | list='-', 
-            mode: Literal['x','y','both']='x', 
-            n: int=None,
-            xlabel: str=None,
-            ylabel: str=None, 
-            yscale: Literal['linear', 'dbm']='dbm', 
-            grid: bool=True,
-            hold: bool=True,
-            **kwargs: dict):
-        r"""Plot Power Spectral Density (PSD) of the electrical signal.
-
-        Parameters
-        ----------
-        fmt : :obj:`str`
-            Format style of line. Example 'b-.'. Default is '-'.
-        mode : :obj:`str`
-            Polarization mode to show. Default is 'x'.
-
-            - ``'x'`` plot polarization x.
-            - ``'y'`` plot polarization y.
-            - ``'both'`` plot both polarizations x and y in the same figure.
-
-        n : int, optional
-            Number of samples to plot. Default is the length of the signal.
-        xlabel : :obj:`str`, optional
-            X-axis label. Default is 'Frequency [GHz]'.
-        ylabel : :obj:`str`, optional
-            Y-axis label.
-        yscale : :obj:`str`, optional
-            Kind of Y-axis plot. Default is 'dbm'.
-
-            - ``'linear'`` plot linear scale.
-            - ``'dbm'`` plot dBm scale.
-
-        style : :obj:`str`, optional
-            Style of plot. Default is 'dark'.
-
-            - ``'dark'`` use dark background.
-            - ``'light'`` use light background.
-
-        grid : bool, optional
-            If show grid. Default is ``True``.
-        hold : bool, optional
-            If hold the current figure. Default is ``True``.
-        \*\*kwargs : :obj:`dict`
-            Aditional matplotlib arguments.
-
-        Returns
-        -------
-        self : :obj:`optical_signal`
-            The same object.
-        """
-        n = self.size if not n else n
-        
-        f, psd = sg.welch(self[:n].signal, fs=gv.fs*1e-9, nperseg=2048, scaling='spectrum', return_onesided=False, detrend=False)
-        f, psd = np.fft.fftshift(f), np.fft.fftshift(psd)
-
-        if yscale == 'linear':
-            psd = psd*1e3
-            ylabel = ylabel if ylabel else 'Power [mW]'
-            ylim = (-0.1,)
-        elif yscale == 'dbm':
-            psd = dbm(psd)
-            ylabel = ylabel if ylabel else 'Power [dBm]'
-            ylim = (-100,)
-        else:
-            raise TypeError('argument `yscale` should be ("linear" or "log")')
-
-        if self.n_pol == 1:
-            if not isinstance(fmt, str):
-                warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
-                fmt = '-'
-            args = (f, psd, fmt)
-        else:
-            if mode == 'x':
-                if not isinstance(fmt, str):
-                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
-                    fmt = '-'
-                args = (f, psd[0], fmt)
-            elif mode == 'y':
-                if not isinstance(fmt, str):
-                    warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
-                    fmt = '-'
-                args = (f, psd[1], fmt)
-            elif mode == 'both':
-                if isinstance(fmt, (list, tuple)):
-                    args = (f, psd[0], fmt[0], f, psd[1], fmt[1])
-                elif isinstance(fmt, str):
-                    args = (f, psd[0], fmt, f, psd[1], fmt)
-                else:
-                    warnings.warn('`fmt` must be a string or a list of strings for both polarizations signals, using default value.')
-                    args = (f, psd[0], '-', f, psd[1], '-')
-            else:
-                raise TypeError('argument `mode` should be ("x", "y" or "both")')    
-        
-        label = kwargs.pop('label', None) if mode == 'both' else None
-
-        if not hold:
-            plt.figure()
-
-        ls = plt.plot( *args, **kwargs)
-        plt.ylabel(ylabel)
-        plt.xlabel(xlabel if xlabel else 'Frequency [GHz]')
-        plt.xlim( -3.5*gv.R*1e-9, 3.5*gv.R*1e-9 )
-        plt.ylim( *ylim )
-        if grid: plt.grid(alpha=0.3, color=c)
-        
-        if label is not None:
-            if isinstance(label, str):
-                ls[0].set_label(label)
-                ls[1].set_label(label)
-            elif isinstance(label, (list, tuple)):
-                ls[0].set_label(label[0])
-                ls[1].set_label(label[1])
-            else:
-                raise ValueError('`label` must be a string or a list of strings.')
-            plt.legend()
-        if 'label' in kwargs.keys():
-            plt.legend()
-
-        return self
     
 class EyeShowOptions():
     def __init__(self, 
