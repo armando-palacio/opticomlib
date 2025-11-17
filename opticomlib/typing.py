@@ -29,25 +29,83 @@ from .utils import (
     upfirdn,
     eyediagram,
     ComplexNumber,
-    RealNumber
+    RealNumber,
+    tic, toc,
 )
+
+from .logger import logging, HierLogger
+logger = HierLogger(__name__)
+INFO, DEBUG, WARNING = logging.INFO, logging.DEBUG, logging.WARNING
 
 Array_Like = (list, tuple, np.ndarray)
 
+
+
+
+
+
+
+
+
+
+
+class NULLType: 
+    def __add__(self, other):  # n + null -> n
+        return other
+    __radd__ = __add__
+    def __mul__(self, other):  # n * null -> 0
+        return self
+    __rmul__ = __mul__
+    def __repr__(self):
+        return "NULL"
+    def __str__(self):
+        return "NULL"
+    def __sub__(self, other):
+        return -other
+    __rsub__ = __add__
+    def __neg__(self):
+        return self
+    def __truediv__(self, other):
+        return self
+    __floordiv__ = __truediv__
+    def __pow__(self, other):
+        return self
+    def __array_function__(self, func, types, args, kwargs):
+        return self
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        if method == '__call__' and not kwargs.get('out'):
+            if ufunc == np.add or ufunc == np.subtract:
+                lhs, _ = inputs
+                return lhs
+        return self
+NULL = NULLType()
+
+
+
+
+
+
+
+
+
+
+
+@logger.auto_indent_methods
 class global_variables():
     r"""**Global Variables (gv)**
 
-    This object is used to store global variables that are used in the simulation.
-    The global variables are used mainly to define the sampling frequency, the slot rate, 
-    the number of samples per slot, the number of bits of simulation and the optical wavelength or frequency.
+    This object stores the simulation-wide parameters required across the pipeline.
+    It keeps track of the sampling frequency, slot rate, samples per slot, number of
+    simulated slots, optical wavelength/frequency, preferred plotting style, and logging verbosity.
 
     .. Note:: 
         
         A slot is taken as the smallest time unit representing a binary value of the signal.
         For example, in PPM a bit is not the same as a slot. However, in OOK a bit and a slot are the same.
 
-    This class don't need to be instantiated. It is already instantiated as ``gv``.
-    For update or add a variable use the :meth:`__call__` method (i.e gv(\*\*kargs)).
+    This class doesn't need to be instantiated; it is already exposed as ``gv``.
+    Use the :meth:`__call__` method (e.g. ``gv(**kwargs)``) to refresh parameters,
+    update Matplotlib's style via ``plt_style`` or adjust the logger through ``verbose``.
     
     .. rubric:: Attributes
     .. autosummary::
@@ -55,21 +113,21 @@ class global_variables():
         ~global_variables.sps
         ~global_variables.R
         ~global_variables.fs
-        ~global_variables.dt
         ~global_variables.wavelength
         ~global_variables.f0
         ~global_variables.N
+        ~global_variables.dt
         ~global_variables.t
         ~global_variables.dw
         ~global_variables.w
-        ~global_variables.plot_style
+        ~global_variables.plt_style
+        ~global_variables.verbose
 
         
     .. rubric:: Methods
     .. autosummary::
 
         __call__
-        __str__
         print
         default
 
@@ -79,19 +137,22 @@ class global_variables():
 
     ::
 
-        ------------------------
-        *** Global Variables ***
-        ------------------------
-            sps :   8
-            R   :   1.00e+10
-            fs  :   8.00e+10
-            dt  :   1.25e-11
-            λ0  :   1.55e-06
-            f0  :   1.93e+14
-            N   :   100
-            dw  :   6.28e+08
-            t   :   [0.e+00 1.e-11 3.e-11 ... 1.e-08 1.e-08 1.e-08]
-            w   :   [-3.e+11 -3.e+11 -3.e+11 ...  2.e+11  3.e+11  3.e+11]
+        ------------------------------
+        ***    Global Variables    ***
+        ------------------------------
+                sps :  8
+                R   :  1.00e+10
+                fs  :  8.00e+10
+                λ0  :  1.55e-06
+                f0  :  1.93e+14
+                N   :  100
+                dt  :  1.25e-11
+                t   :  [0.00e+00 1.25e-11 2.50e-11 ... 9.97e-09 9.99e-09 1.00e-08]
+                dw  :  6.28e+08
+        Config
+        ------
+                plt_style :  "fast"
+                verbose   :  None
 
     Also can be define new variables trough \*\*kwargs. If at least two of this arguments (``sps``, ``fs`` and ``R``) are not provided
     a warning will be raised and the default values will be used.
@@ -99,9 +160,6 @@ class global_variables():
     >>> gv(alpha=0.5, beta=0.3).print()
     
     ::
-    
-        UserWarning: `sps`, `R` and `fs` will be set to default values (16 samples per slot, 1.00e+09 Hz, 1.60e+10 Samples/s)
-        warnings.warn(msg)
 
         ------------------------------
         ***    Global Variables    ***
@@ -109,19 +167,20 @@ class global_variables():
                 sps :  16
                 R   :  1.00e+09
                 fs  :  1.60e+10
-                dt  :   1.25e-11
                 λ0  :  1.55e-06
                 f0  :  1.93e+14
-                N   :   128
-                t   :   [0.e+00 1.e-11 3.e-11 ... 1.e-08 1.e-08 1.e-08]
-                dw  :   6.28e+08
-                w   :   [-3.e+11 -3.e+11 -3.e+11 ...  2.e+11  3.e+11  3.e+11]
-        
+                N   :  128
+                dt  :  6.25e-11
+                t   :  [0.00e+00 6.25e-11 1.25e-10 ... 1.28e-07 1.28e-07 1.28e-07]
+                dw  :  4.91e+07
+        Config
+        ------
+                plt_style :  "fast"
+                verbose   :  None
         Custom
         ------
                 alpha : 0.5
                 beta : 0.3
-
     """
 
     def __init__(self):
@@ -142,33 +201,47 @@ class global_variables():
         self.t = np.linspace(0, self.N*self.sps*self.dt, self.N*self.sps, endpoint=True)
         """Time array in seconds"""
         self.dw = 2*pi*self.fs/(self.N*self.sps)
-        """Frequency step in Hz"""
+        """Frequency step in rad/s"""
         self.w = 2*pi*fftshift(fftfreq(self.N*self.sps))*self.fs
-        """Frequency array in Hz"""
+        """Frequency array in rad/s"""
         self.plt_style = 'fast'
+        """Matplotlib plot style, ``"fast"`` by default."""
         plt.style.use(self.plt_style)
+        self.verbose = None
+        """Logging verbosity level, ``None`` by default. Can be set to ``DEBUG`` or 10, ``INFO`` or 20, ``WARNING`` or 30."""
 
-    def default(self):
-        """ Return all attributes to default values.
-        
-        """
-        self.sps = 16
-        self.R = 1e9
-        self.fs = self.R*self.sps
-        self.dt = 1/self.fs
-        self.wavelength = 1550e-9
-        self.f0 = c/self.wavelength
-        self.N = 128
-        self._set_t_dw_w()
-        self.plt_style = 'fast'
-        plt.style.use(self.plt_style)
+            
+    def __str__(self):
+        title = 3*'*' + '    Global Variables    ' + 3*'*'
+        sub = len(title)*'-'
 
-        attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw', 'plt_style'])]
-        
-        for attr in attrs:
-            delattr(self, attr)
-        return self
+        names = list(gv.__dict__.keys())
+        others = [name for name in names if name not in ['sps', 'R', 'fs', 'wavelength', 'f0', 'N', 'dt', 'dw', 't', 'w', 'plt_style', 'verbose']]
 
+        msg = f'\n{sub}\n{title}\n{sub}\n\t' + \
+            f'sps :  {self.sps}\n\t' + \
+            f'R   :  {self.R:.2e}\n\t' + \
+            f'fs  :  {self.fs:.2e}\n\t' + \
+            f'λ0  :  {self.wavelength:.2e}\n\t' + \
+            f'f0  :  {self.f0:.2e}\n\t' + \
+            f'N   :  {self.N}\n\t' + \
+            f'dt  :  {self.dt:.2e}\n\t' + \
+            f't   :  {self.t}\n\t' + \
+            f'dw  :  {self.dw:.2e}\n'
+
+        msg += f'  Config\n  ------\n\t' + \
+            f'plt_style :  "{self.plt_style}"\n\t' + \
+            f'verbose   :  {self.verbose}\n'
+            
+        if others:
+            msg += '  Custom\n  ------\n\t' + '\n\t'.join([f'{name} : {getattr(self, name)}' for name in others]) + '\n'
+
+        return msg
+    
+    def print(self):
+        """ Prints the global variables in a formatted manner"""
+        np.set_printoptions(precision=2, threshold=20)
+        print(self)
 
     def __call__(
             self, 
@@ -178,7 +251,7 @@ class global_variables():
             wavelength: float=1550e-9, 
             N: int=None, 
             plt_style : Literal['ggplot', 'bmh', 'dark_background', 'fast', 'default']='fast', 
-            verbose=True, 
+            verbose=None,
             **kargs
         ) -> Any:
         """
@@ -186,31 +259,38 @@ class global_variables():
 
         Parameters
         ----------
-        sps : :obj:`int`, optional
-            Samples per slot. If provided, it will set the instance's `sps` attribute.
-        R : :obj:`float`, optional
-            Rate in Hz. If provided, it will set the instance's `R` attribute.
-        fs : :obj:`float`, optional
-            Sampling frequency in Samples/s. If provided, it will set the instance's `fs` attribute.
-        wavelength : :obj:`float`, optional
+        sps : int, optional
+            Samples per slot.
+        R : float, optional
+            Rate in Hz.
+        fs : float, optional
+            Sampling frequency in Samples/s.
+        wavelength : float, optional
             Wavelength in meters. Default is 1550e-9.
-        N : :obj:`int`, optional
-            Number of samples. If provided, it will set the instance's `N` attribute and calculate `t`, `dw`, and `w`.
-        **kargs : :obj:`dict`
-            Additional attributes to set on the instance.
+        N : int, optional
+            Number of samples.
+        plt_style : str, optional
+            Matplotlib plot style. Default is "fast".
+        verbose : int | None, optional
+            Verbosity level for logging.
+        **kargs : dict
+            Additional custom parameters.
 
         Returns
         -------
-        self
+        gv
             The instance itself.
 
         Notes
         -----
-        If `sps` is provided and either `R` or `fs` is provided, it will calculate the missing one.
-        If `R` is provided and `fs` is provided, it will calculate `sps`.
-        If only `fs` is provided, it will calculate `sps` using the instance's `R` attribute.
-        If none of `sps`, `R`, or `fs` is provided, it will use the instance's default values.
+        In the absence of parameters, default values are used. Missing parameters are calculated from the provided ones, prioritizing the default value of **gv.R** when more than one of **sps**, **fs**, and **R** is not provided.
         """
+        if verbose is not None :
+            self.verbose = verbose
+            logger.logger.setLevel(self.verbose)
+
+        logger.debug('setting gv()')
+
         if sps:
             self.sps = int(np.round(sps))
             if R:
@@ -220,9 +300,7 @@ class global_variables():
                 self.fs = fs
                 self.R = fs/self.sps
             else:
-                if verbose:
-                    msg = f'`R` will be set to default value ({self.R:.2e} Hz)'
-                    warnings.warn(msg)
+                logger.warning(f"'R' set to default value ({self.R:.2e} bits/s)")
                 self.fs = self.R*self.sps
 
         elif R: 
@@ -231,22 +309,17 @@ class global_variables():
                 self.fs = fs
                 self.sps = int(np.round(fs/R))
             else:
-                if verbose:
-                    msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
-                    warnings.warn(msg)
+                logger.warning(f"'sps' set to default value ({self.sps} S/bit)")
                 self.fs = R*self.sps
 
         elif fs:
-            if verbose:
-                msg = f'`sps` will be set to default value ({self.sps} samples per slot)'
-                warnings.warn(msg)
+            logger.warning(f"'R' set to default value ({self.R:.2e} bits/s)")
             self.fs = fs
             self.sps = int(np.round(fs/self.R))
 
-        elif verbose:
-            msg = f'`sps`, `R` and `fs` will be set to previous values ({self.sps} samples per slot, {self.R:.2e} Hz, {self.fs:.2e} Samples/s)'
-            warnings.warn(msg)
-
+        else:
+            logger.warning(f"'sps', 'R' and 'fs' will be set to default values ({self.sps} S/bit, {self.R:.2e} bits/s, {self.fs:.2e} Hz)")
+        
         self.dt = 1/self.fs
 
         self.N = N if N is not None else self.N
@@ -258,61 +331,53 @@ class global_variables():
         self.plt_style = plt_style
         plt.style.use(self.plt_style)
 
+        logger.info('Global variables set to, sps: %d, R: %.2e, fs: %.2e, N: %d, wavelength: %.2e', self.sps, self.R, self.fs, self.N, self.wavelength)
+
         if kargs:
             for key, value in kargs.items():
                 setattr(self, key, value)
         
         return self
-        
-    def __str__(self):
-        """ Returns a formatted string with the global variables of the instance."""
-        title = 3*'*' + '    Global Variables    ' + 3*'*'
-        sub = len(title)*'-'
-
-        names = list(gv.__dict__.keys())
-        others = [name for name in names if name not in ['sps', 'R', 'fs', 'wavelength', 'f0', 'N', 'dt', 'dw', 't', 'w']]
-
-        msg = f'\n{sub}\n{title}\n{sub}\n\t' + \
-            f'sps :  {self.sps}\n\t' + \
-            f'R   :  {self.R:.2e}\n\t' + \
-            f'fs  :  {self.fs:.2e}\n\t' + \
-            f'dt  :  {self.dt:.2e}\n\t' + \
-            f'λ0  :  {self.wavelength:.2e}\n\t' + \
-            f'f0  :  {self.f0:.2e}\n\t' + \
-            f'N   :  {self.N}\n\t' + \
-            f'dt  :  {self.dt:.2e}\n\t' + \
-            f't   :  {self.t}\n\t' + \
-            f'dw  :  {self.dw:.2e}\n\t' + \
-            f'w   :  {self.w}\n'
-            
-        if others:
-            msg += '  Custom\n  ------\n\t' + '\n\t'.join([f'{name} : {getattr(self, name)}' for name in others]) + '\n'
-
-        return msg
-    
-    def print(self):
-        """ Prints the global variables of the instance in a formatted manner.
-
-        Prints the global variables including `sps`, `R`, `fs`, `wavelength`, `f0`, `N`, `dt`, `dw`, `t`, and `w`.
-        If there are other attributes defined, they will be printed under the "Custom" section.
-
-        Notes
-        -----
-        The array variables are printed with a precision of 2 in scientific notation, and are presented in a compact from if length exceeds 20 elements.
-        """
-        np.set_printoptions(precision=2, threshold=20)
-        print(self)
 
     def _set_t_dw_w(self):
-        """ Calculate time array, frequency step and frequency array based on current `N`, `sps`, and `fs` values and set them as attributes."""
         self.t = np.linspace(0, self.N*self.sps/self.fs, self.N*self.sps, endpoint=True)
         self.dw = 2*pi*self.fs/(self.N*self.sps)
         self.w = 2*pi*fftshift(fftfreq(self.N*self.sps))*self.fs
 
+    def default(self):
+        """ Return all parameters to default values."""
+        self.sps = 16
+        self.R = 1e9
+        self.fs = self.R*self.sps
+        self.dt = 1/self.fs
+        self.wavelength = 1550e-9
+        self.f0 = c/self.wavelength
+        self.N = 128
+        self._set_t_dw_w()
+        self.plt_style = 'fast'
+        plt.style.use(self.plt_style)
+        self.verbose = None
+
+        attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw', 'plt_style'])]
+        
+        for attr in attrs:
+            delattr(self, attr)
+        return self
 
 gv = global_variables()
 
 
+
+
+
+
+
+
+
+
+
+
+@logger.auto_indent_methods
 class binary_sequence():
     r"""**Binary Sequence**
 
@@ -324,36 +389,65 @@ class binary_sequence():
 
         ~binary_sequence.data
         ~binary_sequence.execution_time
+        ~binary_sequence.ones
+        ~binary_sequence.zeros
+        ~binary_sequence.size
+        ~binary_sequence.type
+        ~binary_sequence.sizeof
 
     .. rubric:: Methods
     .. autosummary::
 
-        __init__
-        __str__
-        __repr__
+        prbs
         print
-        __len__
-        __getitem__
-        __eq__
-        __add__
-        __radd__
-        __invert__
-        len
-        ones
-        zeros
-        type
-        sizeof
+        to_numpy
+        flip
+        hamming_distance
+        dac
+        plot
+
+    .. table:: **Implemented Operators**
+        :widths: 10 90
+        :align: center
+
+        +--------------------------------+--------------------------------------------------------------+
+        | Operator                       | Description                                                  |
+        +================================+==============================================================+
+        | ``~``                          | ``~a`` NOT operation, bit by bit.                            |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``&``                          | ``a & b`` AND operation, bit by bit                          |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``|``                          | ``a | b`` OR operation, bit by bit                           |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``^``                          | ``a ^ b`` XOR operation, bit by bit                          |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``+``                          | ``a + b`` concatenate ``a ∪ b``; ``b + a`` concatenate       |
+        |                                | ``b ∪ a``.                                                   |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``*``                          | ``a * n`` (n > 1 integer) repeats ``a`` n times; ``a * b``   |
+        |                                | equivalent to ``&`` operator.                                |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``==``                         | ``a == b`` compares elements, returning a ``binary_sequence``|
+        |                                | mask of matches.                                             |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``!=``                         | ``a != b`` compares elements, returning a ``binary_sequence``|
+        |                                | mask of differences.                                         |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``[:]``                        | ``a[i]`` returns the integer value at index ``i``;           |
+        |                                | ``a[i:j]`` returns a sliced ``binary_sequence``.             |
+        +--------------------------------+--------------------------------------------------------------+
+        | ``<``, ``<=``, ``>``, ``>=``   | Not implemented                                              |
+        | ``-``, ``/``, ``//``, ``<<``,  |                                                              |
+        | ``>>``,                        |                                                              |
+        +--------------------------------+--------------------------------------------------------------+
     """
 
     def __init__(self, data: str | Iterable): 
-        """ Initialize the binary sequence object.
+        logger.debug('%s.__init__(%s)', self.__class__.__name__, type(data).__name__)
 
-        Parameters
-        ----------
-        data : :obj:`str`, 1D array_like or scalar
-            The binary sequence data.
-        """
-        if isinstance(data, str):
+        if isinstance(data, binary_sequence):
+            data = data.data
+        elif isinstance(data, str):
             data = str2array(data)
         else:
             data = np.array(data)
@@ -371,7 +465,8 @@ class binary_sequence():
         """The execution time of the last operation performed on the binary sequence."""
 
     def __str__(self, title: str=None): 
-        """Return a formatted string with the binary sequence data, length, size in bytes and time if available."""
+        logger.debug('__str__()')
+
         if title is None:
             title = self.__class__.__name__
         
@@ -383,417 +478,31 @@ class binary_sequence():
 
         msg = f'\n{sub}\n{title}\n{sub}\n\t' + \
             f'data  :  {data} (shape: {self.data.shape})\n\t' + \
-            f'ones  :  {self.ones()}\n\t' + \
-            f'zeros :  {self.zeros()}\n\t' + \
-            f'size  :  {self.sizeof()} bytes\n\t' + \
+            f'ones  :  {self.ones}\n\t' + \
+            f'zeros :  {self.zeros}\n\t' + \
+            f'size  :  {self.sizeof} bytes\n\t' + \
             f'time  :  {si(self.execution_time, "s", 2)}\n'
         return msg
     
     def __repr__(self):
+        logger.debug('__repr__()')
+
         np.set_printoptions(threshold=100)
         return f'binary_sequence({str(self.data)})'
-    
-    def print(self, msg: str=None): 
-        """Print object parameters.
 
-        Parameters
-        ----------
-        msg : str, opcional
-            top message to show
-
-        Returns
-        -------
-        :obj:`binary_sequence`
-            The same object.
-        """
-        print(self.__str__(msg))
-        return self
-    
     def __len__(self):
-        """Get number of slots of the binary sequence. ``len(self)``"""
+        logger.debug('__len__()')
         return self.size
-
-    def __getitem__(self, slice: int | slice):
-        """Get a slice of the binary sequence (``self[slice]``). 
-        
-        Parameters
-        ----------
-        slice : :obj:`int` or :obj:`slice`
-            The slice to get. 
-
-        Returns
-        -------
-        :obj:`int` or :obj:`binary_sequence`
-            The value of the slot if `slice` is an integer, or a new binary sequence object with the result of the slice.
-        """ 
-        return binary_sequence(self.data[slice])
-    
-    def __eq__(self, other):
-        """Compare two binary sequences using ``==`` operator.
-
-        Parameters
-        ----------
-        other : :obj:`str` or :obj:`binary_sequence` or :obj:`Array_Like`
-            The binary sequence to compare.
-            
-        Returns
-        -------
-        :obj:`np.ndarray` of :obj:`bool`
-            A boolean array with the result of the comparison. ``True`` if the elements are equal, ``False`` otherwise.
-        """
-        if isinstance(other, binary_sequence):
-            other = other.data
-        elif isinstance(other, str):
-            other = str2array(other, bool)  
-        else:
-            other = np.array(other, dtype=bool)
-            if other.ndim == 0:
-                other = other[np.newaxis]
-
-        if other.size != self.data.size and other.size != 1:
-            raise ValueError(f"Can't compare binary sequences with shapes {self.data.shape} and {other.shape}")
-        
-        return np.array_equal(self.data, other)
-
-    def __add__(self, other): 
-        """ Concatenate two binary sequences, adding to the end (``+``).
-
-        Parameters
-        ----------
-        other : :obj:`str` or :obj:`binary_sequence` or Array_Like
-            The binary sequence to concatenate.
-
-        Returns
-        -------
-        binary_sequence
-            A new binary sequence object with the result of the concatenation.
-
-        Raises
-        ------
-        ValueError
-            If the sequence to concatenate it's not in an apropiate format.
-        TypeError
-            If the binary sequence to concatenate is not of type :obj:`str`, :obj:`binary_sequence` or :obj:`Array_Like`.
-        
-        See Also
-        --------
-        __radd__ : Concatenates two binary sequence, adding at the beginning (``+``).
-        """
-        if isinstance(other, binary_sequence):
-            other = other.data
-        elif isinstance(other, str):
-            other = str2array(other)
-        elif isinstance(other, Array_Like):
-            other = np.array(other)
-        else:
-            raise TypeError("Can't concatenate binary_sequence with type {}".format(type(other)))
-        
-        if not np.all((other == 0) | (other == 1)): 
-            raise ValueError("Sequence to concatenate must contain only 0's and 1's!")
-        if other.ndim != 1:
-            raise ValueError(f"Binary sequence must be 1D array, invalid shape {other.shape}")
-        
-        out = np.concatenate((self.data, other))
-        return binary_sequence(out)
-    
-    def __radd__(self, other): 
-        """ Concatenate two binary sequences, adding to the beginning (``+``).
-
-        Parameters
-        ----------
-        other : :obj:`str` or :obj:`binary_sequence` or Array_Like
-            The binary sequence to concatenate.
-
-        Returns
-        -------
-        binary_sequence
-            A new binary sequence object with the result of the concatenation.
-
-        Raises
-        ------
-        ValueError
-            If the sequence to concatenate it's not in an apropiate format.
-        TypeError
-            If the binary sequence to concatenate is not of type :obj:`str`, :obj:`binary_sequence` or :obj:`Array_Like`.
-        
-        See Also
-        --------
-        __add__ : Concatenates two binary sequence, adding at the end.
-        """
-        if isinstance(other, binary_sequence):
-            other = other.data
-        elif isinstance(other, str):
-            other = str2array(other)
-        elif isinstance(other, Array_Like):
-            other = np.array(other)
-        else:
-            raise TypeError("Can't concatenate binary_sequence with type {}".format(type(other)))
-        
-        if not np.all((other == 0) | (other == 1)): 
-            raise ValueError("Sequence to concatenate must contain only 0's and 1's!")
-        if other.ndim != 1:
-            raise ValueError(f"Binary sequence must be 1D array, invalid shape {other.shape}")
-
-        out = np.concatenate((other, self.data))
-        return binary_sequence(out)
-
-    def __invert__(self):
-        """Invert the binary sequence using the ``~`` operator. 
-        
-        Implement a bitwise not ``~`` operation on the binary sequence. Example: ``~binary_sequence([1,0,1,0])`` returns ``binary_sequence([0,1,0,1])``.
-
-        Returns
-        -------
-        binary_sequence
-            A new binary sequence object with the result of the inversion.
-        """
-        return binary_sequence(~self.data.astype(bool))
-
-    def len(self): 
-        """Get number of slots of the binary sequence.
-        
-        Returns
-        -------
-        :obj:`int`
-            The number of slots of the binary sequence.
-        """
-        return self.data.size
-    
-    def ones(self):
-        """Return the number of ones in the binary sequence.
-        
-        Returns
-        -------
-        :obj:`int`
-            The number of ones in the binary sequence.
-        """
-        return np.sum(self.data)
-    
-    def zeros(self):
-        """Return the number of zeros in the binary sequence.
-        
-        Returns
-        -------
-        :obj:`int`
-            The number of zeros in the binary sequence.
-        """
-        return self.size - self.ones()
-    
-    def dac(self, h: np.ndarray):
-        """Apply upsampling and FIR filtering to the binary sequence for digital-to-analog conversion.
-
-        This method upsamples the binary sequence by the global samples per slot (gv.sps) and applies the provided FIR filter to produce an electrical signal.
-
-        Parameters
-        ----------
-        h : :obj:`np.ndarray`
-            The FIR filter coefficients used for shaping the signal.
-
-        Returns
-        -------
-        :obj:`electrical_signal`
-            The resulting electrical signal after upsampling, filtering, and downsampling.
-        """
-        return electrical_signal(upfirdn(x=self.data, h=h, up=gv.sps, dn=1))
-    
-    def type(self): 
-        """Return de object type.
-        
-        Returns
-        -------
-        :obj:`type`
-            The object type :obj:`binary_sequence`.
-        """
-        return type(self)
-    
-    def sizeof(self):
-        """Get memory size of object in bytes."""
-        return sizeof(self)
-
-
-class electrical_signal():
-    """**Electrical Signal**
-
-    This class provides methods and attributes to work with electrical signals. 
-    It has overloaded operators necessary to properly interpret 
-    the ``+``, ``-``, ``*`` and ``/``` operations as any numpy array.
-
-    .. rubric:: Attributes
-    .. autosummary::
-
-        ~electrical_signal.signal
-        ~electrical_signal.noise
-        ~electrical_signal.execution_time
-
-    .. rubric:: Methods
-    .. autosummary::
-
-        __init__
-        __call__
-        print
-        size
-        shape
-        type
-        fs
-        sps
-        dt
-        t
-        w
-        f
-        abs
-        sum
-        power
-        phase
-        normalize
-        apply
-        filter
-        plot
-        psd
-        plot_eye
-        grid
-        legend
-        show
-    """
-
-    def __init__(self, signal: str | Iterable, noise: str | Iterable = None, dtype: np.dtype=None) -> None:
-        """ Initialize the electrical signal object.
-
-        Parameters
-        ----------
-        signal : :obj:`str` or 1D array_like or scalar
-            The signal values.
-        noise : :obj:`str` or 1D array_like or scalar, optional
-            The noise values. Defaults to `None`.
-
-        Notes
-        -----
-        The signal and noise can be provided as a string, in which case it will be converted to a 
-        ``numpy.array`` using the :func:`str2array` function. For example:
-        
-        .. code-block:: python
-
-            >>> electrical_signal('1 2 3,4,5')  # separate values by space or comma indistinctly
-            electrical_signal(signal=[1.+0.j 2.+0.j 3.+0.j 4.+0.j 5.+0.j],
-                              noise=[0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j])
-            >>> electrical_signal('1+2j, 3+4j, 5+6j') # complex values
-        """    
-        signal, noise = self._prepare_arrays(signal, noise, dtype)
-        
-        if self.__class__ == electrical_signal:
-            if signal.ndim > 1 or signal.size < 1:
-                raise ValueError(f"Signal must be scalar or 1D array for electrical_signal, invalid shape {signal.shape}")
-            
-            if signal.ndim == 0:
-                signal = signal[np.newaxis]
-                if noise is not None:
-                    noise = noise[np.newaxis]
-        
-        self.signal = signal
-        """The signal values, a 1D numpy array of complex values."""
-        self.noise = noise
-        """The noise values, a 1D numpy array of complex values."""
-        self.execution_time = 0.
-        """The execution time of the last operation performed on the electrical signal."""
-
-    @staticmethod
-    def _prepare_arrays(signal, noise, dtype):
-        """Prepare signal and noise arrays with common conversions and dtype handling."""
-        def _convert_to_array(value, dtype):
-            if isinstance(value, str):
-                return str2array(value)
-            return np.array(value, dtype=dtype)
-        
-        signal = _convert_to_array(signal, dtype)
-        
-        if noise is not None:
-            noise = _convert_to_array(noise, dtype)
-            
-            if dtype is None:
-                arrays_type = np.result_type(signal, noise)  # obtain the most comprehensive type
-            else:
-                arrays_type = dtype
-
-            signal = signal.astype(arrays_type)
-            noise = noise.astype(arrays_type) 
-
-            if signal.shape != noise.shape:
-                raise ValueError(f"`signal` and `noise` must have the same shape, mismatch shapes {signal.shape} and {noise.shape}!")
-        else:
-            if dtype is not None:
-                signal = signal.astype(dtype)
-        
-        return signal, noise
-
-
-    def __str__(self, title: str=None): 
-        """Return a formatted string with the electrical_signal data, length, size in bytes and time if available."""
-        if title is None:
-            title = self.__class__.__name__
-        
-        title = 3*'*' + f'    {title}    ' + 3*'*'
-        sub = len(title)*'-'
-        tab = 3*' '
-
-        np.set_printoptions(precision=3, threshold=20)
-
-        if self.signal.ndim == 1:
-            signal = str(self.signal)
-            noise = str(self.noise)
-        else:
-            signal = str(self.signal).replace('\n', '\n'+tab + 11*' ')
-            noise = str(self.noise).replace('\n', '\n'+tab + 11*' ')
-        
-        msg = f'\n{sub}\n{title}\n{sub}\n'+ tab + \
-            f'signal:     {signal} (shape: {self.shape})\n'+ tab + \
-            f'noise:      {noise} (shape: {self.shape if self.noise is not None else None})\n'+ tab + \
-            f'pow_signal: {si(self.power('W', 'signal'), 'W', 1)} ({self.power('dbm', 'signal'):.1f} dBm)\n'+ tab + \
-            f'pow_noise:  {si(self.power('W', 'noise'), 'W', 1)} ({self.power('dbm', 'noise'):.1f} dBm)\n'+ tab + \
-            f'pow_total:  {si(self.power('W', 'all'), 'W', 1)} ({self.power('dbm', 'all'):.1f} dBm)\n'+ tab + \
-            f'len:        {self.size}\n' + tab + \
-            f'elem_type:  {self.dtype}\n' + tab + \
-            f'mem_size:   {self.sizeof()} bytes\n' + tab + \
-            f'time:       {si(self.execution_time, "s", 2)}\n'
-        return msg
-    
-    def __repr__(self):
-        np.set_printoptions(precision=3, threshold=20)
-        
-        if self.noise is not None:
-            return f'electrical_signal({str(self.signal)})'
-        return f'electrical_signal(signal={str(self.signal)},\n\t\t   noise={str(self.noise)})'
-
-    def print(self, msg: str=None): 
-        """Prints object parameters.
-        
-        Parameters
-        ----------
-        msg : :obj:`str`, opcional
-            top message to show
-
-        Returns
-        -------
-        self : electrical_signal
-            The same object.
-        """
-        print(self.__str__(msg))
-        return self
-
-    def __len__(self): 
-        return self.size
-    
-    def __iter__(self):
-        """Return an iterator over the signal values (signal + noise)."""
-        return iter(self.__array__())
     
     def __array__(self, dtype=None):
-        """Return the array representation of the electrical signal.
+        """Return the array representation of the binary sequence.
         
         This method provides the basic array conversion for NumPy compatibility.
-        It returns the signal + noise.
+        It returns the data.
         This is the fundamental protocol that allows the object to be converted to a NumPy array
         when needed, enabling direct use in NumPy functions that expect array-like objects.
         
-        Unlike __array_ufunc__ and __array_function__, this method is called for basic array
+        Unlike ``__array_ufunc__`` and ``__array_function__``, this method is called for basic array
         conversion and does not handle specific NumPy operations - it simply provides the
         underlying data as an array.
         
@@ -801,19 +510,20 @@ class electrical_signal():
         ----------
         dtype : np.dtype, optional
             Desired data type of the array.
-            
+                
         Returns
         -------
         np.ndarray
-            The array representation of the signal data.
+            The array representation of the binary data.
         """
-        arr = self.signal + self.noise if self.noise is not None else self.signal
+        logger.debug('__array__()')
+        arr = self.data
         return arr
     
     def __getattr__(self, name):
         """Delegate attribute access to the underlying NumPy array for array-like methods.
         
-        This method allows instances of electrical_signal to access NumPy array methods
+        This method allows instances of ``binary_sequence`` to access NumPy array methods
         (like max, min, sum, etc.) directly as if they were arrays. If the requested attribute
         is a method or property of np.ndarray, it will be called on the array representation
         of this object.
@@ -833,9 +543,11 @@ class electrical_signal():
         AttributeError
             If the attribute is not found in np.ndarray.
         """
+        logger.debug('__getattr__(%s)', name)
         # Check if the attribute exists in np.ndarray and is not a private/internal attribute
         if hasattr(np.ndarray, name) and not name.startswith('__'):
-            return getattr(np.array(self), name)
+            logger.debug("Delegating attribute '%s' to ndarray for %s", name, self.__class__.__name__)
+            return getattr(self.__array__(), name)
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
     
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
@@ -844,11 +556,11 @@ class electrical_signal():
         This method is specifically designed for NumPy's universal functions, which are
         element-wise operations like np.add, np.sin, np.multiply, etc. When a ufunc is
         called on an instance of this class, this method intercepts the call, converts
-        any instances of this class in the inputs to arrays using __array__(), and then
+        any instances of this class in the inputs to arrays using ``__array__()``, and then
         applies the ufunc to the converted arrays.
         
-        Unlike __array__, which provides basic array conversion, this method handles
-        the execution of specific ufunc operations. Unlike __array_function__, which
+        Unlike ``__array__``, which provides basic array conversion, this method handles
+        the execution of specific ufunc operations. Unlike ``__array_function__``, which
         handles higher-level array functions, this focuses on element-wise operations.
         
         Parameters
@@ -868,25 +580,33 @@ class electrical_signal():
             The result of applying the ufunc to the converted inputs, wrapped in the
             appropriate class if the result is an array with compatible shape.
         """
+        logger.debug('__array_ufunc__(%s, %s)', ufunc.__name__, method)
+        
+        if method == '__call__' and not kwargs.get('out'):
+            if ufunc == np.add:
+                lhs, rhs = inputs
+                if isinstance(rhs, binary_sequence):
+                    return rhs.__radd__(lhs)
+            if ufunc == np.multiply:
+                lhs, rhs = inputs
+                if isinstance(rhs, binary_sequence):
+                    return rhs.__mul__(lhs)
+        
         # Convert inputs that are instances of this class to arrays
         new_inputs = []
         for inp in inputs:
             if isinstance(inp, self.__class__):
-                new_inputs.append(np.array(inp))
+                new_inputs.append(inp.__array__())
             else:
                 new_inputs.append(inp)
         
-        # Call the ufunc
         result = getattr(ufunc, method)(*new_inputs, **kwargs)
-        
-        # If the result is an array with compatible shape, wrap it in the class
-        if isinstance(result, np.ndarray):
-            if self.__class__ == electrical_signal and result.ndim == 1:
-                return self.__class__(result)
-            elif self.__class__ == optical_signal and result.ndim in [1, 2]:
-                return self.__class__(result)
-            else:
-                return result
+
+        try: 
+            if isinstance(result, np.ndarray):
+                return binary_sequence(result)
+        except Exception:
+            pass
         return result
     
     def __array_function__(self, func, types, args, kwargs):
@@ -899,9 +619,10 @@ class electrical_signal():
         the function with the converted arguments.
         
         Key differences from other protocols:
-        - __array__: Provides basic array conversion without handling specific operations
-        - __array_ufunc__: Handles element-wise universal functions (ufuncs) like np.add, np.sin
-        - __array_function__: Handles higher-level array functions and transformations
+
+        - ``__array__``: Provides basic array conversion without handling specific operations.
+        - ``__array_ufunc__``: Handles element-wise universal functions (ufuncs) like np.add, np.sin, etc.
+        - ``__array_function__``: Handles higher-level array functions and transformations like np.abs, etc.
         
         This enables seamless integration with NumPy's array function ecosystem, allowing
         instances to be used directly in functions like np.sum(x), np.mean(x), np.concatenate([x, y]),
@@ -924,9 +645,11 @@ class electrical_signal():
             The result of applying the NumPy array function to the converted arguments, wrapped in the
             appropriate class if the result is an array with compatible shape.
         """
+        logger.debug('__array_function__(%s)', func.__name__)
+
         def _convert(obj):
             if isinstance(obj, self.__class__):
-                return np.array(obj)
+                return obj.__array__()
             elif isinstance(obj, (list, tuple)):
                 return type(obj)(_convert(item) for item in obj)
             elif isinstance(obj, dict):
@@ -939,6 +662,572 @@ class electrical_signal():
         new_kwargs = _convert(kwargs)
         
         result = func(*new_args, **new_kwargs)
+
+        try:
+            if isinstance(result, np.ndarray):
+                return binary_sequence(result)
+        except Exception:
+            pass
+        return result
+
+    def __getitem__(self, slice: int | slice):
+        """Get a slice of the binary sequence (``self[slice]``). 
+        
+        Parameters
+        ----------
+        slice : :obj:`int` or :obj:`slice`
+            The slice to get. 
+
+        Returns
+        -------
+        :obj:`int` or :obj:`binary_sequence`
+            The value of the slot if `slice` is an integer, or a new binary sequence object with the result of the slice.
+        """ 
+        logger.debug('__getitem__(%s)', slice)
+        if isinstance(slice, int):
+            return self.data[slice]
+        return binary_sequence(self.data[slice])
+    
+    def __eq__(self, other):
+        logger.debug('__eq__(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+
+        return binary_sequence(self.data == other.data)
+
+    def __ne__(self, other):
+        logger.debug('__ne__(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+
+        return binary_sequence(self.data != other.data)
+
+
+    def __add__(self, other): 
+        logger.debug('__add__(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+        
+        out = np.concatenate((self.data, other.data))
+        return binary_sequence(out)
+    
+    def __radd__(self, other): 
+        logger.debug('__radd__(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+
+        out = np.concatenate((other.data, self.data))
+        return binary_sequence(out)
+
+    def __mul__(self, other):
+        logger.debug('__mul__(%s)', type(other).__name__)
+
+        if isinstance(other, int) and other > 1:
+            # Repeat the sequence other times
+            repeated = np.tile(self.data, other)
+            return binary_sequence(repeated)
+        else:
+            # Convert other to binary_sequence if necessary
+            if not isinstance(other, binary_sequence):
+                other = binary_sequence(other)
+            
+            result = self.data * other.data
+            return binary_sequence(result)
+    __rmul__ = __mul__
+
+    def __invert__(self):
+        logger.debug('__invert__()')
+
+        return binary_sequence(~self.data.astype(bool))
+    
+    def __or__(self, other):
+        logger.debug('__or__(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+
+        return binary_sequence(self.data | other.data)
+    __ror__ = __or__
+
+    def __and__(self, other):
+        logger.debug('__and__(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+
+        return binary_sequence(self.data & other.data)
+    __rand__ = __and__
+
+    def __xor__(self, other):
+        logger.debug('__xor__(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+
+        return binary_sequence(self.data ^ other.data)
+    __rxor__ = __xor__
+    
+    # properties
+    @property
+    def ones(self):
+        """Number of ones in the binary sequence."""
+        x = np.sum(self.data==1)
+        logger.debug('ones: %d', x)
+        return x
+    
+    @property
+    def zeros(self):
+        """Number of zeros in the binary sequence."""
+        x = np.sum(self.data == 0)
+        logger.debug('zeros: %d', x)
+        return x
+    
+    @property
+    def size(self):
+        """Number of slots of the binary sequence."""
+        x = self.data.size
+        logger.debug('size: %d', x)
+        return x
+
+    @property
+    def type(self): 
+        """Object type."""
+        x = type(self)
+        logger.debug('type: %s', x.__name__)
+        return x
+    
+    @property
+    def sizeof(self):
+        """Memory size of object in bytes."""
+        logger.debug('sizeof')
+        x = sizeof(self)
+        logger.debug('sizeof: %d bytes', x)
+        return x
+    
+    # static methods
+    @staticmethod
+    def prbs(order: int, seed: int=None, len: int=None, return_seed: bool=False):
+        r"""Pseudorandom binary sequence generator (PRBS) (*static method*).
+
+        Parameters
+        ----------
+        order : :obj:`int`, {7, 9, 11, 15, 20, 23, 31}
+            degree of the generating pseudorandom polynomial
+        len : :obj:`int`, optional
+            lenght of output binary sequence
+        seed : :obj:`int`, optional
+            seed of the generator (initial state of the LFSR).
+            It must be provided if you want to continue the sequence.
+            Default is 2**order-1.
+        return_seed : :obj:`bool`, optional
+            If True, the last state of LFSR is returned. Default is False.
+
+        Returns
+        -------
+        out : :obj:`binary_sequence`
+            generated pseudorandom binary sequence if `return_seed` is False
+        out, last_seed : :obj:`tuple` of (:obj:`binary_sequence`, : obj:`int`)
+            generated pseudorandom binary sequence and last state of LFSR if `return_seed`
+        """
+        tic()
+        taps = {
+            7: [7, 6],
+            9: [9, 5],
+            11: [11, 9],
+            15: [15, 14],
+            20: [20, 3],
+            23: [23, 18],
+            31: [31, 28],
+        }
+        seed = seed % (2**order) if seed is not None else (1 << order) - 1
+        if seed == 0:
+            seed = 1
+            warnings.warn(
+                "The seed can't be 0 or a multiple of 2**order. It has been changed to 1.",
+                UserWarning,
+            )
+
+        if len is not None:
+            if not isinstance(len, int):
+                raise TypeError("The parameter `len` must be an integer.")
+            elif len <= 0:
+                raise ValueError(
+                    "The parameter `len` must be an integer greater than cero."
+                )
+        else:
+            len = 2**order - 1
+
+        if order not in taps.keys():
+            raise ValueError(
+                "The parameter `order` must be one of the following values (7, 9, 11, 15, 20, 23, 31)."
+            )
+
+        prbs = np.empty((len,), dtype=np.uint8)  # Preallocate memory for the PRBS
+        lfsr = seed  # initial state of the LFSR
+        tap1, tap2 = np.array(taps[order]) - 1
+
+        index = 0
+        while index < len:
+            prbs[index] = lfsr & 1
+            new = ((lfsr >> tap1) ^ (lfsr >> tap2)) & 1
+            lfsr = ((lfsr << 1) | new) & (1 << order) - 1
+            index += 1
+            # if lfsr == seed:
+            #     break
+
+        output = binary_sequence(prbs)
+        output.execution_time = toc()
+
+        if not return_seed:
+            return output
+        return output, lfsr
+
+    # methods
+    def print(self, msg: str=None): 
+        """Print object parameters.
+
+        Parameters
+        ----------
+        msg : str, opcional
+            top message to show
+
+        Returns
+        -------
+        :obj:`binary_sequence`
+            The same object.
+        """
+        logger.debug('print()')
+        print(self.__str__(msg))
+        return self
+    
+    def to_numpy(self, dtype: np.dtype | None = None) -> np.ndarray:
+        """Return a NumPy representation of the binary sequence. This method is similar to ``__array__``, the diference is that some libraries, as matplotlib, used to call this method to get the numpy array.
+        """
+        logger.debug("to_numpy(dtype=%s)", dtype)
+        return np.array(self.data, dtype=dtype)
+    
+    def flip(self):
+        """Invert the binary sequence. Equivalent to the ``~`` operator.
+
+        Returns
+        -------
+        binary_sequence
+            A new binary sequence object with the result of the inversion.
+        """
+        logger.debug('flip()')
+
+        return ~self
+
+    def hamming_distance(self, other):
+        """Calculate the Hamming distance to another binary sequence of the same length.
+
+        Parameters
+        ----------
+        other : :obj:`str` or :obj:`binary_sequence` or :obj:`Array_Like`
+            The binary sequence to compare.
+        Returns
+        -------
+        :obj:`int`
+            The Hamming distance between the two binary sequences.
+        """
+        logger.debug('hamming_distance(%s)', type(other).__name__)
+
+        if not isinstance(other, binary_sequence):
+            other = binary_sequence(other)
+        return np.sum(self != other)
+    
+    def dac(self, h: np.ndarray):
+        """Apply upsampling and FIR filtering to the binary sequence for digital-to-analog conversion.
+
+        This method upsamples the binary sequence by the global samples per slot (gv.sps) and applies the provided FIR filter to produce an electrical signal.
+
+        Parameters
+        ----------
+        h : :obj:`np.ndarray`
+            The FIR filter impulse response to use for shaping the signal.
+
+        Returns
+        -------
+        :obj:`electrical_signal`
+            The resulting electrical signal after upsampling, filtering, and downsampling.
+        """
+        logger.debug('dac()')
+        return electrical_signal(upfirdn(x=self.data, h=h, up=gv.sps, dn=1))
+    
+    def plot(self, **kwargs):
+        """Plot the binary sequence using matplotlib.
+
+        Parameters
+        ----------
+        **kwargs : :obj:`dict`
+            Additional keyword arguments to customize the plot.
+
+        Returns
+        -------
+        :obj:`matplotlib.axes.Axes`
+            The axes object of the plot.
+        """
+        logger.debug('plot()')
+
+        _, ax = plt.subplots()
+        ax.step(np.arange(self.size), self.data, where='post', **kwargs)
+        ax.set_xlabel('Index')
+        ax.set_ylabel('Value')
+        ax.set_title('Binary Sequence')
+        ax.set_yticks([0, 1])
+        ax.grid(True)
+
+        return self
+
+
+
+
+
+
+
+
+
+
+
+@logger.auto_indent_methods
+class electrical_signal():
+    """**Electrical Signal**
+
+    This class provides methods and attributes to work with electrical signals. 
+    It has overloaded operators necessary to properly interpret 
+    the ``+``, ``-``, ``*``, ``/``, ``**``, and comparison operations as any numpy array.
+
+    .. rubric:: Attributes
+    .. autosummary::
+
+        ~electrical_signal.signal
+        ~electrical_signal.noise
+        ~electrical_signal.execution_time
+        ~electrical_signal.size
+        ~electrical_signal.type
+        ~electrical_signal.fs
+        ~electrical_signal.sps
+        ~electrical_signal.dt
+        ~electrical_signal.t
+        ~electrical_signal.sizeof
+
+    .. rubric:: Methods
+    .. autosummary::
+
+        __init__
+        __call__
+        print
+        to_numpy
+        w
+        f
+        abs
+        power
+        normalize
+        phase
+        filter
+        plot
+        psd
+        plot_eye
+        grid
+        legend
+        show
+
+    .. table:: **Implemented Operators**
+        :widths: 10 90
+        :align: center
+
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | Operator                       | Description                                                                                      |
+        +================================+==================================================================================================+
+        | ``+``                          | ``a + b`` adds signals and noises element-wise;                                                  |
+        |                                | ``sig = (a.signal + b.signal), noi = (a.noise + b.noise)``                                       |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``-``                          | ``a - b`` subtracts signals and noises element-wise;                                             |
+        |                                | ``sig = (a.signal - b.signal), noi = (a.noise - b.noise)``                                       |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``*``                          | ``a * b`` multiplies two ``electrical_signal``;                                                  |
+        |                                | ``sig = (a.signal*b.signal)``                                                                    |
+        |                                | ``noi = (a.signal*b.noise + a.noise*b.signal + a.noise*b.noise)``                                |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``/``                          | ``a / n`` divides signal and noise by a scalar;                                                  |
+        |                                | ``sig = (a.signal/n), noi = (a.signal/n)``                                                       |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``//``                         | ``a // n`` floor divides signal and noise by a scalar;                                           |
+        |                                | ``sig = (a.signal//n), noi = (a.signal//n)``                                                     |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``**``                         | ``a ** n`` raises ``electrical_signal`` to a power;                                              |
+        |                                | ``- n=1  -->  sig = (a.signal), noi = (a.noise)``;                                               |
+        |                                | ``- n=2  -->  sig = (a.signal**2), noi = (2*a.signal*a.noise + a.noise**2)``                     |
+        |                                | ``- n=other  -->  sig = (a.signal + a.noise)**n, noi=NULL``                                      |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``>``                          | ``a > b`` compares signals element-wise, returns                                                 |
+        |                                | ``binary_sequence`` mask.                                                                        |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``<``                          | ``a < b`` compares signals element-wise, returns                                                 |
+        |                                | ``binary_sequence`` mask.                                                                        |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``==``                         | ``a == b`` compares signals element-wise, returns                                                |
+        |                                | ``np.ndarray`` mask.                                                                             |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``[:]``                        | ``a[i]`` returns the value at index ``i``;                                                       |
+        |                                | ``a[i:j]`` returns a sliced ``electrical_signal``.                                               |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+        | ``-`` (unary)                  | ``-a`` negates signal and noise.                                                                 |
+        +--------------------------------+--------------------------------------------------------------------------------------------------+
+    """
+    def __init__(self, signal: str | Iterable, noise: str | Iterable = NULL, dtype: np.dtype=None) -> None:
+        """ Initialize the electrical signal object.
+
+        Parameters
+        ----------
+        signal : :obj:`str` or 1D array_like or scalar
+            The signal values.
+        noise : :obj:`str` or 1D array_like or scalar, optional
+            The noise values. Defaults to ``NULL``.
+        dtype : :obj:`np.dtype`, optional
+            The desired data type for the signal and noise arrays. If not provided, the data type
+            will be inferred from the input data. Defaults to ``None``.
+
+        Notes
+        -----
+        The signal and noise can be provided as a string, in which case it will be converted to a 
+        ``numpy.array`` using the :func:`str2array` function. For example:
+        
+        .. code-block:: python
+
+            >>> electrical_signal('1 2 3,4,5')  # separate values by space or comma indistinctly
+            electrical_signal(signal=[1 2 3 4 5],
+                               noise=NULL)
+            >>> electrical_signal('1+2j, 3+4j, 5+6j') # complex values
+            electrical_signal(signal=[1.+2.j 3.+4.j 5.+6.j],
+                               noise=NULL)
+        """    
+        if self.__class__ == electrical_signal:
+            logger.debug("%s.__init__()", self.__class__.__name__)
+
+            if isinstance(signal, electrical_signal):
+                signal, noise = signal.signal, signal.noise
+            else:
+                signal, noise = self._prepare_arrays(signal, noise, dtype)
+
+            if signal.ndim > 1 or signal.size < 1:
+                raise ValueError(f"Signal must be scalar or 1D array for electrical_signal, invalid shape {signal.shape}")
+            
+            if signal.ndim == 0:
+                signal = signal[np.newaxis]
+                if noise is not NULL:
+                    noise = noise[np.newaxis]
+        
+        self.signal = signal
+        """The signal values, a 1D array-like values."""
+        self.noise = noise
+        """The noise values, a 1D array-like values."""
+        self.execution_time = 0.
+        """The execution time of the last operation performed."""
+
+    def __str__(self, title: str=None): 
+        logger.debug("__str__()")
+        
+        if title is None:
+            title = self.__class__.__name__
+        
+        title = 3*'*' + f'    {title}    ' + 3*'*'
+        sub = len(title)*'-'
+        tab = 3*' '
+
+        np.set_printoptions(precision=3, threshold=20)
+
+        if self.signal.ndim == 1:
+            signal = str(self.signal)
+            noise = str(self.noise)
+        else:
+            signal = str(self.signal).replace('\n', '\n'+tab + 11*' ')
+            noise = str(self.noise).replace('\n', '\n'+tab + 11*' ')
+
+        pw_sig_w = self.power('W', 'signal')
+        pw_sig_dbm = dbm(pw_sig_w)
+
+        pw_noi_w = self.power('W', 'noise')
+        pw_noi_dbm = dbm(pw_noi_w)
+
+        pw_all_w = self.power('W', 'all')
+        pw_all_dbm = dbm(pw_all_w) 
+        
+        msg = f'\n{sub}\n{title}\n{sub}\n'+ tab + \
+            f'signal:     {signal} (shape: {self.shape})\n'+ tab + \
+            f'noise:      {noise} (shape: {self.shape if self.noise is not NULL else None})\n'+ tab + \
+            f'pow_signal: {si(pw_sig_w, 'W', 1)} ({pw_sig_dbm:.1f} dBm)\n'+ tab + \
+            f'pow_noise:  {si(pw_noi_w, 'W', 1)} ({pw_noi_dbm:.1f} dBm)\n'+ tab + \
+            f'pow_total:  {si(pw_all_w, 'W', 1)} ({pw_all_dbm:.1f} dBm)\n'+ tab + \
+            f'len:        {self.size}\n' + tab + \
+            f'elem_type:  {self.dtype}\n' + tab + \
+            f'mem_size:   {self.sizeof} bytes\n' + tab + \
+            f'time:       {si(self.execution_time, "s", 2)}\n'
+        return msg
+    
+    def __repr__(self):
+        logger.debug("__repr__()")
+
+        np.set_printoptions(precision=3, threshold=20)
+        
+        if self.noise is not NULL:
+            return f'electrical_signal({str(self.signal)})'
+        return f'electrical_signal(signal={str(self.signal)},\n\t\t   noise={str(self.noise)})'
+
+    def __len__(self): 
+        logger.debug("__len__()")
+        return self.size
+    
+    def __iter__(self):
+        logger.debug("__iter__()")
+        return iter(self.__array__())
+    
+    def __array__(self, dtype=None):
+        logger.debug("__array__()")
+        arr = self.signal + self.noise
+        if dtype is not None:
+            arr = arr.astype(dtype)
+        return arr
+    
+    def __getattr__(self, name):
+        logger.debug("__getattr__('%s')", name)
+        # Check if the attribute exists in np.ndarray and is not a private/internal attribute
+        if hasattr(np.ndarray, name) and not name.startswith('__'):
+            logger.debug("Delegating attribute '%s' to ndarray for %s", name, self.__class__.__name__)
+            return getattr(self.__array__(), name)
+        logger.debug("Attribute '%s' not found in %s", name, self.__class__.__name__)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+    
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        logger.debug("__array_ufunc__(%s, %s)", getattr(ufunc, '__name__', ufunc), method)
+
+        if method == '__call__' and not kwargs.get('out'):
+            if ufunc == np.add:
+                lhs, rhs = inputs
+                if isinstance(rhs, electrical_signal):
+                    return rhs.__add__(lhs)
+            if ufunc == np.subtract:
+                lhs, rhs = inputs
+                if isinstance(rhs, electrical_signal):
+                    return (-rhs).__add__(lhs)
+            if ufunc == np.multiply:
+                lhs, rhs = inputs
+                if isinstance(rhs, electrical_signal):
+                    return rhs.__mul__(lhs)
+
+        # Convert inputs that are instances of this class to arrays
+        new_inputs = []
+        for inp in inputs:
+            if isinstance(inp, self.__class__):
+                new_inputs.append(inp.__array__())
+            else:
+                new_inputs.append(inp)
+        # Call the ufunc
+        result = getattr(ufunc, method)(*new_inputs, **kwargs)
         
         # If the result is an array with compatible shape, wrap it in the class
         if isinstance(result, np.ndarray):
@@ -950,116 +1239,147 @@ class electrical_signal():
                 return result
         return result
     
-    def _parse(self, other):
-        if not isinstance(other, self.type()):
-            other = self.__class__(other)
-        else:
-            other = other[:]
+    def __array_function__(self, func, types, args, kwargs):
+        logger.debug("__array_function__(%s, %s, %s)", getattr(func, '__name__', func), args, kwargs)
 
-        if other.noise is None:
-            other.noise = np.zeros_like(other.signal)
+        @logger.auto_indent
+        def _convert(obj):
+            logger.debug("_convert(%s)", type(obj).__name__)
+            if isinstance(obj, self.__class__):
+                return obj.__array__()
+            elif isinstance(obj, (list, tuple)):
+                return type(obj)(_convert(item) for item in obj)
+            elif isinstance(obj, dict):
+                return {k: _convert(v) for k, v in obj.items()}
+            else:
+                return obj
         
-        if self.size != other.size:
-            l_min = min(self.size, other.size)
-            l_max = max(self.size, other.size)
-            
-            if l_min != 1 and l_min != l_max: 
-                raise ValueError(f"Can't add {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
+        # Convert args and kwargs that contain instances to arrays
+        new_args = _convert(args)
+        new_kwargs = _convert(kwargs)
+    
+        result = func(*new_args, **new_kwargs)
         
-        dtype = np.result_type(self.signal, other.signal)
-        return other, dtype
+        # If the result is an array with compatible shape, wrap it in the class
+        if isinstance(result, np.ndarray):
+            if self.__class__ == electrical_signal and result.ndim == 1:
+                return self.__class__(result)
+            elif self.__class__ == optical_signal and result.ndim in [1, 2]:
+                return self.__class__(result)
+            else:
+                return result
+        return result
     
     def __add__(self, other):
-        other, dtype = self._parse(other)
-        self_, _ = self._parse(self)
+        logger.debug("__add__()")
+        other, _ = self._parse(other)
 
-        sig = self_.signal + other.signal
-        noi = self_.noise + other.noise
+        sig = self.signal + other.signal
+        noi = self.noise + other.noise
 
-        return self.__class__(sig, noi if noi.any() != 0 else None)
-        
+        return self.__class__(sig, noi)
+    
     def __radd__(self, other):
+        logger.debug("__radd__()")
         return self.__add__(other)
     
     def __neg__(self):
+        logger.debug("__neg__()")
         sig = -self.signal
-        noi = -self.noise if self.noise is not None else None
+        noi = -self.noise 
         return self.__class__(sig, noi)
 
     def __sub__(self, other):
+        logger.debug("__sub__()")
+        other, _ = self._parse(other)
         return self + (-other)
         
     def __rsub__(self, other):
+        logger.debug("__rsub__()")
+        other, _ = self._parse(other)
         return (-self) + other
     
     def __mul__(self, other):
-        other, dtype = self._parse(other)
-        self_, _ = self._parse(self)
+        logger.debug("__mul__()")
+        other, _ = self._parse(other)
 
-        sig = self_.signal*other.signal
-        noi = self_.signal*other.noise + self_.noise*other.signal + self_.noise*other.noise
+        sig = self.signal*other.signal
+        noi = self.signal*other.noise + self.noise*other.signal + self.noise*other.noise
 
-        return self.__class__(sig, noi if noi.any() !=0 else None)
+        return self.__class__(sig, noi)
         
     def __rmul__(self, other):
+        logger.debug("__rmul__()")
         return self.__mul__(other)
         
     def __truediv__(self, number: int):
+        logger.debug("__truediv__()")
         if not isinstance(number, ComplexNumber):
+            logger.error("Division by unsupported type %s", type(number))
             raise TypeError(f"Can't divide electrical_signal by type {type(number)}")
         if number == 0:
+            logger.error("Attempted division by zero in %s", self.__class__.__name__)
             raise ZeroDivisionError("Can't divide electrical_signal by zero")
 
-        if self.noise is None:
-            return self.__class__(self.signal / number)
         return self.__class__(self.signal / number, self.noise / number)
     
     def __floordiv__(self, other):
+        logger.debug("__floordiv__()")
         x = (self/other)
-        if x.noise is None:
-            return self.__class__( np.floor(x.signal) )
         return self.__class__( np.floor(x.signal), np.floor(x.noise) )
         
     def __getitem__(self, key):
+        logger.debug("__getitem__(%s)", key)
         if isinstance(key, slice):
-            if self.noise is None:
+            if self.noise is NULL:
                 return self.__class__( self.signal[key] ) 
             return self.__class__( self.signal[key], self.noise[key] )
         elif isinstance(key, int):
-            return self.signal[key] + (self.noise[key] if self.noise is not None else 0)
+            if self.noise is NULL:
+                return self.signal[key]
+            return self.__class__( self.signal[key], self.noise[key] )
         raise TypeError(f"Invalid argument type. {key} of type {type(key)}")
     
-    def __gt__(self, other): 
+    def __gt__(self, other):
+        logger.debug("__gt__()") 
         other, _ = self._parse(other)
-        self_, _ = self._parse(self)
         
-        x_r = self_.signal + self_.noise
+        x_r = self.signal + self.noise
         x_l = other.signal + other.noise
 
         return binary_sequence(x_r > x_l)
         
     def __lt__(self, other):
+        logger.debug("__lt__()")
         return other - self > 0 
     
+    def __eq__(self, other):
+        logger.debug("__eq__()")
+        other, _ = self._parse(other)
+
+        x_r = self.signal + self.noise
+        x_l = other.signal + other.noise
+
+        return x_r == x_l
+    
     def __pow__(self, other):
+        logger.debug("__pow__()")
+
         if not isinstance(other, RealNumber):
             raise TypeError(f"Can't exponentiate electrical_signal by type {type(other)}")
         
-        self_, _ = self._parse(self)
-
         if other == 0:
-            sig = np.ones_like(self_.signal)
-            noi = None
+            sig = np.ones_like(self.signal)
+            noi = NULL
         elif other == 1:
-            sig = self_.signal
-            noi = self_.noise if self_.noise.any() !=0 else None
+            sig = self.signal
+            noi = self.noise 
         elif other == 2:
-            sig = self_.signal**2
-            noi = 2*self_.signal*self_.noise + self_.noise**2
-            noi = noi if noi.any() !=0 else None
+            sig = self.signal**2
+            noi = 2*self.signal*self.noise + self.noise**2
         else:
-            sig = (self_.signal + self_.noise) ** other 
-            noi = None
+            sig = (self.signal + self.noise) ** other 
+            noi = NULL
 
         return self.__class__(sig, noi)
     
@@ -1083,15 +1403,15 @@ class electrical_signal():
         TypeError
             If ``domain`` is not one of the following values ('t', 'w', 'f').
         """
-        self_, _ = self._parse(self)
+        logger.debug("__call__(domain='%s', shift=%s)", domain, shift)
 
         if domain == 'w' or domain == 'f':
-            signal = fft(self_.signal, axis=-1)
-            noise = fft(self_.noise, axis=-1)
+            signal = fft(self.signal, axis=-1)
+            noise = fft(self.noise, axis=-1)
               
         elif domain == 't':
-            signal = ifft(self_.signal, axis=-1)
-            noise = ifft(self_.noise, axis=-1)
+            signal = ifft(self.signal, axis=-1)
+            noise = ifft(self.noise, axis=-1)
         
         else:
             raise ValueError("`domain` must be one of the following values ('t', 'w', 'f')")
@@ -1104,71 +1424,133 @@ class electrical_signal():
                 signal = ifftshift(signal, axes=-1)
                 noise = ifftshift(noise, axes=-1)
 
-        return self.__class__(signal, noise if noise.any() !=0 else None)
+        return self.__class__(signal, noise)
 
-
+    # properties
+    @property
+    def index(self) -> np.ndarray:
+        logger.debug("index")
+        return np.arange(self.signal.size)
+    
+    @property
+    def size(self) -> np.ndarray:
+        """Number of samples of the electrical signal."""
+        logger.debug("size")
+        return self.signal.size
+    
+    @property
     def type(self): 
-        """Return de object type (``electrical_signal``).
-        
-        Returns
-        -------
-        :obj:`type`
-            The object type (``electrical_signal``).
-        """
+        """Object type."""
+        logger.debug("type")
         return type(self)
 
+    @property
     def sizeof(self):
-        """Get memory size of object in bytes.
-        
-        Returns
-        -------
-        :obj:`int`
-            The memory size of the object in bytes.
-        """
+        """Memory size of object in bytes."""
+        logger.debug("sizeof")
         return sizeof(self)
 
+    @property
     def fs(self): 
-        """Get sampling frequency of the electrical signal.
-        
-        Returns
-        -------
-        :obj:`float`
-            The sampling frequency of the electrical signal (``gv.fs``).
-        """
+        """Sampling frequency of the electrical signal."""
+        logger.debug("fs()")
         return gv.fs
     
+    @property
     def sps(self):
-        """Get samples per slot of the electrical signal.
-        
-        Returns
-        -------
-        :obj:`int`
-            The samples per slot of the electrical signal (``gv.sps``).
-        """
+        """Samples per slot of the electrical signal."""
+        logger.debug("sps()")
         return gv.sps
     
+    @property
     def dt(self): 
-        """Get time step of the electrical signal.
-        
-        Returns
-        -------
-        :obj:`float`
-            The time step of the electrical signal (``gv.dt``).
-        """
+        """Time step of the electrical signal."""
+        logger.debug("dt")
         return gv.dt
     
+    @property
     def t(self): 
-        """Get time array for the electrical signal.
+        """Time array for the electrical signal."""
+        logger.debug("t")
+        return gv.t[:self.size]
+    
+    # static and private methods
+    @staticmethod  # can be used without instantiating the class, eg: electrical_signal._prepare_arrays()
+    def _prepare_arrays(signal, noise, dtype):
+        logger.debug("_prepare_arrays()")
+
+        @logger.auto_indent
+        def _convert_to_array(value, dtype, text=''):
+            logger.debug("_convert_to_array(%s(%s))", text, type(value).__name__)
+            if isinstance(value, str):
+                return str2array(value)
+            return np.array(value)
         
+        signal = _convert_to_array(signal, dtype, 'signal')
+        
+        if noise is not NULL:
+            noise = _convert_to_array(noise, dtype, 'noise')
+            
+            if dtype is None:
+                arrays_type = np.result_type(signal, noise)  # obtain the most comprehensive type
+            else:
+                arrays_type = dtype
+
+            signal = signal.astype(arrays_type)
+            noise = noise.astype(arrays_type) 
+
+            if signal.shape != noise.shape:
+                raise ValueError(f"`signal` and `noise` must have the same shape, mismatch shapes {signal.shape} and {noise.shape}!")
+        else:
+            if dtype is not None:
+                signal = signal.astype(dtype)
+        
+        return signal, noise
+    
+    def _parse(self, other):
+        logger.debug("_parse()")
+
+        if not isinstance(other, self.type):
+            other = self.__class__(other)
+        else:
+            other = other[:]
+        
+        if self.size != other.size:
+            l_min = min(self.size, other.size)
+            l_max = max(self.size, other.size)
+            
+            if l_min != 1 and l_min != l_max:
+                raise ValueError(f"Can't add {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
+        
+        dtype = np.result_type(self.signal, other.signal)
+        return other, dtype
+    
+    # public methods
+    def print(self, msg: str=None): 
+        """Print object parameters.
+        
+        Parameters
+        ----------
+        msg : :obj:`str`, opcional
+            top message to show
+
         Returns
         -------
-        :obj:`np.ndarray`
-            The time array for the electrical signal.
+        self : electrical_signal
+            The same object.
         """
-        return gv.t
+        logger.debug("print()")
+        print(self.__str__(msg))
+        return self
+
+    def to_numpy(self, dtype: np.dtype | None = None, copy: bool = False) -> np.ndarray:
+        """Return a NumPy representation of the electrical signal (signal + noise)."""
+        logger.debug("to_numpy(dtype=%s, copy=%s)", dtype, copy)
+        data = self.signal + self.noise
+        return np.array(data, dtype=dtype, copy=copy)
     
     def w(self, shift: bool=False): 
-        """Return angular frequency for spectrum representation.
+        """Return angular frequency (rad/s) for spectrum representation.
         
         Parameters
         ----------
@@ -1180,13 +1562,27 @@ class electrical_signal():
         :obj:`np.ndarray`
             The angular frequency array for signals simulation.
         """
-        w = gv.w
+        w = fftfreq(self.T.shape[0], gv.dt)*2*pi
         if shift:
-            return fftshift(w)
+            return fftshift(w, axes=-1)
         return w
     
     def f(self, shift: bool=False):
+        """Return frequency (Hz) for spectrum representation.
+        
+        Parameters
+        ----------
+        shift : :obj:`bool`, optional
+            If True, apply fftshift().
+        
+        Returns
+        -------
+        :obj:`np.ndarray`
+
+            The frequency array for signals simulation.
+        """
         return self.w(shift)/(2*pi)
+
 
     def abs(self, of: Literal['signal','noise','all']='all'):
         """Get absolute value of ``signal``, ``noise`` or ``signal+noise``.
@@ -1201,18 +1597,20 @@ class electrical_signal():
         out : :obj:`np.ndarray`, (1D or 2D, float)
             The absolute value of the object.
         """
-        self_,_ = self._parse(self)
+        logger.debug("abs(of='%s')", of)
 
         if not isinstance(of, str):
             raise TypeError('`of` must be a string.')
         of = of.lower()
         
         if of == 'signal':
-            return self.__class__(np.abs(self_.signal))
+            return self.__class__(np.abs(self.signal))
         elif of == 'noise':
-            return self.__class__(np.abs(self_.noise))
+            if self.noise is NULL:
+                return self.__class__(np.zeros_like(self.signal.real))
+            return self.__class__(np.abs(self.noise))
         elif of == 'all':
-            return np.abs(self_)
+            return np.abs(self)
         else:
             raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
     
@@ -1221,14 +1619,18 @@ class electrical_signal():
         
         Parameters
         ----------
+        unit : :obj:`str`, optional
+            Defines the unit of power. 'W' for Watts, 'dBm' for decibels-milliwatts.
         of : :obj:`str`, optional
-            Defines from which attribute to obtain the power. If 'all', power of signal+noise is determined.
+            Defines from which attribute to obtain the power. If 'all', power of ``signal+noise`` is determined.
         
         Returns
         -------
         :obj:`float`
             The power of the electrical signal.
         """
+        logger.debug("power(unit='%s', of='%s')", unit, of)
+
         if of.lower() not in ['signal', 'noise', 'all']:
             raise ValueError('`of` must be one of the following values ("signal", "noise", "all")')
         p = np.mean(self.abs(of)**2, axis=-1)
@@ -1243,7 +1645,19 @@ class electrical_signal():
     
     def normalize(self, by: Literal['power', 'amplitude']='power'):
         """Return the power-normalized signal
+
+        Parameters
+        ----------
+        by : :obj:`str`, optional
+            Defines the normalization method. ``'power'`` for power normalization, ``'amplitude'`` for amplitude normalization.
+        
+        Returns
+        -------
+        :obj:`electrical_signal`
+            The normalized electrical signal.
         """
+        logger.debug("normalize(by='%s')", by)
+
         x = self[:]
         if by == 'power':
             pw = x.power('W', 'signal')
@@ -1255,36 +1669,35 @@ class electrical_signal():
             raise ValueError('`by` must be one of the following values ("power", "amplitude")')
     
     def phase(self):
-        """Get phase of the ``signal`` + `noise`.
+        """Get phase of the electrical signal: ``unwrap(angle(signal+noise))``.
         
         Returns
         -------
         :obj:`np.ndarray`
-            The phase of the electrical signal.
+            the unwrapped phase of the electrical signal.
         """
-        self_, _ = self._parse(self)
-        return np.unwrap(np.angle(self_))
+        logger.debug("phase()")
+        return np.unwrap(np.angle(self))
 
-    
     def filter(self, h: np.ndarray):
-        """Apply FIR filter to the electrical signal.
+        """Apply FIR filter of impulse response **h** to the electrical signal: ``np.convolve(signal + noise, h, mode='same')``.
 
         Parameters
         ----------
         h : :obj:`np.ndarray`
-            The FIR filter coefficients used for filtering the signal.
+            The FIR filter impulse response.
 
         Returns
         -------
-        self : :obj:`electrical_signal`
-            The same object with the filtered signal and noise.
+        :obj:`electrical_signal`
+            An electrical signal object with the result of the filtering.
         """
-        self_, _ = self._parse(self)
-        
-        sig = np.convolve(self_.signal, h, mode='same')
-        noi = np.convolve(self_.noise, h, mode='same')
+        logger.debug("filter()")
 
-        return self.__class__(sig, noi if noi.any() !=0 else None) 
+        sig = np.convolve(self.signal, h, mode='same')
+        noi = np.convolve(self.noise, h, mode='same')
+
+        return self.__class__(sig, noi) 
 
     def plot(self, 
              fmt: str | list='-', 
@@ -1303,27 +1716,29 @@ class electrical_signal():
         Parameters
         ----------
         fmt : :obj:`str` or :obj:`list`, optional
-            Format style of line. Example 'b-.', Defaults to '-'.
+            Format style of line. Example ``'b-.'``, Defaults to ``'-'``.
         n : :obj:`int`, optional
             Number of samples to plot. Defaults to the length of the signal.
         xlabel : :obj:`str`, optional
-            X-axis label. Defaults to 'Time [ns]'.
+            X-axis label. Defaults to ``'Time [ns]'``.
         ylabel : :obj:`str`, optional
-            Y-axis label. Defaults to 'Amplitude [V]' for electrical, 'Power [mW]' for optical.
+            Y-axis label. Defaults to ``'Amplitude [V]'``
         grid : :obj:`bool`, optional
-            If show grid. Defaults to False.
+            If show grid. Defaults to ``False``.
         hold : :obj:`bool`, optional
-            If hold the current plot. Defaults to True.
+            If hold the current plot. Defaults to ``True``.
         **kwargs : :obj:`dict`
-            Additional keyword arguments compatible with matplotlib.pyplot.plot().
+            Additional keyword arguments compatible with ``matplotlib.pyplot.plot()``.
 
         Returns
         -------
-        self : electrical_signal or optical_signal
+        :obj:`electrical_signal`
             The same object.
         """
-        n = self.size if not n else n
-        t = self.t()[:n]*1e9
+        logger.debug("plot()")
+
+        n = self.size if n is None else n
+        t = self.t[:n]*1e9
         y = self[:n]
         
         args = (t, y, fmt)
@@ -1370,32 +1785,36 @@ class electrical_signal():
         Parameters
         ----------
         fmt : :obj:`str` or :obj:`list`
-            Format style of line. Example 'b-.'. Defaults to '-'.
+            Format style of line. Example ``'b-.'``. Defaults to ``'-'``.
         mode : :obj:`str`, optional
-            Polarization mode to show (for optical signals). Defaults to 'x'.
-            - 'x' plot polarization x.
-            - 'y' plot polarization y.
-            - 'both' plot both polarizations x and y in the same figure.
+            Polarization mode to show (for optical signals). Defaults to ``'x'``.
+            
+            - ``'x'`` plot polarization x.
+            - ``'y'`` plot polarization y.
+            - ``'both'`` plot both polarizations x and y in the same figure.
+
         n : :obj:`int`, optional
             Number of samples to plot. Defaults to the length of the signal.
         xlabel : :obj:`str`, optional
-            X-axis label. Defaults to 'Frequency [GHz]'.
+            X-axis label. Defaults to ``'Frequency [GHz]'``.
         ylabel : :obj:`str`, optional
-            Y-axis label. Defaults to 'Power [dBm]' if ``yscale='dbm'`` or 'Power [mW]' if ``yscale='linear'``.
+            Y-axis label. Defaults to ``'Power [dBm]'`` if ``yscale='dbm'`` or ``'Power [mW]'`` if ``yscale='linear'``.
         yscale : :obj:`str`, {'linear', 'dbm'}, optional
-            Kind of Y-axis plot. Defaults to 'dbm'.
+            Kind of Y-axis plot. Defaults to ``'dbm'``.
         grid : :obj:`bool`, optional
-            If show grid. Defaults to True.
+            If show grid. Defaults to ``True``.
         hold : :obj:`bool`, optional
-            If hold the current plot. Defaults to True.
+            If hold the current plot. Defaults to ``True``.
         **kwargs : :obj:`dict`
             Additional matplotlib arguments.
 
         Returns
         -------
-        self : electrical_signal or optical_signal
+        obj:`electrical_signal`
             The same object.
         """
+        logger.debug("psd()")
+
         n = self.size if not n else n
         
         f, psd = sg.welch(self[:n].signal, fs=gv.fs*1e-9, nperseg=2048, scaling='spectrum', return_onesided=False, detrend=False)
@@ -1451,7 +1870,8 @@ class electrical_signal():
         plt.xlabel(xlabel if xlabel else 'Frequency [GHz]')
         plt.xlim( -3.5*gv.R*1e-9, 3.5*gv.R*1e-9 )
         plt.ylim( *ylim )
-        if grid: plt.grid(alpha=0.3)
+        if grid:
+            plt.grid(alpha=0.3)
         
         if label is not None:
             if isinstance(label, str):
@@ -1476,54 +1896,57 @@ class electrical_signal():
 
         Parameters
         ----------
-        n_traces : int, optional
-            Maximum number of traces to plot. If None, all available traces
-            will be plotted. Defaults to None.
-        cmap : str, optional
-            Name of the matplotlib colormap. Defaults to 'viridis'.
-        N_grid_bins : int, optional
-            Number of bins for the density histogram. Defaults to 350.
-        grid_sigma : float, optional
-            Sigma for the Gaussian filter applied to the density. Defaults to 3.
-        ax : matplotlib.axes.Axes, optional
-            Axes object to plot on. If None, creates new figure and axes.
-            Defaults to None.
-        \*\*plot_kw : dict, optional
+        n_traces : :obj:`int`, optional
+            Maximum number of traces to plot. If ``None``, all available traces
+            will be plotted. Defaults to ``None``.
+        cmap : :obj:`str`, optional
+            Name of the matplotlib colormap. Defaults to ``'viridis'``.
+        N_grid_bins : :obj:`int`, optional
+            Number of bins for the density histogram. Defaults to ``350``.
+        grid_sigma : :obj:`float`, optional
+            Sigma for the Gaussian filter applied to the density. Defaults to ``3``.
+        ax : :obj:`matplotlib.axes.Axes`, optional
+            Axes object to plot on. If ``None``, creates new figure and axes.
+            Defaults to ``None``.
+        \*\*plot_kw : :obj:`dict`, optional
             Additional plotting parameters:
             
-            Figure parameters (used only if ax is None):
-            - figsize : tuple, default (10, 6)
-            - dpi : int, default 100
+            *Figure parameters (used only if ax is ``None``):*
             
-            Line collection parameters:
-            - linewidth : float, default 0.75
-            - alpha : float, default 0.25
-            - capstyle : str, default 'round'
-            - joinstyle : str, default 'round'
+            - **figsize** : :obj:`tuple`, default ``(10, 6)``
+            - **dpi** : :obj:`int`, default ``100``
             
-            Axes formatting parameters:
-            - xlabel : str, default "Time (2-symbol segment)"
-            - ylabel : str, default "Amplitude"
-            - title : str, default "Eye Diagram ({num_traces} traces)"
-            - grid : bool, default True
-            - grid_alpha : float, default 0.3
-            - xlim : tuple, optional (xmin, xmax)
-            - ylim : tuple, optional (ymin, ymax)
-            - tight_layout : bool, default True
+            *Line collection parameters:*
             
-            Display parameters:
-            - show : bool, default True (whether to call plt.show())
+            - **linewidth** : :obj:`float`, default ``0.75``
+            - **alpha** : :obj:`float`, default ``0.25``
+            - **capstyle** : :obj:`str`, default ``'round'``
+            - **joinstyle** : :obj:`str`, default ``'round'``
+            
+            *Axes formatting parameters:*
+            
+            - **xlabel** : :obj:`str`, default ``"Time (2-symbol segment)"``
+            - **ylabel** : :obj:`str`, default ``"Amplitude"``
+            - **title** : :obj:`str`, default ``"Eye Diagram ({num_traces} traces)"``
+            - **grid** : bool, default ``True``
+            - **grid_alpha** : :obj:`float`, default ``0.3``
+            - **xlim** : :obj:`tuple`, optional (xmin, xmax)
+            - **ylim** : :obj:`tuple`, optional (ymin, ymax)
+            - **tight_layout** : :obj:`bool`, default ``True``
+            
+            *Display parameters:*
+
+            - **show** : :obj:`bool`, default ``True`` (whether to call ``plt.show()``)
         
         Returns
         -------
-        self
+        :obj:`electrical_signal`
             The same object with the plotted eye diagram.
         """
-
+        logger.debug("plot_eye()")
         eyediagram(self, gv.sps, n_traces, cmap, N_grid_bins, grid_sigma, ax, **plot_kw)
         return self
 
-    
     def grid(self, **kwargs):
         r"""Add grid to the plot.
 
@@ -1537,6 +1960,7 @@ class electrical_signal():
         self : :obj:`electrical_signal`
             The same object.
         """
+        logger.debug("grid()")
         kwargs['alpha'] = kwargs.get('alpha', 0.3)
         plt.grid(**kwargs)
         return self
@@ -1556,6 +1980,7 @@ class electrical_signal():
         self : :obj:`electrical_signal`
             The same object.
         """
+        logger.debug("legend()")
         plt.legend(*args, **kwargs)
         return self
     
@@ -1567,16 +1992,27 @@ class electrical_signal():
         self : :obj:`electrical_signal`
             The same object.
         """
+        logger.debug("show()")
         plt.show()
         return self
 
 
+
+
+
+
+
+
+
+
+
+@logger.auto_indent_methods
 class optical_signal(electrical_signal):
     """**Optical Signal**
     
     Bases: :obj:`electrical_signal`
 
-    This class provides methods and attributes to work with optical signals.
+    This class provides methods and attributes to work with optical signals. Attributes and some methods are inherited from the :obj:`electrical_signal` class.
 
     .. rubric:: Attributes
     .. autosummary::
@@ -1589,34 +2025,12 @@ class optical_signal(electrical_signal):
     .. autosummary::
 
         __init__
-        __call__
-        print
-        size
-        shape
-        type
-        fs
-        sps
-        dt
-        t
-        w
-        f
-        abs
-        power
-        phase
-        normalize
-        apply
-        filter
         plot
-        psd
-        plot_eye
-        grid
-        legend
-        show
     """
 
     def __init__(self, 
                  signal: str | Iterable, 
-                 noise: str | Iterable = None, 
+                 noise: str | Iterable = NULL, 
                  n_pol: Literal[1, 2] = None,
                  dtype: np.dtype=None):
         """ Initialize the optical signal object.
@@ -1626,13 +2040,19 @@ class optical_signal(electrical_signal):
         signal : :obj:`str` or array_like (1D, 2D) or scalar
             The signal values.
         noise : :obj:`str` or array_like (1D, 2D) or scalar, optional
-            The noise values, default is `None`.
+            The noise values, default is ``NULL``.
         n_pol : :obj:`int`, optional
-            Number of polarizations. Defaults to 1.
+            Number of polarizations. Defaults to ``1``.
         """
-        signal, noise = self._prepare_arrays(signal, noise, dtype)
 
         if self.__class__ == optical_signal:
+            logger.debug("%s.__init__(n_pol=%s, dtype=%s)", self.__class__.__name__, n_pol, dtype)
+
+            if isinstance(signal, (electrical_signal, optical_signal)):
+                signal, noise = signal.signal, signal.noise
+            else:
+                signal, noise = self._prepare_arrays(signal, noise, dtype)
+            
             if signal.ndim>2 or (signal.ndim>1 and signal.shape[0]>2) or signal.size<1:
                 raise ValueError(f"Signal must be a scalar, 1D or 2D array for optical_signal, invalid shape {signal.shape}")
             if n_pol is not None and n_pol not in [1, 2]:
@@ -1641,12 +2061,12 @@ class optical_signal(electrical_signal):
             if signal.ndim == 0:
                 if n_pol is None or n_pol == 1: 
                     signal = signal[np.newaxis]
-                    if noise is not None:
+                    if noise is not NULL:
                         noise = noise[np.newaxis]
                     n_pol=1
                 else:
                     signal = np.array([[signal], [signal]])
-                    if noise is not None:
+                    if noise is not NULL:
                         noise = np.array([[noise], [noise]])
             
             elif signal.ndim == 1:
@@ -1654,18 +2074,18 @@ class optical_signal(electrical_signal):
                     n_pol = 1
                 else:
                     signal = np.array([signal, signal])
-                    if noise is not None:
+                    if noise is not NULL:
                         noise = np.array([noise, noise])
             
             elif signal.ndim == 2 and signal.shape[0] == 1:
                 if n_pol is None or n_pol == 2:
                     signal = np.tile(signal, (2, 1))
-                    if noise is not None:
+                    if noise is not NULL:
                         noise = np.tile(noise, (2, 1))
                     n_pol = 2
                 else:
                     signal = signal[0]
-                    if noise is not None:
+                    if noise is not NULL:
                         noise = noise[0]
                     
             elif signal.ndim == 2 and signal.shape[0] == 2:
@@ -1673,16 +2093,18 @@ class optical_signal(electrical_signal):
                     n_pol = 2
                 else:
                     signal = signal[0]
-                    if noise is not None:
+                    if noise is not NULL:
                         noise = noise[0]
         
         self.n_pol = n_pol
         super().__init__( signal, noise, dtype=dtype)  
     
     def __repr__(self):
+        logger.debug("__repr__()")
+
         np.set_printoptions(precision=1, threshold=20)
 
-        if self.noise is not None:
+        if self.noise is not NULL:
             signal = str(self.signal).replace('\n', '\n' + 15*' ')
             return f'optical_signal({signal})'
         
@@ -1691,7 +2113,8 @@ class optical_signal(electrical_signal):
         return f'optical_signal(signal={signal}\n' + 16*' '+ f'noise={noise})'
 
     def __str__(self, title: str=None): 
-        """Return a formatted string with the optical_signal data, length, size in bytes and time if available."""
+        logger.debug("__str__()")
+        
         if title is None:
             title = self.__class__.__name__
         
@@ -1729,30 +2152,19 @@ class optical_signal(electrical_signal):
 
         msg = f'\n{sub}\n{title}\n{sub}\n'+ tab + \
             f'signal:     {signal} (shape: {self.shape})\n'+ tab + \
-            f'noise:      {noise} (shape: {self.shape if self.noise is not None else None})\n'+ tab + \
+            f'noise:      {noise} (shape: {self.shape if self.noise is not NULL else None})\n'+ tab + \
             f'pow_signal: {pow_sig_str}\n'+ tab + \
             f'pow_noise:  {pow_noise_str}\n'+ tab + \
             f'pow_total:  {pow_all_str}\n'+ tab + \
-            f'len:        {self.size}\n' + tab + \
             f'elem_type:  {self.dtype}\n' + tab + \
-            f'mem_size:   {self.sizeof()} bytes\n' + tab + \
+            f'mem_size:   {self.sizeof} bytes\n' + tab + \
             f'time:       {si(self.execution_time, "s", 2)}\n'
         return msg
 
     
     def __getitem__(self, key): 
-        """Slice the optical signal.
+        logger.debug("__getitem__(%s)", key)
 
-        Parameters
-        ----------
-        key : :obj:`int`, :obj:`slice`, or :obj:`tuple`
-            Index, slice, or advanced index to get the new optical signal.
-
-        Returns
-        -------
-        out : :obj:`optical_signal`
-            A new optical signal object with the result of the indexing.
-        """
         if isinstance(key, tuple):
             if len(key) != 2:
                 raise IndexError('Too many indices for optical_signal object.')
@@ -1760,40 +2172,40 @@ class optical_signal(electrical_signal):
             if self.n_pol == 1 and pol_idx not in [0, -1, slice(None)]:
                 raise IndexError('Optical signal has only one polarization (index 0).')
             sig = self.signal[pol_idx, time_idx] if self.n_pol == 2 else self.signal[time_idx]
-            if self.noise is not None:
+            if self.noise is not NULL:
                 noi = self.noise[pol_idx, time_idx] if self.n_pol == 2 else self.noise[time_idx]
             elif isinstance(time_idx, int):
-                return sig
+                return sig[time_idx]
             else:
-                noi = None
+                noi = NULL
             return self.__class__(sig, noi, n_pol=1 if sig.ndim!=2 else self.n_pol)
         elif isinstance(key, slice):
             if self.n_pol == 1:
                 sig = self.signal[key]
-                if self.noise is not None:
+                if self.noise is not NULL:
                     noi = self.noise[key]
                 else:
-                    noi = None
+                    noi = NULL
             else:
                 sig = self.signal[:, key]
-                if self.noise is not None:
+                if self.noise is not NULL:
                     noi = self.noise[:, key]
                 else:
-                    noi = None
+                    noi = NULL
             return self.__class__(sig, noi, n_pol=self.n_pol)
         else:
             if self.n_pol == 1:
                 sig = self.signal[key]
-                if self.noise is not None:
+                if self.noise is not NULL:
                     noi = self.noise[key]
                 else:
                     return sig
             else:
                 sig = self.signal[key, :]
-                if self.noise is not None:
+                if self.noise is not NULL:
                     noi = self.noise[key, :]
                 else:   
-                    noi = None
+                    noi = NULL
             return self.__class__(sig, noi, n_pol=1 if sig.ndim!=2 else self.n_pol)            
             
     def __gt__(self, other): 
@@ -1820,32 +2232,35 @@ class optical_signal(electrical_signal):
         Parameters
         ----------
         fmt : :obj:`str` or :obj:`list`, optional
-            Format style of line. Example 'b-.', Defaults to '-'.
+            Format style of line. Example ``'b-.'``, Defaults to ``'-'``.
         mode : :obj:`str`, optional
-            Plot mode. 'field', 'power' (default).
-            - 'field' plot real and imaginary parts of the field.
-            - 'power' plot power/intensity.
+            Plot mode. ``'field'``, ``'power'`` (default).
+
+            - ``'field'`` plot real and imaginary parts of the field one-polarization.
+            - ``'power'`` plot power/intensity (one or two polarizations).
+
         n : :obj:`int`, optional
             Number of samples to plot. Defaults to the length of the signal.
         xlabel : :obj:`str`, optional
-            X-axis label. Defaults to 'Time [ns]'.
+            X-axis label. Defaults to ``'Time [ns]'``.
         ylabel : :obj:`str`, optional
-            Y-axis label. Defaults to 'Power [mW]' for power, 'Field [V]' for field.
+            Y-axis label. Defaults to ``'Power [mW]'`` for power, ``'Field [W**0.5]'`` for field.
         grid : :obj:`bool`, optional
-            If show grid. Defaults to False.
+            If show grid. Defaults to ``False``.
         hold : :obj:`bool`, optional
-            If hold the current plot. Defaults to True.
+            If hold the current plot. Defaults to ``True``.
         **kwargs : :obj:`dict`
-            Additional keyword arguments compatible with matplotlib.pyplot.plot().
+            Additional keyword arguments compatible with ``matplotlib.pyplot.plot()``.
 
         Returns
         -------
         self : optical_signal
             The same object.
         """
+        logger.debug("plot()")
         n = self.shape[0] if not n and self.n_pol==1 else self.shape[1] if not n and self.n_pol==2 else n
 
-        t = self.t()[:n]*1e9
+        t = self.t[:n]*1e9
         y = self[:n]
 
         if not hold:
@@ -1854,7 +2269,7 @@ class optical_signal(electrical_signal):
         
         # Optical signal: plot intensity or field
         if mode == 'power':
-            I = np.array(y.abs('all')**2 * 1e3)  # mW
+            I = y.abs('all')**2 * 1e3  # mW
             if y.n_pol == 1:
                 if not isinstance(fmt, str):
                     warnings.warn('`fmt` must be a string for single polarization signals, using default value.')
@@ -1907,7 +2322,17 @@ class optical_signal(electrical_signal):
             plt.show()
         return self
 
-    
+
+
+
+
+
+
+
+
+
+
+
 class EyeShowOptions():
     def __init__(self, 
             averages : bool = None, 
@@ -1926,6 +2351,17 @@ class EyeShowOptions():
         self.t_opt = t_opt if t_opt is not None else all_none
         self.histogram = histogram if histogram is not None else all_none
 
+
+
+
+
+
+
+
+
+
+
+@logger.auto_indent_methods
 class eye():
     """**Eye Diagram Parameters**.
 
@@ -1988,6 +2424,7 @@ class eye():
         \*\*kwargs : :obj:`dict`, optional
             Dictionary with the eye diagram parameters.
         """
+        logger.debug("%s.__init__()", self.__class__.__name__)
 
         if kwargs:
             for key, value in kwargs.items():
@@ -1998,6 +2435,8 @@ class eye():
         
     def __str__(self, title: str=None): 
         """Return a formatted string with the eye diagram data."""
+        logger.debug("__str__()")
+
         if self.empty:
             raise ValueError('Empty eye diagram object.')
 
@@ -2011,8 +2450,7 @@ class eye():
 
         msg = f'\n{sub}\n{title}\n{sub}\n ' + '\n '.join([f'{key} : {value}' for key, value in self.__dict__.items() if key != 'execution_time'])
         
-        if self.execution_time is not None:
-            msg += f'\n time  :  {si(self.execution_time, "s", 1)}\n'
+        msg += f'\n time  :  {si(self.execution_time, "s", 1)}\n'
         return msg
     
     def print(self, msg: str=None): 
@@ -2028,6 +2466,7 @@ class eye():
         self: :obj:`eye`
             Same object
         """
+        logger.debug("print()")
         print(self.__str__(msg))
         return self
     
@@ -2067,6 +2506,8 @@ class eye():
         self: :obj:`eye`
             Same object
         """
+        logger.debug("plot()")
+
         if self.empty:
             raise ValueError('Empty eye diagram object.')
 
@@ -2259,6 +2700,7 @@ class eye():
         self : :obj:`eye`
             The same object.
         """
+        logger.debug("show()")
         plt.show()
         return self
 
