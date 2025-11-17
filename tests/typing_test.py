@@ -677,7 +677,8 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_equal(x.noise, -np.tile(np.arange(6),(2,1)))
                 assert_equal(x.n_pol, 2)
                 assert_equal(x.execution_time, 0)
-                assert_equal(x.size, 12)
+                assert_equal(x.size, 6)
+                assert_equal(len(x), 6)
 
                 x = optical_signal(sig) # No noise
 
@@ -685,7 +686,8 @@ class TestOpticalSignal(unittest.TestCase):
                 assert_(x.noise is NULL)
                 assert_equal(x.n_pol, 2)
                 assert_(x.execution_time == 0)
-                assert_(x.size == 12)
+                assert_(x.size == 6)
+                assert_(len(x) == 6)
 
     def test_print(self):
         # with noise
