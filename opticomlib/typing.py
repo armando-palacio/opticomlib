@@ -81,6 +81,14 @@ class NULLType:
                 lhs, _ = inputs
                 return lhs
         return self
+    def __getattr__(self, name):
+        # Return self so that any attribute access returns NULL
+        # This also allows chaining: NULL.real.imag -> NULL
+        return self
+    def __call__(self, *args, **kwargs):
+        # Return self so that any method call returns NULL
+        # This handles cases like NULL.conj() -> NULL
+        return self
 NULL = NULLType()
 
 
@@ -288,11 +296,11 @@ class global_variables():
         -----
         In the absence of parameters, default values are used. Missing parameters are calculated from the provided ones, prioritizing the default value of **gv.R** when more than one of **sps**, **fs**, and **R** is not provided.
         """
+        logger.debug('setting gv()')
+
         if verbose is not None :
             self.verbose = verbose
             logger.logger.setLevel(self.verbose)
-
-        logger.debug('setting gv()')
 
         if sps:
             self.sps = int(np.round(sps))
@@ -331,8 +339,10 @@ class global_variables():
         self.wavelength = wavelength
         self.f0 = c/wavelength
 
-        self.plt_style = plt_style
-        plt.style.use(self.plt_style)
+        if plt_style != self.plt_style:
+            self.plt_style = plt_style
+            plt.rcdefaults()
+            plt.style.use(self.plt_style)
 
         logger.info('Global variables set to, sps: %d, R: %.2e, fs: %.2e, N: %d, wavelength: %.2e', self.sps, self.R, self.fs, self.N, self.wavelength)
 
@@ -349,6 +359,8 @@ class global_variables():
 
     def default(self):
         """ Return all parameters to default values."""
+        logger.debug('resetting gv to default()')
+
         self.sps = 16
         self.R = 1e9
         self.fs = self.R*self.sps
@@ -358,12 +370,15 @@ class global_variables():
         self.N = 128
         self._set_t_dw_w()
         self.plt_style = 'fast'
+        plt.rcdefaults()
         plt.style.use(self.plt_style)
         self.verbose = None
         # Reset logger level to default (NOTSET allows propagation to parent)
         logger.logger.setLevel(logging.NOTSET)
 
         attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw', 'plt_style'])]
+
+        logger.info('Global variables set to default, sps: %d, R: %.2e, fs: %.2e, N: %d, wavelength: %.2e', self.sps, self.R, self.fs, self.N, self.wavelength)
         
         for attr in attrs:
             delattr(self, attr)
@@ -1011,6 +1026,8 @@ class electrical_signal():
         ~electrical_signal.noise
         ~electrical_signal.execution_time
         ~electrical_signal.size
+        ~electrical_signal.real
+        ~electrical_signal.imag
         ~electrical_signal.type
         ~electrical_signal.fs
         ~electrical_signal.sps
@@ -1025,6 +1042,8 @@ class electrical_signal():
         __call__
         print
         to_numpy
+        conj
+        sum
         w
         f
         abs
@@ -1442,6 +1461,19 @@ class electrical_signal():
         return self.signal.size
     
     @property
+    def real(self) -> np.ndarray:
+        """Real part of the electrical signal (signal + noise)."""
+        logger.debug("real")
+        print(self.noise.real)
+        return self.__class__(self.signal.real, self.noise.real)
+    
+    @property
+    def imag(self) -> np.ndarray:
+        """Imaginary part of the electrical signal (signal + noise)."""
+        logger.debug("imag")
+        return self.__class__(self.signal.imag, self.noise.imag)
+    
+    @property
     def type(self): 
         """Object type."""
         logger.debug("type")
@@ -1523,7 +1555,7 @@ class electrical_signal():
             l_max = max(self.size, other.size)
             
             if l_min != 1 and l_min != l_max:
-                raise ValueError(f"Can't add {self.__class__.__name__}'s with shapes {self.signal.shape} and {other.signal.shape}")
+                raise ValueError(f"Can't operate '{self.__class__.__name__}'s with shapes {self.shape} and {other.shape}")
         
         dtype = np.result_type(self.signal, other.signal)
         return other, dtype
@@ -1551,6 +1583,35 @@ class electrical_signal():
         logger.debug("to_numpy(dtype=%s, copy=%s)", dtype, copy)
         data = self.signal + self.noise
         return np.array(data, dtype=dtype, copy=copy)
+    
+    def conj(self):
+        """Return the complex conjugate of the electrical signal.
+
+        Returns
+        -------
+        :obj:`electrical_signal`
+            The complex conjugate of the electrical signal.
+        """
+        logger.debug("conj()")
+        return self.__class__(self.signal.conj(), self.noise.conj())
+
+    def sum(self, axis: int=None):
+        """Return the sum of the elements over a given axis.
+
+        Parameters
+        ----------
+        axis : :obj:`int`, optional
+            Axis along which the sum is computed. By default, the sum is computed over the entire array.
+
+        Returns
+        -------
+        :obj:`electrical_signal`
+            New object with signal and noise summed over the specified axis.
+        """
+        logger.debug("sum(axis=%s)", axis)
+        sig = self.signal.sum(axis=axis)
+        noi = self.noise.sum(axis=axis) if self.noise is not NULL else NULL
+        return self.__class__(sig, noi)
     
     def w(self, shift: bool=False): 
         """Return angular frequency (rad/s) for spectrum representation.
@@ -1740,8 +1801,8 @@ class electrical_signal():
         """
         logger.debug("plot()")
 
-        n = self.size if n is None else n
-        t = self.t[:n]*1e9
+        n = min(self.size, gv.t.size) if n is None else n
+        t = gv.t[:n]*1e9
         y = self[:n]
         
         args = (t, y, fmt)
@@ -2217,7 +2278,15 @@ class optical_signal(electrical_signal):
     def __lt__(self, other):
         raise NotImplementedError('The < operator is not implemented for optical_signal objects.')
 
-    
+    @property
+    def size(self) -> np.ndarray:
+        """Number of samples of one polarization of the optical signal."""
+        logger.debug("size")
+        if self.n_pol == 1:
+            return self.signal.size
+        else:
+            return self.signal[0].size
+
     def plot(self, 
              fmt: str | list='-', 
              mode: Literal['field', 'power'] = 'power', 
@@ -2261,9 +2330,9 @@ class optical_signal(electrical_signal):
             The same object.
         """
         logger.debug("plot()")
-        n = self.shape[0] if not n and self.n_pol==1 else self.shape[1] if not n and self.n_pol==2 else n
 
-        t = self.t[:n]*1e9
+        n = min(self.size, gv.t.size) if n is None else n
+        t = gv.t[:n]*1e9
         y = self[:n]
 
         if not hold:
