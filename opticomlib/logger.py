@@ -4,7 +4,7 @@ import threading
 
 
 logging.getLogger("matplotlib").setLevel(logging.ERROR)
-logging.basicConfig(format="%(asctime)s -- %(levelname)7s -- %(message)s", datefmt="%M:%S")
+logging.basicConfig(format="%(asctime)s -- %(levelname)7s -- %(message)s", datefmt="%H:%M:%S")
 
 
 class HierLogger:
@@ -14,8 +14,6 @@ class HierLogger:
 
     def __init__(self, name: str = "hier_logger"):
         self._local = threading.local()
-        self._local.indent = 0
-        self._local.suppress = 0
         self.logger = logging.getLogger(name)
 
     # ------------------------------------------------------------------
@@ -99,9 +97,9 @@ class HierLogger:
         ----------
         cls : type | None
             Clase a decorar. Si es ``None`` retorna el decorador.
-        include_private : bool, default False
+        include_private : bool, default True
             Cuando es False, ignora miembros cuyo nombre comienza con ``_``.
-        include_dunder : bool, default False
+        include_dunder : bool, default True
             Cuando es False, ignora métodos ``__dunder__``.
         """
 
@@ -125,8 +123,18 @@ class HierLogger:
                     descriptor = classmethod
                     attr = attr.__func__
                 elif isinstance(attr, property):
-                    descriptor = property
-                    attr = attr.fget
+                    # Extract all property methods
+                    fget, fset, fdel = attr.fget, attr.fset, attr.fdel
+                    
+                    # Wrap each method if it exists
+                    wrapped_fget = self.auto_indent(fget) if fget is not None else None
+                    wrapped_fset = self.auto_indent(fset) if fset is not None else None
+                    wrapped_fdel = self.auto_indent(fdel) if fdel is not None else None
+                    
+                    # Recreate property with wrapped methods and original docstring
+                    wrapped = property(wrapped_fget, wrapped_fset, wrapped_fdel, attr.__doc__)
+                    setattr(target_cls, name, wrapped)
+                    continue
 
                 if callable(attr):
                     wrapped = self.auto_indent(attr)

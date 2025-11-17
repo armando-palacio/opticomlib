@@ -14,9 +14,12 @@ from pympler.asizeof import asizeof as sizeof
 
 import numpy as np
 from scipy.constants import c, pi
+from scipy.ndimage import gaussian_filter
+from scipy.special import expit
 import scipy.signal as sg
 
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 
 from typing import Literal, Any, Iterable
 
@@ -300,7 +303,7 @@ class global_variables():
                 self.fs = fs
                 self.R = fs/self.sps
             else:
-                logger.warning(f"'R' set to default value ({self.R:.2e} bits/s)")
+                logger.warning("'R' set to default value (%.2e bits/s)", self.R)
                 self.fs = self.R*self.sps
 
         elif R: 
@@ -309,16 +312,16 @@ class global_variables():
                 self.fs = fs
                 self.sps = int(np.round(fs/R))
             else:
-                logger.warning(f"'sps' set to default value ({self.sps} S/bit)")
+                logger.warning("'sps' set to default value (%d S/bit)", self.sps)
                 self.fs = R*self.sps
 
         elif fs:
-            logger.warning(f"'R' set to default value ({self.R:.2e} bits/s)")
+            logger.warning("'R' set to default value (%.2e bits/s)", self.R)
             self.fs = fs
             self.sps = int(np.round(fs/self.R))
 
         else:
-            logger.warning(f"'sps', 'R' and 'fs' will be set to default values ({self.sps} S/bit, {self.R:.2e} bits/s, {self.fs:.2e} Hz)")
+            logger.warning("'sps', 'R' and 'fs' will be set to default values (%d S/bit, %.2e bits/s, %.2e Hz)", self.sps, self.R, self.fs)
         
         self.dt = 1/self.fs
 
@@ -357,6 +360,8 @@ class global_variables():
         self.plt_style = 'fast'
         plt.style.use(self.plt_style)
         self.verbose = None
+        # Reset logger level to default (NOTSET allows propagation to parent)
+        logger.logger.setLevel(logging.NOTSET)
 
         attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw', 'plt_style'])]
         
@@ -605,8 +610,8 @@ class binary_sequence():
         try: 
             if isinstance(result, np.ndarray):
                 return binary_sequence(result)
-        except Exception:
-            pass
+        except (ValueError, TypeError) as e:
+            logger.debug('Failed to convert ufunc result to binary_sequence: %s', e)
         return result
     
     def __array_function__(self, func, types, args, kwargs):
@@ -666,8 +671,8 @@ class binary_sequence():
         try:
             if isinstance(result, np.ndarray):
                 return binary_sequence(result)
-        except Exception:
-            pass
+        except (ValueError, TypeError) as e:
+            logger.debug('Failed to convert array_function result to binary_sequence: %s', e)
         return result
 
     def __getitem__(self, slice: int | slice):
@@ -876,8 +881,6 @@ class binary_sequence():
             new = ((lfsr >> tap1) ^ (lfsr >> tap2)) & 1
             lfsr = ((lfsr << 1) | new) & (1 << order) - 1
             index += 1
-            # if lfsr == seed:
-            #     break
 
         output = binary_sequence(prbs)
         output.execution_time = toc()
@@ -2512,16 +2515,15 @@ class eye():
             raise ValueError('Empty eye diagram object.')
 
         ## SETTINGS
-
+        
+        # Determine style context for temporary style changes
         if style == 'dark':
-            if ax is None:
-                plt.style.use('dark_background')
+            style_context = 'dark_background'
             t_opt_color = '#60FF86'
             means_color = 'white'
             bgcolor='black'
         elif style == 'light':
-            if ax is None:
-                plt.style.use('default')
+            style_context = 'default'
             t_opt_color = 'green'#'#229954'
             means_color = '#5A5A5A'
             bgcolor='white'
@@ -2530,166 +2532,166 @@ class eye():
         
         dt = self.dt
 
-        if show_options.histogram:
-            fig, ax = plt.subplots(1,2, gridspec_kw={'width_ratios': [4,1],  
-                                                    'wspace': 0.03},
-                                                    figsize=(8,5))
-        elif ax is None:
-            fig, ax = plt.subplots(1,1)
-            ax = [ax, ax]
-        else:
-            ax = [ax, ax]
-            
-        if title:
-            plt.suptitle(f'Eye diagram {title}')
+        # Use style context manager only when creating new axes to avoid global state pollution
+        # When ax is provided by caller, respect their style settings
+        from contextlib import nullcontext
+        style_mgr = plt.style.context(style_context) if ax is None else nullcontext()
         
-        ax[0].set_xlim(-1-dt,1)
-        ax[0].set_ylim(self.mu0-4*self.s0, self.mu1+4*self.s1)
-        ax[0].set_ylabel(r'Amplitude [V]', fontsize=12)
-        ax[0].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
-        ax[0].set_xticks([-1,-0.5,0,0.5,1])
-        ax[0].set_xlabel(r'Time [$t/T_{slot}$]', fontsize=12)
-        
-        if show_options.t_opt:
-            ax[0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
-            ax[0].axvline(self.t_span0, color = t_opt_color, ls = '-', alpha = 0.4)
-            ax[0].axvline(self.t_span1, color = t_opt_color, ls = '-', alpha = 0.4)
-
-        # crossing points
-        if show_options.cross_points:
-            if self.y_right and self.y_left:
-                ax[0].plot([self.t_left, self.t_right], [self.y_left, self.y_right], 'xr')
-
-        # threshold
-        if show_options.threshold:
-            ax[0].axhline(self.threshold, c='r', ls='--')
-            
+        with style_mgr:
             if show_options.histogram:
-                ax[1].axhline(self.threshold, c='r', ls='--', label='th')
-                if show_options.legends:
-                    ax[1].legend()
-        
-        # horizontal lines
-        for hl in hlines:
-            ax[0].axhline(hl, c='y')
+                fig, ax = plt.subplots(1,2, gridspec_kw={'width_ratios': [4,1],  
+                                                        'wspace': 0.03},
+                                                        figsize=(8,5))
+            elif ax is None:
+                fig, ax = plt.subplots(1,1)
+                ax = [ax, ax]
+            else:
+                ax = [ax, ax]
+                
+            if title:
+                plt.suptitle(f'Eye diagram {title}')
             
-            if show_options.histogram:
-                ax[1].axhline(hl, c='y')
-        
-        # vertical lines
-        for vl in vlines:
-            ax[0].axvline(vl, c='y')
+            ax[0].set_xlim(-1-dt,1)
+            ax[0].set_ylim(self.mu0-4*self.s0, self.mu1+4*self.s1)
+            ax[0].set_ylabel(r'Amplitude [V]', fontsize=12)
+            ax[0].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
+            ax[0].set_xticks([-1,-0.5,0,0.5,1])
+            ax[0].set_xlabel(r'Time [$t/T_{slot}$]', fontsize=12)
             
-            if show_options.histogram:
-                ax[1].axvline (vl, c='y')
-        
-        # legend
-        if show_options.legends: 
-            ax[0].legend([r'$t_{opt}$'], fontsize=12, loc='upper right')
-        
-        # means
-        if show_options.averages:
-            ax[0].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
-            ax[0].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
+            if show_options.t_opt:
+                ax[0].axvline(self.t_opt, color = t_opt_color, ls = '--', alpha = 0.7)
+                ax[0].axvline(self.t_span0, color = t_opt_color, ls = '-', alpha = 0.4)
+                ax[0].axvline(self.t_span1, color = t_opt_color, ls = '-', alpha = 0.4)
+
+            # crossing points
+            if show_options.cross_points:
+                if self.y_right and self.y_left:
+                    ax[0].plot([self.t_left, self.t_right], [self.y_left, self.y_right], 'xr')
+
+            # threshold
+            if show_options.threshold:
+                ax[0].axhline(self.threshold, c='r', ls='--')
+                
+                if show_options.histogram:
+                    ax[1].axhline(self.threshold, c='r', ls='--', label='th')
+                    if show_options.legends:
+                        ax[1].legend()
+            
+            # horizontal lines
+            for hl in hlines:
+                ax[0].axhline(hl, c='y')
+                
+                if show_options.histogram:
+                    ax[1].axhline(hl, c='y')
+            
+            # vertical lines
+            for vl in vlines:
+                ax[0].axvline(vl, c='y')
+                
+                if show_options.histogram:
+                    ax[1].axvline (vl, c='y')
+            
+            # legend
+            if show_options.legends: 
+                ax[0].legend([r'$t_{opt}$'], fontsize=12, loc='upper right')
+            
+            # means
+            if show_options.averages:
+                ax[0].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7)
+                ax[0].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7)
+
+                if show_options.histogram:
+                    ax[1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7, label=r'$\mu_1$')
+                    ax[1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7, label=r'$\mu_0$')
+                    if show_options.legends:
+                        ax[1].legend()
 
             if show_options.histogram:
-                ax[1].axhline(self.mu1, color = means_color, ls = ':', alpha = 0.7, label=r'$\mu_1$')
-                ax[1].axhline(self.mu0, color = means_color, ls = '-.', alpha = 0.7, label=r'$\mu_0$')
-                if show_options.legends:
-                    ax[1].legend()
-
-        if show_options.histogram:
-            ax[1].sharey(ax[0])
-            ax[1].tick_params(axis='x', which='both', length=0, labelbottom=False)
-            ax[1].tick_params(axis='y', which='both', length=0, labelleft=False)
-            ax[1].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
+                ax[1].sharey(ax[0])
+                ax[1].tick_params(axis='x', which='both', length=0, labelbottom=False)
+                ax[1].tick_params(axis='y', which='both', length=0, labelleft=False)
+                ax[1].grid(color='grey', ls='--', lw=0.5, alpha=0.5)
 
 
-        ## ADD PLOTS
-        y_ = np.roll(self.y, -self.sps//2)[self.sps//2 : -self.sps//2]  # shift signal to center
-        t_ = self.t[:-self.sps]
+            ## ADD PLOTS
+            y_ = np.roll(self.y, -self.sps//2)[self.sps//2 : -self.sps//2]  # shift signal to center
+            t_ = self.t[:-self.sps]
 
-        from scipy.ndimage import gaussian_filter
-        from scipy.special import expit
-        from matplotlib.collections import LineCollection
+            N = 350  # number of bins
+            heatmap, xedges, yedges = np.histogram2d(t_, y_, bins=N)
+            heatmap_smooth = gaussian_filter(heatmap, sigma=3)
 
-        N = 350  # number of bins
-        heatmap, xedges, yedges = np.histogram2d(t_, y_, bins=N)
-        heatmap_smooth = gaussian_filter(heatmap, sigma=3)
-
-        if smooth:
-            extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
-            vmin, vmax = heatmap.min(), heatmap.max()
-            alpha_values = expit((heatmap_smooth - (vmin + 0.05 * (vmax - vmin))) * 100 / (vmax - vmin)).T*0.8
-
-            img = ax[0].imshow(
-                heatmap_smooth.T, 
-                extent=extent, 
-                origin='lower', 
-                aspect='auto', 
-                alpha=alpha_values,
-                cmap=cmap,
-                interpolation='bicubic',
-                resample=True,
-            )
-            # fig.colorbar(img, ax=ax[0])
-        else:
-            # ax[0].hexbin( # plot eye
-            #     x = t_, 
-            #     y = y_, 
-            #     gridsize=500, 
-            #     bins='log',
-            #     alpha=0.7, 
-            #     cmap=cmap 
-            # )
-            t_norm = (t_ - t_.min()) / (t_.max() - t_.min())
-            y_norm = (y_ - y_.min()) / (y_.max() - y_.min())
-
-            it = np.clip((t_norm * (N - 1)).astype(int), 0, N - 1)
-            iy = np.clip((y_norm * (N - 1)).astype(int), 0, N - 1)
-
-            color_values = heatmap_smooth[it, iy]
-            color_values = (color_values - color_values.min()) / (color_values.max() - color_values.min())
-
-            t = t_[:2*self.sps]
-
-            n_traces = len(y_) // (2*self.sps)
-
-            Y_reshaped = y_[:n_traces * 2*self.sps].reshape(-1, 2*self.sps)
-            color_values_reshaped = color_values[:n_traces * 2*self.sps].reshape(-1, 2*self.sps)
-
-            for c, y in zip(color_values_reshaped, Y_reshaped):
-                points = np.array([t, y]).T.reshape(-1, 1, 2)
-                segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
-                # Asignar color a cada segmento según la grilla
-                colors = getattr(plt.cm, cmap)(c[:-1])
-
-                lc = LineCollection(segments, colors=colors, linewidth=1, alpha=0.05)
-                ax[0].add_collection(lc)
-
-        if show_options.histogram:
             if smooth:
-                ax[1].plot(heatmap_smooth[170:180].sum(axis=0), np.linspace(y_.min(), y_.max(), 350), color=t_opt_color)
-            else:
-                ax[1].hist(  # plot vertical histogram 
-                    y_[(t_>self.t_opt-0.05*self.t_dist) & (t_<self.t_opt+0.05*self.t_dist)], 
-                    bins=200, 
-                    density=True, 
-                    orientation = 'horizontal', 
-                    color = t_opt_color, 
-                    alpha = 0.9,
-                    histtype='step',
-                )
+                extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+                vmin, vmax = heatmap.min(), heatmap.max()
+                alpha_values = expit((heatmap_smooth - (vmin + 0.05 * (vmax - vmin))) * 100 / (vmax - vmin)).T*0.8
 
-        if savefig: 
-            if savefig.endswith('.png'):
-                plt.savefig(savefig, dpi=300)
+                img = ax[0].imshow(
+                    heatmap_smooth.T, 
+                    extent=extent, 
+                    origin='lower', 
+                    aspect='auto', 
+                    alpha=alpha_values,
+                    cmap=cmap,
+                    interpolation='bicubic',
+                    resample=True,
+                )
+                # fig.colorbar(img, ax=ax[0])
             else:
-                plt.savefig(savefig)
+                # ax[0].hexbin( # plot eye
+                #     x = t_, 
+                #     y = y_, 
+                #     gridsize=500, 
+                #     bins='log',
+                #     alpha=0.7, 
+                #     cmap=cmap 
+                # )
+                t_norm = (t_ - t_.min()) / (t_.max() - t_.min())
+                y_norm = (y_ - y_.min()) / (y_.max() - y_.min())
+
+                it = np.clip((t_norm * (N - 1)).astype(int), 0, N - 1)
+                iy = np.clip((y_norm * (N - 1)).astype(int), 0, N - 1)
+
+                color_values = heatmap_smooth[it, iy]
+                color_values = (color_values - color_values.min()) / (color_values.max() - color_values.min())
+
+                t = t_[:2*self.sps]
+
+                n_traces = len(y_) // (2*self.sps)
+
+                Y_reshaped = y_[:n_traces * 2*self.sps].reshape(-1, 2*self.sps)
+                color_values_reshaped = color_values[:n_traces * 2*self.sps].reshape(-1, 2*self.sps)
+
+                for c, y in zip(color_values_reshaped, Y_reshaped):
+                    points = np.array([t, y]).T.reshape(-1, 1, 2)
+                    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+                    # Asignar color a cada segmento según la grilla
+                    colors = getattr(plt.cm, cmap)(c[:-1])
+
+                    lc = LineCollection(segments, colors=colors, linewidth=1, alpha=0.05)
+                    ax[0].add_collection(lc)
+
+            if show_options.histogram:
+                if smooth:
+                    ax[1].plot(heatmap_smooth[170:180].sum(axis=0), np.linspace(y_.min(), y_.max(), 350), color=t_opt_color)
+                else:
+                    ax[1].hist(  # plot vertical histogram 
+                        y_[(t_>self.t_opt-0.05*self.t_dist) & (t_<self.t_opt+0.05*self.t_dist)], 
+                        bins=200, 
+                        density=True, 
+                        orientation = 'horizontal', 
+                        color = t_opt_color, 
+                        alpha = 0.9,
+                        histtype='step',
+                    )
+
+            if savefig: 
+                if savefig.endswith('.png'):
+                    plt.savefig(savefig, dpi=300)
+                else:
+                    plt.savefig(savefig)
         
-        if ax is None:
-            plt.style.use('default')
         return self
 
     def show(self):
