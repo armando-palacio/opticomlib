@@ -17,7 +17,8 @@ from opticomlib import (
     idb,
     idbm,
     dbm,
-    plt
+    plt,
+    RealNumber,
 )
 
 from opticomlib.devices import (
@@ -51,10 +52,10 @@ class TestDevices(unittest.TestCase):
                 prbs = PRBS(order=order, len=20)
                 
                 assert_equal(len(prbs), 20)
-                assert_(prbs.type() == binary_sequence)
+                assert_(prbs.type == binary_sequence)
                 assert_equal(prbs.data, data_out[i])
 
-        assert_equal(PRBS(7, len=2*127), PRBS(7, len=127).data.tolist()*2) # checking lengths longer than 2**order-1
+        assert_equal(PRBS(7, len=2*127), PRBS(7, len=127)*2) # checking lengths longer than 2**order-1
 
 
     def test_DAC(self):
@@ -76,20 +77,20 @@ class TestDevices(unittest.TestCase):
         # test NRZ pulse shape
 
         dac = DAC('010', pulse_shape='nrz', Vout=5, bias=0)
-        assert_equal(dac.type(), electrical_signal)
-        assert_equal(dac.len(), 3*gv.sps)
+        assert_equal(dac.type, electrical_signal)
+        assert_equal(dac.size, 3*gv.sps)
         assert_allclose(dac.signal, np.concatenate((np.zeros(gv.sps), 5*np.ones(gv.sps), np.zeros(gv.sps))))
 
         # test RZ pulse shape
         dac = DAC('010', pulse_shape='rz', Vout=5, bias=1)
-        assert_equal(dac.type(), electrical_signal)
-        assert_equal(dac.len(), 3*gv.sps)
+        assert_equal(dac.type, electrical_signal)
+        assert_equal(dac.size, 3*gv.sps)
         assert_allclose(dac.signal, np.concatenate((np.ones(gv.sps), 6*np.ones(gv.sps//2), np.ones(gv.sps//2), np.ones(gv.sps))))
 
         # test gaussian pulse shape
         dac = DAC('010', pulse_shape='gaussian', Vout=5, bias=1, T=8, m=2)
-        assert_equal(dac.type(), electrical_signal)
-        assert_equal(dac.len(), 3*gv.sps)
+        assert_equal(dac.type, electrical_signal)
+        assert_equal(dac.size, 3*gv.sps)
 
 
     def test_MZM(self):
@@ -111,21 +112,21 @@ class TestDevices(unittest.TestCase):
                 mzm = MZM(op_input, el_input, bias=gv.Vpi/2, Vpi=gv.Vpi, loss_dB=2, ER_dB=30, pol='x', BW=None)
                 
 
-                assert_(mzm.type() == optical_signal)
+                assert_(mzm.type == optical_signal)
                 assert_equal(mzm.n_pol, 1)
-                assert_equal(mzm.len(), op_input.len())
+                assert_equal(mzm.size, op_input.size)
                 assert_allclose(dbm(mzm.abs().min()**2), dbm(op_input.power())-32) # check that min power is Po - ER - Loss
-                if not isinstance(el_input, (int, float)):
+                if not isinstance(el_input, RealNumber):
                     assert_allclose(dbm(mzm.abs().max()**2), dbm(op_input.power())-2) # check that max power is Po - Loss
                 
                 mzm = MZM(op_input, el_input, bias=gv.Vpi/2, Vpi=gv.Vpi, loss_dB=2, ER_dB=30, pol='y', BW=10e9)
                 # when set a BW, the ER of the output signal is degraded. 
 
-                assert_(mzm.type() == optical_signal)
+                assert_(mzm.type == optical_signal)
                 assert_equal(mzm.n_pol, 1)
-                assert_equal(mzm.len(), op_input.len())
+                assert_equal(mzm.size, op_input.size)
                 assert_(dbm(mzm.abs().min()**2) < dbm(op_input.power())-30) # check that min power is under -30 dB
-                if not isinstance(el_input, (int, float)):
+                if not isinstance(el_input, RealNumber):
                     assert_(dbm(mzm.abs().max()**2) > dbm(op_input.power())-3) # check that max power is upper -3 dB
 
 
@@ -135,9 +136,9 @@ class TestDevices(unittest.TestCase):
             with self.subTest(type = type(el_input)):
                 mzm = MZM(op_input, el_input, bias=gv.Vpi/2, Vpi=gv.Vpi, loss_dB=2, ER_dB=30, pol='x', BW=None)
 
-                assert_(mzm.type() == optical_signal)
+                assert_(mzm.type == optical_signal)
                 assert_equal(mzm.n_pol, 2)
-                assert_equal(mzm.len(), op_input.len())
+                assert_equal(mzm.size, op_input.size)
                 
                 assert_allclose(dbm(mzm.abs()[0].min()**2), dbm(op_input.power()[0])-32)
                 if not isinstance(el_input, (int, float)):
@@ -147,9 +148,9 @@ class TestDevices(unittest.TestCase):
 
                 mzm = MZM(op_input, el_input, bias=gv.Vpi/2, Vpi=gv.Vpi, loss_dB=2, ER_dB=30, pol='y', BW=None)
 
-                assert_(mzm.type() == optical_signal)
+                assert_(mzm.type == optical_signal)
                 assert_equal(mzm.n_pol, 2)
-                assert_equal(mzm.len(), op_input.len())
+                assert_equal(mzm.size, op_input.size)
 
                 assert_allclose(dbm(mzm.abs()[1].min()**2), dbm(op_input.power()[1])-32)
                 if not isinstance(el_input, (int, float)):
@@ -168,13 +169,29 @@ class TestDevices(unittest.TestCase):
         assert_raises(TypeError, PD, input, BW=5e9, include_noise=True) # include_noise must be a string
         
         pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='all')
-        assert_(pd.type() == electrical_signal)
-        assert_equal(pd.len(), input.len())
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='ase-only')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='thermal-only')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='shot-only')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='ase-thermal')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='ase-shot')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='thermal-shot')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='none')
+        assert_(pd.type == electrical_signal)
+        assert_equal(pd.size, input.size)
+        assert_allclose(pd.mean(), input.power().sum()*50, rtol=1e-1)
 
-        # pd = PD(op_input, BW=10e9)
-        # assert_(pd.type() == electrical_signal)
-        # assert_equal(pd.len(), op_input.len())
-        # assert_allclose(pd.signal, op_input.power() * 0.5)
+        input = optical_signal(np.ones(100), np.random.normal(0,0.1,100), n_pol=1)
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='all')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='ase-only')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='thermal-only')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='shot-only')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='ase-thermal')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='ase-shot')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='thermal-shot')
+        pd = PD(input, BW=5e9, r=1, T=200, R_load=50, include_noise='none')
+        assert_(pd.type == electrical_signal)
+        assert_equal(pd.size, input.size)
+        assert_allclose(pd.mean(), input.power().sum()*50, rtol=1e-1)
 
 
 if __name__ == '__main__':
