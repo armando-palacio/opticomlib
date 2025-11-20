@@ -1183,9 +1183,9 @@ class electrical_signal():
         msg = f'\n{sub}\n{title}\n{sub}\n'+ tab + \
             f'signal:     {signal} (shape: {self.shape})\n'+ tab + \
             f'noise:      {noise} (shape: {self.shape if self.noise is not NULL else None})\n'+ tab + \
-            f'pow_signal: {si(pw_sig_w, 'W', 1)} ({pw_sig_dbm:.1f} dBm)\n'+ tab + \
-            f'pow_noise:  {si(pw_noi_w, 'W', 1)} ({pw_noi_dbm:.1f} dBm)\n'+ tab + \
-            f'pow_total:  {si(pw_all_w, 'W', 1)} ({pw_all_dbm:.1f} dBm)\n'+ tab + \
+            f"pow_signal: {si(pw_sig_w, 'W', 1)} ({pw_sig_dbm:.1f} dBm)\n"+ tab + \
+            f"pow_noise:  {si(pw_noi_w, 'W', 1)} ({pw_noi_dbm:.1f} dBm)\n"+ tab + \
+            f"pow_total:  {si(pw_all_w, 'W', 1)} ({pw_all_dbm:.1f} dBm)\n"+ tab + \
             f'len:        {self.size}\n' + tab + \
             f'elem_type:  {self.dtype}\n' + tab + \
             f'mem_size:   {self.sizeof} bytes\n' + tab + \
