@@ -33,6 +33,7 @@ from .utils import (
     eyediagram,
     ComplexNumber,
     RealNumber,
+    IntegerNumber,
     tic, toc,
 )
 
