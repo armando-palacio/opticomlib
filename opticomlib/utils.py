@@ -28,8 +28,9 @@
     optimum_threshold
     shortest_int  
     eyediagram
-    rcos
-    gauss
+    rcos_pulse
+    gauss_pulse
+    nrz_pulse
     upfirdn
     phase_estimator      
 """
@@ -49,10 +50,12 @@ from numpy.fft import fft, ifft, fftfreq, fftshift
 
 import warnings
 
-Array_Like = (set, list, tuple, np.ndarray)
+Array_Like = (list, tuple, np.ndarray)
 from numbers import Integral as IntegerNumber
 from numbers import Real as RealNumber # inlude integer numbers
 from numbers import Complex as ComplexNumber # inlcude real numbers, is not exclusive
+from collections.abc import Iterable
+
 
 
 def _is_iterable_and_numpy_compatible(obj):
@@ -82,7 +85,6 @@ def _is_iterable_and_numpy_compatible(obj):
     - It excludes non-numeric elements such as strings and mixed-type collections.
     """
     # Check if the object is iterable
-    from collections.abc import Iterable
     is_iterable = isinstance(obj, Iterable)
     
     if not is_iterable:
@@ -93,9 +95,7 @@ def _is_iterable_and_numpy_compatible(obj):
     except Exception:
         return False
 
-    # Check if all elements are numeric
-    from numbers import Complex
-    result = all(isinstance(x, Complex) for x in array.flatten())
+    result = all(isinstance(x, ComplexNumber) for x in array.flatten())
 
     return result
 
@@ -140,7 +140,7 @@ def dec2bin(num: int, digits: int=8):
         array([0, 1, 0, 1], dtype=uint8)
     """
     if not _is_integer(num):
-        raise ValueError('`num` debe ser un número entero.')
+        raise ValueError('`num` must be an integer number.')
 
     binary = np.zeros(digits, np.uint8)
     if num > 2**digits-1: raise ValueError(f'The number is too large to be represented with {digits} bits.')
@@ -896,7 +896,7 @@ def rcos(x, alpha, T):
         return 1 if first_condition else 0 if third_condition else 0.5*(1+np.cos(pi*T/alpha*(np.abs(x)-(1-alpha)/(2*T))))
     
     if not _is_iterable_and_numpy_compatible(x):
-        raise ValueError('`x` must be a number or an array_like.')
+        raise TypeError('`x` must be a number or an array_like.')
     
     x = np.array(x)
     y = np.zeros_like(x)
@@ -905,7 +905,6 @@ def rcos(x, alpha, T):
     if alpha != 0:
         y[ second_condition ] = 0.5*(1+np.cos(pi*T/alpha*(np.abs(x[second_condition])-(1-alpha)/(2*T))))
     return y
-
 
 def si(x, unit: Literal['m','s']='s', k: int=1):
     r"""
@@ -1028,7 +1027,6 @@ def nearest(x, a):
     
     raise ValueError('`A` must be a number or an array_like')
 
-
 def nearest_index(X, A):
     """
     Find the indices of X for the values of X closest to the values of A.
@@ -1047,13 +1045,13 @@ def nearest_index(X, A):
 
     Raises
     ------
-    ValueError
+    TypeError
         If ``X`` is not an `array_like`.
     """
     if _is_iterable_and_numpy_compatible(X):
         X = np.array(X)
     else:
-        raise ValueError('`X` must be an array_like.')
+        raise TypeError('`X` must be an array_like.')
 
     if _is_iterable_and_numpy_compatible(A):
         return np.argmin(
@@ -1066,9 +1064,8 @@ def nearest_index(X, A):
     if _is_numeric(A):
         return np.argmin(np.abs(X - A))
     
-    raise ValueError('`A` must be a number or an array_like')
-    
-    
+    raise TypeError('`A` must be a number or an array_like')
+
 
 def p_ase(
         amplify=True, 
@@ -1507,6 +1504,15 @@ def shortest_int(x: np.ndarray, percent: float=50) -> tuple[float, float]:
 
     x = np.sort(x.real)
     lag = int(len(x) * percent/100)
+    
+    # Validate that lag is at least 1 to ensure diff_lag can operate correctly
+    if lag < 1:
+        raise ValueError(
+            f"Computed lag ({lag}) must be at least 1. "
+            f"The provided percent ({percent}%) is too small for the length of x ({len(x)}). "
+            f"Choose a larger percent value (at least {100/len(x):.4f}%)."
+        )
+    
     diff = diff_lag(x, lag)
     i = np.where(np.abs(diff - np.min(diff)) < 1e-10)[0]
     if len(i) > 1:
@@ -1625,7 +1631,7 @@ def eyediagram(y, sps, n_traces=None, cmap='viridis',
     start_idx = sps // 2
     end_idx = len(y) - sps // 2
     
-    if start_idx >= end_idx or end_idx <= start_idx:
+    if start_idx >= end_idx:
         raise ValueError(f"Signal too short for truncation. Need at least {sps} samples, got {len(y)}.")
     
     Y_truncated = y[start_idx:end_idx]
@@ -1747,7 +1753,7 @@ def eyediagram(y, sps, n_traces=None, cmap='viridis',
 
 
 
-def rcos(beta, span, sps, shape='sqrt'):
+def rcos_pulse(beta, span, sps, shape='sqrt'):
     """Generate a raised cosine or root raised cosine filter impulse response.
 
     This function replicates the MATLAB `rcosdesign()` function, generating the impulse response
@@ -1786,12 +1792,12 @@ def rcos(beta, span, sps, shape='sqrt'):
     >>> import numpy as np
     >>> h = rcos(0.5, 6, 64, 'sqrt')
     >>> h.shape
-    (49,)
+    (384,)
     """
     if not (0 <= beta <= 1):
-        raise ValueError("beta debe estar en [0, 1]")
+        raise ValueError("beta must be in [0, 1]")
     if shape.lower() not in ('sqrt', 'normal'):
-        raise ValueError("shape debe ser 'sqrt' o 'normal'")
+        raise ValueError("shape must be 'sqrt' or 'normal'")
     
     N = span * sps
     t = np.linspace(-span/2, span/2, N+1)
@@ -1834,13 +1840,9 @@ def rcos(beta, span, sps, shape='sqrt'):
             num = np.sin(np.pi * ti * (1 - beta)) + 4 * beta * ti * np.cos(np.pi * ti * (1 + beta))
             den = np.pi * ti * (1 - (4 * beta * ti)**2)
             p[mask_general] = num / den
-    
-    # Normalización de energía
-    p = p / np.sqrt(np.sum(p**2))
     return p
 
-
-def gauss(span, sps, T=1, m=1):
+def gauss_pulse(span, sps, T=1, m=1, c=0.0):
     """Generate a Gaussian or Super-Gaussian filter.
 
     This function generates the impulse response of a Gaussian filter used in digital
@@ -1856,6 +1858,8 @@ def gauss(span, sps, T=1, m=1):
         Full Width at Half Maximum (FWHM) of the pulse in symbols. Default is 1.
     m : int
         Super-Gaussian order. Default is 1 (standard Gaussian).
+    c : float
+        Chirp parameter. Default is 0.0 (no chirp).
 
     Returns
     -------
@@ -1879,8 +1883,31 @@ def gauss(span, sps, T=1, m=1):
     N = span * sps
     t = np.linspace(-span/2, span/2, N+1)
     alpha = 2*np.sqrt(np.log(2)) / T
-    p = np.exp(- (alpha * t)**(2*m))
-    p = p / np.sqrt(np.sum(p**2))
+    p = np.exp(- (alpha * (1 + 1j*c) * t)**(2*m))
+    return p
+
+def nrz_pulse(span, sps, T):
+    """Generate a Non-Return-to-Zero (NRZ) pulse shape.
+
+    This function generates the impulse response of a Non-Return-to-Zero (NRZ) pulse shape, commonly used in digital communications for pulse shaping.
+
+    Parameters
+    ----------
+    span : int
+        Number of symbols. The filter length will be span * sps + 1.
+    sps : int
+        Samples per symbol.
+    T : float
+        Duration of the NRZ pulse in symbols.
+
+    Returns
+    -------
+    numpy.ndarray
+        The impulse response of the NRZ pulse shape.
+    """
+    N = span * sps
+    t = np.linspace(-span/2, span/2, N+1)
+    p = np.where((t >= -T/2) & (t < T/2), 1.0, 0.0)
     return p
 
 
@@ -1914,13 +1941,13 @@ def upfirdn(x, h, up=1, dn=1):
     """
     # Upsample
     xu = np.zeros(len(x) * up)
-    xu[::up] = x
+    xu[up//2::up] = x
 
     # Filtrado
-    y = np.convolve(xu, h, mode='same')
+    y = sg.fftconvolve(xu, h, mode='same')
     
     # Downsample
-    y = y[::dn]
+    y = y[up//2::dn]
     return y
 
 
