@@ -831,7 +831,13 @@ class binary_sequence():
     
     # static methods
     @staticmethod
-    def prbs(order: int, seed: int=None, len: int=None, return_seed: bool=False):
+    def prbs(
+        order: int, 
+        len: int=None, 
+        seed: int=None, 
+        return_seed: 
+        bool=False
+        ):
         r"""Pseudorandom binary sequence generator (PRBS) (*static method*).
 
         Parameters
@@ -1129,25 +1135,31 @@ class electrical_signal():
             electrical_signal(signal=[1.+2.j 3.+4.j 5.+6.j],
                                noise=NULL)
         """    
+        sig, noi = signal, noise
+
         if self.__class__ == electrical_signal:
             logger.debug("%s.__init__()", self.__class__.__name__)
 
             if isinstance(signal, electrical_signal):
-                signal, noise = signal.signal, signal.noise
-            else:
-                signal, noise = self._prepare_arrays(signal, noise, dtype)
-
-            if signal.ndim > 1 or signal.size < 1:
-                raise ValueError(f"Signal must be scalar or 1D array for electrical_signal, invalid shape {signal.shape}")
-            
-            if signal.ndim == 0:
-                signal = signal[np.newaxis]
+                sig, noi = signal.signal, signal.noise
                 if noise is not NULL:
-                    noise = noise[np.newaxis]
+                    _, noi_ = self._prepare_arrays(sig, noise, dtype)
+                    noi = noi + noi_
+            else:
+                sig, noi = self._prepare_arrays(signal, noise, dtype)
+
+
+            if sig.ndim > 1 or sig.size < 1:
+                raise ValueError(f"Signal must be scalar or 1D array for electrical_signal, invalid shape {sig.shape}")
+            
+            if sig.ndim == 0:
+                sig = sig[np.newaxis]
+                if noi is not NULL:
+                    noi = noi[np.newaxis]
         
-        self.signal = signal
+        self.signal = sig
         """The signal values, a 1D array-like values."""
-        self.noise = noise
+        self.noise = noi
         """The noise values, a 1D array-like values."""
         self.execution_time = 0.
         """The execution time of the last operation performed."""
@@ -1465,7 +1477,6 @@ class electrical_signal():
     def real(self) -> np.ndarray:
         """Real part of the electrical signal (signal + noise)."""
         logger.debug("real")
-        print(self.noise.real)
         return self.__class__(self.signal.real, self.noise.real)
     
     @property
@@ -1759,8 +1770,8 @@ class electrical_signal():
         """
         logger.debug("filter()")
 
-        sig = np.convolve(self.signal, h, mode='same')
-        noi = np.convolve(self.noise, h, mode='same')
+        sig = sg.fftconvolve(self.signal, h, mode='same')
+        noi = sg.fftconvolve(self.noise, h, mode='same')
 
         return self.__class__(sig, noi) 
 
@@ -2008,8 +2019,18 @@ class electrical_signal():
         :obj:`electrical_signal`
             The same object with the plotted eye diagram.
         """
+        tic()
         logger.debug("plot_eye()")
+
+        MAX_TRACES = 4096
+
+        if n_traces is None:
+            n_traces = MAX_TRACES # large number to plot all traces
+        else:
+            n_traces = min(n_traces, MAX_TRACES)
+
         eyediagram(self, gv.sps, n_traces, cmap, N_grid_bins, grid_sigma, ax, **plot_kw)
+        self.execution_time += toc()
         return self
 
     def grid(self, **kwargs):
@@ -2114,55 +2135,58 @@ class optical_signal(electrical_signal):
             logger.debug("%s.__init__(n_pol=%s, dtype=%s)", self.__class__.__name__, n_pol, dtype)
 
             if isinstance(signal, (electrical_signal, optical_signal)):
-                signal, noise = signal.signal, signal.noise
+                sig, noi = signal.signal, signal.noise
+                if noise is not NULL:
+                    _, noi_ = self._prepare_arrays(signal, noise, dtype)
+                    noi = noi + noi_
             else:
-                signal, noise = self._prepare_arrays(signal, noise, dtype)
+                sig, noi = self._prepare_arrays(signal, noise, dtype)
             
-            if signal.ndim>2 or (signal.ndim>1 and signal.shape[0]>2) or signal.size<1:
-                raise ValueError(f"Signal must be a scalar, 1D or 2D array for optical_signal, invalid shape {signal.shape}")
+            if sig.ndim>2 or (sig.ndim>1 and sig.shape[0]>2) or sig.size<1:
+                raise ValueError(f"Signal must be a scalar, 1D or 2D array for optical_signal, invalid shape {sig.shape}")
             if n_pol is not None and n_pol not in [1, 2]:
                 raise ValueError("n_pol must be either 1 or 2")
             
-            if signal.ndim == 0:
+            if sig.ndim == 0:
                 if n_pol is None or n_pol == 1: 
-                    signal = signal[np.newaxis]
-                    if noise is not NULL:
-                        noise = noise[np.newaxis]
+                    sig = sig[np.newaxis]
+                    if noi is not NULL:
+                        noi = noi[np.newaxis]
                     n_pol=1
                 else:
-                    signal = np.array([[signal], [signal]])
-                    if noise is not NULL:
-                        noise = np.array([[noise], [noise]])
+                    sig = np.array([[sig], [sig]])
+                    if noi is not NULL:
+                        noi = np.array([[noi], [noi]])
             
-            elif signal.ndim == 1:
+            elif sig.ndim == 1:
                 if n_pol is None or n_pol == 1: 
                     n_pol = 1
                 else:
-                    signal = np.array([signal, signal])
-                    if noise is not NULL:
-                        noise = np.array([noise, noise])
+                    sig = np.array([sig, sig])
+                    if noi is not NULL:
+                        noi = np.array([noi, noi])
             
-            elif signal.ndim == 2 and signal.shape[0] == 1:
+            elif sig.ndim == 2 and sig.shape[0] == 1:
                 if n_pol is None or n_pol == 2:
-                    signal = np.tile(signal, (2, 1))
-                    if noise is not NULL:
-                        noise = np.tile(noise, (2, 1))
+                    sig = np.tile(sig, (2, 1))
+                    if noi is not NULL:
+                        noi = np.tile(noi, (2, 1))
                     n_pol = 2
                 else:
-                    signal = signal[0]
-                    if noise is not NULL:
-                        noise = noise[0]
+                    sig = sig[0]
+                    if noi is not NULL:
+                        noi = noi[0]
                     
-            elif signal.ndim == 2 and signal.shape[0] == 2:
+            elif sig.ndim == 2 and sig.shape[0] == 2:
                 if n_pol is None or n_pol == 2:
                     n_pol = 2
                 else:
-                    signal = signal[0]
-                    if noise is not NULL:
-                        noise = noise[0]
+                    sig = sig[0]
+                    if noi is not NULL:
+                        noi = noi[0]
         
         self.n_pol = n_pol
-        super().__init__( signal, noise, dtype=dtype)  
+        super().__init__(sig, noi, dtype=dtype)  
     
     def __repr__(self):
         logger.debug("__repr__()")
