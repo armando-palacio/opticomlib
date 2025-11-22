@@ -53,6 +53,10 @@ from .utils import (
     tau_g,
     dispersion,
     shortest_int,
+    rcos_pulse,
+    gauss_pulse,
+    nrz_pulse,
+    upfirdn
 )
 
 
@@ -180,9 +184,11 @@ def PRBS(
 
 def DAC(
     input: str | list | tuple | np.ndarray | binary_sequence,
-    bias: float = 0.0,
-    Vout: float = 1.0,
-    pulse_shape: Literal["nrz", "rz", "rect", "gaussian"] = "nrz",
+    pulse_shape: Literal["nrz", "gaussian", "rcos"] = "nrz",
+    coupling: Literal['AC', 'DC'] = "DC",
+    Vpp: float = 1.0,
+    offset: float = 0.0,
+    h: np.ndarray = None,
     BW: float = None,
     **kwargs,
 ):
@@ -190,51 +196,49 @@ def DAC(
 
     Converts a binary sequence into an electrical signal, sampled at a frequency ``gv.fs``.
 
-    Warning
-    -------
-    Parameter value ``pulse_shape='rect'`` is equivalent to ``pulse_shape='nrz'``. It is recommended to use ``pulse_shape='nrz'``, ``'rect'`` will be removed in futures versions.
-
     Parameters
     ----------
     input : :obj:`str`, :obj:`list`, :obj:`tuple`, :obj:`np.ndarray`, or :obj:`binary_sequence`
         Input binary sequence.
-    bias : :obj:`float`
-        DC bias of the output signal. Default: 0.0
-    Vout : :obj:`float`
-        Output signal amplitude. Should be in the range [-48, 48] Volts. Default: 1.0
-    pulse_shape : :obj:`str`, {'nrz', 'rect', 'gaussian'}
+    pulse_shape : :obj:`str`, {'nrz', 'rz', 'gaussian', 'rcos'}
         Pulse shape at the output. Default: 'nrz'
+    coupling : :obj:`str`, {'AC', 'DC'}
+    Vpp : :obj:`float`
+        Output peak-to-peak voltage, in Volts. Range: (0, 48] V. Default: 1.0 V
+    offset : :obj:`float`
+        DC offset of the output signal, in Volts. Range: [-48, 48) V. Default: 0.0 V
+    h : :obj:`ndarray`, optional
+        Impulse response of the pulse shaping filter. If provided, it overrides the ``pulse_shape`` parameter.
     BW : :obj:`float`
         Bandwidth of DAC. If ``None`` bandwidth is not limited. Default: None
 
     Other Parameters
     ----------------
-    c : :obj:`float`
-        Chirp of the Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``. Default: 0.0
-    m : :obj:`int`
-        Order of the super-Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``. Default: 1
+    If ``pulse_shape='nrz'``, the following parameters can be specified:
+
     T : :obj:`int`
-        Pulse width at half maximum in number of samples. Only applicable if ``pulse_shape='gaussian'``. Default: ``gv.sps``
+        Pulse width at half maximum in number of bits. Default: 1
+
+    If ``pulse_shape='gaussian'``, the following parameters can be specified:
+    
+    c : :obj:`float`
+        Chirp of the Gaussian pulse. Default: 0.0
+    m : :obj:`int`
+        Order of the super-Gaussian pulse. Default: 1
+    T : :obj:`int`
+        Pulse width at half maximum in number of bits. Default: 1
+
+    If ``pulse_shape='rcos'``, the following parameters can be specified:
+    
+    beta : :obj:`float`
+        Roll-off factor of the raised cosine pulse. Default: 0.25
+    rcos_type : :obj:`str`, {'normal', 'sqrt'}
+        Type of raised cosine pulse. 'normal' for raised cosine, 'sqrt' for square-root raised cosine. 
 
     Returns
     -------
     :obj:`electrical_signal`
         The converted electrical signal.
-
-    Raises
-    ------
-    ValueError
-        If ``pulse_shape`` is not ``'rect'`` or ``'gaussian'``.
-        If ``Vout`` is not between -48 and 48 Volts.
-        If ``bias`` is not between -48 and 48 Volts.
-        If ``T`` is <=0 or greater than 2 times the samples per bit.
-        If ``m`` is not a positive integer.
-    TypeError
-        If ``Vout`` is not a scalar value.
-        If ``bias`` is not a scalar value.
-        If ``c`` is not a scalar value.
-        If ``m`` is not an integer value.
-        If ``T`` is not an integer value.
 
     Examples
     --------
@@ -251,78 +255,69 @@ def DAC(
         DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r', lw=3, grid=True).show()
     """
     tic()
-    if not isinstance(input, binary_sequence):
-        input = binary_sequence(input)
 
+    SHAPES = ["nrz", "gaussian", "rcos"]
+
+    input = binary_sequence(input)
+    bits = input.size
     sps = gv.sps
+    input = input.to_numpy()
 
-    if pulse_shape in ["rect", "nrz", "NRZ"]:
-        x = np.kron(input.data, np.ones(sps))
+    if h is not None:
+        x = upfirdn(input, h=h, up=sps)
 
-    elif pulse_shape in ["rz", "RZ"]:
-        rz_pulse = np.zeros(sps)
-        rz_pulse[: sps // 2] = 1
+    elif pulse_shape.lower() not in SHAPES:
+        raise ValueError(f'The parameter `pulse_shape` must be one of the following values {SHAPES}')
+    
+    elif pulse_shape.lower() == "nrz":
+        T = kwargs.get("T", 1)
+        span = max(4, bits-4)
+        
+        h = nrz_pulse(span=span, sps=sps, T=T)
+        x = upfirdn(input, h=h, up=sps)
 
-        mask = np.tile(rz_pulse, input.size)
-
-        x = np.kron(input.data, np.ones(sps)) * mask
-
-    elif pulse_shape in ["gaussian", "GAUSSIAN"]:
+    elif pulse_shape.lower() == "gaussian":
         c = kwargs.get("c", 0.0)
         m = kwargs.get("m", 1)
-        T = kwargs.get("T", sps)
+        T = kwargs.get("T", 1)
+        span = max(4, bits-4)
 
-        if not isinstance(c, (int, float)):
-            raise TypeError("The parameter `c` must be a scalar value.")
+        h_pulse = gauss_pulse(span=span, sps=sps, T=T, m=m, c=c)
+        x = upfirdn(input, h=h_pulse, up=sps)
+    
+    elif pulse_shape.lower() == "rcos":
+        beta = kwargs.get("beta", 0.25) # roll-off factor
+        rcos_type = kwargs.get("rcos_type", "normal")  # 'normal' or 'sqrt'  
+        span = max(4, bits-4)      
 
-        if not isinstance(m, int):
-            raise TypeError("The parameter `m` must be an integer value.")
-        else:
-            if m <= 0:
-                raise ValueError("The parameter `m` must be a positive integer value.")
+        h_pulse = rcos_pulse(beta=beta, span=span, sps=sps, shape=rcos_type)
+        x = upfirdn(input, h=h_pulse, up=sps)
 
-        if not isinstance(T, int):
-            raise TypeError("The parameter `T` must be an integer value.")
-        else:
-            if T > 2 * sps or T <= 0:
-                raise ValueError("The parameter `T` must be in the range [0, 2*sps].")
+    
+    if Vpp is not None:
+        if not isinstance(Vpp, (int, float)):
+            raise TypeError("The parameter `Vpp` must be a scalar value.")
+        if Vpp <= 0 or Vpp > 48:
+            raise ValueError(
+                "The parameter `Vpp` must be in the range (0, 48] Volts."
+            )
+        x = x * Vpp
 
-        def p(t, T):
-            return np.exp(-(1 + 1j * c) / 2 * (t / T) ** (2 * m))
+    if offset is not None:
+        if not isinstance(offset, (int, float)):
+            raise TypeError("The parameter `offset` must be a scalar value.")
+        if np.abs(offset) > 48:
+            raise ValueError(
+                "The parameter `offset` must be in the range [-48, 48] Volts."
+            )
+        x = x + offset
 
-        t = np.linspace(-4 * sps, 4 * sps, 8 * sps)  # time vector of the Gaussian pulse
-        k = 2 * (2 * np.log(2)) ** (
-            1 / (2 * m)
-        )  # scaling factor between the width of a slot and the standard deviation of a Gaussian pulse
-        pulse = p(t, T / k)  # gaussian pulse
-
-        s = np.zeros(input.size * sps)
-        s[int(sps // 2) :: sps] = input.data
-        s[int(sps // 2 - 1) :: sps] = input.data
-
-        x = sg.fftconvolve(s, pulse, mode="same") / 2
+    if coupling.upper() == 'AC':
+        x = x - np.mean(x)
+    elif coupling.upper() == 'DC':
+        pass
     else:
-        raise ValueError(
-            'The parameter `pulse_shape` must be one of the following values ("rect", "gaussian")'
-        )
-
-    if Vout is not None:
-        if not isinstance(Vout, (int, float)):
-            raise TypeError("The parameter `Vout` must be a scalar value.")
-        if np.abs(Vout) >= 48:
-            raise ValueError(
-                "The parameter `Vout` must be in the range [-48, 48] Volts."
-            )
-        x = x * Vout
-
-    if bias is not None:
-        if not isinstance(bias, (int, float)):
-            raise TypeError("The parameter `bias` must be a scalar value.")
-        if np.abs(bias) >= 48:
-            raise ValueError(
-                "The parameter `bias` must be in the range [-48, 48] Volts."
-            )
-        x = x + bias
+        raise ValueError("The parameter `coupling` must be either 'AC' or 'DC'.")
 
     output = electrical_signal(x)
 
