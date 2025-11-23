@@ -56,7 +56,7 @@ from .utils import (
     rcos_pulse,
     gauss_pulse,
     nrz_pulse,
-    upfirdn
+    upfir
 )
 
 
@@ -264,26 +264,48 @@ def DAC(
     input = input.to_numpy()
 
     if h is not None:
-        x = upfirdn(input, h=h, up=sps)
+        x = upfir(input, h=h, up=sps)
 
     elif pulse_shape.lower() not in SHAPES:
         raise ValueError(f'The parameter `pulse_shape` must be one of the following values {SHAPES}')
     
     elif pulse_shape.lower() == "nrz":
         T = kwargs.get("T", 1)
+        if not isinstance(T, int):
+            raise TypeError("The parameter `T` must be an integer.")
+        if T <= 0:
+            raise ValueError("The parameter `T` must be greater than 0.")
+        if T > 2*sps:
+            raise ValueError("The parameter `T` must be less than 2*sps.")
+            
         span = max(4, bits-4)
         
         h = nrz_pulse(span=span, sps=sps, T=T)
-        x = upfirdn(input, h=h, up=sps)
+        x = upfir(input, h=h, up=sps)
 
     elif pulse_shape.lower() == "gaussian":
         c = kwargs.get("c", 0.0)
         m = kwargs.get("m", 1)
         T = kwargs.get("T", 1)
+
+        if not isinstance(c, (int, float)):
+            raise TypeError("The parameter `c` must be a real number.")
+        if not isinstance(m, int):
+            raise TypeError("The parameter `m` must be an integer.")
+        if not isinstance(T, int):
+            raise TypeError("The parameter `T` must be an integer.")
+        
+        if m <= 0:
+            raise ValueError("The parameter `m` must be greater than 0.")
+        if T <= 0:
+            raise ValueError("The parameter `T` must be greater than 0.")
+        if T > 2*sps:
+            raise ValueError("The parameter `T` must be less than 2*sps.")
+
         span = max(4, bits-4)
 
         h_pulse = gauss_pulse(span=span, sps=sps, T=T, m=m, c=c)
-        x = upfirdn(input, h=h_pulse, up=sps)
+        x = upfir(input, h=h_pulse, up=sps)
     
     elif pulse_shape.lower() == "rcos":
         beta = kwargs.get("beta", 0.25) # roll-off factor
@@ -291,7 +313,7 @@ def DAC(
         span = max(4, bits-4)      
 
         h_pulse = rcos_pulse(beta=beta, span=span, sps=sps, shape=rcos_type)
-        x = upfirdn(input, h=h_pulse, up=sps)
+        x = upfir(input, h=h_pulse, up=sps)
 
     
     if Vpp is not None:
