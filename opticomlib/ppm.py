@@ -50,7 +50,7 @@ def PPM_ENCODER(input: Union[str, list, tuple, ndarray, binary_sequence], M: int
     Examples
     --------
     >>> from opticomlib.ppm import PPM_ENCODER
-    >>> PPM_ENCODER('01111000', 4).data.astype(int)
+    >>> PPM_ENCODER('01111000', 4)
     array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0])
 
     """
@@ -179,7 +179,7 @@ def HDD(input: Union[str, list, tuple, np.ndarray, binary_sequence], M: int):
 
     s = np.sum(input.reshape(n_simb, M), axis=-1) # number of ON slots per symbol
 
-    output = input.copy() 
+    output = input[:]
 
     for i in np.where(s==0)[0]: 
         output[i*M + np.random.randint(M)] = 1  # raise one slot randomly for each symbol without ON slots
@@ -244,7 +244,8 @@ def SDD(input: electrical_signal, M: int) -> binary_sequence:
     if input.size % (M*gv.sps) != 0:
         raise ValueError("The length of `input` must be a multiple of `M*sps`.")
 
-    signal = np.sum( input.reshape(-1, gv.sps), axis=-1)
+    # signal = np.max( input.reshape(-1, gv.sps), axis=-1)
+    signal = input[gv.sps//2 :: gv.sps] # subsample the signal to 1 sample per slot
 
     i = np.argmax( signal.reshape(-1, M), axis=-1)
 
@@ -364,7 +365,7 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
         gv(sps=64, R=1e9)
 
         x = DAC('0100 1010 0000', pulse_shape='gaussian')
-        x.noise = np.random.normal(0, 0.1, x.len())
+        x.noise = np.random.normal(0, 0.1, x.size)
 
         y = DSP(x, M=4, decision='soft')
 
@@ -378,7 +379,7 @@ def DSP(input: electrical_signal, M :int, decision: Literal['hard','soft']='hard
     if not isinstance(input, electrical_signal):
         input = electrical_signal(input)
     
-    if input.len() < gv.sps:
+    if input.size < gv.sps:
         raise ValueError("`input` must have at least `sps` samples.")
     
     if not M & (M-1) == 0:
@@ -470,10 +471,10 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kwargs):
         if not isinstance(Tx, binary_sequence):
             Tx = binary_sequence( Tx )
 
-        Tx = Tx[:Rx.len()]
-        assert Tx.len() == Rx.len(), "Error: `Tx` and `Rx` must have the same length."
+        Tx = Tx[:Rx.size]
+        assert Tx.size == Rx.size, "Error: `Tx` and `Rx` must have the same length."
 
-        return np.sum(Tx.data != Rx.data)/Tx.len()
+        return np.sum(Tx.data != Rx.data)/Tx.size
 
     elif mode.lower() == 'estimator':
         eye_obj = kwargs.get('eye_obj', None)

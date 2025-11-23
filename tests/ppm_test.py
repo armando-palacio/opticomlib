@@ -137,7 +137,7 @@ class TestPPM(unittest.TestCase):
         
         ppm_seq = PPM_ENCODER(bits, M)
         inputs = DAC(ppm_seq, pulse_shape='gaussian')
-        inputs.noise = np.random.normal(0, 0.05, inputs.len())
+        inputs.noise = np.random.normal(0, 0.05, inputs.size)
 
         rx_soft = DSP(inputs, M, decision='soft')
         rx_hard = DSP(inputs, M, decision='hard')
