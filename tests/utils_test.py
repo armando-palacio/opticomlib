@@ -5,10 +5,43 @@ from opticomlib.utils import (
     dec2bin, str2array, db, dbm, idb, idbm, gaus, Q, phase, tau_g, dispersion,
     rcos, si, norm, nearest, nearest_index, p_ase, average_voltages,
     noise_variances, optimum_threshold, theory_BER, shortest_int,
-    rcos_pulse, gauss_pulse, nrz_pulse, upfir, phase_estimator
+    rcos_pulse, gauss_pulse, nrz_pulse, upfir, phase_estimator, get_psd
 )
 
 class TestUtils(unittest.TestCase):
+    def test_get_psd(self):
+        fs = 10e9 # 10 GHz
+        t = np.arange(0, 1000e-9, 1/fs) # 1000 ns duration for good resolution
+        f_sig = 1e9 # 1 GHz signal
+        
+        # Test with array
+        sig = np.sin(2*pi*f_sig*t)
+        f, psd = get_psd(sig, fs)
+        
+        # Check peak frequency
+        # f is in Hz. Expected peak at 1 GHz (1e9 Hz).
+        peak_idx = np.argmax(psd)
+        peak_freq = np.abs(f[peak_idx])
+        
+        # Resolution is fs / nperseg. nperseg is 2048 or len(sig).
+        # Here len(sig) = 10000. nperseg=2048.
+        # fs = 10e9. df = 10e9/2048 ~ 5 MHz.
+        self.assertAlmostEqual(peak_freq, 1e9, delta=50e6)
+        
+        # Check peak power
+        # Power of sin(t) is 0.5 W.
+        # Since return_onesided=False, power is split between +f and -f.
+        # So expected peak is 0.25 W.
+        self.assertAlmostEqual(psd[peak_idx], 0.25, delta=0.05)
+
+        # Test with object having .signal
+        class MockSignal:
+            def __init__(self, s): self.signal = s
+        
+        mock_sig = MockSignal(sig)
+        f2, psd2 = get_psd(mock_sig, fs)
+        np.testing.assert_array_equal(psd, psd2)
+
     def test_dec2bin(self):
         # Test basic conversion
         np.testing.assert_array_equal(dec2bin(5, 4), np.array([0, 1, 0, 1], dtype=np.uint8))

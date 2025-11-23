@@ -1830,7 +1830,7 @@ class electrical_signal():
         if not hold:
             plt.figure()
 
-        plt.plot(*args, **kwargs)
+        plt.plot(*args, **kwargs, label=label)
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         
@@ -1841,8 +1841,6 @@ class electrical_signal():
             plt.grid(alpha=0.3, axis='y')
 
         if label is not None:
-            plt.legend()
-        if 'label' in kwargs.keys():
             plt.legend()
 
         if show:
@@ -1856,7 +1854,7 @@ class electrical_signal():
             xlabel: str=None,
             ylabel: str=None, 
             yscale: Literal['linear', 'dbm']='dbm', 
-            grid: bool=True,
+            grid: bool=False,
             hold: bool=True,
             show: bool=False,
             **kwargs: dict):
@@ -1895,7 +1893,7 @@ class electrical_signal():
         """
         logger.debug("psd()")
 
-        n = self.size if not n else n
+        n = min(self.size, gv.t.size) if n is None else n
         sig = self[:n].signal
         nperseg = 2048 if sig.shape[-1] > 2048 else sig.shape[-1]
         
@@ -1947,7 +1945,7 @@ class electrical_signal():
         if not hold:
             plt.figure()
 
-        ls = plt.plot( *args, **kwargs)
+        ls = plt.plot(*args, **kwargs)
         plt.ylabel(ylabel)
         plt.xlabel(xlabel if xlabel else 'Frequency [GHz]')
         plt.xlim( -3.5*gv.R*1e-9, 3.5*gv.R*1e-9 )
@@ -1964,8 +1962,6 @@ class electrical_signal():
                 ls[1].set_label(label[1])
             else:
                 raise ValueError('`label` must be a string or a list of strings.')
-            plt.legend()
-        if 'label' in kwargs.keys():
             plt.legend()
         if show:
             plt.show()
