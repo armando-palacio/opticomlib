@@ -31,7 +31,7 @@
     rcos_pulse
     gauss_pulse
     nrz_pulse
-    upfirdn
+    upfir
     phase_estimator      
 """
 
@@ -1160,7 +1160,12 @@ def average_voltages(
 
     er = idb(ER)  # extinction ratio
     p_avg = idbm(P_avg)  # average input power, in [W]
-    g = idb(G)  # gain of EDFA
+    
+    if amplify:
+        if G is None: raise ValueError("G must be provided if amplify=True")
+        g = idb(G)  # gain of EDFA
+    else:
+        g = 1.0
 
     p_ON = p_avg * M / (1 + (M-1)/er) # ON slot average optical power, without amplification
     p_OFF = p_ON/er   # OFF slot average optical power, without amplification
@@ -1223,11 +1228,15 @@ def noise_variances(
     """
     mu, mu_ASE = average_voltages(P_avg, modulation, M, ER, amplify, wavelength, G, NF, BW_opt, r, R_L)
 
-    l = BW_el/BW_opt
     nf_el = idb(NF_el)
 
-    S_sig_ase_i = 2 * mu_ASE * (mu-mu_ASE) * l  # signal-ase beating noise variance, in [V^2]
-    S_ase_ase = mu_ASE**2 * (1 - l/2) * l       # ase-ase beating noise variance, in [V^2]
+    if amplify:
+        l = BW_el/BW_opt
+        S_sig_ase_i = 2 * mu_ASE * (mu-mu_ASE) * l  # signal-ase beating noise variance, in [V^2]
+        S_ase_ase = mu_ASE**2 * (1 - l/2) * l       # ase-ase beating noise variance, in [V^2]
+    else:
+        S_sig_ase_i = 0
+        S_ase_ase = 0
 
     S_th = 4 * kB * T * BW_el * R_L   # thermal noise variance, in [V^2]
     S_sh_i = 2 * e * mu * BW_el * R_L   # shot noise variance, in [V^2]
@@ -1261,6 +1270,9 @@ def optimum_threshold(mu0,mu1,S0,S1, modulation: Literal['ook', 'ppm'], M=None):
     """
 
     M = 2 if modulation.lower() == 'ook' else M
+
+    if S1 == S0:
+        return (mu0 + mu1) / 2
 
     s1=S1**0.5
     s0=S0**0.5
@@ -1911,7 +1923,7 @@ def nrz_pulse(span, sps, T):
     return p
 
 
-def upfirdn(x, h, up=1, dn=1):
+def upfir(x, h, up=1):
     """Replicate MATLAB's upfirdn function for upsampling and FIR filtering.
 
     This function performs upsampling of the input signal and then applies an FIR filter,
@@ -1925,8 +1937,6 @@ def upfirdn(x, h, up=1, dn=1):
         Impulse response of the FIR filter.
     up : int, optional
         Upsampling factor. Default is 1 (no upsampling).
-    dn : int, optional
-        Downsampling factor. Default is 1 (no downsampling).
 
     Returns
     -------
@@ -1945,9 +1955,6 @@ def upfirdn(x, h, up=1, dn=1):
 
     # Filtrado
     y = sg.fftconvolve(xu, h, mode='same')
-    
-    # Downsample
-    y = y[up//2::dn]
     return y
 
 

@@ -1,40 +1,185 @@
 import unittest
 import numpy as np
-from scipy.constants import c, pi
-from numpy.testing import (
-    assert_,
-    assert_allclose,
-    assert_almost_equal,
-    assert_equal,
-    assert_raises,
-)
-
+from scipy.constants import pi, c
 from opticomlib.utils import (
-    str2array,
+    dec2bin, str2array, db, dbm, idb, idbm, gaus, Q, phase, tau_g, dispersion,
+    rcos, si, norm, nearest, nearest_index, p_ase, average_voltages,
+    noise_variances, optimum_threshold, theory_BER, shortest_int,
+    rcos_pulse, gauss_pulse, nrz_pulse, upfir, phase_estimator
 )
 
 class TestUtils(unittest.TestCase):
+    def test_dec2bin(self):
+        # Test basic conversion
+        np.testing.assert_array_equal(dec2bin(5, 4), np.array([0, 1, 0, 1], dtype=np.uint8))
+        np.testing.assert_array_equal(dec2bin(10, 4), np.array([1, 0, 1, 0], dtype=np.uint8))
+        
+        # Test error handling
+        with self.assertRaises(ValueError):
+            dec2bin(16, 4) # Too large
+        with self.assertRaises(ValueError):
+            dec2bin(1.5, 4) # Not integer
+
     def test_str2array(self):
-        # test bool values
-        assert_equal(str2array('10101'), [1,0,1,0,1])
-        assert_equal(str2array('10101', dtype=bool), [1,0,1,0,1])
-        assert_equal(str2array('100;101'), [[1,0,0],[1,0,1]])
-        assert_equal(str2array('10 100 1000'), [1,0,1,0,0,1,0,0,0]) 
-        assert_equal(str2array('1,0,1,0,1'), [1,0,1,0,1])
-        assert_equal(str2array('1 0 1 0 1', dtype=bool), [1,0,1,0,1])
+        # Test binary string
+        np.testing.assert_array_equal(str2array('101'), np.array([True, False, True]))
+        np.testing.assert_array_equal(str2array('1 0 1'), np.array([True, False, True]))
+        np.testing.assert_array_equal(str2array('1,0,1'), np.array([True, False, True]))
+        
+        # Test numeric string
+        np.testing.assert_array_equal(str2array('1 2 3'), np.array([1, 2, 3]))
+        np.testing.assert_array_equal(str2array('1.1 2.2'), np.array([1.1, 2.2]))
+        
+        # Test complex string
+        np.testing.assert_array_equal(str2array('1+2j 3-4j'), np.array([1+2j, 3-4j]))
+        np.testing.assert_array_equal(str2array('1+2j 3-4j', np.float32), np.array([1.0, 3.0]))
+        
+        # Test 2D array
+        np.testing.assert_array_equal(str2array('1 2; 3 4'), np.array([[1, 2], [3, 4]]))
 
-        # test int values
-        assert_equal(str2array('1 0 1 10', dtype=int), [1,0,1,10])
-        assert_equal(str2array('1 -2 1; 4,5,6', dtype=int), [[1, -2, 1], [4, 5, 6]])
+    def test_db_conversions(self):
+        # Test db
+        self.assertAlmostEqual(db(1), 0.0)
+        self.assertAlmostEqual(db(10), 10.0)
+        np.testing.assert_allclose(db([1, 10]), [0.0, 10.0])
+        
+        # Test dbm
+        self.assertAlmostEqual(dbm(1e-3), 0.0)
+        self.assertAlmostEqual(dbm(1), 30.0)
+        
+        # Test idb
+        self.assertAlmostEqual(idb(10), 10.0)
+        self.assertAlmostEqual(idb(0), 1.0)
+        
+        # Test idbm
+        self.assertAlmostEqual(idbm(0), 1e-3)
+        self.assertAlmostEqual(idbm(30), 1.0)
 
-        # test float values
-        assert_equal(str2array('1 -2 1; 4.1,5,6.4', dtype=float), [[1.0, -2.0, 1.0], [4.1, 5.0, 6.4]])
+    def test_gaus(self):
+        self.assertAlmostEqual(gaus(0, 0, 1), 1/(2*pi)**0.5)
+        self.assertAlmostEqual(gaus(1, 1, 2), 1/(2*(2*pi)**0.5))
 
-        # test complex values
-        assert_equal(str2array('1+j -2-j 1; 4.1,5,6.4', dtype=complex), [[1+1j, -2-1j, 1+0j], [4.1+0j, 5+0j, 6.4+0j]])
+        self.assertAlmostEqual(np.trapz(gaus(np.linspace(-10,10,1000), 0, 1), np.linspace(-10,10,1000)), 1.0, places=3) # Check integral equals 1
 
+    def test_Q(self):
+        self.assertAlmostEqual(Q(0), 0.5)
+        self.assertTrue(Q(10) < 1e-6)
 
+    def test_phase(self):
+        t = np.linspace(0, 10, 100)
+        x = np.exp(1j * t)
+        p = phase(x)
+        # Phase should be linear with slope 1
+        np.testing.assert_allclose(np.diff(p), np.diff(t), atol=1e-5)
 
+    def test_si(self):
+        self.assertEqual(si(1e-3, 's'), '1.0 ms')
+        self.assertEqual(si(1e9, 'Hz'), '1.0 GHz')
+        self.assertEqual(si(0.002, 's'), '2.0 ms')
 
-if __name__ == "__main__":
+    def test_norm(self):
+        x = np.array([1, 2, 4])
+        np.testing.assert_array_equal(norm(x), np.array([0.25, 0.5, 1.0]))
+
+    def test_nearest(self):
+        x = np.array([1, 2, 3, 4, 5])
+        self.assertEqual(nearest(x, 2.2), 2)
+        self.assertEqual(nearest(x, 4.8), 5)
+        np.testing.assert_array_equal(nearest(x, [1.1, 3.9]), np.array([1, 4]))
+        
+        self.assertEqual(nearest_index(x, 2.2), 1)
+
+    def test_p_ase(self):
+        # Test with known values
+        # G=20dB (100), NF=3dB (2), BW=1GHz
+        # P_ase = NF * h * f0 * (G-1) * BW
+        # f0 = c/1550nm
+        from scipy.constants import h
+        f0 = c/1550e-9
+        expected = idb(3) * h * f0 * (100-1) * 1e9
+        self.assertAlmostEqual(p_ase(True, 1550e-9, 20, 3, 1e9), expected, delta=expected*1e-3)
+        self.assertEqual(p_ase(False), 0)
+
+    def test_average_voltages(self):
+        # Simple OOK case
+        mu, mu_ase = average_voltages(P_avg=0, modulation='ook', amplify=False, r=1, R_L=1)
+        # P_avg=0dBm = 1mW. OOK: P_ON = 2*P_avg = 2mW, P_OFF = 0 (ER=inf)
+        # mu_ON = r*P_ON*R_L = 2e-3 V
+        # mu_OFF = 0
+        np.testing.assert_allclose(mu, [0, 2e-3])
+        self.assertEqual(mu_ase, 0)
+
+    def test_noise_variances(self):
+        # Thermal noise only
+        # T=300K, R_L=50, BW_el=1Hz
+        # S_th = 4 * kB * T * BW_el * R_L
+        kB = 1.38e-23
+        expected_th = 4 * kB * 300 * 1 * 50
+        
+        S = noise_variances(P_avg=-100, modulation='ook', amplify=False, BW_el=1, R_L=50, T=300, NF_el=0)
+        # Shot noise should be negligible at -100dBm
+        np.testing.assert_allclose(S, [expected_th, expected_th], rtol=1e-1)
+
+    def test_optimum_threshold(self):
+        mu0, mu1 = 0, 1
+        S0, S1 = 0.1, 0.1
+        # Symmetric noise, threshold should be 0.5
+        th = optimum_threshold(mu0, mu1, S0, S1, 'ook')
+        self.assertAlmostEqual(th, 0.5)
+
+    def test_theory_BER(self):
+        # Test OOK BER
+        # High power -> low BER
+        ber_low = theory_BER(P_avg=0, modulation='ook', amplify=False)
+        self.assertTrue(ber_low < 1e-9)
+        
+        # Low power -> high BER
+        ber_high = theory_BER(P_avg=-60, modulation='ook', amplify=False)
+        self.assertTrue(ber_high > 1e-3)
+
+    def test_shortest_int(self):
+        x = np.random.normal(0, 1, 10000)
+        interval = shortest_int(x, 50)
+        # For normal distribution, 50% interval is approx [-0.67, 0.67]
+        self.assertTrue(interval[0] < 0 < interval[1])
+        self.assertAlmostEqual(interval[1] - interval[0], 1.35, delta=0.2)
+
+    def test_pulses(self):
+        # Test rcos_pulse
+        h_rcos = rcos_pulse(beta=0.5, span=4, sps=8)
+        self.assertEqual(len(h_rcos), 4*8+1)
+        
+        # Test gauss_pulse
+        h_gauss = gauss_pulse(span=4, sps=8)
+        self.assertEqual(len(h_gauss), 4*8+1)
+        
+        # Test nrz_pulse
+        h_nrz = nrz_pulse(span=4, sps=8, T=1)
+        self.assertEqual(len(h_nrz), 4*8+1)
+
+    def test_upfir(self):
+        x = np.array([1, 1])
+        h = np.array([1, 1])
+        # up=1 -> conv([1,1], [1,1]) = [1, 2, 1] -> mode='same' -> [1, 2] or [2, 1] depending on centering
+        # scipy.signal.fftconvolve with mode='same' centers the output
+        y = upfir(x, h, up=1)
+        self.assertEqual(len(y), len(x))
+
+    def test_phase_estimator(self):
+        t = np.linspace(0, 1, 100)
+        phi0 = 0.5
+        y = np.cos(2*pi*10*t + phi0)
+        est_phi = phase_estimator(y)
+        # Note: phase_estimator uses Hilbert transform which might have edge effects
+        # and ambiguity of 2pi. We check if it's close.
+        # The estimator returns phase in radians.
+        # Since it's a cosine, the phase at t=0 is phi0.
+        # However, hilbert(cos(wt+phi)) ~ exp(j(wt+phi)). Angle is wt+phi.
+        # At t=0, angle is phi.
+        
+        # We need to handle 2pi wrapping for comparison
+        diff = np.angle(np.exp(1j*(est_phi - phi0)))
+        self.assertTrue(np.abs(diff) < 1e-2)
+
+if __name__ == '__main__':
     unittest.main()
