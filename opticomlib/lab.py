@@ -298,7 +298,8 @@ class PPG3204():
         offset
         get_offset
         setup
-        get_setup
+        get_metadata
+        print_setup
     """
     CHANNELS = 4 
     """Number of channels of the PPG3204, 4 channels."""
@@ -1072,11 +1073,11 @@ class PPG3204():
         
         Parameters
         ----------
-        freq : :obj:`float`, optional
+        data_rate : :obj:`float`, optional
             Frequency of the pattern in Hz. The range is from 1.5 GHz to 32 GHz.
         patt_len : :obj:`int` or :obj:`Array_Like(int)`, optional
             Pattern length for every channel specified in ``CHs``.
-        Vout : :obj:`float` or :obj:`Array_Like(float)`, optional
+        amplitude : :obj:`float` or :obj:`Array_Like(float)`, optional
             Amplitude to set to the specify channels
         offset : :obj:`float` or :obj:`Array_Like(float)`, optional
             Offset to set to the specify channels
@@ -1086,7 +1087,7 @@ class PPG3204():
             Skew to set to the specify channels
         patt_type : :obj:`str`, optional
             Work patt_type of the PPG.
-        order : :obj:`int` or :obj:`Array_Like(int)`, optional
+        prbs : :obj:`int` or :obj:`Array_Like(int)`, optional
             order of the polynomial generator. If ``patt_type='PRBS'``.
         data : :obj:`np.ndarray` or :obj:`Array_Like(np.ndarray)`, optional
             Data to set to the specify channels. If ``patt_type='DATA'``.
@@ -1164,8 +1165,6 @@ class PED4002():
         is_sync
         sync_threshold
         get_sync_threshold
-        sync_type
-        get_sync_type
         center_offset
         offset
         get_offset
