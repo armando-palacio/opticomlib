@@ -29,7 +29,7 @@ from .utils import (
     str2array, 
     dbm, 
     si, 
-    upfirdn,
+    upfir,
     eyediagram,
     ComplexNumber,
     RealNumber,
@@ -377,7 +377,7 @@ class global_variables():
         # Reset logger level to default (NOTSET allows propagation to parent)
         logger.logger.setLevel(logging.NOTSET)
 
-        attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw', 'plt_style'])]
+        attrs = [attr for attr in dir(gv) if not callable(getattr(gv, attr)) and not attr.startswith("__") and not (attr in ['sps', 'R', 'fs', 'dt', 'wavelength', 'f0', 'N', 't', 'w', 'dw', 'plt_style', 'verbose'])]
 
         logger.info('Global variables set to default, sps: %d, R: %.2e, fs: %.2e, N: %d, wavelength: %.2e', self.sps, self.R, self.fs, self.N, self.wavelength)
         
@@ -981,7 +981,7 @@ class binary_sequence():
             The resulting electrical signal after upsampling, filtering, and downsampling.
         """
         logger.debug('dac()')
-        return electrical_signal(upfirdn(x=self.data, h=h, up=gv.sps, dn=1))
+        return electrical_signal(upfir(x=self.data, h=h, up=gv.sps))
     
     def plot(self, **kwargs):
         """Plot the binary sequence using matplotlib.
@@ -1771,7 +1771,11 @@ class electrical_signal():
         logger.debug("filter()")
 
         sig = sg.fftconvolve(self.signal, h, mode='same')
-        noi = sg.fftconvolve(self.noise, h, mode='same')
+        
+        if self.noise is not NULL:
+            noi = sg.fftconvolve(self.noise, h, mode='same')
+        else:
+            noi = NULL
 
         return self.__class__(sig, noi) 
 
@@ -1892,8 +1896,10 @@ class electrical_signal():
         logger.debug("psd()")
 
         n = self.size if not n else n
+        sig = self[:n].signal
+        nperseg = 2048 if sig.shape[-1] > 2048 else sig.shape[-1]
         
-        f, psd = sg.welch(self[:n].signal, fs=gv.fs*1e-9, nperseg=2048, scaling='spectrum', return_onesided=False, detrend=False)
+        f, psd = sg.welch(sig, fs=gv.fs*1e-9, nperseg=nperseg, scaling='spectrum', return_onesided=False, detrend=False)
         f, psd = fftshift(f), fftshift(psd, axes=-1)
 
         if yscale == 'linear':

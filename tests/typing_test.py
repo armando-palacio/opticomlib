@@ -7,26 +7,25 @@ from numpy.testing import (
     assert_almost_equal,
     assert_equal,
     assert_raises,
+    assert_array_equal
 )
 
 from opticomlib.typing import (
     NULL,
-    global_variables,
     binary_sequence,
     electrical_signal,
     optical_signal,
-    eye
+    gv
 )
-
-gv = global_variables()
 
 from opticomlib.utils import ComplexNumber, RealNumber, IntegerNumber
 
 
 class TestGlobalVariables(unittest.TestCase):
-    def test_global_variables(self):
-        gv = global_variables()
+    def setUp(self):
+        gv.default()
 
+    def test_global_variables(self):
         ## Test default attributes
         assert_(gv.sps == 16)
         assert_(gv.R == 1e9)
@@ -61,7 +60,17 @@ class TestGlobalVariables(unittest.TestCase):
         except Exception as e:
             self.fail(f"gv.print() raised {type(e).__name__} unexpectedly!")
 
-
+    def test_default(self):
+        gv(sps=32, R=20e9) # Change values
+        assert_(gv.sps == 32)
+        
+        gv.default() # Reset
+        assert_(gv.sps == 16)
+        assert_(gv.R == 1e9)
+        assert_(gv.fs == 16e9)
+        # Check that custom attributes are removed
+        if hasattr(gv, 'alpha'):
+            assert_raises(AttributeError, lambda: gv.alpha)
 
 
 class TestBinarySequence(unittest.TestCase):
@@ -70,14 +79,18 @@ class TestBinarySequence(unittest.TestCase):
             (0,0,0,0,1,1,1,1,0,0,0,0),
             np.array([0,0,0,0,1,1,1,1,0,0,0,0])]
     
-    assert_raises(TypeError, lambda: binary_sequence())
-    assert_raises(ValueError, lambda: binary_sequence([0,1,2,3]))
-    assert_raises(ValueError, lambda: binary_sequence('001201'))
-    assert_raises(ValueError, lambda: binary_sequence('001;101'))
-    assert_(np.array_equal(binary_sequence([]) , []))
-    assert_(np.array_equal(binary_sequence(binary_sequence([1,0])) , [1,0]))
+    def setUp(self):
+        gv.default()
+
+    def test_init_errors(self):
+        assert_raises(TypeError, lambda: binary_sequence())
+        assert_raises(ValueError, lambda: binary_sequence([0,1,2,3]))
+        assert_raises(ValueError, lambda: binary_sequence('001201'))
+        assert_raises(ValueError, lambda: binary_sequence('001;101'))
     
     def test_init(self):
+        assert_(np.array_equal(binary_sequence([]) , []))
+        assert_(np.array_equal(binary_sequence(binary_sequence([1,0])) , [1,0]))
         assert_(binary_sequence(0)[0]==0)
         assert_(binary_sequence('1')[0]==1)
 
@@ -158,7 +171,44 @@ class TestBinarySequence(unittest.TestCase):
                 assert_(np.array_equal(bits ^ other, [0,0,0,1,0,0,1,1,0,1,1,1]))
                 assert_(np.array_equal(other ^ bits, [0,0,0,1,0,0,1,1,0,1,1,1]))
 
+    def test_mul(self):
+        bits = binary_sequence('10')
+        # Repetition
+        assert_equal(bits * 3, binary_sequence('101010'))
+        # AND operation
+        assert_equal(bits * binary_sequence('11'), binary_sequence('10'))
 
+    def test_prbs(self):
+        # Test PRBS generation
+        prbs7 = binary_sequence.prbs(order=7)
+        assert_equal(prbs7.size, 2**7 - 1)
+        assert_(np.all((prbs7.data == 0) | (prbs7.data == 1)))
+        
+        # Test seed consistency
+        prbs7_1 = binary_sequence.prbs(order=7, seed=123)
+        prbs7_2 = binary_sequence.prbs(order=7, seed=123)
+        assert_equal(prbs7_1, prbs7_2)
+
+        # Test return_seed
+        seq, last_seed = binary_sequence.prbs(order=7, len=10, seed=1, return_seed=True)
+        assert_equal(seq.size, 10)
+        assert_(isinstance(last_seed, (int, np.integer)))
+
+    def test_dac(self):
+        bits = binary_sequence('101')
+        gv(sps=4)
+        h = np.ones(4)
+        sig = bits.dac(h)
+        assert_(isinstance(sig, electrical_signal))
+        # Expected size is len(bits)*sps due to upfir implementation
+        assert_equal(sig.size, 3*4)
+
+    def test_numpy_interop(self):
+        bits = binary_sequence('1010')
+        assert_equal(np.sum(bits), 2)
+        assert_equal(np.mean(bits), 0.5)
+        assert_equal(np.max(bits), 1)
+        assert_equal(np.min(bits), 0)
 
 
 class TestElectricalSignal(unittest.TestCase):
@@ -168,6 +218,9 @@ class TestElectricalSignal(unittest.TestCase):
     noises = ['+0,-1,-2,-3,-4+0i,-5.',
                 [0,-1,-2,-3,-4.,-5],
                 -np.arange(6)]
+
+    def setUp(self):
+        gv.default()
 
     def test_init(self):
         assert_raises(TypeError, lambda: electrical_signal())
@@ -403,6 +456,40 @@ class TestElectricalSignal(unittest.TestCase):
                 
                 assert_raises(ValueError, lambda: x + sig[:4])
     
+    def test_truediv_and_floordiv(self):
+        x = electrical_signal([2, 4, 6], [1, 2, 3])
+        
+        # True div
+        y = x / 2
+        assert_equal(y.signal, [1, 2, 3])
+        assert_equal(y.noise, [0.5, 1, 1.5])
+        
+        # Floor div
+        y = x // 2
+        assert_equal(y.signal, [1, 2, 3])
+        assert_equal(y.noise, [0, 1, 1]) # floor(0.5)=0, floor(1)=1, floor(1.5)=1
+
+        assert_raises(ZeroDivisionError, lambda: x / 0)
+
+    def test_pow(self):
+        x = electrical_signal([2, 3], [1, 1])
+        
+        # Power 0
+        y = x ** 0
+        assert_equal(y.signal, [1, 1])
+        assert_(y.noise is NULL)
+        
+        # Power 1
+        y = x ** 1
+        assert_equal(y.signal, x.signal)
+        assert_equal(y.noise, x.noise)
+        
+        # Power 2
+        y = x ** 2
+        assert_equal(y.signal, x.signal**2)
+        # (s+n)^2 = s^2 + 2sn + n^2. Signal part is s^2, noise part is 2sn + n^2
+        assert_equal(y.noise, 2*x.signal*x.noise + x.noise**2)
+
     def test_gt_and_lt(self):
         for sig, noi in zip(self.signals, self.noises):
             with self.subTest(type=type(sig)):
@@ -596,6 +683,16 @@ class TestElectricalSignal(unittest.TestCase):
                 assert_(y == 0)
                 assert_(isinstance(y, RealNumber))
 
+    def test_normalize(self):
+        x = electrical_signal([1, 2, 3])
+        
+        # Power normalization
+        y = x.normalize('power')
+        assert_almost_equal(y.power('W', 'signal'), 1.0)
+        
+        # Amplitude normalization
+        y = x.normalize('amplitude')
+        assert_equal(np.max(np.abs(y.signal)), 1.0)
 
     def test_phase(self):
         x = electrical_signal(self.signals[-1] + self.signals[-1]*1j, -self.noises[-1] - self.noises[-1]*1j)
@@ -608,7 +705,28 @@ class TestElectricalSignal(unittest.TestCase):
 
         assert_equal(x.phase(), np.unwrap(np.angle(z)))
 
-    
+    def test_filter(self):
+        x = electrical_signal([1, 0, 0, 0])
+        h = [0.5, 0.5]
+        y = x.filter(h)
+        # fftconvolve mode='same'
+        # [1, 0, 0, 0] * [0.5, 0.5] -> [0.5, 0.5, 0, 0, 0]
+        # mode='same' centered: [0.5, 0.5, 0, 0]
+        assert_equal(y.size, 4)
+        assert_(isinstance(y, electrical_signal))
+
+    def test_sum(self):
+        x = electrical_signal([1, 2, 3], [0.1, 0.2, 0.3])
+        y = x.sum()
+        assert_equal(y.signal, 6)
+        assert_almost_equal(y.noise, 0.6)
+
+    def test_conj(self):
+        x = electrical_signal([1+1j], [2-2j])
+        y = x.conj()
+        assert_equal(y.signal, [1-1j])
+        assert_equal(y.noise, [2+2j])
+
     def test_plot(self):
         x = electrical_signal(np.ones(100), np.random.normal(0,0.05,100))
         try:
@@ -641,6 +759,9 @@ class TestOpticalSignal(unittest.TestCase):
     noises_2p = ['+0,-1,-2,-3,-4+0j,-5.; +0,-1,-2,-3,-4+0i,-5.',
                  [[0,-1,-2,-3,-4.,-5]],
                  -np.array([[0,1,2,3,4,5]])]
+    
+    def setUp(self):
+        gv.default()
         
     def test_init(self):
         assert_raises(TypeError, lambda: optical_signal()) # No input
@@ -1010,6 +1131,11 @@ class TestOpticalSignal(unittest.TestCase):
                     assert_raises(ValueError, lambda: x + '+0,-1,-2')
                 else:
                     assert_raises(ValueError, lambda: x + sig[0][:4]) # Different length
+
+    def test_gt_lt_error(self):
+        x = optical_signal([1,2], [0,0])
+        assert_raises(NotImplementedError, lambda: x > x)
+        assert_raises(NotImplementedError, lambda: x < x)
 
     def test_call(self):
         for sig, noi in zip(self.signals_2p, self.noises_2p):
