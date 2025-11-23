@@ -6,6 +6,7 @@ Thank you for your interest in contributing to this project! This guide will hel
   - [Getting Started](#getting-started)
   - [Contributing Code](#contributing-code)
     - [When contributing code, please follow these guidelines](#when-contributing-code-please-follow-these-guidelines)
+    - [Commits conventions](#commits-conventions)
     - [Before opening a pull request, make sure that](#before-opening-a-pull-request-make-sure-that)
   - [Branches Architecture](#branches-architecture)
   - [Reporting Issues](#reporting-issues)
@@ -58,6 +59,29 @@ To contribute to this project, you will need to follow these steps:
 - Make sure your changes do not break any existing functionality.
 - If you are adding a new feature, make sure to include appropriate test and examples.
 - If you are fixing a bug, make sure to include a test that reproduces the bug and is fixed by your changes.
+
+### Commits conventions
+
+For the commit messages, we follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. This convention makes it easier to understand the changes made in the repository and helps with automatic versioning and changelog generation in future.
+
+Conventional commits are a standard for structuring commit messages in software development. They help maintain a clear and consistent change history. Here is a list of some of the common conventional commit types:
+
+1. **feat**: It is used to denote a new feature added to the code.
+2. **fix**: It is used when correcting an error or a defect in the code.
+3. **docs**: Used for changes or additions related to documentation.
+4. **style**: Used for changes that do not affect the meaning of the code (whitespace, formatting, etc.).
+5. **refactor**: It is used when a modification is made to the code that does not correct errors or add functionality.
+6. **test**: It is used to add missing tests or modify existing tests.
+7. **chore**: Used for changes in the construction process or maintenance tasks.
+8. **perf**: It is used when changes are made that improve performance.
+9. **revert**: Used to revert a previous commit.
+10. **build**: Used for changes related to the build system, such as adjustments to build configuration, dependencies, build scripts, etc.
+11. **ci**: Used for configuration changes or continuous integration (CI) scripts, such as CI workflow adjustments, automated test setup, etc.
+12. **deps**: Used for updates, additions or deletions of project dependencies.
+13. **merge**: It is used for branch mergers, indicating the merger of one branch into another.
+14. **config**: Used for changes to project settings that do not fall into other categories, such as changes to configuration files, environment settings, etc.
+15. **migration**: Used for changes related to data migration, database schema changes, etc.
+16. **vendor**: Used for updates or changes to third-party libraries or external components.
 
 ### Before opening a pull request, make sure that
 
@@ -269,32 +293,18 @@ Let's take a closer look at using branches in a Python project on GitHub. Here's
 1. Main branch (`main`):
 
     This branch should only contain stable and tested code that is ready to be deployed into production.
-    It is recommended that this branch be protected, to avoid direct changes and the need for revisions via pull requests.
-    Development branches:
 
-2. Development Branch (`dev`):
-
-    This branch is used to integrate and test new features before merging them into the main branch. Feature branches may be created from this branch for the development of new features.
-
-3. Feature branches (`feature/*`):
+2. Feature branches (`feat/*`):
 
     Separate branches are created to develop specific features or solve specific problems.
     Each feature branch should be descriptive, representing the functionality being developed.
-    When implementation is complete and the functionality has been tested, the feature branch is merged with the development branch.
+    When implementation is complete and the functionality has been tested, the feature branch is merged with the main branch.
 
-4. Release branches (`release/tage_name`):
-
-    Release branches are created when a new version of the software is being prepared for production deployment.
-    These branches are used for final testing, last-minute bug fixes, and documentation preparation prior to deployment.
-    Once testing is complete, the release branch is merged with both the main and development branches.
-
-5. Hotfix branches (`hotfix/*`):
+3. Hotfix branches (`hotfix/*`):
 
     Hotfix branches are created to address critical issues that require an immediate fix in production.
     These branches are derived directly from the main branch.
-    Once the problem is fixed, the hotfix branch is merged with both the main branch and the development branch.
-
-This branching strategy promotes an orderly and controlled workflow, facilitates collaboration between team members, and ensures code stability in production. Proper use of branches helps maintain a clear and organized change history in the repository.
+    Once the problem is fixed, the hotfix branch is merged with the main branch.
 
 ## Reporting Issues
 
