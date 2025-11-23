@@ -103,7 +103,7 @@ def DSP(input: electrical_signal, BW: float = None):
 
         gv(sps=64, R=1e9)
 
-        x = DAC('01000100100000', 1, pulse_shape='gaussian')
+        x = DAC('01000100100000', pulse_shape='gaussian')
         x.noise = np.random.normal(0, 0.1, x.size)
 
         y, eye_, xth = DSP(x)

@@ -32,7 +32,8 @@
     gauss_pulse
     nrz_pulse
     upfir
-    phase_estimator      
+    phase_estimator
+    get_psd      
 """
 
 import re
@@ -670,7 +671,7 @@ def tau_g(x: np.ndarray, fs: float):
         phi = tau_g(y, 1e2)
 
         plt.figure(figsize=(8, 5))
-        plt.plot(t[:-1], phi, 'r', lw=2)
+        plt.plot(t, phi, 'r', lw=2)
         plt.ylabel(r'$\tau_g$ [ps]')
         plt.xlabel('t')
         plt.grid(alpha=0.3)
@@ -2005,3 +2006,37 @@ def phase_estimator(*signals):
     if len(phis) == 1:
         return phis[0]
     return np.array(phis)
+
+def get_psd(signal, fs, nperseg=None):
+    """
+    Calculate the Power Spectral Density (PSD) of a signal using Welch's method.
+
+    Parameters
+    ----------
+    signal : Array_Like
+        Input signal.
+    fs : float
+        Sampling frequency in Hz.
+    nperseg : int, optional
+        Length of each segment for Welch's method. If None, defaults to 2048 or the length of the signal, whichever is smaller.
+
+    Returns
+    -------
+    f : np.ndarray
+        Frequency array.
+    psd : np.ndarray
+        Power Spectral Density.
+    """
+    if hasattr(signal, 'signal'):
+        sig = signal.signal
+    elif _is_iterable_and_numpy_compatible(signal):
+        sig = np.array(signal)
+    else:
+        raise TypeError("signal must be array_like or have a .signal attribute")
+
+    nperseg = nperseg if nperseg is not None else min(2048, len(sig))
+    
+    # fs is passed in GHz to get f in GHz
+    f, psd = sg.welch(sig, fs=fs, nperseg=nperseg, scaling='spectrum', return_onesided=False, detrend=False)
+    f, psd = fftshift(f), fftshift(psd, axes=-1)
+    return f, psd

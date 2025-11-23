@@ -252,7 +252,7 @@ def DAC(
 
         gv(sps=32) # set samples per bit
 
-        DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r', lw=3, grid=True).show()
+        DAC('0 0 1 0 0', Vpp=5, pulse_shape='gaussian', m=2).plot('r', lw=3, grid=True).show()
     """
     tic()
 
@@ -689,66 +689,60 @@ def MZM(
 
     Examples
     --------
-    .. code-block:: python
-        :linenos:
+    .. plot::
+        :include-source:
+        :align: center
 
         from opticomlib import idbm, dbm, optical_signal, gv
-        from opticomlib.devices import MZM
+        from opticomlib.devices import MZM, LASER
 
         import numpy as np
         import matplotlib.pyplot as plt
 
-        gv(sps=128, R=10e9) # set samples per bit and bitrate
+        gv(sps=128, R=10e9, Vpi=5, N=10)
 
-        Vpi = 5
         tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool)
 
-        V = DAC(~tx_seq, Vout=Vpi, pulse_shape='rect') - Vpi/2
+        V = DAC(tx_seq, Vpp=gv.Vpi, offset=gv.Vpi/2, pulse_shape='nrz')
 
-        input = optical_signal( np.ones_like(V.signal)*idbm(10)**0.5 )
-        input.noise = np.random.normal(0, 0.01, input.size)
-        t = input.t()*1e9
+        input = LASER(P0=10) + np.random.normal(0, 0.01, gv.t.size)
 
-        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=2, ER_dB=40, BW=40e9)
+        mod_sig = MZM(input, el_input=V, bias=-gv.Vpi/2, Vpi=gv.Vpi, loss_dB=2, ER_dB=40, BW=40e9)
 
         fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
 
 
         # Plot input and output power
-        axs[0].plot(t, dbm(input.abs()**2), 'r-', label='input', lw=3)
-        axs[0].plot(t, dbm(mod_sig.abs()**2), 'C1-', label='output', lw=3)
+        axs[0].plot(gv.t, dbm(input.abs()**2), 'r-', label='input', lw=3)
+        axs[0].plot(gv.t, dbm(mod_sig.abs()**2), 'C1-', label='output', lw=3)
         axs[0].legend(bbox_to_anchor=(1, 1), loc='upper left')
         axs[0].set_ylabel('Potencia [dBm]')
-        for i in t[::gv.sps]:
+        for i in gv.t[::gv.sps]:
             axs[0].axvline(i, color='k', linestyle='--', alpha=0.5)
 
         # # Plot fase
         phi_in = input.phase()
         phi_out = mod_sig.phase()
 
-        axs[1].plot(t, phi_in, 'b-', label='Fase in', lw=3)
-        axs[1].plot(t, phi_out, 'C0-', label='Fase out', lw=3)
+        axs[1].plot(gv.t, phi_in, 'b-', label='Fase in', lw=3)
+        axs[1].plot(gv.t, phi_out, 'C0-', label='Fase out', lw=3)
         axs[1].set_ylabel('Fase [rad]')
         axs[1].legend(bbox_to_anchor=(1, 1), loc='upper left')
-        for i in t[::gv.sps]:
+        for i in gv.t[::gv.sps]:
             axs[1].axvline(i, color='k', linestyle='--', alpha=0.5)
 
         # Frecuency chirp
-        freq_in = 1/2/np.pi*np.diff(phi_in)/np.diff(t)
-        freq_out = 1/2/np.pi*np.diff(phi_out)/np.diff(t)
+        freq_in = 1/2/np.pi*np.diff(phi_in)/gv.dt
+        freq_out = 1/2/np.pi*np.diff(phi_out)/gv.dt
 
-        axs[2].plot(t[:-1], freq_in, 'k', label='Frequency in', lw=3)
-        axs[2].plot(t[:-1], freq_out, 'C7', label='Frequency out', lw=3)
+        axs[2].plot(gv.t[:-1], freq_in, 'k', label='Frequency in', lw=3)
+        axs[2].plot(gv.t[:-1], freq_out, 'C7', label='Frequency out', lw=3)
         axs[2].set_xlabel('Tiempo [ns]')
         axs[2].set_ylabel('Frequency Chirp [Hz]')
         axs[2].legend(bbox_to_anchor=(1, 1), loc='upper left')
-        for i in t[::gv.sps]:
+        for i in gv.t[::gv.sps]:
             axs[2].axvline(i, color='k', linestyle='--', alpha=0.5)
         plt.show()
-
-    .. image:: _images/MZM_example.svg
-        :width: 100%
-        :align: center
     """
 
     tic()
@@ -1007,7 +1001,6 @@ def DM(input: optical_signal, D: float, retH: bool = False):
 
         t = gv.t*1e9
 
-        plt.style.use('dark_background')
         fig, ax = plt.subplots(2, 1, sharex=True, gridspec_kw={'hspace': 0.05})
 
         ax[0].plot(t, input.abs()[0], 'r-', lw=3, label='input')
@@ -1103,18 +1096,16 @@ def FIBER(input: optical_signal,
         :include-source:
         :alt: FIBER example 1
         :align: center
-        :caption: The input signal is a 10 Gbps NRZ signal with 20 dBm of power. The fiber has a length of 50 km, an attenuation of 0.01 dB/km,
-                    a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.
+        :caption: The input signal is a 10 Gbps NRZ signal with 20 dBm of power. The fiber has a length of 50 km, an attenuation of 0.01 dB/km, a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.
 
         from opticomlib.devices import FIBER, DAC
-        from opticomlib import optical_signal, gv, idbm
+        from opticomlib import optical_signal as op_sig, gv, idbm
 
         gv(sps=32, R=10e9)
 
-        signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2)
+        input = op_sig( DAC('0,0,0,1,0,0,0', pulse_shape='gaussian'), n_pol=2)
 
-        output = FIBER_GPU(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)
+        output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)
 
         input.plot('r-', label='input', lw=3)
         output.plot('b-', label='output', lw=3).show()
@@ -1609,12 +1600,11 @@ def ADC(
         yn = ADC(y, n=2)
 
         y.plot(
-            style='light', 
             grid=True, 
             lw=5,
             label = 'analog signal'
         )
-        yn.plot('.-', style='light', lw=2, label=' 2 bits quantized signal').show()
+        yn.plot('.-', lw=2, label=' 2 bits quantized signal').show()
     """
     tic()
 
