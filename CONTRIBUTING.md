@@ -22,23 +22,31 @@ To contribute to this project, you will need to follow these steps:
    git clone https://github.com/armando-palacio/opticomlib.git
    cd opticomlib
    ```
-3. Create a new branch for your changes.
+3. Set up the development environment.
+
+   To set up the development environment with all necessary dependencies, you can use Conda:
+
+   ```bash
+   conda env create -f dev_requires.yml
+   conda activate opticomlib-dev
+   ```
+4. Create a new branch for your changes.
 
    ```bash
    git checkout -b new-branch-name
    ```
-4. Make your changes and commit them.
+5. Make your changes and commit them.
 
    ```bash
    git add .
    git commit -m "A short description of the changes made"
    ```
-5. Push your changes to your forked (project) repository.
+6. Push your changes to your forked (project) repository.
 
    ```bash
    git push origin new-branch-name
    ```
-6. Open a pull request to the main repository.
+7. Open a pull request to the main repository.
 
    - Go to the main repository and click on the "New pull request" button.
    - Select your forked repository and the branch with your changes.
