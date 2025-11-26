@@ -1,29 +1,49 @@
-from opticomlib.devices import EDFA
-from opticomlib import optical_signal, gv, np, plt
+from opticomlib import idbm, dbm, optical_signal, gv
+from opticomlib.devices import MZM, LASER
 
-gv(sps=256, R=1e9, N=5, G=20, NF=5, BW=50e9)
+import numpy as np
+import matplotlib.pyplot as plt
 
-x = optical_signal(
-    signal=[
-        (1e-3)*np.sin(2*np.pi*gv.R*gv.t),
-        np.zeros_like(gv.t)
-    ],
-    n_pol=2
-)
+gv(sps=128, R=10e9, Vpi=5, N=10)
 
-y = EDFA(x, G=gv.G, NF=gv.NF, BW=gv.BW)
+tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool)
 
-fig, axs = plt.subplots(2,1, sharex=True, figsize=(8,6))
-plt.suptitle(f"EDFA input-output (G={gv.G} dB, NF={gv.NF} dB, BW={gv.BW*1e-9} GHz)")
+V = DAC(tx_seq, Vpp=gv.Vpi, offset=gv.Vpi/2, pulse_shape='nrz')
 
-axs[0].set_title('Input')
-axs[0].plot(gv.t*1e9, x.signal.T)
-axs[0].set_ylim(-0.015, 0.015)
+input = LASER(P0=10) + np.random.normal(0, 0.01, gv.t.size)
 
-axs[1].set_title('Output')
-axs[1].plot(gv.t*1e9, y.signal.T + y.noise.T.real)
-axs[1].set_ylim(-0.015, 0.015)
+mod_sig = MZM(input, el_input=V, bias=-gv.Vpi/2, Vpi=gv.Vpi, loss_dB=2, ER_dB=40, BW=40e9)
 
-plt.legend(['x-pol', 'y-pol'])
-plt.xlabel('t [ns]')
+fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
+
+# Plot input and output power
+axs[0].plot(gv.t, dbm(input.abs()**2), 'r-', label='input', lw=3)
+axs[0].plot(gv.t, dbm(mod_sig.abs()**2), 'C1-', label='output', lw=3)
+axs[0].legend(bbox_to_anchor=(1, 1), loc='upper left')
+axs[0].set_ylabel('Potencia [dBm]')
+for i in gv.t[::gv.sps]:
+    axs[0].axvline(i, color='k', linestyle='--', alpha=0.5)
+
+# # Plot fase
+phi_in = input.phase()
+phi_out = mod_sig.phase()
+
+axs[1].plot(gv.t, phi_in, 'b-', label='Fase in', lw=3)
+axs[1].plot(gv.t, phi_out, 'C0-', label='Fase out', lw=3)
+axs[1].set_ylabel('Fase [rad]')
+axs[1].legend(bbox_to_anchor=(1, 1), loc='upper left')
+for i in gv.t[::gv.sps]:
+    axs[1].axvline(i, color='k', linestyle='--', alpha=0.5)
+
+# Frecuency chirp
+freq_in = 1/2/np.pi*np.diff(phi_in)/gv.dt
+freq_out = 1/2/np.pi*np.diff(phi_out)/gv.dt
+
+axs[2].plot(gv.t[:-1], freq_in, 'k', label='Frequency in', lw=3)
+axs[2].plot(gv.t[:-1], freq_out, 'C7', label='Frequency out', lw=3)
+axs[2].set_xlabel('Tiempo [ns]')
+axs[2].set_ylabel('Frequency Chirp [Hz]')
+axs[2].legend(bbox_to_anchor=(1, 1), loc='upper left')
+for i in gv.t[::gv.sps]:
+    axs[2].axvline(i, color='k', linestyle='--', alpha=0.5)
 plt.show()

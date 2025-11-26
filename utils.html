@@ -82,12 +82,21 @@
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.si"><code class="docutils literal notranslate"><span class="pre">si()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.norm"><code class="docutils literal notranslate"><span class="pre">norm()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.nearest"><code class="docutils literal notranslate"><span class="pre">nearest()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.nearest_index"><code class="docutils literal notranslate"><span class="pre">nearest_index()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.p_ase"><code class="docutils literal notranslate"><span class="pre">p_ase()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.average_voltages"><code class="docutils literal notranslate"><span class="pre">average_voltages()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.noise_variances"><code class="docutils literal notranslate"><span class="pre">noise_variances()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.optimum_threshold"><code class="docutils literal notranslate"><span class="pre">optimum_threshold()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.shortest_int"><code class="docutils literal notranslate"><span class="pre">shortest_int()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.apply_optimized_gaussian_filter"><code class="docutils literal notranslate"><span class="pre">apply_optimized_gaussian_filter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.eyediagram"><code class="docutils literal notranslate"><span class="pre">eyediagram()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.rcos_pulse"><code class="docutils literal notranslate"><span class="pre">rcos_pulse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.gauss_pulse"><code class="docutils literal notranslate"><span class="pre">gauss_pulse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.nrz_pulse"><code class="docutils literal notranslate"><span class="pre">nrz_pulse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.upfir"><code class="docutils literal notranslate"><span class="pre">upfir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.phase_estimator"><code class="docutils literal notranslate"><span class="pre">phase_estimator()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.utils.get_psd"><code class="docutils literal notranslate"><span class="pre">get_psd()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -158,13 +167,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.Q" title="opticomlib.utils.Q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Q</span></code></a>(x)</p></td>
 <td><p>Q-function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.phase" title="opticomlib.utils.phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code></a>(H)</p></td>
-<td><p>Calculate the unwrapped phase of a frequency response.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.phase" title="opticomlib.utils.phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code></a>(x[, zero_ref_index])</p></td>
+<td><p>Calculate the unwrapped phase the signal.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.tau_g" title="opticomlib.utils.tau_g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tau_g</span></code></a>(H, fs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.tau_g" title="opticomlib.utils.tau_g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tau_g</span></code></a>(x, fs)</p></td>
 <td><p>Calculate the group delay of a frequency response.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.dispersion" title="opticomlib.utils.dispersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispersion</span></code></a>(H, fs, f0)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.dispersion" title="opticomlib.utils.dispersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispersion</span></code></a>(x, fs, f0)</p></td>
 <td><p>Calculate the dispersion of a frequency response.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.bode" title="opticomlib.utils.bode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bode</span></code></a>(H, fs[, f0, xaxis, disp, yscale, ret, ...])</p></td>
@@ -180,7 +189,7 @@
 <td><p>Normalize an array by dividing each element by the maximum value in the array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.nearest" title="opticomlib.utils.nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nearest</span></code></a>(x, a)</p></td>
-<td><p>Find the nearest value in an array.</p></td>
+<td><p>Find the value of X closest to a.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.theory_BER" title="opticomlib.utils.theory_BER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">theory_BER</span></code></a>(P_avg, modulation[, M, decision, ...])</p></td>
 <td><p>This function calculates the bit error rate (BER) for an OPTICAL RECEIVER, based on a PIN photodetector, from the average input power.</p></td>
@@ -197,8 +206,29 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.optimum_threshold" title="opticomlib.utils.optimum_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimum_threshold</span></code></a>(mu0, mu1, S0, S1, modulation)</p></td>
 <td><p>Calculate the optimum threshold for binary modulation formats.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.shortest_int" title="opticomlib.utils.shortest_int"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shortest_int</span></code></a>(data[, percent])</p></td>
-<td><p>Estimation of the shortest interval containing <code class="docutils literal notranslate"><span class="pre">percent</span></code> of the samples in 'data'.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.shortest_int" title="opticomlib.utils.shortest_int"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shortest_int</span></code></a>(x[, percent])</p></td>
+<td><p>Estimation of the shortest interval of x values, containing {<code class="docutils literal notranslate"><span class="pre">percent</span></code>}% of the samples in 'x'.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.eyediagram" title="opticomlib.utils.eyediagram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eyediagram</span></code></a>(y, sps[, n_traces, cmap, ...])</p></td>
+<td><p>Plots a colored eye diagram, internally calculating color density.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.rcos_pulse" title="opticomlib.utils.rcos_pulse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcos_pulse</span></code></a>(beta, span, sps[, shape])</p></td>
+<td><p>Generate a raised cosine or root raised cosine filter impulse response.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.gauss_pulse" title="opticomlib.utils.gauss_pulse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gauss_pulse</span></code></a>(span, sps[, T, m, c])</p></td>
+<td><p>Generate a Gaussian or Super-Gaussian filter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.nrz_pulse" title="opticomlib.utils.nrz_pulse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nrz_pulse</span></code></a>(span, sps, T)</p></td>
+<td><p>Generate a Non-Return-to-Zero (NRZ) pulse shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.upfir" title="opticomlib.utils.upfir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upfir</span></code></a>(x, h[, up])</p></td>
+<td><p>Replicate MATLAB's upfirdn function for upsampling and FIR filtering.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.utils.phase_estimator" title="opticomlib.utils.phase_estimator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_estimator</span></code></a>(t, x, f)</p></td>
+<td><p>Estimates the phase and amplitude of a sinusoid with known frequency.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.utils.get_psd" title="opticomlib.utils.get_psd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_psd</span></code></a>(signal, fs[, nperseg])</p></td>
+<td><p>Calculate the Power Spectral Density (PSD) of a signal using Welch's method.</p></td>
 </tr>
 </tbody>
 </table>
@@ -220,7 +250,10 @@
 <dd class="field-odd"><p><a class="reference internal" href="types.html#opticomlib.typing.binary_sequence" title="opticomlib.typing.binary_sequence">binary_sequence</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">num</span></code> is too large to be represented with <code class="docutils literal notranslate"><span class="pre">digits</span></code> bits.</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">num</span></code> is not an integer number.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">num</span></code> is too large to be represented with <code class="docutils literal notranslate"><span class="pre">digits</span></code> bits.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -555,11 +588,14 @@ Then you can use toc() to get the elapsed time.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.phase">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.phase" title="Permalink to this definition"></a></dt>
-<dd><p>Calculate the unwrapped phase of a frequency response.</p>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_ref_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.phase" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the unwrapped phase the signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Signal to calculate the phase</p></li>
+<li><p><strong>zero_ref_index</strong> (int, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Position of signal to take zero phase reference. By default zero phase reference is set to position 0 of x.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>phase</strong> – Unwrapped phase in radians.</p>
@@ -593,12 +629,12 @@ Then you can use toc() to get the elapsed time.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.tau_g">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">tau_g</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#tau_g"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.tau_g" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">tau_g</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#tau_g"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.tau_g" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the group delay of a frequency response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p></li>
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p></li>
 <li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Sampling frequency of the system.</p></li>
 </ul>
 </dd>
@@ -619,7 +655,7 @@ Then you can use toc() to get the elapsed time.</p>
 <span class="n">phi</span> <span class="o">=</span> <span class="n">tau_g</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mf">1e2</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">phi</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\tau_g$ [ps]&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
@@ -634,12 +670,12 @@ Then you can use toc() to get the elapsed time.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.dispersion">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">dispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#dispersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.dispersion" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">dispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#dispersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.dispersion" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the dispersion of a frequency response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>H</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p></li>
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Frequency response of a system.</p></li>
 <li><p><strong>fs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Sampling frequency of the system.</p></li>
 <li><p><strong>f0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Center frequency of the system.</p></li>
 </ul>
@@ -655,7 +691,7 @@ Then you can use toc() to get the elapsed time.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.bode">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">bode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'lambda'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'db'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retAxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dark'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'light'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dark'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#bode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.bode" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">bode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'f'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'w'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'lambda'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'db'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retAxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#bode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.bode" title="Permalink to this definition"></a></dt>
 <dd><p>Plot the Bode plot of a given transfer function H (magnitude, phase and group delay).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -784,12 +820,12 @@ Then you can use toc() to get the elapsed time.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.nearest">
 <span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">nearest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#nearest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.nearest" title="Permalink to this definition"></a></dt>
-<dd><p>Find the nearest value in an array.</p>
+<dd><p>Find the value of X closest to a.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Array_Like</em>) – Input array.</p></li>
-<li><p><strong>a</strong> (<em>Number</em>) – Value to find.</p></li>
+<li><p><strong>X</strong> (<em>Array_Like</em>) – Input array.</p></li>
+<li><p><strong>A</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Reference value or values to find in X.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -801,6 +837,29 @@ Then you can use toc() to get the elapsed time.</p>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not an <cite>array_like</cite>.
     If <code class="docutils literal notranslate"><span class="pre">a</span></code> is not a <cite>number</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.nearest_index">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">nearest_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#nearest_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.nearest_index" title="Permalink to this definition"></a></dt>
+<dd><p>Find the indices of X for the values of X closest to the values of A.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Array_Like</em>) – Input array.</p></li>
+<li><p><strong>A</strong> (<em>Number</em><em> or </em><em>Array_Like</em>) – Value or values to find in X.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> – Indices of the nearest values in the array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number or np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">X</span></code> is not an <cite>array_like</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -980,17 +1039,254 @@ not considered to affect the transmitted signal.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="opticomlib.utils.shortest_int">
-<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">shortest_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/opticomlib/utils.html#shortest_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.shortest_int" title="Permalink to this definition"></a></dt>
-<dd><p>Estimation of the shortest interval containing <code class="docutils literal notranslate"><span class="pre">percent</span></code> of the samples in ‘data’.</p>
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">shortest_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/opticomlib/utils.html#shortest_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.shortest_int" title="Permalink to this definition"></a></dt>
+<dd><p>Estimation of the shortest interval of x values, containing {<code class="docutils literal notranslate"><span class="pre">percent</span></code>}% of the samples in ‘x’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>ndarray</em>) – Array of data.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>) – Data of not complex values. If data is complex, real part will be taken.</p></li>
+<li><p><strong>percent</strong> (<em>real number</em>) – percent of of data.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The shortest interval containing 50% of the samples in ‘data’.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple[float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.apply_optimized_gaussian_filter">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">apply_optimized_gaussian_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_bit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#apply_optimized_gaussian_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.apply_optimized_gaussian_filter" title="Permalink to this definition"></a></dt>
+<dd><p>Applies a Gaussian filter to a NRZ signal. The filter is optimized based on the bit duration, to a sigma of 0.139 * T_bit.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>t (np.ndarray): Time vector corresponding to signal_in.
+signal (np.ndarray): NRZ input signal.
+T_bit (float): Bit duration, used as a reference for sigma.</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: The filtered signal with scaled amplitude.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.eyediagram">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">eyediagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_grid_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">350</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">plot_kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#eyediagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.eyediagram" title="Permalink to this definition"></a></dt>
+<dd><p>Plots a colored eye diagram, internally calculating color density.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.ndarray</em>) – Full amplitude array (1D).</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) – Samples per symbol. Used to segment the eye traces.</p></li>
+<li><p><strong>n_traces</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of traces to plot. If None, all available traces
+will be plotted. Defaults to None.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the matplotlib colormap. Defaults to ‘viridis’.</p></li>
+<li><p><strong>N_grid_bins</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bins for the density histogram. Defaults to 350.</p></li>
+<li><p><strong>grid_sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – Sigma for the Gaussian filter applied to the density. Defaults to 3.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes object to plot on. If None, creates new figure and axes.
+Defaults to None.</p></li>
+<li><p><strong>**plot_kw</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>Additional plotting parameters:</p>
+<p>Figure parameters (used only if ax is None):
+- figsize : tuple, default (10, 6)
+- dpi : int, default 100</p>
+<p>Line collection parameters:
+- linewidth : float, default 0.75
+- alpha : float, default 0.25
+- capstyle : str, default ‘round’
+- joinstyle : str, default ‘round’</p>
+<p>Axes formatting parameters:
+- xlabel : str, default “Time (2-symbol segment)”
+- ylabel : str, default “Amplitude”
+- title : str, default “Eye Diagram ({num_traces} traces)”
+- grid : bool, default True
+- grid_alpha : float, default 0.3
+- xlim : tuple, optional (xmin, xmax)
+- ylim : tuple, optional (ymin, ymax)
+- tight_layout : bool, default True</p>
+<p>Display parameters:
+- show : bool, default False (whether to call plt.show())</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes object containing the eye diagram plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.rcos_pulse">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">rcos_pulse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sqrt'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#rcos_pulse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.rcos_pulse" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a raised cosine or root raised cosine filter impulse response.</p>
+<p>This function replicates the MATLAB <cite>rcosdesign()</cite> function, generating the impulse response
+of a raised cosine or root raised cosine filter used in digital communications for
+pulse shaping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beta</strong> (<em>float</em>) – Roll-off factor, must be between 0 and 1.</p></li>
+<li><p><strong>span</strong> (<em>int</em>) – Number of symbols. The filter length will be span * sps + 1.</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) – Samples per symbol.</p></li>
+<li><p><strong>shape</strong> (<em>str</em><em>, </em><em>optional</em>) – Filter shape, either ‘normal’ for raised cosine or ‘sqrt’ for root raised cosine.
+Default is ‘sqrt’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filter impulse response, normalized to unit energy.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If beta is not in [0, 1] or shape is not ‘normal’ or ‘sqrt’.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The filter is normalized such that the sum of squares of the coefficients is 1.
+For beta=0, it reduces to a <cite>sinc()</cite> function.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">rcos</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;sqrt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(384,)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.gauss_pulse">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">gauss_pulse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">span</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#gauss_pulse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.gauss_pulse" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a Gaussian or Super-Gaussian filter.</p>
+<p>This function generates the impulse response of a Gaussian filter used in digital
+communications to reduce bandwidth and minimize intersymbol interference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>span</strong> (<em>int</em>) – Number of symbols. The filter length will be span * sps + 1.</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) – Samples per symbol.</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Full Width at Half Maximum (FWHM) of the pulse in symbols. Default is 1.</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – Super-Gaussian order. Default is 1 (standard Gaussian).</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – Chirp parameter. Default is 0.0 (no chirp).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The impulse response of the Gaussian filter, normalized to unit energy.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The filter is normalized such that the sum of squares of the coefficients is 1.
+The Gaussian shape helps reduce intersymbol interference in modulation systems.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">gauss</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">(49,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Energy:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">h</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.nrz_pulse">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">nrz_pulse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">span</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#nrz_pulse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.nrz_pulse" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a Non-Return-to-Zero (NRZ) pulse shape.</p>
+<p>This function generates the impulse response of a Non-Return-to-Zero (NRZ) pulse shape, commonly used in digital communications for pulse shaping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>span</strong> (<em>int</em>) – Number of symbols. The filter length will be span * sps + 1.</p></li>
+<li><p><strong>sps</strong> (<em>int</em>) – Samples per symbol.</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Duration of the NRZ pulse in symbols.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The impulse response of the NRZ pulse shape.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.upfir">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">upfir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#upfir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.upfir" title="Permalink to this definition"></a></dt>
+<dd><p>Replicate MATLAB’s upfirdn function for upsampling and FIR filtering.</p>
+<p>This function performs upsampling of the input signal and then applies an FIR filter,
+partially replicating the functionality of MATLAB’s <cite>upfirdn</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em>) – Input signal to process.</p></li>
+<li><p><strong>h</strong> (<em>array_like</em>) – Impulse response of the FIR filter.</p></li>
+<li><p><strong>up</strong> (<em>int</em><em>, </em><em>optional</em>) – Upsampling factor. Default is 1 (no upsampling).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filtered signal after upsampling, convolution and downsampling.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Upsampling is performed by inserting zeros between the input signal samples.
+Convolution is then applied with the filter using <cite>mode=’same’</cite> to maintain length. Finally,
+downsampling is performed by selecting every <cite>dn</cite>-th sample from the filtered signal.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.phase_estimator">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">phase_estimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#phase_estimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.phase_estimator" title="Permalink to this definition"></a></dt>
+<dd><p>Estimates the phase and amplitude of a sinusoid with known frequency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>array_like</em>) – Times in seconds, shape (N,).</p></li>
+<li><p><strong>x</strong> (<em>array_like</em>) – Sampled signal, shape (N,).</p></li>
+<li><p><strong>f</strong> (<em>float</em>) – Frequency in Hz.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>phi</strong> (<em>float</em>) – Estimated phase in radians.</p></li>
+<li><p><strong>amp</strong> (<em>float</em>) – Estimated amplitude.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The model is <span class="math notranslate nohighlight">\(x[n] = A \cos(2\pi f t[n] + \phi) + noise\)</span>, solved by linear regression
+over <span class="math notranslate nohighlight">\([\cos(\omega t), \sin(\omega t)]\)</span>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.utils.get_psd">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.utils.</span></span><span class="sig-name descname"><span class="pre">get_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nperseg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/utils.html#get_psd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.utils.get_psd" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the Power Spectral Density (PSD) of a signal using Welch’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signal</strong> (<em>Array_Like</em>) – Input signal.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency in Hz.</p></li>
+<li><p><strong>nperseg</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of each segment for Welch’s method. If None, defaults to 2048 or the length of the signal, whichever is smaller.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>f</strong> (<em>np.ndarray</em>) – Frequency array.</p></li>
+<li><p><strong>psd</strong> (<em>np.ndarray</em>) – Power Spectral Density.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>

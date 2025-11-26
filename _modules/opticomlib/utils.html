@@ -115,7 +115,14 @@
 <span class="sd">    average_voltages</span>
 <span class="sd">    noise_variances</span>
 <span class="sd">    optimum_threshold</span>
-<span class="sd">    shortest_int              </span>
+<span class="sd">    shortest_int  </span>
+<span class="sd">    eyediagram</span>
+<span class="sd">    rcos_pulse</span>
+<span class="sd">    gauss_pulse</span>
+<span class="sd">    nrz_pulse</span>
+<span class="sd">    upfir</span>
+<span class="sd">    phase_estimator</span>
+<span class="sd">    get_psd      </span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -134,8 +141,62 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="n">Array_Like</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-<span class="n">Number</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Integral</span> <span class="k">as</span> <span class="n">IntegerNumber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Real</span> <span class="k">as</span> <span class="n">RealNumber</span> <span class="c1"># inlude integer numbers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Complex</span> <span class="k">as</span> <span class="n">ComplexNumber</span> <span class="c1"># inlcude real numbers, is not exclusive</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if an object is iterable, can be converted into a NumPy array, </span>
+<span class="sd">    and contains only numeric values (complex or real values).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj : any</span>
+<span class="sd">        The input object to be checked.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the object is iterable, can be transformed into a NumPy array, </span>
+<span class="sd">        and contains only numeric values. False otherwise.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The function first verifies if `obj` is iterable.</span>
+<span class="sd">    - If it is not iterable, the function returns False immediately.</span>
+<span class="sd">    - If `obj` can be converted into a NumPy array (`np.array(obj)`), </span>
+<span class="sd">      it proceeds to check the numerical validity.</span>
+<span class="sd">    - `numbers.Complex` is used to ensure all elements are numeric.</span>
+<span class="sd">    - The function supports various iterable types like lists, tuples, and NumPy arrays.</span>
+<span class="sd">    - It excludes non-numeric elements such as strings and mixed-type collections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the object is iterable</span>
+    <span class="n">is_iterable</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_iterable</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c1"># Try to convert it into a NumPy array</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ComplexNumber</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_numeric</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ComplexNumber</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_real</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">RealNumber</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_integer</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">IntegerNumber</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="dec2bin"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.dec2bin">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">dec2bin</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
@@ -157,6 +218,8 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
+<span class="sd">        If ``num`` is not an integer number.</span>
+<span class="sd">    ValueError</span>
 <span class="sd">        If ``num`` is too large to be represented with ``digits`` bits.</span>
 
 <span class="sd">    Example</span>
@@ -166,6 +229,8 @@
 <span class="sd">        &gt;&gt;&gt; dec2bin(5, 4)</span>
 <span class="sd">        array([0, 1, 0, 1], dtype=uint8)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_integer</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`num` must be an integer number.&#39;</span><span class="p">)</span>
 
     <span class="n">binary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">**</span><span class="n">digits</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The number is too large to be represented with </span><span class="si">{</span><span class="n">digits</span><span class="si">}</span><span class="s1"> bits.&#39;</span><span class="p">)</span>
@@ -281,7 +346,11 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The string contains invalid characters and can</span><span class="se">\&#39;</span><span class="s1">t be converted to an array.&#39;</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="k">if</span> <span class="n">dtype</span> <span class="k">else</span> <span class="n">arr</span></div>
+    <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ComplexWarning</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">arr</span></div>
 
 
 
@@ -391,14 +460,16 @@
 <span class="sd">        &gt;&gt;&gt; db([1,2,3,4])</span>
 <span class="sd">        array([0.        , 3.01029996, 4.77121255, 6.02059991])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span> <span class="o">+</span> <span class="n">Array_Like</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number, list, tuple or ndarray.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Some values of input array are negative.&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`x` must be positive.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>   
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`x` must be a number or an array_like with positive values.&#39;</span><span class="p">)</span>
     
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Some values of input array are negative.&#39;</span><span class="p">)</span>
-
     <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span> <span class="c1"># to avoid warning when x=0</span>
     <span class="k">return</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> </div>
 
@@ -434,15 +505,7 @@
 <span class="sd">        &gt;&gt;&gt; dbm([1,2,3,4])</span>
 <span class="sd">        array([30.        , 33.01029996, 34.77121255, 36.02059991])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Number</span> <span class="o">+</span> <span class="n">Array_Like</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number, list, tuple or ndarray.&#39;</span><span class="p">)</span>
-    
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Some values of input array are negative.&#39;</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mf">1e3</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">db</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">30</span></div>
 
 
 <div class="viewcode-block" id="idb"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.idb">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">idb</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -469,7 +532,11 @@
 <span class="sd">        &gt;&gt;&gt; idb([0,3,6,9])</span>
 <span class="sd">        array([1.        , 1.99526231, 3.98107171, 7.94328235])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number or an array_like.&#39;</span><span class="p">)</span>
+    
     <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span></div>
 
 
@@ -497,7 +564,11 @@
 <span class="sd">        &gt;&gt;&gt; idbm([0,3,6,9])</span>
 <span class="sd">        array([0.001     , 0.00199526, 0.00398107, 0.00794328])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number or an array_like.&#39;</span><span class="p">)</span>
+    
     <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span></div>
 
 
@@ -548,7 +619,10 @@
 <span class="sd">        plt.grid(alpha=0.3)</span>
 <span class="sd">        plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number or an array_like.&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">if</span> <span class="n">std</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">std</span> <span class="o">=</span> <span class="mi">1</span>
@@ -600,18 +674,24 @@
 <span class="sd">        plt.grid()</span>
 <span class="sd">        plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be a number or an array_like.&#39;</span><span class="p">)</span>
+    
     <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">sp</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> </div>
 
 
-<div class="viewcode-block" id="phase"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.phase">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">phase</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<div class="viewcode-block" id="phase"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.phase">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">phase</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">zero_ref_index</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the unwrapped phase of a frequency response.</span>
+<span class="sd">    Calculate the unwrapped phase the signal.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    H : :obj:`np.ndarray`</span>
-<span class="sd">        Frequency response of a system.</span>
+<span class="sd">    x : :obj:`np.ndarray`</span>
+<span class="sd">        Signal to calculate the phase</span>
+<span class="sd">    zero_ref_index : int, default: ``None``</span>
+<span class="sd">        Position of signal to take zero phase reference. By default zero phase reference is set to position 0 of x.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -640,15 +720,25 @@
 <span class="sd">        plt.grid(alpha=0.3)</span>
 <span class="sd">        plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">H</span><span class="p">))</span></div>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be an array_like.&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="tau_g"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.tau_g">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">tau_g</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="n">phase_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">zero_ref_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">phase_</span><span class="p">[</span><span class="n">zero_ref_index</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">phase_</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span></div>
+
+<div class="viewcode-block" id="tau_g"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.tau_g">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">tau_g</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the group delay of a frequency response.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    H : :obj:`np.ndarray`</span>
+<span class="sd">    x : :obj:`np.ndarray`</span>
 <span class="sd">        Frequency response of a system.</span>
 <span class="sd">    fs : :obj:`float`</span>
 <span class="sd">        Sampling frequency of the system.</span>
@@ -674,22 +764,26 @@
 <span class="sd">        phi = tau_g(y, 1e2)</span>
 
 <span class="sd">        plt.figure(figsize=(8, 5))</span>
-<span class="sd">        plt.plot(t[:-1], phi, &#39;r&#39;, lw=2)</span>
+<span class="sd">        plt.plot(t, phi, &#39;r&#39;, lw=2)</span>
 <span class="sd">        plt.ylabel(r&#39;$\tau_g$ [ps]&#39;)</span>
 <span class="sd">        plt.xlabel(&#39;t&#39;)</span>
 <span class="sd">        plt.grid(alpha=0.3)</span>
 <span class="sd">        plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dw</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">fs</span><span class="o">/</span><span class="n">H</span><span class="o">.</span><span class="n">size</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">phase</span><span class="p">(</span><span class="n">H</span><span class="p">))</span><span class="o">/</span><span class="n">dw</span> <span class="o">*</span> <span class="mf">1e12</span></div>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be an array_like.&#39;</span><span class="p">)</span>
+    
+    <span class="n">dw</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">fs</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">phase_</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">phase_</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="n">phase_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dw</span> <span class="o">*</span> <span class="mf">1e12</span></div>
 
-<div class="viewcode-block" id="dispersion"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.dispersion">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">dispersion</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f0</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="dispersion"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.dispersion">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">dispersion</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f0</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the dispersion of a frequency response.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    H : :obj:`np.ndarray`</span>
+<span class="sd">    x : :obj:`np.ndarray`</span>
 <span class="sd">        Frequency response of a system.</span>
 <span class="sd">    fs : :obj:`float`</span>
 <span class="sd">        Sampling frequency of the system.</span>
@@ -701,9 +795,13 @@
 <span class="sd">    D : :obj:`np.ndarray`</span>
 <span class="sd">        Cumulative dispersion of the system, in [ps/nm].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">fs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The input value must be an array_like.&#39;</span><span class="p">)</span>
+    
+    <span class="n">f</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">fs</span><span class="p">))</span>
     <span class="n">dλ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">c</span><span class="o">/</span><span class="p">(</span><span class="n">f</span><span class="o">+</span><span class="n">f0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e9</span>
-    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">tau_g</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">fs</span><span class="p">))</span><span class="o">/</span><span class="n">dλ</span>
+    <span class="n">tau_g_</span> <span class="o">=</span> <span class="n">tau_g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">tau_g_</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="n">tau_g_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dλ</span>
     <span class="k">return</span> <span class="n">D</span></div>
 
 
@@ -717,7 +815,6 @@
          <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
          <span class="n">retAxes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
          <span class="n">show_</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-         <span class="n">style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span> <span class="s1">&#39;light&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span>
          <span class="n">xlim</span><span class="p">:</span> <span class="nb">tuple</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the Bode plot of a given transfer function H (magnitude, phase and group delay).</span>
@@ -776,13 +873,6 @@
         <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="o">/</span><span class="p">(</span><span class="n">f</span><span class="o">+</span><span class="n">f0</span><span class="p">)</span> <span class="o">-</span> <span class="n">c</span><span class="o">/</span><span class="n">f0</span><span class="p">)</span><span class="o">*</span><span class="mf">1e9</span>
         <span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$\lambda$ [nm]&#39;</span>
 
-    <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s1">&#39;dark&#39;</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;dark_background&#39;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s1">&#39;light&#39;</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`style` must be &quot;dark&quot; or &quot;light&quot;.&#39;</span><span class="p">)</span>
-
     <span class="n">nplots</span> <span class="o">=</span> <span class="mi">4</span> <span class="k">if</span> <span class="n">disp</span> <span class="ow">and</span> <span class="n">f0</span> <span class="k">else</span> <span class="mi">3</span>
 
     <span class="k">if</span> <span class="n">yscale</span><span class="o">==</span><span class="s1">&#39;db&#39;</span><span class="p">:</span>
@@ -814,7 +904,7 @@
     <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
     <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_right</span><span class="p">()</span>
 
-    <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">sg</span><span class="o">.</span><span class="n">medfilt</span><span class="p">(</span><span class="n">tau_g</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">fs</span><span class="p">),</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">medfilt</span><span class="p">(</span><span class="n">tau_g</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">fs</span><span class="p">),</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\tau_g$ [ps]&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">labelpad</span><span class="o">=</span><span class="n">pad</span><span class="p">)</span>
     <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
     <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
@@ -824,7 +914,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">f0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`f0` must be specify to determine dispersion.&#39;</span><span class="p">)</span>
 
-        <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sg</span><span class="o">.</span><span class="n">medfilt</span><span class="p">(</span><span class="n">dispersion</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">f0</span><span class="p">),</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">medfilt</span><span class="p">(</span><span class="n">dispersion</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">f0</span><span class="p">),</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;D [ps/nm]&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">labelpad</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
         <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
         <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
@@ -896,20 +986,19 @@
     <span class="n">second_condition</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">T</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&lt;=</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">T</span><span class="p">))</span>
     <span class="n">third_condition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">T</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">first_condition</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">third_condition</span> <span class="k">else</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">T</span><span class="o">/</span><span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">T</span><span class="p">))))</span>
     
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`x` must be a number or an array_like.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`x` must be a number or an array_like.&#39;</span><span class="p">)</span>
     
     <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-    <span class="n">H</span><span class="p">[</span> <span class="n">first_condition</span> <span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">y</span><span class="p">[</span> <span class="n">first_condition</span> <span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">alpha</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">H</span><span class="p">[</span> <span class="n">second_condition</span> <span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">T</span><span class="o">/</span><span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">second_condition</span><span class="p">])</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">T</span><span class="p">))))</span>
-    <span class="k">return</span> <span class="n">H</span></div>
-
+        <span class="n">y</span><span class="p">[</span> <span class="n">second_condition</span> <span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">T</span><span class="o">/</span><span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">second_condition</span><span class="p">])</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">T</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">y</span></div>
 
 <div class="viewcode-block" id="si"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.si">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">si</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -938,6 +1027,9 @@
 <span class="sd">        &gt;&gt;&gt; si(1e9, &#39;Hz&#39;)</span>
 <span class="sd">        &#39;1.0 GHz&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`x` must be a numeric value.&#39;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="mf">1e12</span><span class="o">&lt;=</span> <span class="n">x</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="o">*</span><span class="mf">1e-9</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">f</span><span class="si">}</span><span class="s1"> T</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span> 
     <span class="k">if</span> <span class="mf">1e9</span><span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;</span><span class="mf">1e12</span><span class="p">:</span>
@@ -959,7 +1051,7 @@
     <span class="k">if</span> <span class="mf">1e-15</span><span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;</span><span class="mf">1e-12</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="o">*</span><span class="mf">1e15</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">f</span><span class="si">}</span><span class="s1"> f</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;0 </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">f</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span></div>
     
 
 <div class="viewcode-block" id="norm"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.norm">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">norm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -981,24 +1073,24 @@
 <span class="sd">    ValueError</span>
 <span class="sd">        If ``x`` is not an `array_like`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`x` must be an array_like.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`x` must be an array_like.&#39;</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">x</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="nearest"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.nearest">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">nearest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find the nearest value in an array.</span>
+<span class="sd">    Find the value of X closest to a.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : Array_Like</span>
+<span class="sd">    X : Array_Like</span>
 <span class="sd">        Input array.</span>
-<span class="sd">    a : Number</span>
-<span class="sd">        Value to find.</span>
+<span class="sd">    A : Number or Array_Like</span>
+<span class="sd">        Reference value or values to find in X.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1011,15 +1103,63 @@
 <span class="sd">        If ``x`` is not an `array_like`.</span>
 <span class="sd">        If ``a`` is not a `number`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Array_Like</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`x` must be an array_like.&#39;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`a` must be a number.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)]</span>
     
-    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span></div>
+    <span class="k">if</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">a</span><span class="p">))]</span>
+    
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`A` must be a number or an array_like&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="nearest_index"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.nearest_index">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">nearest_index</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the indices of X for the values of X closest to the values of A.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : Array_Like</span>
+<span class="sd">        Input array.</span>
+<span class="sd">    A : Number or Array_Like</span>
+<span class="sd">        Value or values to find in X.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : Number or np.ndarray</span>
+<span class="sd">        Indices of the nearest values in the array.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``X`` is not an `array_like`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`X` must be an array_like.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">X</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">_is_numeric</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">A</span><span class="p">))</span>
+    
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`A` must be a number or an array_like&#39;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="p_ase"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.p_ase">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">p_ase</span><span class="p">(</span>
         <span class="n">amplify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
@@ -1114,7 +1254,12 @@
 
     <span class="n">er</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">ER</span><span class="p">)</span>  <span class="c1"># extinction ratio</span>
     <span class="n">p_avg</span> <span class="o">=</span> <span class="n">idbm</span><span class="p">(</span><span class="n">P_avg</span><span class="p">)</span>  <span class="c1"># average input power, in [W]</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>  <span class="c1"># gain of EDFA</span>
+    
+    <span class="k">if</span> <span class="n">amplify</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">G</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;G must be provided if amplify=True&quot;</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>  <span class="c1"># gain of EDFA</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="mf">1.0</span>
 
     <span class="n">p_ON</span> <span class="o">=</span> <span class="n">p_avg</span> <span class="o">*</span> <span class="n">M</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">er</span><span class="p">)</span> <span class="c1"># ON slot average optical power, without amplification</span>
     <span class="n">p_OFF</span> <span class="o">=</span> <span class="n">p_ON</span><span class="o">/</span><span class="n">er</span>   <span class="c1"># OFF slot average optical power, without amplification</span>
@@ -1177,11 +1322,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mu</span><span class="p">,</span> <span class="n">mu_ASE</span> <span class="o">=</span> <span class="n">average_voltages</span><span class="p">(</span><span class="n">P_avg</span><span class="p">,</span> <span class="n">modulation</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">ER</span><span class="p">,</span> <span class="n">amplify</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">NF</span><span class="p">,</span> <span class="n">BW_opt</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">R_L</span><span class="p">)</span>
 
-    <span class="n">l</span> <span class="o">=</span> <span class="n">BW_el</span><span class="o">/</span><span class="n">BW_opt</span>
     <span class="n">nf_el</span> <span class="o">=</span> <span class="n">idb</span><span class="p">(</span><span class="n">NF_el</span><span class="p">)</span>
 
-    <span class="n">S_sig_ase_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu_ASE</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span><span class="o">-</span><span class="n">mu_ASE</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span>  <span class="c1"># signal-ase beating noise variance, in [V^2]</span>
-    <span class="n">S_ase_ase</span> <span class="o">=</span> <span class="n">mu_ASE</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">l</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span>       <span class="c1"># ase-ase beating noise variance, in [V^2]</span>
+    <span class="k">if</span> <span class="n">amplify</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">BW_el</span><span class="o">/</span><span class="n">BW_opt</span>
+        <span class="n">S_sig_ase_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu_ASE</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu</span><span class="o">-</span><span class="n">mu_ASE</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span>  <span class="c1"># signal-ase beating noise variance, in [V^2]</span>
+        <span class="n">S_ase_ase</span> <span class="o">=</span> <span class="n">mu_ASE</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">l</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span>       <span class="c1"># ase-ase beating noise variance, in [V^2]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">S_sig_ase_i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">S_ase_ase</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">S_th</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">BW_el</span> <span class="o">*</span> <span class="n">R_L</span>   <span class="c1"># thermal noise variance, in [V^2]</span>
     <span class="n">S_sh_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">BW_el</span> <span class="o">*</span> <span class="n">R_L</span>   <span class="c1"># shot noise variance, in [V^2]</span>
@@ -1215,6 +1364,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">M</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">modulation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ook&#39;</span> <span class="k">else</span> <span class="n">M</span>
+
+    <span class="k">if</span> <span class="n">S1</span> <span class="o">==</span> <span class="n">S0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">mu0</span> <span class="o">+</span> <span class="n">mu1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
     <span class="n">s1</span><span class="o">=</span><span class="n">S1</span><span class="o">**</span><span class="mf">0.5</span>
     <span class="n">s0</span><span class="o">=</span><span class="n">S0</span><span class="o">**</span><span class="mf">0.5</span>
@@ -1431,31 +1583,572 @@
 
 
 
-<div class="viewcode-block" id="shortest_int"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.shortest_int">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">shortest_int</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">percent</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Estimation of the shortest interval containing ``percent`` of the samples in &#39;data&#39;.</span>
+<div class="viewcode-block" id="shortest_int"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.shortest_int">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">shortest_int</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">percent</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimation of the shortest interval of x values, containing {``percent``}% of the samples in &#39;x&#39;.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        data : ndarray</span>
-<span class="sd">            Array of data.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : ndarray</span>
+<span class="sd">        Data of not complex values. If data is complex, real part will be taken.</span>
+<span class="sd">    percent : real number</span>
+<span class="sd">        percent of of data.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        tuple[float, float]</span>
-<span class="sd">            The shortest interval containing 50% of the samples in &#39;data&#39;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">diff_lag</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">data</span><span class="p">,</span> <span class="n">lag</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">lag</span><span class="p">:]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="n">lag</span><span class="p">]</span>
-        <span class="p">)</span>  <span class="c1"># Difference between two elements of an array separated by a distance &#39;lag&#39;</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple[float, float]</span>
+<span class="sd">        The shortest interval containing 50% of the samples in &#39;data&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`x` must be an array_like.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_real</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span> <span class="ow">or</span> <span class="n">percent</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">percent</span> <span class="o">&gt;</span><span class="mi">100</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`percent` must be a real number between (0, 100].&#39;</span><span class="p">)</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="n">percent</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lag</span><span class="p">)</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">lag</span><span class="p">]))</span></div>
+    <span class="n">diff_lag</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">data</span><span class="p">,</span> <span class="n">lag</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">lag</span><span class="p">:]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="n">lag</span><span class="p">]</span>
+    <span class="p">)</span>  <span class="c1"># Difference between two elements of an array separated by a distance &#39;lag&#39;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">percent</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+    
+    <span class="c1"># Validate that lag is at least 1 to ensure diff_lag can operate correctly</span>
+    <span class="k">if</span> <span class="n">lag</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Computed lag (</span><span class="si">{</span><span class="n">lag</span><span class="si">}</span><span class="s2">) must be at least 1. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;The provided percent (</span><span class="si">{</span><span class="n">percent</span><span class="si">}</span><span class="s2">%) is too small for the length of x (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">). &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Choose a larger percent value (at least </span><span class="si">{</span><span class="mi">100</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">%).&quot;</span>
+        <span class="p">)</span>
+    
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">diff_lag</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lag</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">lag</span><span class="p">]))</span></div>
+
+
+<span class="c1"># --- Función para Aplicar el Filtro Gaussiano Optimizado ---</span>
+<div class="viewcode-block" id="apply_optimized_gaussian_filter"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.apply_optimized_gaussian_filter">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">apply_optimized_gaussian_filter</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">T_bit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies a Gaussian filter to a NRZ signal. The filter is optimized based on the bit duration, to a sigma of 0.139 * T_bit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t (np.ndarray): Time vector corresponding to signal_in.</span>
+<span class="sd">        signal (np.ndarray): NRZ input signal.</span>
+<span class="sd">        T_bit (float): Bit duration, used as a reference for sigma.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The filtered signal with scaled amplitude.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dt</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;El paso de tiempo dt debe ser positivo.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Calcular parámetros del kernel basados en el sigma óptimo</span>
+    <span class="n">std_dev_points</span> <span class="o">=</span> <span class="n">T_bit</span> <span class="o">*</span> <span class="mf">0.139</span> <span class="o">/</span> <span class="n">dt</span>
+
+    <span class="c1"># Determinar el tamaño del kernel. Debe ser impar y lo suficientemente grande.</span>
+    <span class="c1"># Un tamaño basado en 6*sigma_en_puntos cubre &gt;99.7% de la gaussiana.</span>
+    <span class="n">kernel_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">std_dev_points</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kernel_size</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">kernel_size</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># Asegurar que es impar para un centro claro</span>
+    <span class="k">if</span> <span class="n">kernel_size</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># Asegurar un tamaño mínimo para el kernel</span>
+        <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="c1"># Asegurar que el kernel no sea más grande que la señal de entrada (menos un pequeño margen)</span>
+    <span class="n">max_possible_kernel_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">kernel_size</span> <span class="o">&gt;</span> <span class="n">max_possible_kernel_size</span><span class="p">:</span>
+         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Advertencia: El tamaño calculado del kernel (</span><span class="si">{</span><span class="n">kernel_size</span><span class="si">}</span><span class="s2">) es mayor que la señal (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span><span class="si">}</span><span class="s2">). Reduciendo a </span><span class="si">{</span><span class="n">max_possible_kernel_size</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+         <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">max_possible_kernel_size</span>
+         <span class="k">if</span> <span class="n">kernel_size</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: El tamaño de la señal es demasiado pequeño para aplicar un filtro significativo.&quot;</span><span class="p">)</span>
+             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="c1"># Devolver ceros si no se puede filtrar</span>
+
+    <span class="c1"># Crear el kernel gaussiano usando la función corregida</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal.windows</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian</span>
+    <span class="n">gaussian_kernel</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">std_dev_points</span><span class="p">)</span>
+
+    <span class="c1"># Normalizar el kernel para preservar el área (o nivel DC) de la señal</span>
+    <span class="n">kernel_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gaussian_kernel</span><span class="p">)</span>
+    <span class="n">gaussian_kernel</span> <span class="o">/=</span> <span class="n">kernel_sum</span>
+
+    <span class="c1"># Realizar la convolución</span>
+    <span class="c1"># mode=&#39;same&#39; asegura que la salida tenga el mismo tamaño y esté centrada</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">convolve</span>
+    <span class="n">convolved_signal</span> <span class="o">=</span> <span class="n">convolve</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">gaussian_kernel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convolved_signal</span></div>
+
+
+<div class="viewcode-block" id="eyediagram"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.eyediagram">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">eyediagram</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">n_traces</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> 
+             <span class="n">N_grid_bins</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">grid_sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots a colored eye diagram, internally calculating color density.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : np.ndarray</span>
+<span class="sd">        Full amplitude array (1D).</span>
+<span class="sd">    sps : int</span>
+<span class="sd">        Samples per symbol. Used to segment the eye traces.</span>
+<span class="sd">    n_traces : int, optional</span>
+<span class="sd">        Maximum number of traces to plot. If None, all available traces</span>
+<span class="sd">        will be plotted. Defaults to None.</span>
+<span class="sd">    cmap : str, optional</span>
+<span class="sd">        Name of the matplotlib colormap. Defaults to &#39;viridis&#39;.</span>
+<span class="sd">    N_grid_bins : int, optional</span>
+<span class="sd">        Number of bins for the density histogram. Defaults to 350.</span>
+<span class="sd">    grid_sigma : float, optional</span>
+<span class="sd">        Sigma for the Gaussian filter applied to the density. Defaults to 3.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        Axes object to plot on. If None, creates new figure and axes.</span>
+<span class="sd">        Defaults to None.</span>
+<span class="sd">    **plot_kw : dict, optional</span>
+<span class="sd">        Additional plotting parameters:</span>
+<span class="sd">        </span>
+<span class="sd">        Figure parameters (used only if ax is None):</span>
+<span class="sd">        - figsize : tuple, default (10, 6)</span>
+<span class="sd">        - dpi : int, default 100</span>
+<span class="sd">        </span>
+<span class="sd">        Line collection parameters:</span>
+<span class="sd">        - linewidth : float, default 0.75</span>
+<span class="sd">        - alpha : float, default 0.25</span>
+<span class="sd">        - capstyle : str, default &#39;round&#39;</span>
+<span class="sd">        - joinstyle : str, default &#39;round&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Axes formatting parameters:</span>
+<span class="sd">        - xlabel : str, default &quot;Time (2-symbol segment)&quot;</span>
+<span class="sd">        - ylabel : str, default &quot;Amplitude&quot;</span>
+<span class="sd">        - title : str, default &quot;Eye Diagram ({num_traces} traces)&quot;</span>
+<span class="sd">        - grid : bool, default True</span>
+<span class="sd">        - grid_alpha : float, default 0.3</span>
+<span class="sd">        - xlim : tuple, optional (xmin, xmax)</span>
+<span class="sd">        - ylim : tuple, optional (ymin, ymax)</span>
+<span class="sd">        - tight_layout : bool, default True</span>
+<span class="sd">        </span>
+<span class="sd">        Display parameters:</span>
+<span class="sd">        - show : bool, default False (whether to call plt.show())</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matplotlib.axes.Axes</span>
+<span class="sd">        The axes object containing the eye diagram plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Truncate signals to avoid edge artifacts</span>
+    <span class="c1"># Remove sps//2 samples from each end</span>
+    <span class="n">start_idx</span> <span class="o">=</span> <span class="n">sps</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">sps</span> <span class="o">//</span> <span class="mi">2</span>
+    
+    <span class="k">if</span> <span class="n">start_idx</span> <span class="o">&gt;=</span> <span class="n">end_idx</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Signal too short for truncation. Need at least </span><span class="si">{</span><span class="n">sps</span><span class="si">}</span><span class="s2"> samples, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    
+    <span class="n">Y_truncated</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+    
+    <span class="c1"># Eye diagram parameters</span>
+    <span class="n">num_points_per_trace</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sps</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_truncated</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num_points_per_trace</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Need at least </span><span class="si">{</span><span class="n">num_points_per_trace</span><span class="si">}</span><span class="s2"> points for eye diagram, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">Y_truncated</span><span class="p">)</span><span class="si">}</span><span class="s2"> after truncation.&quot;</span><span class="p">)</span>
+    
+    <span class="n">available_traces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_truncated</span><span class="p">)</span> <span class="o">//</span> <span class="n">num_points_per_trace</span>
+    <span class="n">num_traces_to_plot</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">available_traces</span><span class="p">,</span> <span class="n">n_traces</span><span class="p">)</span> <span class="k">if</span> <span class="n">n_traces</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">available_traces</span>
+    
+    <span class="k">if</span> <span class="n">num_traces_to_plot</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not enough points to form even one trace of </span><span class="si">{</span><span class="n">num_points_per_trace</span><span class="si">}</span><span class="s2"> points after truncation.&quot;</span><span class="p">)</span>
+    
+    <span class="n">X_truncated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_traces_to_plot</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">sps</span><span class="p">,</span> <span class="n">num_points_per_trace</span><span class="p">))</span>
+    <span class="n">Y_truncated</span> <span class="o">=</span> <span class="n">Y_truncated</span><span class="p">[:</span><span class="n">num_traces_to_plot</span> <span class="o">*</span> <span class="n">num_points_per_trace</span><span class="p">]</span>
+    
+    <span class="c1"># Get colormap</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cmap_obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span> <span class="n">cmap</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Colormap &#39;</span><span class="si">{</span><span class="n">cmap</span><span class="si">}</span><span class="s2">&#39; not found. Using &#39;viridis&#39; by default.&quot;</span><span class="p">)</span>
+        <span class="n">cmap_obj</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span>
+
+    <span class="c1"># Extract plotting parameters with defaults</span>
+    <span class="c1"># Figure parameters</span>
+    <span class="n">figsize</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;figsize&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">dpi</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dpi&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    
+    <span class="c1"># Line collection parameters</span>
+    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;linewidth&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">capstyle</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;capstyle&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">)</span>
+    <span class="n">joinstyle</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;joinstyle&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Axes formatting parameters</span>
+    <span class="n">xlabel</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">,</span> <span class="s2">&quot;Time (2-symbol segment)&quot;</span><span class="p">)</span>
+    <span class="n">ylabel</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">,</span> <span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
+    <span class="n">title_template</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s2">&quot;Eye Diagram (</span><span class="si">{num_traces}</span><span class="s2"> traces)&quot;</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grid&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">grid_alpha</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grid_alpha&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;xlim&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ylim&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">tight_layout</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tight_layout&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Display parameters</span>
+    <span class="n">show</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;show&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Calculate ranges using truncated signals</span>
+    <span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">=</span> <span class="n">X_truncated</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">X_truncated</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">min_y</span><span class="p">,</span> <span class="n">max_y</span> <span class="o">=</span> <span class="n">Y_truncated</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">Y_truncated</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
+    <span class="c1"># Normalize coordinates (handle edge cases)</span>
+    <span class="n">X_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X_truncated</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_x</span> <span class="o">==</span> <span class="n">min_x</span> <span class="k">else</span> <span class="p">(</span><span class="n">X_truncated</span> <span class="o">-</span> <span class="n">min_x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_x</span> <span class="o">-</span> <span class="n">min_x</span><span class="p">)</span>
+    <span class="n">Y_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Y_truncated</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_y</span> <span class="o">==</span> <span class="n">min_y</span> <span class="k">else</span> <span class="p">(</span><span class="n">Y_truncated</span> <span class="o">-</span> <span class="n">min_y</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_y</span> <span class="o">-</span> <span class="n">min_y</span><span class="p">)</span>
+
+    <span class="c1"># Create density grid using truncated signals</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
+    <span class="n">grid_density</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="n">X_truncated</span><span class="p">,</span> <span class="n">Y_truncated</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">N_grid_bins</span><span class="p">)</span>
+    <span class="n">grid_density</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">grid_density</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">grid_sigma</span><span class="p">)</span>
+
+    <span class="c1"># Map points to grid indices</span>
+    <span class="n">ix_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">((</span><span class="n">X_norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_grid_bins</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">N_grid_bins</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">iy_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">((</span><span class="n">Y_norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_grid_bins</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">N_grid_bins</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Get and normalize color values</span>
+    <span class="n">color_values</span> <span class="o">=</span> <span class="n">grid_density</span><span class="p">[</span><span class="n">ix_grid</span><span class="p">,</span> <span class="n">iy_grid</span><span class="p">]</span>
+    <span class="n">color_range</span> <span class="o">=</span> <span class="n">color_values</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">color_values</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">color_values_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">color_values</span><span class="p">)</span> <span class="k">if</span> <span class="n">color_range</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="n">color_values</span> <span class="o">-</span> <span class="n">color_values</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">color_range</span>
+    
+
+    <span class="c1"># Prepare data for plotting using truncated signals</span>
+    <span class="n">x_eye_trace</span> <span class="o">=</span> <span class="n">X_truncated</span><span class="p">[:</span><span class="n">num_points_per_trace</span><span class="p">]</span>
+
+    <span class="n">Y_reshaped</span> <span class="o">=</span> <span class="n">Y_truncated</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_traces_to_plot</span><span class="p">,</span> <span class="n">num_points_per_trace</span><span class="p">)</span>
+    <span class="n">color_reshaped</span> <span class="o">=</span> <span class="n">color_values_norm</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_traces_to_plot</span><span class="p">,</span> <span class="n">num_points_per_trace</span><span class="p">)</span>
+
+    <span class="c1"># Create plot or use existing axes</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+        <span class="n">created_fig</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">created_fig</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Plot eye traces</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineCollection</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_traces_to_plot</span><span class="p">):</span>
+        <span class="c1"># Create line segments</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_eye_trace</span><span class="p">,</span> <span class="n">Y_reshaped</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap_obj</span><span class="p">(</span><span class="n">color_reshaped</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)])</span>
+            <span class="n">lc</span> <span class="o">=</span> <span class="n">LineCollection</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> 
+                              <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">capstyle</span><span class="o">=</span><span class="n">capstyle</span><span class="p">,</span> <span class="n">joinstyle</span><span class="o">=</span><span class="n">joinstyle</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+
+    <span class="c1"># Format plot</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span> <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span> <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">min_y</span><span class="p">,</span> <span class="n">max_y</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    
+    <span class="c1"># Format title with number of traces</span>
+    <span class="n">title_formatted</span> <span class="o">=</span> <span class="n">title_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_traces</span><span class="o">=</span><span class="n">num_traces_to_plot</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_formatted</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">grid</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">grid_alpha</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">created_fig</span> <span class="ow">and</span> <span class="n">tight_layout</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">created_fig</span> <span class="ow">and</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="rcos_pulse"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.rcos_pulse">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">rcos_pulse</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;sqrt&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a raised cosine or root raised cosine filter impulse response.</span>
+
+<span class="sd">    This function replicates the MATLAB `rcosdesign()` function, generating the impulse response</span>
+<span class="sd">    of a raised cosine or root raised cosine filter used in digital communications for</span>
+<span class="sd">    pulse shaping.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    beta : float</span>
+<span class="sd">        Roll-off factor, must be between 0 and 1.</span>
+<span class="sd">    span : int</span>
+<span class="sd">        Number of symbols. The filter length will be span * sps + 1.</span>
+<span class="sd">    sps : int</span>
+<span class="sd">        Samples per symbol.</span>
+<span class="sd">    shape : str, optional</span>
+<span class="sd">        Filter shape, either &#39;normal&#39; for raised cosine or &#39;sqrt&#39; for root raised cosine.</span>
+<span class="sd">        Default is &#39;sqrt&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The filter impulse response, normalized to unit energy.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If beta is not in [0, 1] or shape is not &#39;normal&#39; or &#39;sqrt&#39;.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The filter is normalized such that the sum of squares of the coefficients is 1.</span>
+<span class="sd">    For beta=0, it reduces to a `sinc()` function.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; h = rcos(0.5, 6, 64, &#39;sqrt&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; h.shape</span>
+<span class="sd">    (384,)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">beta</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;beta must be in [0, 1]&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;sqrt&#39;</span><span class="p">,</span> <span class="s1">&#39;normal&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;shape must be &#39;sqrt&#39; or &#39;normal&#39;&quot;</span><span class="p">)</span>
+    
+    <span class="n">N</span> <span class="o">=</span> <span class="n">span</span> <span class="o">*</span> <span class="n">sps</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">beta</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;normal&#39;</span><span class="p">:</span>
+        <span class="n">sinc_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">cos_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">sinc_t</span> <span class="o">*</span> <span class="n">cos_term</span><span class="p">,</span> <span class="n">den</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">den</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">den</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># Handle the singularity at t = 1/(2*beta)</span>
+        <span class="n">special_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">den</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-8</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">special_mask</span><span class="p">):</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">special_mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span><span class="p">))</span>
+    
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># sqrt</span>
+        <span class="n">t_abs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        
+        <span class="c1"># Special case at t=0</span>
+        <span class="n">mask_zero</span> <span class="o">=</span> <span class="n">t_abs</span> <span class="o">&lt;</span> <span class="mf">1e-8</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">mask_zero</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        
+        <span class="c1"># Special case at t = 1/(4*beta)</span>
+        <span class="n">special_t_sqrt</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">mask_special</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t_abs</span> <span class="o">-</span> <span class="n">special_t_sqrt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-8</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask_special</span><span class="p">):</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">mask_special</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">beta</span><span class="p">))</span> <span class="o">+</span>
+                <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">beta</span><span class="p">))</span>
+            <span class="p">)</span>
+        
+        <span class="c1"># General case</span>
+        <span class="n">mask_general</span> <span class="o">=</span> <span class="o">~</span><span class="n">mask_zero</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">mask_special</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask_general</span><span class="p">):</span>
+            <span class="n">ti</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">mask_general</span><span class="p">]</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ti</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">))</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">ti</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ti</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">beta</span><span class="p">))</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ti</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">ti</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">mask_general</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+<div class="viewcode-block" id="gauss_pulse"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.gauss_pulse">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">gauss_pulse</span><span class="p">(</span><span class="n">span</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a Gaussian or Super-Gaussian filter.</span>
+
+<span class="sd">    This function generates the impulse response of a Gaussian filter used in digital</span>
+<span class="sd">    communications to reduce bandwidth and minimize intersymbol interference.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    span : int</span>
+<span class="sd">        Number of symbols. The filter length will be span * sps + 1.</span>
+<span class="sd">    sps : int</span>
+<span class="sd">        Samples per symbol.</span>
+<span class="sd">    T : float</span>
+<span class="sd">        Full Width at Half Maximum (FWHM) of the pulse in symbols. Default is 1.</span>
+<span class="sd">    m : int</span>
+<span class="sd">        Super-Gaussian order. Default is 1 (standard Gaussian).</span>
+<span class="sd">    c : float</span>
+<span class="sd">        Chirp parameter. Default is 0.0 (no chirp).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The impulse response of the Gaussian filter, normalized to unit energy.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The filter is normalized such that the sum of squares of the coefficients is 1.</span>
+<span class="sd">    The Gaussian shape helps reduce intersymbol interference in modulation systems.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; h = gauss(6, 8, 1.0)</span>
+<span class="sd">    &gt;&gt;&gt; print(h.shape)</span>
+<span class="sd">    (49,)</span>
+<span class="sd">    &gt;&gt;&gt; print(&#39;Energy:&#39;, np.sum(h**2))</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">span</span> <span class="o">*</span> <span class="n">sps</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">T</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+<div class="viewcode-block" id="nrz_pulse"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.nrz_pulse">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">nrz_pulse</span><span class="p">(</span><span class="n">span</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a Non-Return-to-Zero (NRZ) pulse shape.</span>
+
+<span class="sd">    This function generates the impulse response of a Non-Return-to-Zero (NRZ) pulse shape, commonly used in digital communications for pulse shaping.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    span : int</span>
+<span class="sd">        Number of symbols. The filter length will be span * sps + 1.</span>
+<span class="sd">    sps : int</span>
+<span class="sd">        Samples per symbol.</span>
+<span class="sd">    T : float</span>
+<span class="sd">        Duration of the NRZ pulse in symbols.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The impulse response of the NRZ pulse shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">span</span> <span class="o">*</span> <span class="n">sps</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">T</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+<div class="viewcode-block" id="upfir"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.upfir">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">upfir</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Replicate MATLAB&#39;s upfirdn function for upsampling and FIR filtering.</span>
+
+<span class="sd">    This function performs upsampling of the input signal and then applies an FIR filter,</span>
+<span class="sd">    partially replicating the functionality of MATLAB&#39;s `upfirdn`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        Input signal to process.</span>
+<span class="sd">    h : array_like</span>
+<span class="sd">        Impulse response of the FIR filter.</span>
+<span class="sd">    up : int, optional</span>
+<span class="sd">        Upsampling factor. Default is 1 (no upsampling).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The filtered signal after upsampling, convolution and downsampling.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Upsampling is performed by inserting zeros between the input signal samples.</span>
+<span class="sd">    Convolution is then applied with the filter using `mode=&#39;same&#39;` to maintain length. Finally,</span>
+<span class="sd">    downsampling is performed by selecting every `dn`-th sample from the filtered signal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Upsample</span>
+    <span class="n">xu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">up</span><span class="p">)</span>
+    <span class="n">xu</span><span class="p">[</span><span class="n">up</span><span class="o">//</span><span class="mi">2</span><span class="p">::</span><span class="n">up</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+
+    <span class="c1"># Filtrado</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">xu</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="phase_estimator"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.phase_estimator">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">phase_estimator</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimates the phase and amplitude of a sinusoid with known frequency.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : array_like</span>
+<span class="sd">        Times in seconds, shape (N,).</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        Sampled signal, shape (N,).</span>
+<span class="sd">    f : float</span>
+<span class="sd">        Frequency in Hz.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    phi : float</span>
+<span class="sd">        Estimated phase in radians.</span>
+<span class="sd">    amp : float</span>
+<span class="sd">        Estimated amplitude.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The model is :math:`x[n] = A \cos(2\pi f t[n] + \phi) + noise`, solved by linear regression</span>
+<span class="sd">    over :math:`[\cos(\omega t), \sin(\omega t)]`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;t and x must have same shape&quot;</span><span class="p">)</span>
+
+    <span class="n">w</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span> <span class="n">S</span><span class="p">))</span>  <span class="c1"># diseño: x ≈ a*C + b*S</span>
+
+    <span class="c1"># IRLS con pérdida Huber: iteratively reweighted LS</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">huber_delta</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">G</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">absr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="c1"># pesos Huber</span>
+        <span class="n">wght</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">absr</span> <span class="o">&gt;</span> <span class="n">huber_delta</span>
+        <span class="n">wght</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">huber_delta</span> <span class="o">/</span> <span class="n">absr</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">wght</span><span class="p">)</span>
+        <span class="n">Gw</span> <span class="o">=</span> <span class="n">G</span> <span class="o">*</span> <span class="n">W</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">xw</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">W</span>
+        <span class="n">theta_new</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">Gw</span><span class="p">,</span> <span class="n">xw</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">theta_new</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-20</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">theta_new</span>
+            <span class="k">break</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">theta_new</span>
+
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># recordatorio: cos(ωt + φ) = cosφ*cosωt - sinφ*sinωt</span>
+    <span class="c1"># por tanto a = A cosφ ; b = -A sinφ</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>  <span class="c1"># devuelve fase en (-pi,pi]</span>
+    <span class="n">amp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>  <span class="c1"># amplitud</span>
+
+    <span class="k">return</span> <span class="n">phi</span><span class="p">,</span> <span class="n">amp</span></div>
+
+
+<div class="viewcode-block" id="get_psd"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.get_psd">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_psd</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the Power Spectral Density (PSD) of a signal using Welch&#39;s method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal : Array_Like</span>
+<span class="sd">        Input signal.</span>
+<span class="sd">    fs : float</span>
+<span class="sd">        Sampling frequency in Hz.</span>
+<span class="sd">    nperseg : int, optional</span>
+<span class="sd">        Length of each segment for Welch&#39;s method. If None, defaults to 2048 or the length of the signal, whichever is smaller.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    f : np.ndarray</span>
+<span class="sd">        Frequency array.</span>
+<span class="sd">    psd : np.ndarray</span>
+<span class="sd">        Power Spectral Density.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="s1">&#39;signal&#39;</span><span class="p">):</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span>
+    <span class="k">elif</span> <span class="n">_is_iterable_and_numpy_compatible</span><span class="p">(</span><span class="n">signal</span><span class="p">):</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;signal must be array_like or have a .signal attribute&quot;</span><span class="p">)</span>
+
+    <span class="n">nperseg</span> <span class="o">=</span> <span class="n">nperseg</span> <span class="k">if</span> <span class="n">nperseg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sig</span><span class="p">))</span>
+    
+    <span class="c1"># fs is passed in GHz to get f in GHz</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">psd</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">welch</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="n">nperseg</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="s1">&#39;spectrum&#39;</span><span class="p">,</span> <span class="n">return_onesided</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detrend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">psd</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">psd</span><span class="p">,</span> <span class="n">axes</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">psd</span></div>
 </pre></div>
 
            </div>

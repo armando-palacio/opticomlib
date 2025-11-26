@@ -126,6 +126,7 @@ The project is hosted on <a class="reference external" href="https://github.com/
 <li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.EDFA"><code class="docutils literal notranslate"><span class="pre">EDFA()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.DM"><code class="docutils literal notranslate"><span class="pre">DM()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.FIBER"><code class="docutils literal notranslate"><span class="pre">FIBER()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.DBP"><code class="docutils literal notranslate"><span class="pre">DBP()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.LPF"><code class="docutils literal notranslate"><span class="pre">LPF()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.PD"><code class="docutils literal notranslate"><span class="pre">PD()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="devices.html#opticomlib.devices.ADC"><code class="docutils literal notranslate"><span class="pre">ADC()</span></code></a></li>
@@ -152,13 +153,7 @@ The project is hosted on <a class="reference external" href="https://github.com/
 <li class="toctree-l2"><a class="reference internal" href="ppm.html#opticomlib.ppm.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.search_inst"><code class="docutils literal notranslate"><span class="pre">search_inst()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.SYNC"><code class="docutils literal notranslate"><span class="pre">SYNC()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.GET_EYE_v2"><code class="docutils literal notranslate"><span class="pre">GET_EYE_v2()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="lab.html#opticomlib.lab.PPG3204"><code class="docutils literal notranslate"><span class="pre">PPG3204</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="lab.html">Laboratory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.dec2bin"><code class="docutils literal notranslate"><span class="pre">dec2bin()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.str2array"><code class="docutils literal notranslate"><span class="pre">str2array()</span></code></a></li>
@@ -179,12 +174,21 @@ The project is hosted on <a class="reference external" href="https://github.com/
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.si"><code class="docutils literal notranslate"><span class="pre">si()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.norm"><code class="docutils literal notranslate"><span class="pre">norm()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.nearest"><code class="docutils literal notranslate"><span class="pre">nearest()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.nearest_index"><code class="docutils literal notranslate"><span class="pre">nearest_index()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.p_ase"><code class="docutils literal notranslate"><span class="pre">p_ase()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.average_voltages"><code class="docutils literal notranslate"><span class="pre">average_voltages()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.noise_variances"><code class="docutils literal notranslate"><span class="pre">noise_variances()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.optimum_threshold"><code class="docutils literal notranslate"><span class="pre">optimum_threshold()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.theory_BER"><code class="docutils literal notranslate"><span class="pre">theory_BER()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.shortest_int"><code class="docutils literal notranslate"><span class="pre">shortest_int()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.apply_optimized_gaussian_filter"><code class="docutils literal notranslate"><span class="pre">apply_optimized_gaussian_filter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.eyediagram"><code class="docutils literal notranslate"><span class="pre">eyediagram()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.rcos_pulse"><code class="docutils literal notranslate"><span class="pre">rcos_pulse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.gauss_pulse"><code class="docutils literal notranslate"><span class="pre">gauss_pulse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.nrz_pulse"><code class="docutils literal notranslate"><span class="pre">nrz_pulse()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.upfir"><code class="docutils literal notranslate"><span class="pre">upfir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.phase_estimator"><code class="docutils literal notranslate"><span class="pre">phase_estimator()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#opticomlib.utils.get_psd"><code class="docutils literal notranslate"><span class="pre">get_psd()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -1,17 +1,20 @@
-from opticomlib.devices import ADC
+from opticomlib.devices import LPF
 from opticomlib import gv, electrical_signal
+import matplotlib.pyplot as plt
 import numpy as np
 
-gv(sps=64, R=1e9, N=2)
+gv(N = 10, sps=128, R=1e9)
 
-y = electrical_signal( np.sin(2*np.pi*gv.R*gv.t) )
+t = gv.t
+c = 20e9/t[-1]   # frequency chirp from 0 to 20 GHz
 
-yn = ADC(y, n=2)
+input = electrical_signal( np.sin( np.pi*c*t**2) )
+output = LPF(input, 10e9)
 
-y.plot(
-    style='light',
-    grid=True,
-    lw=5,
-    label = 'analog signal'
-)
-yn.plot('.-', style='light', lw=2, label=' 2 bits quantized signal').show()
+input.psd('r', label='input', lw=2)
+output.psd('b', label='output', lw=2)
+
+plt.xlim(-30,30)
+plt.ylim(-20, 5)
+plt.annotate('-6 dB', xy=(10, -5), xytext=(10, 2), c='r', arrowprops=dict(arrowstyle='<->'), fontsize=12, ha='center', va='center')
+plt.show()

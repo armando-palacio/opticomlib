@@ -91,7 +91,7 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
-<p>To use <code class="docutils literal notranslate"><span class="pre">Opticomlib</span></code>, python <code class="docutils literal notranslate"><span class="pre">&lt;=3.10</span></code> is required.</p>
+<p>To use <code class="docutils literal notranslate"><span class="pre">Opticomlib</span></code>, python <code class="docutils literal notranslate"><span class="pre">&gt;=3.10</span></code> is required.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you don’t have python installed, it’s strongly recommended to install it using <a class="reference external" href="https://docs.anaconda.com/free/miniconda/index.html">Miniconda</a>
@@ -130,14 +130,17 @@ Also, you need to import <code class="docutils literal notranslate"><span class=
 <span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e9</span><span class="p">)</span> <span class="c1"># set samples per slot and slot rate, it automatically will set de sampling frequency (fs),</span>
                   <span class="c1"># see &quot;Data Types/global_variables&quot; documentation page for more details</span>
 
-<span class="n">pulse</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0001000&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">Vout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># create a gaussian pulse with 16 samples width and 1V of amplitude</span>
-                                                             <span class="c1"># see &quot;Devices/DAC&quot; documentation page for more details of the DAC device</span>
+<span class="n">pulse</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0001000&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">Vpp</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># create a gaussian pulse with 1V of amplitude peak-to-peak</span>
+                                                      <span class="c1"># see &quot;Devices/DAC&quot; documentation page for more details</span>
 
-<span class="n">pulse</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;r.-&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># plot, grid and show the pulse,</span>
-                                               <span class="c1"># see &quot;Data Types/electrical_signal.plot&quot; documentation page for more details of the plot method</span>
+<span class="n">pulse</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;r.-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># plot, grid and show the pulse,</span>
+                                <span class="c1"># see &quot;Data Types/electrical_signal.plot&quot; documentation page for more details</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/gaussian_pulse.svg"><img alt="_images/gaussian_pulse.svg" class="align-center" src="_images/gaussian_pulse.svg" width="100%" /></a>
+<p>(<a class="reference download internal" download="" href="_downloads/afff7ec73c07582fcaa05489682f6193/usage-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/7f8ae5b8bbf892ba2a881811484388a6/usage-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/a578e49f26e678f3a2462f4598ceb3ff/usage-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/e09fcf84a0d06460471b2a0501e00afa/usage-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="_images/usage-1.png" class="plot-directive" src="_images/usage-1.png" />
+</figure>
 <hr class="docutils" />
 <ol class="arabic simple" start="2">
 <li><p>See the response of an optical fiber for a given input optical signal is very simple using <a class="reference internal" href="devices.html#opticomlib.devices.FIBER" title="opticomlib.devices.FIBER"><code class="xref py py-func docutils literal notranslate"><span class="pre">FIBER()</span></code></a> device:</p></li>
@@ -149,62 +152,39 @@ Also, you need to import <code class="docutils literal notranslate"><span class=
 
 <span class="n">P</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="c1"># 1 mW of peak power</span>
 
-<span class="n">pulse_i</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0001000&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">Vout</span><span class="o">=</span><span class="n">P</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">signal</span><span class="p">)</span> <span class="c1"># create a gaussian pulse as before with (1 mW) of peak power and convert it as an optical_signal,</span>
-                                                                                           <span class="c1"># because of the FIBER device only accepts optical_signal as input</span>
+<span class="n">pulse_i</span> <span class="o">=</span> <span class="n">optical_signal</span><span class="p">(</span><span class="n">DAC</span><span class="p">(</span><span class="s1">&#39;0001000&#39;</span><span class="p">,</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">Vpp</span><span class="o">=</span><span class="n">P</span><span class="o">**</span><span class="mf">0.5</span><span class="p">))</span> <span class="c1"># create a gaussian pulse as before with (1 mW) of peak power and convert it as an optical_signal,</span>
+                                                                             <span class="c1"># because of the FIBER device only accepts optical_signal as input</span>
 
 <span class="n">pulse_o</span> <span class="o">=</span> <span class="n">FIBER</span><span class="p">(</span><span class="n">pulse_i</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_2</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">beta_3</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span> <span class="c1"># propagate the pulse through a fiber of 100km length,</span>
                                                                                <span class="c1"># with alpha=0.2 dB/km, beta_2=-20 ps^2/km, beta_3=0 ps^3/km and gamma=1.5 1/W/km</span>
                                                                                <span class="c1"># see &quot;Devices/FIBER&quot; documentation page for more details of the FIBER device</span>
-<span class="n">pulse_i</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;r.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Input&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">)</span>
-<span class="n">pulse_o</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;b.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;light&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># plot, grid, legend and show the input and output pulses</span>
+<span class="n">pulse_i</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;r.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Input&#39;</span><span class="p">)</span>
+<span class="n">pulse_o</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;b.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># plot, grid, legend and show the input and output pulses</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fiber_in_out.svg"><img alt="_images/fiber_in_out.svg" class="align-center" src="_images/fiber_in_out.svg" width="100%" /></a>
+<p>(<a class="reference download internal" download="" href="_downloads/0d8d664294f54b3dbfae94e3c3befaf8/usage-2.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/391c7b380230c246b6fc02103c13ed04/usage-2.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/af10f9dc55d28876912829419cf46811/usage-2.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/f1e38484eaad8abf53eda9cb2ea17ae9/usage-2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="_images/usage-2.png" class="plot-directive" src="_images/usage-2.png" />
+</figure>
 <hr class="docutils" />
 <ol class="arabic simple" start="3">
 <li><p>Estimate the eye diagram parameters and plot the eye of an arbitrary signal is very simple too, using <code class="xref py py-func docutils literal notranslate"><span class="pre">GET_EYE()</span></code> device:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PRBS</span><span class="p">,</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">GET_EYE</span><span class="p">,</span> <span class="n">gv</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">opticomlib.devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PRBS</span><span class="p">,</span> <span class="n">DAC</span><span class="p">,</span> <span class="n">gv</span><span class="p">,</span> <span class="n">np</span>
 
-<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span> <span class="c1"># set again samples per slot and slot rate</span>
+<span class="n">gv</span><span class="p">(</span><span class="n">sps</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">10e9</span><span class="p">)</span> <span class="c1"># set again samples per slot and slot rate</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">Vout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># create a PRBS signal and pass it through a gaussian pulse shaping filter with 1V output</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">DAC</span><span class="p">(</span><span class="n">PRBS</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">pulse_shape</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">Vpp</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># create a PRBS signal and pass it through a gaussian pulse shaping filter with 1V output</span>
 <span class="n">x</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="c1"># add gaussian noise to the signal</span>
 
-<span class="n">eye</span> <span class="o">=</span> <span class="n">GET_EYE</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sps_resamp</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="c1"># get the eye diagram of x with 128 samples per slot</span>
-                                 <span class="c1"># see &quot;Devices/GET_EYE&quot; documentation page for more details of the GET_EYE device</span>
-
-<span class="n">eye</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>       <span class="c1"># print the eye diagram parameters</span>
-<span class="n">eye</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># plot and show the eye diagram</span>
+<span class="n">x</span><span class="o">.</span><span class="n">plot_eye</span><span class="p">(</span><span class="n">n_traces</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-----------------</span>
-<span class="o">***</span>    <span class="n">eye</span>    <span class="o">***</span>
-<span class="o">-----------------</span>
-<span class="n">sps</span> <span class="p">:</span> <span class="mi">32</span>
-<span class="n">dt</span> <span class="p">:</span> <span class="mf">3.125e-12</span>
-<span class="n">y</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span> <span class="mf">0.8</span> <span class="mf">0.8</span> <span class="o">...</span> <span class="mf">0.9</span> <span class="mf">0.8</span> <span class="mf">0.8</span><span class="p">]</span>
-<span class="n">t</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">...</span>  <span class="mf">1.</span>  <span class="mf">1.</span>  <span class="mf">1.</span><span class="p">]</span>
-<span class="n">t_left</span> <span class="p">:</span> <span class="o">-</span><span class="mf">0.4666666666675001</span>
-<span class="n">t_right</span> <span class="p">:</span> <span class="mf">0.5372549019583821</span>
-<span class="n">t_opt</span> <span class="p">:</span> <span class="mf">0.0352941176454411</span>
-<span class="n">t_dist</span> <span class="p">:</span> <span class="mf">1.0039215686258822</span>
-<span class="n">t_span0</span> <span class="p">:</span> <span class="o">-</span><span class="mf">0.014901960785853013</span>
-<span class="n">t_span1</span> <span class="p">:</span> <span class="mf">0.08549019607673522</span>
-<span class="n">i</span> <span class="p">:</span> <span class="mi">17</span>
-<span class="n">y_top</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.9</span> <span class="mf">0.9</span> <span class="mf">1.</span>  <span class="o">...</span> <span class="mf">0.9</span> <span class="mf">0.8</span> <span class="mf">0.8</span><span class="p">]</span>
-<span class="n">y_bot</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.</span>  <span class="o">-</span><span class="mf">0.</span>  <span class="o">-</span><span class="mf">0.</span>  <span class="o">...</span>  <span class="mf">0.</span>   <span class="mf">0.1</span>  <span class="mf">0.1</span><span class="p">]</span>
-<span class="n">mu1</span> <span class="p">:</span> <span class="mf">0.9442477130214517</span>
-<span class="n">s1</span> <span class="p">:</span> <span class="mf">0.06336202689582064</span>
-<span class="n">mu0</span> <span class="p">:</span> <span class="mf">0.04657654834827988</span>
-<span class="n">s0</span> <span class="p">:</span> <span class="mf">0.06488856548646174</span>
-<span class="n">er</span> <span class="p">:</span> <span class="mf">13.069186405369418</span>
-<span class="n">eye_h</span> <span class="p">:</span> <span class="mf">0.5129193875263247</span>
-<span class="n">time</span>  <span class="p">:</span>  <span class="mf">699.1</span> <span class="n">ms</span>
-</pre></div>
-</div>
-<a class="reference internal image-reference" href="_images/eye_diagram.png"><img alt="_images/eye_diagram.png" class="align-center" src="_images/eye_diagram.png" style="width: 100%;" /></a>
+<p>(<a class="reference download internal" download="" href="_downloads/7dc8dfd6225ca50abe9866c7fd99c9ad/usage-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="_downloads/6fe5f832ee7bd28ad9e900b08cf704f6/usage-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="_downloads/7bcc924176493588c0c6ad4ac2522471/usage-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="_downloads/0b887bc8a3f7c01bca0db6d80d014f74/usage-3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-center">
+<img alt="_images/usage-3.png" class="plot-directive" src="_images/usage-3.png" />
+</figure>
 </section>
 
 

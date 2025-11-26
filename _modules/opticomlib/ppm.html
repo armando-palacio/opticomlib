@@ -139,7 +139,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from opticomlib.ppm import PPM_ENCODER</span>
-<span class="sd">    &gt;&gt;&gt; PPM_ENCODER(&#39;01111000&#39;, 4).data.astype(int)</span>
+<span class="sd">    &gt;&gt;&gt; PPM_ENCODER(&#39;01111000&#39;, 4)</span>
 <span class="sd">    array([0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -268,7 +268,7 @@
 
     <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_simb</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># number of ON slots per symbol</span>
 
-    <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[:]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span> 
         <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">M</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># raise one slot randomly for each symbol without ON slots</span>
@@ -333,7 +333,8 @@
     <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span> <span class="o">%</span> <span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of `input` must be a multiple of `M*sps`.&quot;</span><span class="p">)</span>
 
-    <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="nb">input</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># signal = np.max( input.reshape(-1, gv.sps), axis=-1)</span>
+    <span class="n">signal</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="o">//</span><span class="mi">2</span> <span class="p">::</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">]</span> <span class="c1"># subsample the signal to 1 sample per slot</span>
 
     <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span> <span class="n">signal</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
@@ -453,7 +454,7 @@
 <span class="sd">        gv(sps=64, R=1e9)</span>
 
 <span class="sd">        x = DAC(&#39;0100 1010 0000&#39;, pulse_shape=&#39;gaussian&#39;)</span>
-<span class="sd">        x.noise = np.random.normal(0, 0.1, x.len())</span>
+<span class="sd">        x.noise = np.random.normal(0, 0.1, x.size)</span>
 
 <span class="sd">        y = DSP(x, M=4, decision=&#39;soft&#39;)</span>
 
@@ -467,7 +468,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">electrical_signal</span><span class="p">):</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">electrical_signal</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
     
-    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`input` must have at least `sps` samples.&quot;</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -559,10 +560,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Tx</span><span class="p">,</span> <span class="n">binary_sequence</span><span class="p">):</span>
             <span class="n">Tx</span> <span class="o">=</span> <span class="n">binary_sequence</span><span class="p">(</span> <span class="n">Tx</span> <span class="p">)</span>
 
-        <span class="n">Tx</span> <span class="o">=</span> <span class="n">Tx</span><span class="p">[:</span><span class="n">Rx</span><span class="o">.</span><span class="n">len</span><span class="p">()]</span>
-        <span class="k">assert</span> <span class="n">Tx</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="o">==</span> <span class="n">Rx</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="s2">&quot;Error: `Tx` and `Rx` must have the same length.&quot;</span>
+        <span class="n">Tx</span> <span class="o">=</span> <span class="n">Tx</span><span class="p">[:</span><span class="n">Rx</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">Tx</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">Rx</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="s2">&quot;Error: `Tx` and `Rx` must have the same length.&quot;</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Tx</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">Rx</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">/</span><span class="n">Tx</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Tx</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">Rx</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">/</span><span class="n">Tx</span><span class="o">.</span><span class="n">size</span>
 
     <span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;estimator&#39;</span><span class="p">:</span>
         <span class="n">eye_obj</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;eye_obj&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
