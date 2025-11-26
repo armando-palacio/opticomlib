@@ -1638,7 +1638,7 @@ class electrical_signal():
         :obj:`np.ndarray`
             The angular frequency array for signals simulation.
         """
-        w = fftfreq(self.T.shape[0], gv.dt)*2*pi
+        w = fftfreq(self.size, gv.dt)*2*pi
         if shift:
             return fftshift(w, axes=-1)
         return w
