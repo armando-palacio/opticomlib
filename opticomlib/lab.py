@@ -3,8 +3,11 @@
 .. autosummary::
 
    search_inst
+   connect_inst
    SYNC                  
-   GET_EYE_v2            
+   GET_EYE_v2
+   save_h5
+   load_h5            
 
 .. rubric:: Classes
 .. autosummary::
@@ -34,6 +37,7 @@ import pyvisa as visa
 import warnings
 import re
 import time
+import h5py
 
 
 def search_inst():
@@ -45,6 +49,17 @@ def search_inst():
     print(rm.list_resources())
 
 def connect_inst(addr_ID: str):
+    """**Instrument connection**
+    Connect to an instrument via VISA.
+    Parameters
+    ----------
+    addr_ID : :obj:`str`
+        VISA resource of the instrument (e.g. 'USB::0x0699::0x3130::9211219::INSTR').
+    Returns
+    -------
+    inst : :obj:`visa.Resource`
+        A connection (session) to the instrument.
+    """
     inst = visa.ResourceManager().open_resource(addr_ID)
     inst.timeout = 10000 # timeout in milliseconds
     try:
@@ -236,6 +251,66 @@ def GET_EYE_v2(
     
     eye_dict["execution_time"] = toc()
     return eye(**eye_dict)
+
+
+def save_h5(filename, **datos):
+    """
+    Saves measurement data of signals in an HDF5 file.
+
+    This function creates an HDF5 file that contains the common time vector,
+    wavelengths, signal data matrix and optional metadata
+    from the oscilloscope and experiment setup.
+
+    Parameters
+    ----------
+    filename : str
+        Base name of the file (without extension). '.h5' will be added.
+    **datos : dict
+        Name and value of the parameter to save. For example save_h5('name', time=t, wavelength=w)
+    """
+    with h5py.File(filename + '.h5', 'w') as f:
+        for k,v in datos.items():
+            if k != 'metadata':
+                chunks = True if np.asarray(v).ndim>1 else None
+                f.create_dataset(k, data=v, compression=None, chunks=chunks)
+
+        metadata = datos.get('metadata', {})
+        # metadata como atributos
+        meta_grp = f.create_group('metadata')
+        for k,v in metadata.items():
+            meta_grp.attrs[k] = str(v)
+
+
+def load_h5(filename):
+    """
+    Loads all datasets and metadata from an HDF5 file in a generic way.
+
+    This function reads an HDF5 file and returns a dictionary with all datasets
+    found (arrays loaded into memory) and metadata if they exist.
+
+    Parameters
+    ----------
+    filename : str
+        Base name of the file (without extension). '.h5' will be added.
+
+    Returns
+    -------
+    data : dict
+        Dictionary with dataset names as keys and ndarray values.
+        If a 'metadata' group exists, includes a 'metadata' key with dict of attributes.
+    """
+    with h5py.File(filename + '.h5', 'r') as f:
+        data = {}
+        # Cargar todos los datasets de nivel superior
+        for key in f.keys():
+            if isinstance(f[key], h5py.Dataset):
+                data[key] = f[key][:]  # copia a memoria
+            elif isinstance(f[key], h5py.Group) and key == 'metadata':
+                # Cargar metadatos como dict
+                metadata = {k: f[key].attrs[k].decode('utf-8') if isinstance(f[key].attrs[k], bytes) else f[key].attrs[k]
+                            for k in f[key].attrs}
+                data['metadata'] = metadata
+    return data
 
 
 class PPG3204():
@@ -2102,7 +2177,7 @@ class IDPhotonics:
     
     def close(self):
         '''
-        Close conection
+        Close connection
         '''
         if not self.usb:
             self.socket.close()
@@ -2196,7 +2271,6 @@ class IDPhotonics:
         metadata = {
             'WAVELENGTH_NM': self.get_wavelength(ch),
             'POWER_DBM': self.get_power(ch),
-            'OUTPUT': self.output(ch=ch),
         }
         return metadata
     
@@ -2285,7 +2359,7 @@ class LeCroy_WavExp100H:
 
     
     # ------------------------------------------------------
-    # Configuración y adquisición
+    # Configuration and Acquisition
     # ------------------------------------------------------
 
     def stop(self):
@@ -2382,15 +2456,15 @@ class LeCroy_WavExp100H:
         v : np.ndarray
             Voltage array of the acquired waveform.
         """
-        # ---- Fijar cantidad de puntos a adquirir ----
+        # ---- Set number of points to acquire ----
         self._write(f'WFSU SP,0,NP,{points if points else 0},FP,0,SN,0') 
 
-        # ---- Leer datos de forma de onda ----
+        # ---- Read waveform data ----
         self._write(f'C{ch}:WF? DAT1')
         raw_bytes = self.inst.read_raw()
         data = self._parse_IEEE488p2_block(raw_bytes)
 
-        # ---- Escalado de datos ----
+        # ---- Data scaling ----
         # desc = self._query(f'C{ch}:INSPECT? WAVEDESC')
         desc = self._get_wavedesc(ch)
 
