@@ -5,3 +5,4 @@ scikit-learn==1.6.1
 tqdm==4.67.1
 pympler==1.1
 pyvisa==1.14.1
+h5py==3.11.0
