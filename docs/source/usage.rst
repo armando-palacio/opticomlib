@@ -1,6 +1,6 @@
 Installation
 ------------
-To use ``Opticomlib``, python ``<=3.10`` is required.
+To use ``Opticomlib``, python ``>=3.10`` is required.
 
 .. note:: 
    
