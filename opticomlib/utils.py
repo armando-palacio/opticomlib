@@ -257,7 +257,11 @@ def str2array(string: str, dtype: bool | int | float | complex | None = None):
     else:
         raise ValueError('The string contains invalid characters and can\'t be converted to an array.')
     
-    return arr.astype(dtype) if dtype else arr
+    if dtype:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", np.ComplexWarning)
+            return arr.astype(dtype)
+    return arr
 
 
 

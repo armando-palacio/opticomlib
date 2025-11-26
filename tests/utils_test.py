@@ -199,20 +199,21 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(len(y), len(x))
 
     def test_phase_estimator(self):
-        t = np.linspace(0, 1, 100)
+        t = np.linspace(0, 1, 1000)
+        f = 10
         phi0 = 0.5
-        y = np.cos(2*pi*10*t + phi0)
-        est_phi = phase_estimator(y)
-        # Note: phase_estimator uses Hilbert transform which might have edge effects
-        # and ambiguity of 2pi. We check if it's close.
-        # The estimator returns phase in radians.
-        # Since it's a cosine, the phase at t=0 is phi0.
-        # However, hilbert(cos(wt+phi)) ~ exp(j(wt+phi)). Angle is wt+phi.
-        # At t=0, angle is phi.
+        amp0 = 2.0
+        # x = A * cos(2*pi*f*t + phi)
+        y = amp0 * np.cos(2*pi*f*t + phi0)
         
-        # We need to handle 2pi wrapping for comparison
+        est_phi, est_amp = phase_estimator(t, y, f)
+        
+        # Check phase
         diff = np.angle(np.exp(1j*(est_phi - phi0)))
         self.assertTrue(np.abs(diff) < 1e-2)
+        
+        # Check amplitude
+        self.assertAlmostEqual(est_amp, amp0, delta=1e-2)
 
 if __name__ == '__main__':
     unittest.main()
