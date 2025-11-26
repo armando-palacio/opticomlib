@@ -1959,53 +1959,69 @@ def upfir(x, h, up=1):
     return y
 
 
-def phase_estimator(*signals):
-    """
-    Estimate the initial phase of a signal using the Hilbert transform.
-    This function applies the Hilbert transform to the input signal(s) to obtain their
-    analytic representation, computes the instantaneous phase, and performs a linear
-    fit to estimate the initial phase offset. It processes multiple signals if provided,
-    but returns the initial phase estimate for the last signal.
+def phase_estimator(t, x, f):
+    r"""
+    Estimates the phase and amplitude of a sinusoid with known frequency.
 
     Parameters
     ----------
-    *signals : array_like
-        The input signal(s), each a 1-D array of real or complex values.
+    t : array_like
+        Times in seconds, shape (N,).
+    x : array_like
+        Sampled signal, shape (N,).
+    f : float
+        Frequency in Hz.
 
     Returns
     -------
-    float
-        Estimated initial phase in radians for each input signal.
+    phi : float
+        Estimated phase in radians.
+    amp : float
+        Estimated amplitude.
 
     Notes
     -----
-    The initial phase is the intercept of the linear fit of the unwrapped phase versus time.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> t = np.linspace(0, 1, 1000)
-    >>> y = np.sin(2 * np.pi * 10 * t + np.pi/4)  # 10 Hz signal with phase offset
-    >>> phase = phase_estimator(y)
-    >>> print(f"Estimated phase: {phase:.2f} rad")
+    The model is :math:`x[n] = A \cos(2\pi f t[n] + \phi) + noise`, solved by linear regression
+    over :math:`[\cos(\omega t), \sin(\omega t)]`.
     """
-    from scipy.signal import hilbert
+    x = np.asarray(x).ravel()
+    t = np.asarray(t).ravel()
+    if t.shape != x.shape:
+        raise ValueError("t and x must have same shape")
 
-    phis = []
+    w = 2 * np.pi * f
+    C = np.cos(w * t)
+    S = np.sin(w * t)
+    G = np.column_stack((C, S))  # diseño: x ≈ a*C + b*S
 
-    for y in signals:
-        y_hilb = hilbert(y)
-        
-        t = np.arange(y.size)
-        inst_phase = np.unwrap(np.angle(y_hilb))
+    # IRLS con pérdida Huber: iteratively reweighted LS
+    theta = np.linalg.lstsq(G, x, rcond=None)[0]
+    max_iter = 50
+    huber_delta = 0.2
+    for _ in range(max_iter):
+        r = x - G.dot(theta)
+        absr = np.abs(r)
+        # pesos Huber
+        wght = np.ones_like(r)
+        mask = absr > huber_delta
+        wght[mask] = huber_delta / absr[mask]
+        W = np.sqrt(wght)
+        Gw = G * W[:, None]
+        xw = x * W
+        theta_new, _, _, _ = np.linalg.lstsq(Gw, xw, rcond=None)
+        if np.linalg.norm(theta_new - theta) < 1e-20:
+            theta = theta_new
+            break
+        theta = theta_new
 
-        # Perform linear fit of phase vs time to estimate initial phase
-        _, phi0 = np.polyfit(t, inst_phase, 1)
-        phis.append(phi0)
-    
-    if len(phis) == 1:
-        return phis[0]
-    return np.array(phis)
+    a, b = float(theta[0]), float(theta[1])
+    # recordatorio: cos(ωt + φ) = cosφ*cosωt - sinφ*sinωt
+    # por tanto a = A cosφ ; b = -A sinφ
+    phi = np.arctan2(-b, a)  # devuelve fase en (-pi,pi]
+    amp = np.hypot(a, b)  # amplitud
+
+    return phi, amp
+
 
 def get_psd(signal, fs, nperseg=None):
     """
