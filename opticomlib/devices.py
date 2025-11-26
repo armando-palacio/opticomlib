@@ -11,6 +11,7 @@
    EDFA
    DM
    FIBER
+   DBP
    LPF
    PD
    ADC
@@ -37,6 +38,7 @@ from .typing import (
     optical_signal,
     gv,
     eye,
+    RealNumber, ComplexNumber, NULL
 )
 
 from .utils import (
@@ -51,9 +53,11 @@ from .utils import (
     tau_g,
     dispersion,
     shortest_int,
+    rcos_pulse,
+    gauss_pulse,
+    nrz_pulse,
+    upfir
 )
-
-plt.rcParams["font.family"] = "serif"
 
 
 def PRBS(
@@ -169,8 +173,6 @@ def PRBS(
         new = ((lfsr >> tap1) ^ (lfsr >> tap2)) & 1
         lfsr = ((lfsr << 1) | new) & (1 << order) - 1
         index += 1
-        # if lfsr == seed:
-        #     break
 
     output = binary_sequence(prbs)
     output.execution_time = toc()
@@ -182,9 +184,11 @@ def PRBS(
 
 def DAC(
     input: str | list | tuple | np.ndarray | binary_sequence,
-    bias: float = 0.0,
-    Vout: float = 1.0,
-    pulse_shape: Literal["nrz", "rz", "rect", "gaussian"] = "nrz",
+    pulse_shape: Literal["nrz", "gaussian", "rcos"] = "nrz",
+    coupling: Literal['AC', 'DC'] = "DC",
+    Vpp: float = 1.0,
+    offset: float = 0.0,
+    h: np.ndarray = None,
     BW: float = None,
     **kwargs,
 ):
@@ -192,51 +196,49 @@ def DAC(
 
     Converts a binary sequence into an electrical signal, sampled at a frequency ``gv.fs``.
 
-    Warning
-    -------
-    Parameter value ``pulse_shape='rect'`` is equivalent to ``pulse_shape='nrz'``. It is recommended to use ``pulse_shape='nrz'``, ``'rect'`` will be removed in futures versions.
-
     Parameters
     ----------
     input : :obj:`str`, :obj:`list`, :obj:`tuple`, :obj:`np.ndarray`, or :obj:`binary_sequence`
         Input binary sequence.
-    bias : :obj:`float`
-        DC bias of the output signal. Default: 0.0
-    Vout : :obj:`float`
-        Output signal amplitude. Should be in the range [-48, 48] Volts. Default: 1.0
-    pulse_shape : :obj:`str`, {'nrz', 'rect', 'gaussian'}
+    pulse_shape : :obj:`str`, {'nrz', 'rz', 'gaussian', 'rcos'}
         Pulse shape at the output. Default: 'nrz'
+    coupling : :obj:`str`, {'AC', 'DC'}
+    Vpp : :obj:`float`
+        Output peak-to-peak voltage, in Volts. Range: (0, 48] V. Default: 1.0 V
+    offset : :obj:`float`
+        DC offset of the output signal, in Volts. Range: [-48, 48) V. Default: 0.0 V
+    h : :obj:`ndarray`, optional
+        Impulse response of the pulse shaping filter. If provided, it overrides the ``pulse_shape`` parameter.
     BW : :obj:`float`
         Bandwidth of DAC. If ``None`` bandwidth is not limited. Default: None
 
     Other Parameters
     ----------------
-    c : :obj:`float`
-        Chirp of the Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``. Default: 0.0
-    m : :obj:`int`
-        Order of the super-Gaussian pulse. Only applicable if ``pulse_shape='gaussian'``. Default: 1
+    If ``pulse_shape='nrz'``, the following parameters can be specified:
+
     T : :obj:`int`
-        Pulse width at half maximum in number of samples. Only applicable if ``pulse_shape='gaussian'``. Default: ``gv.sps``
+        Pulse width at half maximum in number of bits. Default: 1
+
+    If ``pulse_shape='gaussian'``, the following parameters can be specified:
+    
+    c : :obj:`float`
+        Chirp of the Gaussian pulse. Default: 0.0
+    m : :obj:`int`
+        Order of the super-Gaussian pulse. Default: 1
+    T : :obj:`int`
+        Pulse width at half maximum in number of bits. Default: 1
+
+    If ``pulse_shape='rcos'``, the following parameters can be specified:
+    
+    beta : :obj:`float`
+        Roll-off factor of the raised cosine pulse. Default: 0.25
+    rcos_type : :obj:`str`, {'normal', 'sqrt'}
+        Type of raised cosine pulse. 'normal' for raised cosine, 'sqrt' for square-root raised cosine. 
 
     Returns
     -------
     :obj:`electrical_signal`
         The converted electrical signal.
-
-    Raises
-    ------
-    ValueError
-        If ``pulse_shape`` is not ``'rect'`` or ``'gaussian'``.
-        If ``Vout`` is not between -48 and 48 Volts.
-        If ``bias`` is not between -48 and 48 Volts.
-        If ``T`` is <=0 or greater than 2 times the samples per bit.
-        If ``m`` is not a positive integer.
-    TypeError
-        If ``Vout`` is not a scalar value.
-        If ``bias`` is not a scalar value.
-        If ``c`` is not a scalar value.
-        If ``m`` is not an integer value.
-        If ``T`` is not an integer value.
 
     Examples
     --------
@@ -250,81 +252,94 @@ def DAC(
 
         gv(sps=32) # set samples per bit
 
-        DAC('0 0 1 0 0', Vout=5, pulse_shape='gaussian', m=2).plot('r', lw=3, grid=True).show()
+        DAC('0 0 1 0 0', Vpp=5, pulse_shape='gaussian', m=2).plot('r', lw=3, grid=True).show()
     """
     tic()
-    if not isinstance(input, binary_sequence):
-        input = binary_sequence(input)
 
+    SHAPES = ["nrz", "gaussian", "rcos"]
+
+    input = binary_sequence(input)
+    bits = input.size
     sps = gv.sps
+    input = input.to_numpy()
 
-    if pulse_shape in ["rect", "nrz", "NRZ"]:
-        x = np.kron(input.data, np.ones(sps))
+    if h is not None:
+        x = upfir(input, h=h, up=sps)
 
-    elif pulse_shape in ["rz", "RZ"]:
-        rz_pulse = np.zeros(sps)
-        rz_pulse[: sps // 2] = 1
+    elif pulse_shape.lower() not in SHAPES:
+        raise ValueError(f'The parameter `pulse_shape` must be one of the following values {SHAPES}')
+    
+    elif pulse_shape.lower() == "nrz":
+        T = kwargs.get("T", 1)
+        if not isinstance(T, int):
+            raise TypeError("The parameter `T` must be an integer.")
+        if T <= 0:
+            raise ValueError("The parameter `T` must be greater than 0.")
+        if T > 2*sps:
+            raise ValueError("The parameter `T` must be less than 2*sps.")
+            
+        span = max(4, bits-4)
+        
+        h = nrz_pulse(span=span, sps=sps, T=T)
+        x = upfir(input, h=h, up=sps)
 
-        mask = np.tile(rz_pulse, input.len())
-
-        x = np.kron(input.data, np.ones(sps)) * mask
-
-    elif pulse_shape in ["gaussian", "GAUSSIAN"]:
+    elif pulse_shape.lower() == "gaussian":
         c = kwargs.get("c", 0.0)
         m = kwargs.get("m", 1)
-        T = kwargs.get("T", sps)
+        T = kwargs.get("T", 1)
 
         if not isinstance(c, (int, float)):
-            raise TypeError("The parameter `c` must be a scalar value.")
-
+            raise TypeError("The parameter `c` must be a real number.")
         if not isinstance(m, int):
-            raise TypeError("The parameter `m` must be an integer value.")
-        else:
-            if m <= 0:
-                raise ValueError("The parameter `m` must be a positive integer value.")
-
+            raise TypeError("The parameter `m` must be an integer.")
         if not isinstance(T, int):
-            raise TypeError("The parameter `T` must be an integer value.")
-        else:
-            if T > 2 * sps or T <= 0:
-                raise ValueError("The parameter `T` must be in the range [0, 2*sps].")
+            raise TypeError("The parameter `T` must be an integer.")
+        
+        if m <= 0:
+            raise ValueError("The parameter `m` must be greater than 0.")
+        if T <= 0:
+            raise ValueError("The parameter `T` must be greater than 0.")
+        if T > 2*sps:
+            raise ValueError("The parameter `T` must be less than 2*sps.")
 
-        def p(t, T):
-            return np.exp(-(1 + 1j * c) / 2 * (t / T) ** (2 * m))
+        span = max(4, bits-4)
 
-        t = np.linspace(-4 * sps, 4 * sps, 8 * sps)  # time vector of the Gaussian pulse
-        k = 2 * (2 * np.log(2)) ** (
-            1 / (2 * m)
-        )  # scaling factor between the width of a slot and the standard deviation of a Gaussian pulse
-        pulse = p(t, T / k)  # gaussian pulse
+        h_pulse = gauss_pulse(span=span, sps=sps, T=T, m=m, c=c)
+        x = upfir(input, h=h_pulse, up=sps)
+    
+    elif pulse_shape.lower() == "rcos":
+        beta = kwargs.get("beta", 0.25) # roll-off factor
+        rcos_type = kwargs.get("rcos_type", "normal")  # 'normal' or 'sqrt'  
+        span = max(4, bits-4)      
 
-        s = np.zeros(input.len() * sps)
-        s[int(sps // 2) :: sps] = input.data
-        s[int(sps // 2 - 1) :: sps] = input.data
+        h_pulse = rcos_pulse(beta=beta, span=span, sps=sps, shape=rcos_type)
+        x = upfir(input, h=h_pulse, up=sps)
 
-        x = sg.fftconvolve(s, pulse, mode="same") / 2
+    
+    if Vpp is not None:
+        if not isinstance(Vpp, (int, float)):
+            raise TypeError("The parameter `Vpp` must be a scalar value.")
+        if Vpp <= 0 or Vpp > 48:
+            raise ValueError(
+                "The parameter `Vpp` must be in the range (0, 48] Volts."
+            )
+        x = x * Vpp
+
+    if offset is not None:
+        if not isinstance(offset, (int, float)):
+            raise TypeError("The parameter `offset` must be a scalar value.")
+        if np.abs(offset) > 48:
+            raise ValueError(
+                "The parameter `offset` must be in the range [-48, 48] Volts."
+            )
+        x = x + offset
+
+    if coupling.upper() == 'AC':
+        x = x - np.mean(x)
+    elif coupling.upper() == 'DC':
+        pass
     else:
-        raise ValueError(
-            'The parameter `pulse_shape` must be one of the following values ("rect", "gaussian")'
-        )
-
-    if Vout is not None:
-        if not isinstance(Vout, (int, float)):
-            raise TypeError("The parameter `Vout` must be a scalar value.")
-        if np.abs(Vout) >= 48:
-            raise ValueError(
-                "The parameter `Vout` must be in the range [-48, 48] Volts."
-            )
-        x = x * Vout
-
-    if bias is not None:
-        if not isinstance(bias, (int, float)):
-            raise TypeError("The parameter `bias` must be a scalar value.")
-        if np.abs(bias) >= 48:
-            raise ValueError(
-                "The parameter `bias` must be in the range [-48, 48] Volts."
-            )
-        x = x + bias
+        raise ValueError("The parameter `coupling` must be either 'AC' or 'DC'.")
 
     output = electrical_signal(x)
 
@@ -335,7 +350,7 @@ def DAC(
     return output
 
 
-def LASER(t, p, lw=None, rin=None,  df=None):
+def LASER(P0, lw=None, rin=None,  df=None):
     r"""
     **Continuous Wave Laser**
 
@@ -343,9 +358,7 @@ def LASER(t, p, lw=None, rin=None,  df=None):
 
     Parameters
     ----------
-    t : :obj:`ndarray`
-        Time vector.
-    p : :obj:`float`
+    P0 : :obj:`float`
         Optical Power of laser, in dBm.
     lw : :obj:`float`
         LineWidth of laser, in Hz.
@@ -411,22 +424,20 @@ def LASER(t, p, lw=None, rin=None,  df=None):
         from opticomlib.devices import LASER, gv
         from opticomlib import gv, np, plt
 
-        t = np.arange(0, 100e-9, gv.dt)
-
         P = 30       # 30 dBm (1 W)
         RIN = -140   # -140 dB/Hz Spectral density of RIN
         df = 1e9     # 1 GHz frequency offset   
         
-        l = LASER(t, p=P, rin=RIN, df=df) 
+        l = LASER(P0=P, rin=RIN, df=df) 
 
         plt.subplot(211)
-        l.plot('b',  style='light').grid()
+        l.plot('b').grid()
         plt.title('Time Domain')
         plt.ylim(0, 2000)
         plt.xlim(0, 100)
 
         plt.subplot(212)
-        l.psd('r', style='light').grid()
+        l.psd('r').grid()
         plt.title('Frequency domain')
         plt.ylim(-50, 40)
         plt.tight_layout()
@@ -445,22 +456,20 @@ def LASER(t, p, lw=None, rin=None,  df=None):
         from opticomlib.devices import LASER, gv
         from opticomlib import gv, np, plt
 
-        t = np.arange(0, 100e-9, gv.dt)
-
         P = 30       # 30 dBm (1 W)
         LW = 10e6    # 10 MHz laser linewidth
         RIN = -140   # -140 dB/Hz Spectral density of RIN
         
-        l = LASER(t, p=P, lw=LW, rin=RIN) 
+        l = LASER(P0=P, lw=LW, rin=RIN) 
 
         plt.subplot(211)
-        l.plot('b',  style='light').grid()
+        l.plot('b').grid()
         plt.title('Time Domain')
         plt.ylim(0, 2000)
         plt.xlim(0, 100)
 
         plt.subplot(212)
-        l.psd('r', style='light').grid()
+        l.psd('r').grid()
         plt.title('Frequency domain')
         plt.ylim(-50, 40)
         plt.tight_layout()
@@ -471,18 +480,18 @@ def LASER(t, p, lw=None, rin=None,  df=None):
         :align: center
     """
     tic()
-    op_output = np.ones_like(t) * np.sqrt( idbm(p) )
+    op_output = np.ones_like(gv.t) * np.sqrt( idbm(P0) )
 
     if lw is not None: 
         # generate phase noise (random walk - wiener)
-        phase_noise = np.cumsum( np.random.normal(0, np.sqrt(2*pi * lw * gv.dt), t.size) )
+        phase_noise = np.cumsum( np.random.normal(0, np.sqrt(2*pi * lw * gv.dt), gv.t.size) )
 
         # add the phase noise to the signal
         op_output = op_output * np.exp( 1j * phase_noise ) 
 
     if rin is not None:  
         # generate rin noise
-        rin_noise = np.random.normal(0, np.sqrt( idb(rin) * gv.fs ) , t.size)
+        rin_noise = np.random.normal(0, np.sqrt( idb(rin) * gv.fs ) , gv.t.size)
         
         if rin_noise.min() < -1:
             raise ValueError('Noise power is to high, try decrease RIN parameter.')
@@ -494,7 +503,7 @@ def LASER(t, p, lw=None, rin=None,  df=None):
         if np.abs(df) > gv.fs/2:
             raise ValueError('The laser frequency is out of the Nyquist range. Try increase the sampling frequency.')
 
-        op_output = op_output * np.exp(1j * 2*pi*df * t)
+        op_output = op_output * np.exp(1j * 2*pi*df * gv.t)
 
     op_output = optical_signal(op_output)
     op_output.execution_time = toc()
@@ -557,7 +566,7 @@ def PM(
         gv(sps=16, R=1e9) # set samples per bit and bitrate
 
         op_input = optical_signal(np.exp(1j*np.linspace(0,4*np.pi, 1000))) # input optical signal ( exp(j*w*t) )
-        t = op_input.t()*1e9
+        t = op_input.t*1e9
 
         fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
 
@@ -570,7 +579,7 @@ def PM(
         axs[0].grid()
 
         # Lineal phase
-        output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.len()), Vpi=5)
+        output = PM(op_input, el_input=np.linspace(0,5*np.pi,op_input.size), Vpi=5)
 
         axs[1].set_title(r'Linear phase change  ($\Delta f \rightarrow cte.$)')
         axs[1].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
@@ -578,7 +587,7 @@ def PM(
         axs[1].grid()
 
         # Quadratic phase
-        output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.len())**2, Vpi=5)
+        output = PM(op_input, el_input=np.linspace(0,(5*np.pi)**0.5,op_input.size)**2, Vpi=5)
 
         plt.title(r'Quadratic phase change ($\Delta f \rightarrow linear$)')
         axs[2].plot(t, op_input.signal[0].real, 'r-', label='input', lw=3)
@@ -596,31 +605,14 @@ def PM(
     tic()
 
     if not isinstance(op_input, optical_signal):
-        raise TypeError("`op_input` must be of type (optical_signal).")
+        raise TypeError("`op_input` must be of type 'optical_signal'.")
 
-    if isinstance(el_input, (float, int)):
-        el_input = np.ones(op_input.len()) * el_input
-    elif isinstance(el_input, electrical_signal):
-        el_input = el_input.signal
-        if el_input.size != op_input.signal.len():
-            raise ValueError(
-                "The length of `el_input` must be equal to the length of `op_input`."
-            )
-    elif isinstance(el_input, np.ndarray):
-        if len(el_input) != op_input.len():
-            raise ValueError(
-                "The length of `el_input` must be equal to the length of `op_input`."
-            )
-    else:
-        raise TypeError("`el_input` must be of type (int or electrical_signal).")
+    el_input = electrical_signal(el_input)
 
-    output = optical_signal(np.zeros_like(op_input.signal))
+    if el_input.ndim > 1:
+        raise ValueError("`el_input` must be a scalar or 1D-array.")
 
-    output.signal = op_input.signal * np.exp(1j * el_input * pi / Vpi)
-
-    if np.sum(op_input.noise):
-        output.noise = op_input.noise * np.exp(1j * el_input * pi / Vpi)
-
+    output = op_input * np.exp(1j * el_input * pi / Vpi)
     output.execution_time = toc()
     return output
 
@@ -697,81 +689,70 @@ def MZM(
 
     Examples
     --------
-    .. code-block:: python
-        :linenos:
+    .. plot::
+        :include-source:
+        :align: center
 
         from opticomlib import idbm, dbm, optical_signal, gv
-        from opticomlib.devices import MZM
+        from opticomlib.devices import MZM, LASER
 
         import numpy as np
         import matplotlib.pyplot as plt
 
-        gv(sps=128, R=10e9) # set samples per bit and bitrate
+        gv(sps=128, R=10e9, Vpi=5, N=10)
 
-        Vpi = 5
         tx_seq = np.array([0, 1, 0, 1, 0, 0, 1, 1, 0, 0], bool)
 
-        V = DAC(~tx_seq, Vout=Vpi, pulse_shape='rect') - Vpi/2
+        V = DAC(tx_seq, Vpp=gv.Vpi, offset=gv.Vpi/2, pulse_shape='nrz')
 
-        input = optical_signal( np.ones_like(V.signal)*idbm(10)**0.5 )
-        input.noise = np.random.normal(0, 0.01, input.len())
-        t = input.t()*1e9
+        input = LASER(P0=10) + np.random.normal(0, 0.01, gv.t.size)
 
-        mod_sig = MZM(input, el_input=V, bias=Vpi/2, Vpi=Vpi, loss_dB=2, ER_dB=40, BW=40e9)
+        mod_sig = MZM(input, el_input=V, bias=-gv.Vpi/2, Vpi=gv.Vpi, loss_dB=2, ER_dB=40, BW=40e9)
 
         fig, axs = plt.subplots(3,1, sharex=True, tight_layout=True)
 
 
         # Plot input and output power
-        axs[0].plot(t, dbm(input.abs()**2), 'r-', label='input', lw=3)
-        axs[0].plot(t, dbm(mod_sig.abs()**2), 'C1-', label='output', lw=3)
+        axs[0].plot(gv.t, dbm(input.abs()**2), 'r-', label='input', lw=3)
+        axs[0].plot(gv.t, dbm(mod_sig.abs()**2), 'C1-', label='output', lw=3)
         axs[0].legend(bbox_to_anchor=(1, 1), loc='upper left')
         axs[0].set_ylabel('Potencia [dBm]')
-        for i in t[::gv.sps]:
+        for i in gv.t[::gv.sps]:
             axs[0].axvline(i, color='k', linestyle='--', alpha=0.5)
 
         # # Plot fase
         phi_in = input.phase()
         phi_out = mod_sig.phase()
 
-        axs[1].plot(t, phi_in, 'b-', label='Fase in', lw=3)
-        axs[1].plot(t, phi_out, 'C0-', label='Fase out', lw=3)
+        axs[1].plot(gv.t, phi_in, 'b-', label='Fase in', lw=3)
+        axs[1].plot(gv.t, phi_out, 'C0-', label='Fase out', lw=3)
         axs[1].set_ylabel('Fase [rad]')
         axs[1].legend(bbox_to_anchor=(1, 1), loc='upper left')
-        for i in t[::gv.sps]:
+        for i in gv.t[::gv.sps]:
             axs[1].axvline(i, color='k', linestyle='--', alpha=0.5)
 
         # Frecuency chirp
-        freq_in = 1/2/np.pi*np.diff(phi_in)/np.diff(t)
-        freq_out = 1/2/np.pi*np.diff(phi_out)/np.diff(t)
+        freq_in = 1/2/np.pi*np.diff(phi_in)/gv.dt
+        freq_out = 1/2/np.pi*np.diff(phi_out)/gv.dt
 
-        axs[2].plot(t[:-1], freq_in, 'k', label='Frequency in', lw=3)
-        axs[2].plot(t[:-1], freq_out, 'C7', label='Frequency out', lw=3)
+        axs[2].plot(gv.t[:-1], freq_in, 'k', label='Frequency in', lw=3)
+        axs[2].plot(gv.t[:-1], freq_out, 'C7', label='Frequency out', lw=3)
         axs[2].set_xlabel('Tiempo [ns]')
         axs[2].set_ylabel('Frequency Chirp [Hz]')
         axs[2].legend(bbox_to_anchor=(1, 1), loc='upper left')
-        for i in t[::gv.sps]:
+        for i in gv.t[::gv.sps]:
             axs[2].axvline(i, color='k', linestyle='--', alpha=0.5)
         plt.show()
-
-    .. image:: _images/MZM_example.svg
-        :width: 100%
-        :align: center
     """
 
     tic()
     if not isinstance(op_input, optical_signal):
-        raise TypeError("`op_input` must be of type (optical_signal).")
+        raise TypeError("`op_input` must be of type 'optical_signal'.")
+    
+    el_input = electrical_signal(el_input)
 
-    if not isinstance(el_input, electrical_signal):
-        el_input = electrical_signal(el_input)
-
-    if op_input.len() != el_input.len() and el_input.len() != 1:
-        raise ValueError(
-            "Length of `op_input` and `el_input` must be equal or `el_input` must be an scalar value. Current lengths are {} and {}.".format(
-                op_input.len(), el_input.len()
-            )
-        )
+    if el_input.ndim > 1:
+        raise ValueError("`el_input` must be a scalar or 1D-array.")
 
     if pol not in ["x", "y"]:
         raise ValueError(
@@ -781,23 +762,19 @@ def MZM(
     loss = idb(-loss_dB)  # Propagation losses
     eta = 2 * idb(-ER_dB) ** 0.5  # arms desbalance factor
 
-    output = op_input[:]
-
-    g_t = pi / 2 / Vpi * (el_input.signal + bias)
+    g_t = pi / 2 / Vpi * (el_input + bias)
     h_t = loss**0.5 * (np.cos(g_t) + 1j * eta / 2 * np.sin(g_t))
 
-    output.signal = output.signal * h_t
-    if output.noise is not None:
-        output.noise = output.noise * h_t
+    output = op_input * h_t
 
     if pol == "x" and output.n_pol == 2:
-        output.signal[1] = 0
-        if output.noise is not None:
-            output.noise[1] = 0
+        output.signal[1] = np.zeros_like(output.signal[1])
+        if output.noise is not NULL:
+            output.noise[1] = np.zeros_like(output.noise[1])
     elif pol == "y" and output.n_pol == 2:
-        output.signal[0] = 0
-        if output.noise is not None:
-            output.noise[0] = 0
+        output.signal[0] = np.zeros_like(output.signal[0])
+        if output.noise is not NULL:
+            output.noise[0] = np.zeros_like(output.noise[0])
 
     if BW is not None:
         output = BPF(
@@ -842,7 +819,7 @@ def BPF(input: optical_signal, BW: float, n: int = 4):
 
     output.signal = sg.sosfiltfilt(sos_band, input.signal, axis=-1)
 
-    if output.noise is not None:
+    if output.noise is not NULL:
         output.noise = sg.sosfiltfilt(sos_band, input.noise, axis=-1)
 
     output.execution_time = toc()
@@ -939,25 +916,24 @@ def EDFA(input: optical_signal, G: float, NF: float, BW: float=None):
     tic()
 
     if not isinstance(input, optical_signal):
-        raise TypeError("`input` must be of type (optical_signal).")
+        raise TypeError("`input` must be of type 'optical_signal'.")
 
     output = optical_signal(signal=input.signal, noise=input.noise, n_pol=2) * np.sqrt( idb(G) )
     
     if input.n_pol == 1:
         output.signal[1] = np.zeros_like(output.signal[0])  # y-polarization of signal is set to zeros.
+        if output.noise is not NULL:
+            output.noise[1] = np.zeros_like(output.noise[0])  # y-polarization of noise is set to zeros.
 
     # generate ASE noise (2-polarizations with real and imaginary parts)
     # gv.fs is taken as initial bandwidth of noise 
     P_ase = idb(NF) * h * gv.f0 * (idb(G) - 1) * gv.fs
 
     # generate 4 vectors for, x-polarization real and imaginary parts and y-polarization real and imaginary parts
-    ase = np.sqrt(P_ase/4) * np.random.randn(4, input.len())
+    ase = np.sqrt(P_ase/4) * np.random.randn(4, input.size)
     ase = ase[:2] + 1j*ase[2:]
 
-    if output.noise is not None:
-        output.noise += ase
-    else:
-        output.noise = ase
+    output.noise += ase
 
     if BW is not None:
         output = BPF(output, BW)
@@ -1025,7 +1001,6 @@ def DM(input: optical_signal, D: float, retH: bool = False):
 
         t = gv.t*1e9
 
-        plt.style.use('dark_background')
         fig, ax = plt.subplots(2, 1, sharex=True, gridspec_kw={'hspace': 0.05})
 
         ax[0].plot(t, input.abs()[0], 'r-', lw=3, label='input')
@@ -1044,33 +1019,33 @@ def DM(input: optical_signal, D: float, retH: bool = False):
     tic()
 
     if not isinstance(input, optical_signal):
-        raise TypeError("The input must be an optical signal!")
+        raise TypeError("`input` must be of type 'optical_signal'.")
 
     # Convert units of D:
     D *= 1e-12**2
 
-    H = np.exp(-1j * input.w() ** 2 * D / 2)
+    H = np.exp(1j * input.w() ** 2 * D / 2)
 
     output = (input("w") * H)("t")
 
     if retH:
-        H = np.exp(-1j * input.w() ** 2 * D / 2)
         return output, fftshift(H)
     
     output.execution_time = toc()
     return output
 
 
-def FIBER(
-    input: optical_signal,
-    length: float,
-    alpha: float = 0.0,
-    beta_2: float = 0.0,
-    beta_3: float = 0.0,
-    gamma: float = 0.0,
-    phi_max: float = 0.05,
-    show_progress=False,
-):
+def FIBER(input: optical_signal, 
+              length: float, 
+              alpha: float=0.0, 
+              beta_2: float=0.0, 
+              beta_3: float=0.0, 
+              gamma: float=0.0, 
+              phi_max: float=0.01, 
+              h: float = None, 
+              show_progress: bool = False,
+              return_steps: bool = False
+              ):
     r"""
     **Optical Fiber**
 
@@ -1094,13 +1069,17 @@ def FIBER(
         Nonlinearity coefficient of the fiber, in [(W·km)^-1].
     phi_max : float, default: 0.05
         Upper bound of the nonlinear phase rotation, in [rad].
+    h : int, default: None
+        Fixed step size, in [km]. If ``None``, the step size is adapted to the maximum nonlinear phase rotation. If ``h`` is set, the step size is fixed.
     show_progress : bool, default: False
         Show algorithm progress bar.
+    return_steps : bool, default: False
+        If True, return z and A_z instead of the output optical_signal.
 
     Returns
     -------
-    optical_signal
-        Output optical signal.
+    optical_signal or tuple
+        If return_steps is False, output optical signal. If True, tuple (z, A_z) where z is the array of propagation distances and A_z is the matrix of field amplitudes at each z.
 
     Raises
     ------
@@ -1112,84 +1091,196 @@ def FIBER(
     .. [#] O.V. Sinkin; R. Holzlohner; J. Zweck; C.R. Menyuk, "Optimization of the split-step Fourier method in modeling optical-fiber communications systems," vol. 21, no. 1, pp. 61-68, Jan. 2003, doi: https://doi.org/10.1109/JLT.2003.808628
 
     Example
-    -------
+    ------
     .. plot::
         :include-source:
         :alt: FIBER example 1
         :align: center
-        :caption: The input signal is a 10 Gbps NRZ signal with 20 dBm of power. The fiber has a length of 50 km, an attenuation of 0.01 dB/km,
-                    a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.
+        :caption: The input signal is a 10 Gbps NRZ signal with 20 dBm of power. The fiber has a length of 50 km, an attenuation of 0.01 dB/km, a second-order dispersion of -20 ps^2/km, and a nonlinearity coefficient of 0.1 (W·km)^-1. The output signal is shown in blue.
 
         from opticomlib.devices import FIBER, DAC
-        from opticomlib import optical_signal, gv, idbm
+        from opticomlib import optical_signal as op_sig, gv, idbm
 
         gv(sps=32, R=10e9)
 
-        signal = DAC('0,0,0,1,0,0,0', pulse_shape='gaussian')
-        input = optical_signal( signal.signal/signal.power()**0.5*idbm(20)**0.5, n_pol=2)
+        input = op_sig( DAC('0,0,0,1,0,0,0', pulse_shape='gaussian'), n_pol=2)
 
         output = FIBER(input, length=50, alpha=0.01, beta_2=-20, gamma=0.1, show_progress=True)
 
         input.plot('r-', label='input', lw=3)
         output.plot('b-', label='output', lw=3).show()
     """
-
     tic()
+    try:
+        import cupy as cp
+        use_gpu = True
+    except ImportError:
+        cp = None
+        use_gpu = False
+
     if not isinstance(input, optical_signal):
-        raise TypeError("`input` must be of type (optical_signal).")
+        raise TypeError("`input` must be of type 'optical_signal'.")
 
-    alpha = alpha / 4.343  # [1/km]
+    # Set xp to cp if GPU available, else np
+    xp = cp if use_gpu else np
 
-    w = input.w() * 1e-12  # [rad/ps]
-    D_op = -alpha / 2 - 1j / 2 * beta_2 * w**2 - 1j / 6 * beta_3 * w**3
+    # Define functions based on availability
+    fft_func = cp.fft.fft if use_gpu else np.fft.fft
+    ifft_func = cp.fft.ifft if use_gpu else np.fft.ifft
+    exp_func = cp.exp if use_gpu else np.exp
+    abs_func = cp.abs if use_gpu else np.abs
+    max_func = cp.max if use_gpu else np.max
+    array_func = cp.array if use_gpu else np.array
+    asarray_func = cp.asarray if use_gpu else np.asarray
 
-    A = input.signal
+    # Convert parameters to arrays
+    alpha = array_func(alpha / 4.343, dtype=np.float32)  # [1/km]
+    beta_2 = array_func(beta_2, dtype=np.float32)       # [ps^2/km]
+    beta_3 = array_func(beta_3, dtype=np.float32)       # [ps^3/km]
+    gamma = array_func(gamma, dtype=np.float32)        # [(W·km)^-1]
+    length = array_func(length, dtype=np.float32)       # [km]
+    phi_max = array_func(phi_max, dtype=np.float32)     # [rad]
 
-    h = (
-        length
-        if (beta_2 == 0 and beta_3 == 0) or gamma == 0
-        else phi_max / (gamma * (np.abs(A[0]) ** 2 + np.abs(A[1]) ** 2)).max()
-    )
+    w_gpu = asarray_func(input.w() * 1e-12, dtype=np.float32)  # [rad/ps]
+    D̃ = -alpha / 2 + 1j / 2 * beta_2 * w_gpu**2 + 1j / 6 * beta_3 * w_gpu**3
 
-    x_length = h
+    A_gpu = asarray_func(input.to_numpy(), dtype=(cp.complex64 if use_gpu else np.complex64))
+
+    # Initialize lists for steps only if return_steps is True
+    if return_steps:
+        z_list = [0.0]
+        A_z_list = [A_gpu.get() if use_gpu else A_gpu.copy()]
+
+    # Initial step
+    if h is None:
+        h_ = length if (beta_2 == 0 and beta_3 == 0) or gamma == 0 else phi_max / (np.abs(gamma) * (abs_func(A_gpu)**2)).max()
+    else:  # fixed step mode
+        h_ = array_func(h, dtype=np.float32)
+    h_ = array_func(min(h_, length), dtype=np.float32)
+
+    z = array_func(0, dtype=np.float32)  # [km]
+    steps = 0
 
     if show_progress:
-        barra_progreso = tqdm(total=100)
-
-    while True:
-        exp_NL = np.exp(1j * gamma * (h / 2) * np.abs(A) ** 2)
-        exp_L = np.exp(D_op * h)
-        A = exp_NL * ifft(
-            exp_L * fft(exp_NL * A)
-        )  # Symmetric Split-Step Fourier Method
-
-        if show_progress:
-            barra_progreso.update(100 * h / length)
-
-        h = (
-            phi_max / (gamma * (np.abs(A[0]) ** 2 + np.abs(A[1]) ** 2)).max()
-            if gamma != 0
-            else length
+        barra_progreso = tqdm(
+            total=100,
+            desc="Propagando",
+            bar_format="{l_bar}{bar}|[{elapsed}{postfix}]",
+            postfix={'FFTs': 0}
         )
 
-        if x_length + h > length:
-            break
+    while z < length:
+        z += h_
 
-        x_length += h
+        N̂ = 1j * gamma * abs_func(A_gpu)**2
+        
+        A_gpu = A_gpu * exp_func(h_ / 2 * N̂)  # Half nonlinear step (time domain)
+        A_gpu = fft_func(A_gpu)
+        A_gpu = A_gpu * exp_func(D̃ * h_)  # Full linear step (freq domain)
+        A_gpu = ifft_func(A_gpu)
+        A_gpu = A_gpu * exp_func(h_ / 2 * N̂)  # Half nonlinear step (time domain)
 
-    h = length - x_length
-
-    if h != 0:
-        exp_NL = np.exp(1j * gamma * (h / 2) * np.abs(A) ** 2)
-        exp_L = np.exp(D_op * h)
-        A = exp_NL * ifft(exp_L * fft(exp_NL * A))
+        # Append step only if return_steps is True
+        if return_steps:
+            z_list.append(z.get() if use_gpu else z.copy())
+            A_z_list.append(A_gpu.get() if use_gpu else A_gpu.copy())
 
         if show_progress:
-            barra_progreso.update(100 * h / length)
+            steps += 1
+            barra_progreso.set_postfix(FFTs=steps*2)
+            barra_progreso.update(100 * (h_ / length).get() if use_gpu else 100 * (h_ / length))
 
-    output = optical_signal(A, input.noise)
-    output.execution_time = toc()
-    return output
+        if h is None:
+            h_ = phi_max / (np.abs(gamma) * (abs_func(A_gpu)**2)).max()
+
+        h_ = array_func(min(h_, length - z), dtype=np.float32)
+
+    if show_progress:
+        barra_progreso.close()
+
+    if return_steps:
+        return np.array(z_list), np.array(A_z_list)
+    else:
+        output = optical_signal(A_gpu.get() if use_gpu else A_gpu)
+        output.execution_time = toc()
+        return output
+
+
+def DBP(input: optical_signal, 
+        length: float, 
+        alpha: float=0.0, 
+        beta_2: float=0.0, 
+        beta_3: float=0.0, 
+        gamma: float=0.0, 
+        phi_max: float=0.01, 
+        h: float = None, 
+        show_progress: bool = False,
+        return_steps: bool = False
+        ):
+    r"""
+    **Digital Back-Propagation (DBP)**
+
+    Simulates backward propagation through an optical fiber to compensate for
+    deterministic impairments (GVD, TOD, SPM) accumulated during forward
+    propagation. Solves the GNLSE numerically using the split-step Fourier
+    method with inverted operators.
+
+    Assumes the `input` is the signal *after* forward propagation.
+    The output signal represents the estimated signal *before* the fiber.
+
+    Parameters
+    ----------
+    input : optical_signal
+        Input optical signal (output of the fiber).
+    length : float
+        Total length of the fiber used in forward propagation [km].
+    alpha_db_km : float, default: 0.0
+        Attenuation coefficient used during forward propagation [dB/km].
+        This will be inverted to gain during DBP.
+    beta_2 : float, default: 0.0
+        Second-order dispersion coefficient used during forward propagation [ps^2/km].
+        The sign will be inverted during DBP.
+    beta_3 : float, default: 0.0
+        Third-order dispersion coefficient used during forward propagation [ps^3/km].
+        The sign will be inverted during DBP.
+    gamma : float, default: 0.0
+        Nonlinearity coefficient used during forward propagation [(W·km)^-1].
+        The sign will be inverted during DBP.
+    phi_max : float, default: 0.05
+        Upper bound for nonlinear phase rotation per step [rad] (used in adaptive mode).
+        Limits `abs(-gamma*|A|^2*h)`.
+    h : float, default: None
+        Fixed step size [km] for 'fixed' mode. If ``None``, the step size is adapted to the maximum nonlinear phase rotation.
+        If set, the step size is fixed.
+    show_progress : bool, default: False
+        If True, displays a progress bar.
+    return_steps : bool, default: False
+        If True, return z and A_z instead of the output optical_signal.
+
+    Returns
+    -------
+    optical_signal
+        Output optical signal (estimated input to the fiber).
+
+    Raises
+    ------
+    TypeError
+        If `input` is not an optical_signal.
+    ValueError
+        If `mode` is invalid.
+
+    Notes
+    -----
+    - DBP compensates for deterministic effects. It does **not** remove or
+      compensate for stochastic noise (e.g., ASE noise added by amplifiers).
+    - The accuracy depends on the number of steps (controlled by `h_km` or `phi_max`)
+      and the accuracy of the fiber parameters (`alpha`, `beta_2`, `beta_3`, `gamma`).
+    - Uses the NL-L-NL symmetric SSFM scheme internally for each step.
+    """
+    return FIBER(input, length=length, alpha=-alpha, beta_2=-beta_2,
+                   beta_3=-beta_3, gamma=-gamma, phi_max=phi_max,
+                   h=h, show_progress=show_progress,
+                   return_steps=return_steps)
 
 
 def LPF(
@@ -1258,31 +1349,26 @@ def LPF(
     """
     tic()
 
-    if not isinstance(input, (np.ndarray, electrical_signal)):
-        raise TypeError("`input` must be of type (ndarray or electrical_signal).")
-
-    elif isinstance(input, electrical_signal):
-        signal = input.signal
-        noise = input.noise
-    else:
+    if not isinstance(input, electrical_signal):
         input = electrical_signal(input)
-        signal = input.signal
-        noise = None
+
+    if input.ndim != 1:
+        raise ValueError("`input` must be a 1D-array.")
 
     if not fs:
         fs = gv.fs
 
+    output = input[:]  # copy the input signal
+
     sos_band = sg.bessel(N=n, Wn=BW, btype="low", fs=fs, output="sos", norm="mag")
 
-    output = input[:]
+    output.signal = sg.sosfiltfilt(sos_band, input.signal).real
 
-    output.signal = sg.sosfiltfilt(sos_band, signal).real
-
-    if noise is not None:
-        output.noise = sg.sosfiltfilt(sos_band, noise).real
+    if input.noise is not NULL:
+        output.noise = sg.sosfiltfilt(sos_band, input.noise).real
 
     if retH:
-        _, H = sg.sosfreqz(sos_band, worN=signal.size, fs=fs, whole=True)
+        _, H = sg.sosfreqz(sos_band, worN=input.size, fs=fs, whole=True)
         return output, fftshift(H)
     
     output.execution_time = toc()
@@ -1303,6 +1389,7 @@ def PD(
         "ase-shot",
         "thermal-shot",
         "all",
+        "none",
     ] = "all",
     i_dark: float = 10e-9,
     Fn=0,
@@ -1335,6 +1422,7 @@ def PD(
         - ``'ase-shot'``: include ASE and shot noise
         - ``'thermal-shot'``: include thermal and shot noise
         - ``'all'``: include all types of noise
+        - ``'none'``: do not include any noise
 
     i_dark : :obj:`float`, optional
         Dark current of the photodetector in [A]. Default: 10e-9 [10 nA].
@@ -1403,19 +1491,19 @@ def PD(
     tic()
     # check inputs
     if not isinstance(input, optical_signal):
-        raise TypeError("`input` must be of type (optical_signal).")
+        raise TypeError("`input` must be of type 'optical_signal'.")
 
-    if not isinstance(r, (int, float)):
+    if not isinstance(r, RealNumber):
         raise TypeError("`r` must be a scalar value.")
     elif r <= 0 or r > 1:
         raise ValueError("`r` must be in the range (0,1]")
 
-    if not isinstance(T, (int, float)):
+    if not isinstance(T, RealNumber):
         raise TypeError("`T` must be a scalar value.")
     elif T < 0:
         raise ValueError("`T` must be a positive value.")
 
-    if not isinstance(R_load, (int, float)):
+    if not isinstance(R_load, RealNumber):
         raise TypeError("`R_load` must be a scalar value.")
     elif R_load < 0:
         raise ValueError("`R_load` must be a positive value.")
@@ -1423,59 +1511,43 @@ def PD(
     if not isinstance(include_noise, str):
         raise TypeError("`include_noise` must be a string.")
 
-    # function body
-    i_sig = r * input.abs("signal") ** 2
+    i_ph = r * ( input * input.conj() ).real # photodetected current, in [A]
 
     if input.n_pol == 2:
-        i_sig = i_sig.sum(axis=0)
+        i_ph = i_ph.sum(axis=0)
 
     include_noise = include_noise.lower()  # This allow write in upper or lower case
 
     if "thermal" in include_noise or "all" in include_noise:
         S_T = 4 * kB * T * gv.fs/2 * idb(Fn) / R_load  # thermal noise variance, in [A^2]
-        i_T = np.random.normal(0, S_T**0.5, input.len())  # thermal noise current, in [A]
+        i_T = np.random.normal(0, S_T**0.5, input.size)  # thermal noise current, in [A]
 
     if "shot" in include_noise or "all" in include_noise:
-        if input.noise is not None:
-            i_ase = r * input.power("noise").sum()
-        else:
-            i_ase = 0
-
-        S_N = 2 * e * (i_sig.mean() + i_ase + i_dark) * gv.fs/2  # shot noise variance, in [A^2]
-        i_N = np.random.normal(0, S_N**0.5, input.len())  # shot noise current, in [A]
-
-    if "ase" in include_noise or "all" in include_noise:
-        if input.noise is not None:
-            i_s_n = r * (input.signal * input.noise.conj() + input.noise * input.signal.conj()).real  # SIG-Noise term
-            i_n_n = r * input.abs("noise") ** 2  # Noise-Noise term
-
-            if input.n_pol == 2:
-                i_s_n = i_s_n.sum(axis=0)
-                i_n_n = i_n_n.sum(axis=0)
-        else:
-            i_s_n = np.zeros(input.len())
-            i_n_n = np.zeros(input.len())
+        S_N = 2 * e * (i_ph.mean() + i_dark) * gv.fs/2  # shot noise variance, in [A^2]
+        i_N = np.random.normal(0, S_N**0.5, input.size)  # shot noise current, in [A]
 
     if include_noise == "ase-only":
-        i_noise = i_s_n + i_n_n + i_dark
+        i_noise = i_ph.noise + i_dark
     elif include_noise == "thermal-only":
         i_noise = i_T + i_dark
     elif include_noise == "shot-only":
         i_noise = i_N + i_dark
     elif include_noise == "ase-shot":
-        i_noise = i_s_n + i_n_n + i_N + i_dark
+        i_noise = i_ph.noise + i_N + i_dark
     elif include_noise == "ase-thermal":
-        i_noise = i_s_n + i_n_n + i_T + i_dark
+        i_noise = i_ph.noise + i_T + i_dark
     elif include_noise == "thermal-shot":
         i_noise = i_T + i_N + i_dark
     elif include_noise == "all":
-        i_noise = i_s_n + i_n_n + i_N + i_T + i_dark
+        i_noise = i_ph.noise + i_N + i_T + i_dark
+    elif include_noise == "none":
+        i_noise = NULL
     else:
         raise ValueError(
-            "The argument `include_noise` must be one of the following: 'ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all'."
+            "The argument `include_noise` must be one of the following: 'ase-only','thermal-only','shot-only','ase-thermal','ase-shot','thermal-shot','all', 'none'."
         )
 
-    output = electrical_signal(signal=i_sig*R_load, noise=i_noise*R_load)
+    output = electrical_signal(i_ph.signal*R_load, i_noise*R_load) # output voltage signal, in [v]
     
     output = LPF(output, BW)
 
@@ -1528,25 +1600,18 @@ def ADC(
         yn = ADC(y, n=2)
 
         y.plot(
-            style='light', 
             grid=True, 
             lw=5,
             label = 'analog signal'
         )
-        yn.plot('.-', style='light', lw=2, label=' 2 bits quantized signal').show()
+        yn.plot('.-', lw=2, label=' 2 bits quantized signal').show()
     """
     tic()
 
-    if isinstance(input, electrical_signal):
-        if input.noise is not None:
-            signal = input.signal + input.noise
-        else:
-            signal = input.signal
-    else:
-        signal = input
+    signal = electrical_signal(input).signal # get signal+noise array
 
     if fs is not None:
-        signal = sg.resample(signal, int(input.len() * fs / input.fs()))
+        signal = sg.resample(signal, int(input.size * fs / input.fs))
 
     V_min, V_max = shortest_int(signal, 99.99)
     
@@ -1611,7 +1676,7 @@ def GET_EYE(
         gv(sps=64, R=1e9)
 
         y = DAC( PRBS(order=7), pulse_shape='gaussian')
-        y.noise = np.random.normal(0, 0.05, y.len())
+        y.noise = np.random.normal(0, 0.05, y.size)
 
         GET_EYE(y, sps_resamp=512).plot().show() # with interpolation
 
@@ -1659,22 +1724,18 @@ def GET_EYE(
     if not isinstance(input, electrical_signal):
         input = electrical_signal(input)
 
-    eye_dict["sps"] = sps = input.sps()
-    eye_dict["dt"] = dt = input.dt()
+    eye_dict["sps"] = sps = input.sps
+    eye_dict["dt"] = dt = input.dt
 
     # truncate
-    n = input.len() % (2 * sps)  # we obtain the rest %(2*sps)
+    n = input.size % (2 * sps)  # we obtain the rest %(2*sps)
     if n: # if rest is not zero
         input = input[:-n] # ignore last 'n' samples
                               
-    nslots = min( int(input.len() // sps), nslots) # determine the minimum between slots of signal and 'nslots' parameter
+    nslots = min( int(input.size // sps), nslots) # determine the minimum between slots of signal and 'nslots' parameter
     input = input[: nslots * sps] # truncate signal
 
-    input = (
-        (input.signal + input.noise).real
-        if input.noise is not None
-        else input.signal.real
-    ) # add noise to signal, if there is noise
+    input = input.to_numpy().real
 
     input = np.roll(input, -sps // 2 + 1)  # roll (-sps/2) to focus the eye in center of figure
     y_set = np.unique(input) # take a set of signal values
@@ -1810,19 +1871,22 @@ def GET_EYE(
 def SAMPLER(input: electrical_signal, instant: int):
     """**Digital sampler**
 
-    Receives an electrical signal and an eye object and performs the sampling of the signal
-    at the optimal instant determined by the eye object.
+    This function samples the input electrical signal at the specified instant.
 
-    Args:
-        input: The electrical signal to be sampled.
-        instant: slot instant to take the sample [0, gv.sps].
+    Parameters
+    ----------
+    input : :obj:`electrical_signal`
+        The input electrical signal.
+    instant : :obj:`int`
+        Instant at which the signal will be sampled.    
 
-    Returns:
-        electrical_signal: The sampled electrical signal at one sample per slot.
+    Returns
+    -------
+    :obj:`electrical_signal`
+        The sampled electrical signal.
     """
     tic()
-    output = input[instant :: gv.sps]
-
+    output = electrical_signal(input)[instant :: gv.sps]
     output.execution_time = toc()
     return output
 
@@ -2030,7 +2094,7 @@ def FBG(
     tic()
 
     if not isinstance(input, optical_signal):
-        raise TypeError("`input` must be of type (optical_signal).")
+        raise TypeError("`input` must be of type 'optical_signal'.")
 
     if fc:
         if dneff:
@@ -2152,8 +2216,8 @@ def FBG(
     k = k[:, np.newaxis]
 
     # initial conditions
-    S0 = np.zeros(input.len(), dtype=complex)
-    R0 = np.ones(input.len(), dtype=complex)
+    S0 = np.zeros(input.shape, dtype=complex)
+    R0 = np.ones(input.shape, dtype=complex)
     y0 = np.concatenate([R0, S0])
 
     if apodization == "rcos":
@@ -2247,8 +2311,9 @@ def FBG(
         )  # corrected H(w)
 
     # apply to input optical signal
-    output = ifft(fft(input.signal) * ifftshift(H))
-    output = optical_signal(output)
+    sig = ifft(fft(input.signal) * ifftshift(H))
+    noi = ifft(fft(input.noise) * ifftshift(H))
+    output = optical_signal(sig, noi)
 
     if retH:
         return output, H
@@ -2261,233 +2326,241 @@ def FBG(
 def animated_fiber_propagation(
     input: optical_signal,
     M: int,
-    length_: float,
-    alpha_: float = 0.0,
-    beta_2_: float = 0.0,
-    beta_3_: float = 0.0,
-    gamma_: float = 0.0,
+    length: float,
+    alpha: float = 0.0,
+    beta_2: float = 0.0,
+    beta_3: float = 0.0,
+    gamma: float = 0.0,
     phi_max: float = 0.05,
+    h: float = None,
+    interval: int = 100,
+    plot_psd: bool = False,
+    repeat: bool = True,
 ):
     from matplotlib.animation import FuncAnimation
 
-    # cambio las unidades
-    length = length_ * 1e3
-    alpha = alpha_ * 1 / (4.343 * 1e3)
-    beta_2 = beta_2_ * 1e-12**2 / 1e3
-    beta_3 = beta_3_ * 1e-12**3 / 1e3
-    gamma = gamma_ * 1 / 1e3
+    z, A_z = FIBER(input, length, alpha, beta_2, beta_3, gamma, phi_max, h, show_progress=True, return_steps=True)
 
-    w = input.w()
-    D_op = -alpha / 2 - 1j / 2 * beta_2 * w**2 - 1j / 6 * beta_3 * w**3
+    #### Plots ####
+    if plot_psd:
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(6, 6))
+    else:
+        fig, ax1 = plt.subplots(1, 1, figsize=(6, 4))
+        ax2 = None
 
-    A = input.signal[0]
+    z_text = ax1.text(0.05, 0.9, "", transform=ax1.transAxes)
 
-    h = (
-        length
-        if (beta_2 == 0 and beta_3 == 0) or gamma == 0
-        else phi_max / (gamma * np.abs(A) ** 2).max()
-    )
+    ########## Amplitud #############
+    t = input.t * gv.R
+    t = t - t.max() / 2  # center time
 
-    x_length = h
-    A_z = [A]
-    hs = [0]
-
-    while True:
-        exp_NL = np.exp(1j * gamma * (h / 2) * np.abs(A) ** 2)
-        exp_L = np.exp(D_op * h)
-        A = exp_NL * ifft(exp_L * fft(exp_NL * A))
-        A_z.append(A)
-        hs.append(h)
-
-        h = phi_max / (gamma * np.abs(A) ** 2).max() if gamma != 0 else length
-
-        if x_length + h > length:
-            break
-
-        x_length += h
-
-    h = length - x_length
-
-    if h > 0:
-        exp_NL = np.exp(1j * gamma * (h / 2) * np.abs(A) ** 2)
-        exp_L = np.exp(D_op * h)
-        A = exp_NL * ifft(exp_L * fft(exp_NL * A))
-        A_z.append(A)
-        hs.append(h)
-
-    t = input.t() * gv.slot_rate
-
-    fig, ax = plt.subplots()
-
-    (line,) = ax.plot(t, np.abs(A_z[0]), lw=2, color="red", ls="--")
-    (line,) = ax.plot([], [], lw=2, color="k")
-
-    plt.suptitle(
-        r"Fiber: $\alpha = {:.2f}$ dB/km, $\beta_2 = {}$ ps^2/km, $\gamma = {}$ (W·km)^-1".format(
-            alpha_, beta_2_, gamma_
-        )
-    )
-    ax.set_xlabel(r"$t/T_{slot}$")
-    ax.set_ylabel("|A(z,t)|")
-    ax.set_xlim((0, t.max()))
-    ax.set_ylim((abs(A_z[0]).min() * 0.95, np.abs(A_z).max() * 1.05))
-
-    time_text = ax.text(0.05, 0.9, "", transform=ax.transAxes)
-
-    def init():
-        line.set_data([], [])
-        time_text.set_text("z = 0.0 Km")
-        for i in t[:: M * gv.sps]:
-            plt.axvline(i, color="k", ls="--")
-        for i in t[:: gv.sps]:
-            plt.axvline(i, color="k", ls="--", alpha=0.3, lw=1)
-        return [line, time_text]
-
-    def animate(i):
-        y = np.abs(A_z[i])
-        line.set_data(t, y)
-        time_text.set_text("z = {:.2f} Km".format(np.cumsum(hs)[i] / 1e3))
-        return [line, time_text]
-
-    FuncAnimation(
-        fig,
-        animate,
-        init_func=init,
-        frames=len(A_z),
-        interval=100,
-        blit=True,
-        repeat=False,
-    )
-    plt.show()
-
-
-def animated_fiber_propagation_with_psd(
-    input: optical_signal,
-    M: int,
-    length_: float,
-    alpha_: float = 0.0,
-    beta_2_: float = 0.0,
-    beta_3_: float = 0.0,
-    gamma_: float = 0.0,
-    phi_max: float = 0.05,
-    n: int = None,
-):
-    from matplotlib.animation import FuncAnimation
-
-    n = input.len() if n is None else n * M * input.sps()
-
-    length = length_
-    alpha = alpha_ / 4.343
-    beta_2 = beta_2_
-    beta_3 = beta_3_
-    gamma = gamma_
-
-    w = input.w() * 1e-12  # rad/ps
-    D_op = -alpha / 2 - 1j / 2 * beta_2 * w**2 - 1j / 6 * beta_3 * w**3
-
-    A = input.signal[0]
-
-    h = (
-        length
-        if (beta_2 == 0 and beta_3 == 0) or gamma == 0
-        else phi_max / (gamma * np.abs(A) ** 2).max()
-    )
-
-    x_length = h
-    A_z = [A]
-    A_z_w = [fft(A)]
-    hs = [0]
-
-    while True:
-        exp_NL = np.exp(1j * gamma * (h / 2) * np.abs(A) ** 2)
-        exp_L = np.exp(D_op * h)
-        A = exp_NL * ifft(exp_L * fft(exp_NL * A))
-        A_z.append(A * np.exp(alpha * x_length / 2))
-        A_z_w.append(fft(A * np.exp(alpha * x_length / 2)))
-        hs.append(h)
-
-        h = phi_max / (gamma * np.abs(A) ** 2).max() if gamma != 0 else length
-
-        if x_length + h > length:
-            break
-
-        x_length += h
-
-    h = length - x_length
-
-    if h > 0:
-        exp_NL = np.exp(1j * gamma * (h / 2) * np.abs(A) ** 2)
-        exp_L = np.exp(D_op * h)
-        A = exp_NL * ifft(exp_L * fft(exp_NL * A))
-        A_z.append(A * np.exp(alpha * length / 2))
-        A_z_w.append(fft(A * np.exp(alpha * length / 2)))
-        hs.append(h)
-
-    t = input.t() * gv.slot_rate
-
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 6))
-
-    (line1,) = ax1.plot(t[:n], np.abs(A_z[0])[:n], lw=2, color="red", ls="--")
+    ax1.plot(t, np.abs(A_z[0]), lw=2, color="red", ls="--")
     (line1,) = ax1.plot([], [], lw=2, color="k")
 
     plt.suptitle(
         r"Fiber: $\alpha = {:.2f}$ dB/km, $\beta_2 = {}$ ps^2/km, $\gamma = {}$ (W·km)^-1".format(
-            alpha_, beta_2_, gamma_
+            alpha*4.343, beta_2, gamma
         )
     )
     ax1.set_xlabel("t/T")
     ax1.set_ylabel("|A(z,t)|")
-    ax1.set_xlim((0, t[:n].max()))
-    ax1.set_ylim((0, np.abs(A_z[:n]).max()))
+    ax1.set_xlim((t.min(), t.max()))
+    ax1.set_ylim((0, np.abs(A_z).max()))
+    ax1.grid(True) 
 
-    z_text = ax2.text(0.05, 0.9, "", transform=ax2.transAxes)
+    ########## PSD #############
 
-    f = fftshift(w / 2 / np.pi) * 1e3  # GHz
-    y = fftshift(np.abs(A_z_w[0]) ** 2)
+    if plot_psd:
+        # psd =  lambda X: db(fftshift(np.abs(fft(X)) ** 2) / (gv.fs*1e-9))
+        psd =  lambda X: db(np.fft.fftshift(sg.welch(X, fs=gv.fs*1e-9, return_onesided=False, scaling='density', window='hann', detrend=False)[1]))
+        
+        y = psd(A_z[0])
+        f = fftshift(np.fft.fftfreq(y.size, 1e9/gv.fs)) # GHz
 
-    (line2,) = ax2.plot(f, y / input.len(), "--g", lw=2)
-    (line2,) = ax2.plot([], [], "k", lw=2)
+        ax2.plot(f, y, "--g", lw=2)
+        (line2,) = ax2.plot([], [], "k", lw=2)
 
-    ax2.set_xlabel("f [GHz]")
-    ax2.set_ylabel(r"$|A(z,w)|^2$")
-    sigma = -f[
-        np.cumsum(np.abs(fftshift(A_z_w[0])) ** 2)
-        < 0.001 * np.sum(np.abs(A_z_w[0]) ** 2)
-    ][-1]
-    ax2.set_xlim((-2 * sigma, 2 * sigma))
-    ax2.set_ylim((0, np.abs(A_z_w).max() ** 2 * 1.05 / input.len()))
-    ax2.grid()
+        ax2.set_xlabel("f [GHz]")
+        ax2.set_ylabel(r"PSD [dB/Hz]")
+        ax2.set_xlim(-gv.fs/2*1e-9, gv.fs / 2*1e-9)
+        ax2.grid(True)
 
-    plt.tight_layout()
+        ########## Spectral Phase #############
+        phase_spectral = lambda X: np.unwrap(np.fft.fftshift(np.angle(fft(X, n=y.size))))
 
-    def init():
-        line1.set_data([], [])
-        z_text.set_text("z = 0.0 Km")
-        for i in t[: n : M * gv.sps]:
-            ax1.axvline(i, color="k", ls="--")
-        for i in t[: n : gv.sps]:
-            ax1.axvline(i, color="k", ls="--", alpha=0.3, lw=1)
+        Ph_w = [phase_spectral(A) for A in A_z]
+
+        ax3.plot(f, Ph_w[0], "--b", lw=2)
+        (line3,) = ax3.plot([], [], "k", lw=2)
+
+        ax3.set_xlabel("f [GHz]")
+        ax3.set_ylabel(r"Spectral Phase [rad]")
+        ax3.set_xlim(-gv.fs/2*1e-9, gv.fs / 2*1e-9)
+        ax3.set_ylim((np.array(Ph_w).min(), np.array(Ph_w).max()))
+        ax3.grid(True)
+
+    # Update the animate function to include line3
+    def animate(i):
+        line1.set_data(t, np.abs(A_z[i]))
+        z_text.set_text("z = {:.2f} Km".format(z[i]))
+
+        if plot_psd:
+            line2.set_data(f, psd(A_z[i]))
+            line3.set_data(f, Ph_w[i])
+            return [line1, line2, line3, z_text]
+        
         return [line1, z_text]
 
-    def animate(i):
-        y = np.abs(A_z[i])
-        line1.set_data(t[:n], y[:n])
-        z_text.set_text("z = {:.2f} Km".format(np.cumsum(hs)[i]))
-
-        y = fftshift(np.abs(A_z_w[i]) ** 2) / input.len()
-        line2.set_data(f, y)
-        return [line1, line2, z_text]
-
-    FuncAnimation(
+    ani = FuncAnimation(
         fig,
         animate,
-        init_func=init,
         frames=len(A_z),
-        interval=100,
+        interval=interval,
         blit=True,
-        repeat=False,
+        repeat=repeat,
     )
-    plt.show()
+    return ani
+
+
+def animated_fiber_propagation_with_phase(
+    input: optical_signal,
+    length: float, # km
+    alpha: float = 0.0, # db/km
+    beta_2: float = 0.0, # ps^2/km
+    beta_3: float = 0.0, # ps^3/km
+    gamma: float = 0.0, # (W·km)^-1
+    phi_max: float = 0.05, # max phase shift by step
+    h: int = None,
+    interval: int = 100,
+    repeat: bool = True,
+    plot: bool = False,
+):
+    from matplotlib.animation import FuncAnimation
+
+    alpha = alpha / 4.343  # [1/km]
+    w = input.w() * 1e-12  # [rad/ps]
+    D̃ = -alpha / 2 + 1j / 2 * beta_2 * w**2 + 1j / 6 * beta_3 * w**3 # [1/km]
+
+    A = input.signal if input.noise is None else input.signal + input.noise
+
+    if h is None:
+        h_ = length if (beta_2 == 0 and beta_3 == 0) or gamma == 0 else phi_max / (gamma * (np.abs(A) ** 2)).max() 
+    else:
+        h_ = h
+    h_ = min(h_, length)
+
+    x_length = 0
+    A_z = [A]
+
+    phi = lambda X: np.angle(X)
+    dw = lambda X: - np.diff(np.unwrap(phi(X)), prepend=phi(X)[0]) / (gv.dt*1e12) # [rad/ps] 
+    Ph_z = [phi(A)]
+    Om_z = [dw(A)] # [rad/ps]
+    hs = [0]
+
+    while x_length < length:
+        x_length += h_
+
+        N̂ = 1j * gamma * np.abs(A)**2
+
+        A = A * np.exp( h_/2 * N̂) # Half nonlinear step (time domain)
+        A = np.fft.fft(A)
+        A = A * np.exp( D̃ * h_ ) # Full linear step (freq domain)
+        A = np.fft.ifft(A)
+        A = A * np.exp( h_/2 * N̂) # Half nonlinear step (timedomain)
+        
+        A_z.append(A * np.exp(alpha * x_length / 2))
+
+        unwrapped_phi = np.unwrap(phi(A))
+        idx = np.argmax(np.abs(A_z[0])) # index of the center of the pulse
+        Ph_z.append(unwrapped_phi - unwrapped_phi[idx] + phi(A)[idx])
+        
+        Om_z.append(dw(A))
+        
+        hs.append(h_)
+
+        if h is None:
+            h_ = phi_max / (gamma * (np.abs(A)**2)).max()
+
+        if x_length + h_ > length:
+            h_ = length - x_length
+
+    z = np.cumsum(hs) # km
+    A_z = np.array(A_z) # [1/km]
+    Ph_z = np.array(Ph_z) # [rad]
+    Om_z = np.array(Om_z) # [rad/ps]
+    
+    if plot:
+        #### Plots ####
+        
+        t = input.t() * gv.R
+        t = t - t.max() / 2  # center time
+
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True,)
+
+        ########## Amplitud #############
+
+        ax1.plot(t, np.abs(A_z[0]), lw=2, color="red", ls="--")
+        (line1,) = ax1.plot([], [], lw=2, color="k")
+
+        plt.suptitle(
+            r"Fiber: $\alpha = {:.2f}$ dB/km, $\beta_2 = {}$ ps^2/km, $\gamma = {}$ (W·km)^-1".format(
+                alpha*4.343, beta_2, gamma
+            )
+        )
+        ax1.set_ylabel("|A(z,t)|")
+        ax1.set_ylim((0, np.abs(A_z).max()))
+        ax1.grid()
+
+        ########## Phase #############
+
+        z_text = ax2.text(0.05, 0.9, "z = 0.0 Km", transform=ax2.transAxes) 
+        ax2.plot(t, Ph_z[0], "--g", lw=2)
+        (line2,) = ax2.plot([], [], "k", lw=2)
+
+        ax2.set_ylabel(r"$\phi(t)$ [rad]")
+        ax2.set_ylim((np.array(Ph_z).min(), np.array(Ph_z).max()))
+        ax2.grid()
+
+        ########## Desviación de frecuencia #############
+
+        ax3.plot(t, Om_z[0], "--b", lw=2)
+        (line3,) = ax3.plot([], [], "k", lw=2)
+
+        ax3.set_ylabel(r"$\delta\omega$ [rad/ps]")
+        ax3.set_xlabel(r"t/T")
+        ax3.set_xlim((t.min(), t.max()))
+        ax3.set_ylim((np.array(Om_z).min(), np.array(Om_z).max()))
+        ax3.grid()
+
+
+        plt.tight_layout()
+
+        def animate(i):
+            z = np.cumsum(hs)[i]
+            y = np.abs(A_z[i])
+            line1.set_data(t, y)
+            z_text.set_text("z = {:.2f} Km".format(z))
+
+            y = Ph_z[i] 
+            line2.set_data(t, y)
+
+            y = Om_z[i]
+            line3.set_data(t, y)
+            return [line1, line2, line3, z_text]
+
+        ani = FuncAnimation(
+            fig,
+            animate,
+            # init_func=init,
+            frames=len(A_z),
+            interval=interval,
+            blit=True,
+            repeat=repeat,
+        )
+        return ani, z, A_z, Ph_z, Om_z
+
+    return z, A_z, Ph_z, Om_z
 
 
 if __name__ == "__main__":

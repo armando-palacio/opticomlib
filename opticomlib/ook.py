@@ -103,8 +103,8 @@ def DSP(input: electrical_signal, BW: float = None):
 
         gv(sps=64, R=1e9)
 
-        x = DAC('01000100100000', 1, pulse_shape='gaussian')
-        x.noise = np.random.normal(0, 0.1, x.len())
+        x = DAC('01000100100000', pulse_shape='gaussian')
+        x.noise = np.random.normal(0, 0.1, x.size)
 
         y, eye_, xth = DSP(x)
 
@@ -170,7 +170,7 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
 
         tx = binary_sequence('01000100100000')
         x = DAC(tx, pulse_shape='gaussian')
-        x.noise = np.random.normal(0, 0.1, x.len())
+        x.noise = np.random.normal(0, 0.1, x.size)
 
         rx, eye_, xth = DSP(x)
         BER_count = BER_analizer('counter', Tx=tx, Rx=rx)
@@ -196,10 +196,10 @@ def BER_analizer(mode: Literal['counter', 'estimator'], **kargs):
             Rx = binary_sequence( Rx )
             Tx = binary_sequence( Tx )
 
-        Tx = Tx[:Rx.len()]
-        assert Tx.len() == Rx.len(), "Error: `Tx` and `Rx` must have the same length."
+        Tx = Tx[:Rx.size]
+        assert Tx.size == Rx.size, "Error: `Tx` and `Rx` must have the same length."
 
-        return np.sum(Tx.data != Rx.data)/Tx.len()
+        return np.sum(Tx.data != Rx.data)/Tx.size
 
     elif mode == 'estimator':
         assert 'eye_obj' in kargs.keys(), "`eye_obj` is a required argument for `mode='estimator'`."
