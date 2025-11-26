@@ -1,7 +1,10 @@
 name: Test Code, Build Sphinx Docs, Build the Package, Create a Release and Deploy to PyPi
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*' # Se dispara al pushear tags que empiecen con 'v'
+  workflow_dispatch: # Mantiene la opción de ejecutarlo manualmente si es necesario
 
 jobs:
   test_build_release_deploy:
