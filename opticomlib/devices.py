@@ -694,7 +694,7 @@ def MZM(
         :align: center
 
         from opticomlib import idbm, dbm, optical_signal, gv
-        from opticomlib.devices import MZM, LASER
+        from opticomlib.devices import MZM, LASER, DAC
 
         import numpy as np
         import matplotlib.pyplot as plt
