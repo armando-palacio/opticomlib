@@ -93,6 +93,7 @@
 
 <span class="sd">   search_inst</span>
 <span class="sd">   connect_inst</span>
+<span class="sd">   list_serial_ports</span>
 <span class="sd">   SYNC                  </span>
 <span class="sd">   GET_EYE_v2</span>
 <span class="sd">   save_h5</span>
@@ -105,6 +106,7 @@
 <span class="sd">   PED4002</span>
 <span class="sd">   IDPhotonics         </span>
 <span class="sd">   LeCroy_WavExp100H</span>
+<span class="sd">   EXFO_FVA60B</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sg</span>
@@ -156,6 +158,24 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No identification received!!&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">inst</span></div>
+
+<div class="viewcode-block" id="list_serial_ports"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.list_serial_ports">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">list_serial_ports</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List available serial ports and print their descriptions.</span>
+
+<span class="sd">    Uses serial.tools.list_ports.comports() to discover serial ports.</span>
+<span class="sd">    Prints &quot;Ports not found&quot; when no ports are found, otherwise prints</span>
+<span class="sd">    the .description for each discovered port.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">serial.tools.list_ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">comports</span>
+    <span class="n">ports</span> <span class="o">=</span> <span class="n">comports</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ports</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ports not found&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">ports</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">port</span><span class="o">.</span><span class="n">description</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SYNC"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.SYNC">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">SYNC</span><span class="p">(</span><span class="n">signal_rx</span><span class="p">:</span> <span class="n">electrical_signal</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
@@ -1218,7 +1238,8 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== PPG3204 SETUP ===&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">1</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mi">11</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">))</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;======================&quot;</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;======================&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
     
 <div class="viewcode-block" id="PPG3204.setup"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.PPG3204.setup">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
@@ -2174,7 +2195,8 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;=========== SETUP CH</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s2"> ===========&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">1</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mi">10</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">))</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=================================&quot;</span><span class="p">)</span></div></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=================================&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
 
@@ -2236,8 +2258,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s1">&#39;*IDN?&#39;</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        sends a scpi command to device</span>
 <span class="sd">        command: SCPI command string, refer to documentation for allowed commands and syntax</span>
@@ -2262,7 +2285,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RX: &#39;</span> <span class="o">+</span> <span class="n">reply</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">reply</span>
+        <span class="k">return</span> <span class="n">reply</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
     
 <div class="viewcode-block" id="IDPhotonics.close"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.IDPhotonics.close">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
@@ -2278,61 +2301,61 @@
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        returns the current wavelength of the laser in nm, at the specified channel</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WAV? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WAV? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span></div>
     
 <div class="viewcode-block" id="IDPhotonics.wavelength"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.IDPhotonics.wavelength">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        sets the wavelength of the laser in nm, at the specified channel</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wav:lim? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;,;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wav:lim? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;,;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wavelength</span> <span class="o">&lt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">wavelength</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wavelength </span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s1"> out of range. Must be between </span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> nm&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WAV 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WAV 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">wavelength</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="IDPhotonics.get_power"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.IDPhotonics.get_power">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        returns the current power of the laser in dBm, at the specified channel</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;POW? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;POW? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span></div>
     
 <div class="viewcode-block" id="IDPhotonics.power"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.IDPhotonics.power">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">power</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        sets the power of the laser in dBm, at the specified channel</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lim? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lim? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
         <span class="k">if</span> <span class="n">power</span> <span class="o">&lt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">power</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Power </span><span class="si">{</span><span class="n">power</span><span class="si">}</span><span class="s1"> out of range. Must be between </span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> dBm&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;POW 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">power</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;POW 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">power</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="IDPhotonics.fine_tune"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.IDPhotonics.fine_tune">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">fine_tune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        fine tunes the laser frequency in GHz, at the specified channel</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">limit</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Offset:LIMit? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">))</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Offset:LIMit? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Offset out of range. Must be between </span><span class="si">{</span><span class="o">-</span><span class="n">limit</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">limit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Offset 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Offset 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="IDPhotonics.output"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.IDPhotonics.output">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Enables or disables the output of the laser at the specified channel. To enable all lasers use `ch=&#39;*&#39;`. This method wait until output power is stable. </span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;State 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;State 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;bwai 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">ch</span> <span class="o">!=</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;State? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)))</span> <span class="o">==</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;State? 1,1,</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)))</span> <span class="o">==</span> <span class="n">value</span>
         <span class="k">else</span><span class="p">:</span> 
-            <span class="n">outputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;State? 1,1,*&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">::</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;State? 1,1,*&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">::</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
                 <span class="k">return</span> <span class="n">outputs</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
@@ -2371,7 +2394,8 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;=========== SETUP CH</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s2"> ===========&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">1</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mi">15</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">))</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=================================&quot;</span><span class="p">)</span></div></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=================================&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
 
@@ -2471,7 +2495,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;&quot;&quot;vbs &#39;app.AutoSetup&#39; &quot;&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wait_until_idle</span><span class="p">()</span></div>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_wavedesc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_wavedesc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parses the output string from scope.query(&#39;C#:INSPECT? WAVEDESC&#39;) into a dictionary.</span>
 
@@ -2479,7 +2503,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ch : int</span>
+<span class="sd">        ch : str</span>
 <span class="sd">            LeCroy channel from which to obtain the description. </span>
 
 <span class="sd">        Returns</span>
@@ -2487,7 +2511,7 @@
 <span class="sd">        dict</span>
 <span class="sd">            Dictionary with parsed keys and values from the waveform descriptor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:INSPECT? WAVEDESC&#39;</span><span class="p">)</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:INSPECT? WAVEDESC&#39;</span><span class="p">)</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
@@ -2529,13 +2553,13 @@
             <span class="k">return</span> <span class="n">raw_value</span>
 
 
-<div class="viewcode-block" id="LeCroy_WavExp100H.acquire_waveform"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.LeCroy_WavExp100H.acquire_waveform">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">acquire_waveform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LeCroy_WavExp100H.acquire_waveform"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.LeCroy_WavExp100H.acquire_waveform">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">acquire_waveform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sweeps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Acquire waveform data from the specified channel.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ch : int</span>
-<span class="sd">            Channel number to acquire from (1-4).</span>
+<span class="sd">        ch : str</span>
+<span class="sd">            Channel to acquire from {&#39;C1-4&#39;, &#39;F1-8&#39;}.</span>
 <span class="sd">        points : int, optional</span>
 <span class="sd">            Number of points to acquire. If None, acquires all available points.</span>
 <span class="sd">        Returns</span>
@@ -2545,25 +2569,29 @@
 <span class="sd">        v : np.ndarray</span>
 <span class="sd">            Voltage array of the acquired waveform.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># ---- Set number of points to acquire ----</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WFSU SP,0,NP,</span><span class="si">{</span><span class="n">points</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="mi">0</span><span class="si">}</span><span class="s1">,FP,0,SN,0&#39;</span><span class="p">)</span> 
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># ---- Read waveform data ----</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:WF? DAT1&#39;</span><span class="p">)</span>
-        <span class="n">raw_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inst</span><span class="o">.</span><span class="n">read_raw</span><span class="p">()</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_IEEE488p2_block</span><span class="p">(</span><span class="n">raw_bytes</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sweeps</span><span class="p">):</span>
+            <span class="c1"># ---- Set number of points to acquire ----</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WFSU SP,0,NP,</span><span class="si">{</span><span class="n">points</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="mi">0</span><span class="si">}</span><span class="s1">,FP,0,SN,0&#39;</span><span class="p">)</span> 
+
+            <span class="c1"># ---- Read waveform data ----</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="s1">:WF? DAT1&#39;</span><span class="p">)</span>
+            <span class="n">raw_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inst</span><span class="o">.</span><span class="n">read_raw</span><span class="p">()</span>
+            <span class="n">data_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_IEEE488p2_block</span><span class="p">(</span><span class="n">raw_bytes</span><span class="p">)</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data</span><span class="p">,</span> <span class="n">data_</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># ---- Data scaling ----</span>
-        <span class="c1"># desc = self._query(f&#39;C{ch}:INSPECT? WAVEDESC&#39;)</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_wavedesc</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
 
         <span class="n">VERT_GAIN</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VERTICAL_GAIN&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">VERT_OFFSET</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VERTICAL_OFFSET&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">HORIZ_INTERVAL</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HORIZ_INTERVAL&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="n">HORIZ_OFFSET</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HORIZ_OFFSET&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="c1"># HORIZ_OFFSET = float(desc.get(&quot;HORIZ_OFFSET&quot;, 0))</span>
 
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_</span><span class="p">)),</span> <span class="n">sweeps</span><span class="p">)</span> <span class="o">*</span> <span class="n">HORIZ_INTERVAL</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">data</span> <span class="o">*</span> <span class="n">VERT_GAIN</span> <span class="o">-</span> <span class="n">VERT_OFFSET</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">HORIZ_INTERVAL</span> <span class="o">+</span> <span class="n">HORIZ_OFFSET</span>
         <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span></div>
     
 <div class="viewcode-block" id="LeCroy_WavExp100H.close"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.LeCroy_WavExp100H.close">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2571,6 +2599,126 @@
         <span class="bp">self</span><span class="o">.</span><span class="fm">__del__</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LeCroy: disconnected&quot;</span><span class="p">)</span></div></div>
 
+
+<div class="viewcode-block" id="EXFO_FVA60B"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EXFO_FVA60B</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Driver for EXFO FVA-60B Variable Attenuator.</span>
+
+<span class="sd">    .. rubric:: Main methods</span>
+<span class="sd">    .. autosummary::</span>
+
+<span class="sd">        __init__</span>
+<span class="sd">        attenuation</span>
+<span class="sd">        get_attenuation</span>
+<span class="sd">        wavelength</span>
+<span class="sd">        calibrate</span>
+<span class="sd">        get_insertion_loss</span>
+<span class="sd">        close</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EXFO_FVA60B.__init__"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B.__init__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">11</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the connection with the EXFO FVA-60B attenuator.</span>
+<span class="sd">        Configuration according to manual: 9600 baud, 8 bits, no parity, 1 stop bit.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        port : str</span>
+<span class="sd">            Serial port where the FVA-60B is connected (e.g., &#39;COM3&#39; or &#39;/dev/ttyUSB0&#39;).</span>
+<span class="sd">        timeout : int, optional</span>
+<span class="sd">            Timeout for reading in seconds. Default is 11 seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">Serial</span><span class="p">(</span>
+            <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">baudrate</span><span class="o">=</span><span class="mi">9600</span><span class="p">,</span>
+            <span class="n">bytesize</span><span class="o">=</span><span class="n">serial</span><span class="o">.</span><span class="n">EIGHTBITS</span><span class="p">,</span>
+            <span class="n">parity</span><span class="o">=</span><span class="n">serial</span><span class="o">.</span><span class="n">PARITY_NONE</span><span class="p">,</span>
+            <span class="n">stopbits</span><span class="o">=</span><span class="n">serial</span><span class="o">.</span><span class="n">STOPBITS_ONE</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FVA60B connected to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a command with the required format &gt;CMD&lt; and reads the response.</span>
+<span class="sd">        All commands start with &#39;&gt;&#39; and end with &#39;&lt;&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">reset_input_buffer</span><span class="p">()</span> <span class="c1"># Clear input buffer</span>
+
+        <span class="n">full_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">command_str</span><span class="si">}</span><span class="s2">&lt;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">full_cmd</span><span class="p">)</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">&quot;No response received from FVA-60B.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resp</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Command rejected by the device (Code 1)&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">resp</span>
+
+<div class="viewcode-block" id="EXFO_FVA60B.get_attenuation"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B.get_attenuation">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attenuation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the current attenuation. Command: &gt;?&lt;.</span>
+<span class="sd">        Returns float with the value in dB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="EXFO_FVA60B.attenuation"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B.attenuation">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">attenuation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the attenuation. Command: &gt;A-xx.xx&lt;.</span>
+<span class="sd">        Note: The manual indicates that the value must be divisible by 0.05 dB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Validate 0.05 step</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">db_value</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: The value must be divisible by 0.05 dB. Rounding...&quot;</span><span class="p">)</span>
+            <span class="n">db_value</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">db_value</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span> <span class="o">/</span> <span class="mi">20</span>
+
+        <span class="k">if</span> <span class="n">db_value</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="ow">or</span> <span class="n">db_value</span> <span class="o">&gt;</span> <span class="mi">70</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Attenuation value is out of allowed range (0.5 to 65 dB). Adjusting...&quot;</span><span class="p">)</span>
+            <span class="n">db_value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">db_value</span><span class="p">,</span> <span class="mi">70</span><span class="p">))</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A-</span><span class="si">{</span><span class="n">db_value</span><span class="si">:</span><span class="s2">05.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="EXFO_FVA60B.wavelength"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B.wavelength">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the wavelength. Command: &gt;Lxxxx&lt;.</span>
+<span class="sd">        According to the manual, the range is 1270 to 1330 nm with a 10 nm step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelength</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1270</span><span class="p">,</span> <span class="mi">1331</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Wavelength must be between 1270 and 1330 nm with a 10 nm step. Adjusting...&quot;</span><span class="p">)</span>
+            <span class="n">wavelength</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">wavelength</span> <span class="o">-</span> <span class="mi">1270</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="mi">1270</span>
+            <span class="n">wavelength</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1270</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">wavelength</span><span class="p">,</span> <span class="mi">1330</span><span class="p">))</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;L</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">wavelength</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="EXFO_FVA60B.calibrate"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B.calibrate">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">calibrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes calibration (zeroing). Command: &gt;C&lt;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calibrating... (this takes a few seconds)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+    
+<div class="viewcode-block" id="EXFO_FVA60B.get_insertion_loss"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B.get_insertion_loss">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_insertion_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the current insertion loss. Command: &gt;IL?&lt;.</span>
+<span class="sd">        Returns float with the value in dB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EXFO_FVA60B.close"><a class="viewcode-back" href="../../lab.html#opticomlib.lab.EXFO_FVA60B.close">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the connection to the instrument.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">is_open</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 <span class="c1"># import struct</span>
 <span class="c1"># from smbus2 import SMBus, i2c_msg</span>

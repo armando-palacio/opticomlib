@@ -65,6 +65,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Laboratory</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.lab.search_inst"><code class="docutils literal notranslate"><span class="pre">search_inst()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.lab.connect_inst"><code class="docutils literal notranslate"><span class="pre">connect_inst()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.lab.list_serial_ports"><code class="docutils literal notranslate"><span class="pre">list_serial_ports()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.lab.SYNC"><code class="docutils literal notranslate"><span class="pre">SYNC()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.lab.GET_EYE_v2"><code class="docutils literal notranslate"><span class="pre">GET_EYE_v2()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opticomlib.lab.save_h5"><code class="docutils literal notranslate"><span class="pre">save_h5()</span></code></a></li>
@@ -191,6 +192,16 @@
 <li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.LeCroy_WavExp100H.close"><code class="docutils literal notranslate"><span class="pre">LeCroy_WavExp100H.close()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.__init__"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.get_attenuation"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B.get_attenuation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.attenuation"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B.attenuation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.wavelength"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B.wavelength()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.calibrate"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B.calibrate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.get_insertion_loss"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B.get_insertion_loss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.close"><code class="docutils literal notranslate"><span class="pre">EXFO_FVA60B.close()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities functions</a></li>
@@ -237,16 +248,19 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.connect_inst" title="opticomlib.lab.connect_inst"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect_inst</span></code></a>(addr_ID)</p></td>
 <td><p><strong>Instrument connection</strong> Connect to an instrument via VISA.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.SYNC" title="opticomlib.lab.SYNC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SYNC</span></code></a>(signal_rx, slots_tx[, sps])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.list_serial_ports" title="opticomlib.lab.list_serial_ports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_serial_ports</span></code></a>()</p></td>
+<td><p>List available serial ports and print their descriptions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.SYNC" title="opticomlib.lab.SYNC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SYNC</span></code></a>(signal_rx, slots_tx[, sps])</p></td>
 <td><p><strong>Signal Synchronizer</strong></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.GET_EYE_v2" title="opticomlib.lab.GET_EYE_v2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GET_EYE_v2</span></code></a>(sync_signal, slots_tx[, nslots])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.GET_EYE_v2" title="opticomlib.lab.GET_EYE_v2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GET_EYE_v2</span></code></a>(sync_signal, slots_tx[, nslots])</p></td>
 <td><p><strong>Eye diagram parameters v2</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.save_h5" title="opticomlib.lab.save_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_h5</span></code></a>(filename, **datos)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.save_h5" title="opticomlib.lab.save_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_h5</span></code></a>(filename, **datos)</p></td>
 <td><p>Saves measurement data of signals in an HDF5 file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.load_h5" title="opticomlib.lab.load_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_h5</span></code></a>(filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.load_h5" title="opticomlib.lab.load_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_h5</span></code></a>(filename)</p></td>
 <td><p>Loads all datasets and metadata from an HDF5 file in a generic way.</p></td>
 </tr>
 </tbody>
@@ -265,6 +279,9 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.LeCroy_WavExp100H" title="opticomlib.lab.LeCroy_WavExp100H"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LeCroy_WavExp100H</span></code></a>([addr_ID, timeout_ms])</p></td>
 <td><p>LeCroy Wave Expert 100H - minimal, extensible VISA wrapper for Teledyne LeCroy MAUI/XStreamDSO scopes adquisition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B" title="opticomlib.lab.EXFO_FVA60B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EXFO_FVA60B</span></code></a>(port[, timeout])</p></td>
+<td><p>Driver for EXFO FVA-60B Variable Attenuator.</p></td>
 </tr>
 </tbody>
 </table>
@@ -290,6 +307,15 @@ Connect to an instrument via VISA.
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">visa.Resource</span></code></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="opticomlib.lab.list_serial_ports">
+<span class="sig-prename descclassname"><span class="pre">opticomlib.lab.</span></span><span class="sig-name descname"><span class="pre">list_serial_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#list_serial_ports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.list_serial_ports" title="Permalink to this definition"></a></dt>
+<dd><p>List available serial ports and print their descriptions.</p>
+<p>Uses serial.tools.list_ports.comports() to discover serial ports.
+Prints “Ports not found” when no ports are found, otherwise prints
+the .description for each discovered port.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1864,7 +1890,7 @@ of the “Eye Diagram”.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.LeCroy_WavExp100H.autoset" title="opticomlib.lab.LeCroy_WavExp100H.autoset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autoset</span></code></a>()</p></td>
 <td><p>Run AutoSetup on the oscilloscope (convenience wrapper).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.LeCroy_WavExp100H.acquire_waveform" title="opticomlib.lab.LeCroy_WavExp100H.acquire_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">acquire_waveform</span></code></a>([ch, points])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.LeCroy_WavExp100H.acquire_waveform" title="opticomlib.lab.LeCroy_WavExp100H.acquire_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">acquire_waveform</span></code></a>([ch, points, sweeps])</p></td>
 <td><p>Acquire waveform data from the specified channel.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.LeCroy_WavExp100H.close" title="opticomlib.lab.LeCroy_WavExp100H.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
@@ -1905,12 +1931,12 @@ of the “Eye Diagram”.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="opticomlib.lab.LeCroy_WavExp100H.acquire_waveform">
-<span class="sig-name descname"><span class="pre">acquire_waveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#LeCroy_WavExp100H.acquire_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.LeCroy_WavExp100H.acquire_waveform" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">acquire_waveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'C1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sweeps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#LeCroy_WavExp100H.acquire_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.LeCroy_WavExp100H.acquire_waveform" title="Permalink to this definition"></a></dt>
 <dd><p>Acquire waveform data from the specified channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ch</strong> (<em>int</em>) – Channel number to acquire from (1-4).</p></li>
+<li><p><strong>ch</strong> (<em>str</em>) – Channel to acquire from {‘C1-4’, ‘F1-8’}.</p></li>
 <li><p><strong>points</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of points to acquire. If None, acquires all available points.</p></li>
 </ul>
 </dd>
@@ -1931,6 +1957,93 @@ of the “Eye Diagram”.</p>
 </dd></dl>
 
 </section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">opticomlib.lab.</span></span><span class="sig-name descname"><span class="pre">EXFO_FVA60B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B" title="Permalink to this definition"></a></dt>
+<dd><p>Driver for EXFO FVA-60B Variable Attenuator.</p>
+<p class="rubric">Main methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.__init__" title="opticomlib.lab.EXFO_FVA60B.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(port[, timeout])</p></td>
+<td><p>Initializes the connection with the EXFO FVA-60B attenuator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.attenuation" title="opticomlib.lab.EXFO_FVA60B.attenuation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attenuation</span></code></a>(db_value)</p></td>
+<td><p>Sets the attenuation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.get_attenuation" title="opticomlib.lab.EXFO_FVA60B.get_attenuation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attenuation</span></code></a>()</p></td>
+<td><p>Reads the current attenuation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.wavelength" title="opticomlib.lab.EXFO_FVA60B.wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wavelength</span></code></a>(wavelength)</p></td>
+<td><p>Sets the wavelength.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.calibrate" title="opticomlib.lab.EXFO_FVA60B.calibrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calibrate</span></code></a>()</p></td>
+<td><p>Executes calibration (zeroing).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.get_insertion_loss" title="opticomlib.lab.EXFO_FVA60B.get_insertion_loss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_insertion_loss</span></code></a>()</p></td>
+<td><p>Reads the current insertion loss.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#opticomlib.lab.EXFO_FVA60B.close" title="opticomlib.lab.EXFO_FVA60B.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
+<td><p>Close the connection to the instrument.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the connection with the EXFO FVA-60B attenuator.
+Configuration according to manual: 9600 baud, 8 bits, no parity, 1 stop bit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>port</strong> (<em>str</em>) – Serial port where the FVA-60B is connected (e.g., ‘COM3’ or ‘/dev/ttyUSB0’).</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Timeout for reading in seconds. Default is 11 seconds.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B.get_attenuation">
+<span class="sig-name descname"><span class="pre">get_attenuation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B.get_attenuation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B.get_attenuation" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the current attenuation. Command: &gt;?&lt;.
+Returns float with the value in dB.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B.attenuation">
+<span class="sig-name descname"><span class="pre">attenuation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B.attenuation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B.attenuation" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the attenuation. Command: &gt;A-xx.xx&lt;.
+Note: The manual indicates that the value must be divisible by 0.05 dB.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B.wavelength">
+<span class="sig-name descname"><span class="pre">wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B.wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B.wavelength" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the wavelength. Command: &gt;Lxxxx&lt;.
+According to the manual, the range is 1270 to 1330 nm with a 10 nm step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B.calibrate">
+<span class="sig-name descname"><span class="pre">calibrate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B.calibrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B.calibrate" title="Permalink to this definition"></a></dt>
+<dd><p>Executes calibration (zeroing). Command: &gt;C&lt;.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B.get_insertion_loss">
+<span class="sig-name descname"><span class="pre">get_insertion_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B.get_insertion_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B.get_insertion_loss" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the current insertion loss. Command: &gt;IL?&lt;.
+Returns float with the value in dB.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opticomlib.lab.EXFO_FVA60B.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/opticomlib/lab.html#EXFO_FVA60B.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opticomlib.lab.EXFO_FVA60B.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the connection to the instrument.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>

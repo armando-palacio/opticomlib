@@ -1533,7 +1533,7 @@
         <span class="n">S_ase_ase</span> <span class="o">=</span> <span class="n">mu_ASE</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">l</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">l</span>                                               <span class="c1"># ase-ase beating noise variance, in [V^2]</span>
 
         <span class="n">S_th</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kB</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">BW_el</span> <span class="o">*</span> <span class="n">R_L</span> <span class="o">*</span> <span class="n">nf_el</span>                  <span class="c1"># thermal noise variance, in [V^2]</span>
-        <span class="n">S_sh_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu_OFF</span><span class="p">,</span> <span class="n">mu_ON</span><span class="p">])</span> <span class="o">*</span> <span class="n">BW_el</span>       <span class="c1"># shot noise variance, in [V^2]</span>
+        <span class="n">S_sh_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu_OFF</span><span class="p">,</span> <span class="n">mu_ON</span><span class="p">])</span> <span class="o">*</span> <span class="n">BW_el</span> <span class="o">*</span> <span class="n">R_L</span>      <span class="c1"># shot noise variance, in [V^2]</span>
         
         <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">S_th</span> <span class="o">+</span> <span class="n">S_sig_ase_i</span> <span class="o">+</span> <span class="n">S_ase_ase</span> <span class="o">+</span> <span class="n">S_sh_i</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>   <span class="c1"># santandar desviation of ON and OFF slots</span>
 
@@ -1680,8 +1680,8 @@
 
 
 <div class="viewcode-block" id="eyediagram"><a class="viewcode-back" href="../../utils.html#opticomlib.utils.eyediagram">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">eyediagram</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sps</span><span class="p">,</span> <span class="n">n_traces</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> 
-             <span class="n">N_grid_bins</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">grid_sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kw</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots a colored eye diagram, internally calculating color density.</span>
+             <span class="n">N_grid_bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">grid_sigma</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="s1">&#39;density&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plots a colored eye diagram, internally calculating color density.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1695,13 +1695,18 @@
 <span class="sd">    cmap : str, optional</span>
 <span class="sd">        Name of the matplotlib colormap. Defaults to &#39;viridis&#39;.</span>
 <span class="sd">    N_grid_bins : int, optional</span>
-<span class="sd">        Number of bins for the density histogram. Defaults to 350.</span>
+<span class="sd">        Number of bins for the density histogram. Defaults to 200.</span>
 <span class="sd">    grid_sigma : float, optional</span>
-<span class="sd">        Sigma for the Gaussian filter applied to the density. Defaults to 3.</span>
+<span class="sd">        Sigma for the Gaussian filter applied to the density. Defaults to 5.</span>
+<span class="sd">    style : Literal[&#39;line&#39;, &#39;dot&#39;, &#39;density&#39;], optional</span>
+<span class="sd">        Style of the eye diagram plot:</span>
+<span class="sd">        - &#39;line&#39;: Plots traces as lines.</span>
+<span class="sd">        - &#39;dot&#39;: Plots traces as dots.</span>
+<span class="sd">        - &#39;density&#39;: Plots density map only.</span>
 <span class="sd">    ax : matplotlib.axes.Axes, optional</span>
 <span class="sd">        Axes object to plot on. If None, creates new figure and axes.</span>
 <span class="sd">        Defaults to None.</span>
-<span class="sd">    **plot_kw : dict, optional</span>
+<span class="sd">    \*\*plot_kw : dict, optional</span>
 <span class="sd">        Additional plotting parameters:</span>
 <span class="sd">        </span>
 <span class="sd">        Figure parameters (used only if ax is None):</span>
@@ -1768,12 +1773,6 @@
     <span class="n">figsize</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;figsize&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">dpi</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dpi&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
     
-    <span class="c1"># Line collection parameters</span>
-    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;linewidth&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">alpha</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-    <span class="n">capstyle</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;capstyle&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">)</span>
-    <span class="n">joinstyle</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;joinstyle&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">)</span>
-    
     <span class="c1"># Axes formatting parameters</span>
     <span class="n">xlabel</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;xlabel&#39;</span><span class="p">,</span> <span class="s2">&quot;Time (2-symbol segment)&quot;</span><span class="p">)</span>
     <span class="n">ylabel</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ylabel&#39;</span><span class="p">,</span> <span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
@@ -1824,17 +1823,36 @@
         <span class="n">created_fig</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="c1"># Plot eye traces</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineCollection</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_traces_to_plot</span><span class="p">):</span>
-        <span class="c1"># Create line segments</span>
-        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_eye_trace</span><span class="p">,</span> <span class="n">Y_reshaped</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s1">&#39;dot&#39;</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_truncated</span><span class="p">,</span> <span class="n">Y_truncated</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">color_values_norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap_obj</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s1">&#39;density&#39;</span><span class="p">:</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">min_y</span><span class="p">,</span> <span class="n">max_y</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grid_density</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap_obj</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineCollection</span>
         
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap_obj</span><span class="p">(</span><span class="n">color_reshaped</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)])</span>
-            <span class="n">lc</span> <span class="o">=</span> <span class="n">LineCollection</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> 
-                              <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">capstyle</span><span class="o">=</span><span class="n">capstyle</span><span class="p">,</span> <span class="n">joinstyle</span><span class="o">=</span><span class="n">joinstyle</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+        <span class="c1"># Line collection parameters</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">linewidth</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;linewidth&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">capstyle</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;capstyle&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">)</span>
+        <span class="n">joinstyle</span> <span class="o">=</span> <span class="n">plot_kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;joinstyle&#39;</span><span class="p">,</span> <span class="s1">&#39;round&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_traces_to_plot</span><span class="p">):</span>
+            <span class="c1"># Create line segments</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_eye_trace</span><span class="p">,</span> <span class="n">Y_reshaped</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap_obj</span><span class="p">(</span><span class="n">color_reshaped</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)])</span>
+                <span class="n">lc</span> <span class="o">=</span> <span class="n">LineCollection</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> 
+                                <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">capstyle</span><span class="o">=</span><span class="n">capstyle</span><span class="p">,</span> <span class="n">joinstyle</span><span class="o">=</span><span class="n">joinstyle</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid style &#39;</span><span class="si">{</span><span class="n">style</span><span class="si">}</span><span class="s2">&#39;. Choose from &#39;line&#39;, &#39;dot&#39;, or &#39;density&#39;.&quot;</span><span class="p">)</span>
 
     <span class="c1"># Format plot</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span> <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>

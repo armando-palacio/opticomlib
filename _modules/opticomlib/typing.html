@@ -2057,8 +2057,8 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
     
-<div class="viewcode-block" id="electrical_signal.plot_eye"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.plot_eye">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">plot_eye</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_traces</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> 
-             <span class="n">N_grid_bins</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">grid_sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kw</span><span class="p">):</span>
+<div class="viewcode-block" id="electrical_signal.plot_eye"><a class="viewcode-back" href="../../types.html#opticomlib.typing.electrical_signal.plot_eye">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">plot_eye</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_traces</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span> 
+             <span class="n">N_grid_bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">grid_sigma</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="s1">&#39;density&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kw</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plots a colored eye diagram, internally calculating color density.</span>
 
 <span class="sd">        Parameters</span>
@@ -2067,11 +2067,16 @@
 <span class="sd">            Maximum number of traces to plot. If ``None``, all available traces</span>
 <span class="sd">            will be plotted. Defaults to ``None``.</span>
 <span class="sd">        cmap : :obj:`str`, optional</span>
-<span class="sd">            Name of the matplotlib colormap. Defaults to ``&#39;viridis&#39;``.</span>
+<span class="sd">            Name of the matplotlib colormap. Defaults to ``&#39;jet&#39;``.</span>
 <span class="sd">        N_grid_bins : :obj:`int`, optional</span>
-<span class="sd">            Number of bins for the density histogram. Defaults to ``350``.</span>
+<span class="sd">            Number of bins for the density histogram. Defaults to ``200``.</span>
 <span class="sd">        grid_sigma : :obj:`float`, optional</span>
-<span class="sd">            Sigma for the Gaussian filter applied to the density. Defaults to ``3``.</span>
+<span class="sd">            Sigma for the Gaussian filter applied to the density. Defaults to ``5``.</span>
+<span class="sd">        style : Literal[&#39;line&#39;, &#39;dot&#39;, &#39;density&#39;], optional</span>
+<span class="sd">            Style of the eye diagram plot:</span>
+<span class="sd">            - &#39;line&#39;: Plots traces as lines.</span>
+<span class="sd">            - &#39;dot&#39;: Plots traces as dots.</span>
+<span class="sd">            - &#39;density&#39;: Plots density map only.</span>
 <span class="sd">        ax : :obj:`matplotlib.axes.Axes`, optional</span>
 <span class="sd">            Axes object to plot on. If ``None``, creates new figure and axes.</span>
 <span class="sd">            Defaults to ``None``.</span>
@@ -2120,7 +2125,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">n_traces</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_traces</span><span class="p">,</span> <span class="n">MAX_TRACES</span><span class="p">)</span>
 
-        <span class="n">eyediagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">,</span> <span class="n">n_traces</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">N_grid_bins</span><span class="p">,</span> <span class="n">grid_sigma</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kw</span><span class="p">)</span>
+        <span class="n">eyediagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gv</span><span class="o">.</span><span class="n">sps</span><span class="p">,</span> <span class="n">n_traces</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">N_grid_bins</span><span class="p">,</span> <span class="n">grid_sigma</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kw</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">+=</span> <span class="n">toc</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
