@@ -1444,7 +1444,7 @@ def theory_BER(
         S_ase_ase = mu_ASE**2 * (1 - l/2) * l                                               # ase-ase beating noise variance, in [V^2]
 
         S_th = 4 * kB * T * BW_el * R_L * nf_el                  # thermal noise variance, in [V^2]
-        S_sh_i = 2 * e * np.array([mu_OFF, mu_ON]) * BW_el       # shot noise variance, in [V^2]
+        S_sh_i = 2 * e * np.array([mu_OFF, mu_ON]) * BW_el * R_L      # shot noise variance, in [V^2]
         
         s = (S_th + S_sig_ase_i + S_ase_ase + S_sh_i)**0.5   # santandar desviation of ON and OFF slots
 
@@ -1591,8 +1591,8 @@ def apply_optimized_gaussian_filter(t, signal, T_bit):
 
 
 def eyediagram(y, sps, n_traces=None, cmap='viridis', 
-             N_grid_bins=350, grid_sigma=3, ax=None, **plot_kw):
-    """Plots a colored eye diagram, internally calculating color density.
+             N_grid_bins=200, grid_sigma=5, style: Literal['line', 'dot', 'density']='dot', ax=None, **plot_kw):
+    r"""Plots a colored eye diagram, internally calculating color density.
 
     Parameters
     ----------
@@ -1606,13 +1606,18 @@ def eyediagram(y, sps, n_traces=None, cmap='viridis',
     cmap : str, optional
         Name of the matplotlib colormap. Defaults to 'viridis'.
     N_grid_bins : int, optional
-        Number of bins for the density histogram. Defaults to 350.
+        Number of bins for the density histogram. Defaults to 200.
     grid_sigma : float, optional
-        Sigma for the Gaussian filter applied to the density. Defaults to 3.
+        Sigma for the Gaussian filter applied to the density. Defaults to 5.
+    style : Literal['line', 'dot', 'density'], optional
+        Style of the eye diagram plot:
+        - 'line': Plots traces as lines.
+        - 'dot': Plots traces as dots.
+        - 'density': Plots density map only.
     ax : matplotlib.axes.Axes, optional
         Axes object to plot on. If None, creates new figure and axes.
         Defaults to None.
-    **plot_kw : dict, optional
+    \*\*plot_kw : dict, optional
         Additional plotting parameters:
         
         Figure parameters (used only if ax is None):
@@ -1679,12 +1684,6 @@ def eyediagram(y, sps, n_traces=None, cmap='viridis',
     figsize = plot_kw.get('figsize', None)
     dpi = plot_kw.get('dpi', 100)
     
-    # Line collection parameters
-    linewidth = plot_kw.get('linewidth', 1)
-    alpha = plot_kw.get('alpha', 0.05)
-    capstyle = plot_kw.get('capstyle', 'round')
-    joinstyle = plot_kw.get('joinstyle', 'round')
-    
     # Axes formatting parameters
     xlabel = plot_kw.get('xlabel', "Time (2-symbol segment)")
     ylabel = plot_kw.get('ylabel', "Amplitude")
@@ -1735,17 +1734,36 @@ def eyediagram(y, sps, n_traces=None, cmap='viridis',
         created_fig = False
 
     # Plot eye traces
-    from matplotlib.collections import LineCollection
-    for i in range(num_traces_to_plot):
-        # Create line segments
-        points = np.array([x_eye_trace, Y_reshaped[i]]).T.reshape(-1, 1, 2)
-        segments = np.concatenate([points[:-1], points[1:]], axis=1)
+    if style == 'dot':
+        s = plot_kw.get('s', 0.1)
+        alpha = plot_kw.get('alpha', 0.9)
+        plt.scatter(X_truncated, Y_truncated, c=color_values_norm, cmap=cmap_obj, s=s, alpha=alpha)
+    
+    elif style == 'density':
+        extent = [min_x, max_x, min_y, max_y]
+        ax.imshow(grid_density.T, extent=extent, origin='lower', aspect='auto', cmap=cmap_obj)
+    
+    elif style == 'line':
+        from matplotlib.collections import LineCollection
         
-        if len(segments) > 0:
-            colors = cmap_obj(color_reshaped[i][:len(segments)])
-            lc = LineCollection(segments, colors=colors, linewidth=linewidth, 
-                              alpha=alpha, capstyle=capstyle, joinstyle=joinstyle)
-            ax.add_collection(lc)
+        # Line collection parameters
+        alpha = plot_kw.get('alpha', 0.05)
+        linewidth = plot_kw.get('linewidth', 1)
+        capstyle = plot_kw.get('capstyle', 'round')
+        joinstyle = plot_kw.get('joinstyle', 'round')
+
+        for i in range(num_traces_to_plot):
+            # Create line segments
+            points = np.array([x_eye_trace, Y_reshaped[i]]).T.reshape(-1, 1, 2)
+            segments = np.concatenate([points[:-1], points[1:]], axis=1)
+            
+            if len(segments) > 0:
+                colors = cmap_obj(color_reshaped[i][:len(segments)])
+                lc = LineCollection(segments, colors=colors, linewidth=linewidth, 
+                                alpha=alpha, capstyle=capstyle, joinstyle=joinstyle)
+                ax.add_collection(lc)
+    else:
+        raise ValueError(f"Invalid style '{style}'. Choose from 'line', 'dot', or 'density'.")
 
     # Format plot
     ax.set_xlim(xlim if xlim is not None else (-1,1))
