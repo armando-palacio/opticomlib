@@ -4,6 +4,7 @@
 
    search_inst
    connect_inst
+   list_serial_ports
    SYNC                  
    GET_EYE_v2
    save_h5
@@ -16,6 +17,7 @@
    PED4002
    IDPhotonics         
    LeCroy_WavExp100H
+   EXFO_FVA60B
 """
 import numpy as np
 import scipy.signal as sg
@@ -67,6 +69,24 @@ def connect_inst(addr_ID: str):
     except:
         print('No identification received!!')
     return inst
+
+def list_serial_ports():
+    """
+    List available serial ports and print their descriptions.
+
+    Uses serial.tools.list_ports.comports() to discover serial ports.
+    Prints "Ports not found" when no ports are found, otherwise prints
+    the .description for each discovered port.
+    """
+
+    from serial.tools.list_ports import comports
+    ports = comports()
+    
+    if not ports:
+        print("Ports not found")
+    else: 
+        for port in ports:
+            print(port.description)
 
 
 def SYNC(signal_rx: electrical_signal | np.ndarray, 
@@ -1130,6 +1150,7 @@ class PPG3204():
         for key, value in metadata.items():
             print(f"{1*' ' + key + (11 - len(key))*' '}: {value}")
         print("======================")
+        return self
 
     
     def setup(self, 
@@ -2086,6 +2107,7 @@ class PED4002():
         for key, value in metadata.items():
             print(f"{1*' ' + key + (10 - len(key))*' '}: {value}")
         print("=================================")
+        return self
 
 
 
@@ -2147,8 +2169,9 @@ class IDPhotonics:
             else:
                 self.socket.settimeout(timeout)
             self.socket.connect((self.host, int(self.port)))
+        print(self._query('*IDN?'))
 
-    def _send(self, command:str, verbose:int=0) -> str:
+    def _query(self, command:str, verbose:int=0) -> str:
         '''
         sends a scpi command to device
         command: SCPI command string, refer to documentation for allowed commands and syntax
@@ -2173,7 +2196,7 @@ class IDPhotonics:
             print('RX: ' + reply)
         elif verbose == 1:
             print(reply)
-        return reply
+        return reply.strip(';\r\n')
     
     def close(self):
         '''
@@ -2189,61 +2212,61 @@ class IDPhotonics:
         '''
         returns the current wavelength of the laser in nm, at the specified channel
         '''
-        return float(self._send(f'WAV? 1,1,{ch}').strip(';\r\n'))
+        return float(self._query(f'WAV? 1,1,{ch}'))
     
     def wavelength(self, wavelength:float, ch=1):
         '''
         sets the wavelength of the laser in nm, at the specified channel
         '''
-        limits = np.array(self._send(f'wav:lim? 1,1,{ch}').strip(',;\r\n').split(','), dtype=float)
+        limits = np.array(self._query(f'wav:lim? 1,1,{ch}').strip(',;\r\n').split(','), dtype=float)
         if wavelength < limits[0] or wavelength > limits[1]:
             raise ValueError(f'Wavelength {wavelength} out of range. Must be between {limits[0]} and {limits[1]} nm')
 
-        self._send(f'WAV 1,1,{ch},{wavelength}')
-        self._send(f'bwai 1,1,{ch}')
+        self._query(f'WAV 1,1,{ch},{wavelength}')
+        self._query(f'bwai 1,1,{ch}')
         return self
 
     def get_power(self, ch=1) -> float:
         '''
         returns the current power of the laser in dBm, at the specified channel
         '''
-        return float(self._send(f'POW? 1,1,{ch}').strip(';\r\n'))
+        return float(self._query(f'POW? 1,1,{ch}'))
     
     def power(self, power:float, ch=1):
         '''
         sets the power of the laser in dBm, at the specified channel
         '''
-        limits = np.array(self._send(f'lim? 1,1,{ch}').strip(';\r\n').split(','), dtype=float)[-2:]
+        limits = np.array(self._query(f'lim? 1,1,{ch}').split(','), dtype=float)[-2:]
         if power < limits[0] or power > limits[1]:
             raise ValueError(f'Power {power} out of range. Must be between {limits[0]} and {limits[1]} dBm')
 
-        self._send(f'POW 1,1,{ch},{power}')
-        self._send(f'bwai 1,1,{ch}')
+        self._query(f'POW 1,1,{ch},{power}')
+        self._query(f'bwai 1,1,{ch}')
         return self
 
     def fine_tune(self, offset, ch=1):
         '''
         fine tunes the laser frequency in GHz, at the specified channel
         '''
-        limit = float(self._send(f'Offset:LIMit? 1,1,{ch}').strip(';\r\n'))
+        limit = float(self._query(f'Offset:LIMit? 1,1,{ch}'))
         if np.abs(offset) > limit:
             raise ValueError(f'Offset out of range. Must be between {-limit} and {limit}')
         
-        self._send(f'Offset 1,1,{ch},{offset}')
-        self._send(f'bwai 1,1,{ch}')
+        self._query(f'Offset 1,1,{ch},{offset}')
+        self._query(f'bwai 1,1,{ch}')
         return self
 
     def output(self, value:bool, ch=1):
         '''
         Enables or disables the output of the laser at the specified channel. To enable all lasers use `ch='*'`. This method wait until output power is stable. 
         '''
-        self._send(f'State 1,1,{ch},{value}')
-        self._send(f'bwai 1,1,{ch}')
+        self._query(f'State 1,1,{ch},{value}')
+        self._query(f'bwai 1,1,{ch}')
 
         if ch != '*':
-            return bool(int(self._send(f'State? 1,1,{ch}').strip(';\r\n'))) == value
+            return bool(int(self._query(f'State? 1,1,{ch}'))) == value
         else: 
-            outputs = np.array(self._send(f'State? 1,1,*').strip(';\r\n').replace('\n', ',').split(',')[3::4], dtype=int)
+            outputs = np.array(self._query(f'State? 1,1,*').replace('\n', ',').split(',')[3::4], dtype=int)
             if value == 1: 
                 return outputs.prod() == 1
             else:
@@ -2283,6 +2306,7 @@ class IDPhotonics:
         for key, value in metadata.items():
             print(f"{1*' ' + key + (15 - len(key))*' '}: {value}")
         print("=================================")
+        return self
 
 
 
@@ -2382,7 +2406,7 @@ class LeCroy_WavExp100H:
         self._write(r"""vbs 'app.AutoSetup' """)
         self._wait_until_idle()
 
-    def _get_wavedesc(self, ch):
+    def _get_wavedesc(self, ch:str='C1'):
         """
         Parses the output string from scope.query('C#:INSPECT? WAVEDESC') into a dictionary.
 
@@ -2390,7 +2414,7 @@ class LeCroy_WavExp100H:
 
         Parameters
         ----------
-        ch : int
+        ch : str
             LeCroy channel from which to obtain the description. 
 
         Returns
@@ -2398,7 +2422,7 @@ class LeCroy_WavExp100H:
         dict
             Dictionary with parsed keys and values from the waveform descriptor.
         """
-        desc = self._query(f'C{ch}:INSPECT? WAVEDESC')
+        desc = self._query(f'{ch}:INSPECT? WAVEDESC')
         lines = desc.strip().split('\r\n')
         metadata = {}
         for line in lines:
@@ -2440,13 +2464,13 @@ class LeCroy_WavExp100H:
             return raw_value
 
 
-    def acquire_waveform(self, ch: int = 1, points=None):
+    def acquire_waveform(self, ch: str = 'C1', points=None, sweeps: int = 1):
         """Acquire waveform data from the specified channel.
 
         Parameters
         ----------
-        ch : int
-            Channel number to acquire from (1-4).
+        ch : str
+            Channel to acquire from {'C1-4', 'F1-8'}.
         points : int, optional
             Number of points to acquire. If None, acquires all available points.
         Returns
@@ -2456,25 +2480,29 @@ class LeCroy_WavExp100H:
         v : np.ndarray
             Voltage array of the acquired waveform.
         """
-        # ---- Set number of points to acquire ----
-        self._write(f'WFSU SP,0,NP,{points if points else 0},FP,0,SN,0') 
+        data = []
 
-        # ---- Read waveform data ----
-        self._write(f'C{ch}:WF? DAT1')
-        raw_bytes = self.inst.read_raw()
-        data = self._parse_IEEE488p2_block(raw_bytes)
+        for _ in range(sweeps):
+            # ---- Set number of points to acquire ----
+            self._write(f'WFSU SP,0,NP,{points if points else 0},FP,0,SN,0') 
+
+            # ---- Read waveform data ----
+            self._write(f'{ch}:WF? DAT1')
+            raw_bytes = self.inst.read_raw()
+            data_ = self._parse_IEEE488p2_block(raw_bytes)
+
+            data = np.concatenate([data, data_], axis=-1)
 
         # ---- Data scaling ----
-        # desc = self._query(f'C{ch}:INSPECT? WAVEDESC')
         desc = self._get_wavedesc(ch)
 
         VERT_GAIN = float(desc.get("VERTICAL_GAIN", 0))
         VERT_OFFSET = float(desc.get("VERTICAL_OFFSET", 0))
         HORIZ_INTERVAL = float(desc.get("HORIZ_INTERVAL", 0))
-        HORIZ_OFFSET = float(desc.get("HORIZ_OFFSET", 0))
+        # HORIZ_OFFSET = float(desc.get("HORIZ_OFFSET", 0))
 
+        t = np.tile(np.arange(len(data_)), sweeps) * HORIZ_INTERVAL
         v = data * VERT_GAIN - VERT_OFFSET
-        t = np.arange(len(v)) * HORIZ_INTERVAL + HORIZ_OFFSET
         return t, v
     
     def close(self):
@@ -2482,6 +2510,126 @@ class LeCroy_WavExp100H:
         self.__del__()
         print("LeCroy: disconnected")
 
+
+class EXFO_FVA60B:
+    """
+    Driver for EXFO FVA-60B Variable Attenuator.
+
+    .. rubric:: Main methods
+    .. autosummary::
+
+        __init__
+        attenuation
+        get_attenuation
+        wavelength
+        calibrate
+        get_insertion_loss
+        close
+    """
+    def __init__(self, port, timeout=11):
+        """
+        Initializes the connection with the EXFO FVA-60B attenuator.
+        Configuration according to manual: 9600 baud, 8 bits, no parity, 1 stop bit.
+
+        Parameters
+        ----------
+        port : str
+            Serial port where the FVA-60B is connected (e.g., 'COM3' or '/dev/ttyUSB0').
+        timeout : int, optional
+            Timeout for reading in seconds. Default is 11 seconds.
+        """
+        self.port = port
+        self.timeout = timeout
+        self.ser= serial.Serial(
+            port=self.port,
+            baudrate=9600,
+            bytesize=serial.EIGHTBITS,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            timeout=self.timeout
+        )
+        print(f"FVA60B connected to {self.port}")
+
+    def _query(self, command_str):
+        """
+        Sends a command with the required format >CMD< and reads the response.
+        All commands start with '>' and end with '<'.
+        """
+        self.ser.reset_input_buffer() # Clear input buffer
+
+        full_cmd = f">{command_str}<".encode('ascii')
+        self.ser.write(full_cmd)
+
+        resp = self.ser.read_until(b';')
+        resp = resp.decode('ascii').strip(';')
+
+        if not resp:
+            self.ser.close()
+            raise TimeoutError("No response received from FVA-60B.")
+        if resp == "1":
+            self.ser.close()
+            raise ValueError("Command rejected by the device (Code 1)")
+        
+        return resp
+
+    def get_attenuation(self):
+        """
+        Reads the current attenuation. Command: >?<.
+        Returns float with the value in dB.
+        """
+        return -float(self._query("?"))
+
+    def attenuation(self, db_value):
+        """
+        Sets the attenuation. Command: >A-xx.xx<.
+        Note: The manual indicates that the value must be divisible by 0.05 dB.
+        """
+        # Validate 0.05 step
+        if not (round(db_value * 100) % 5 == 0):
+            print("Warning: The value must be divisible by 0.05 dB. Rounding...")
+            db_value = round(db_value * 20) / 20
+
+        if db_value < 0.5 or db_value > 70:
+            print("Warning: Attenuation value is out of allowed range (0.5 to 65 dB). Adjusting...")
+            db_value = max(0.5, min(db_value, 70))
+
+        cmd = f"A-{db_value:05.2f}"
+        self._query(cmd)
+        return self
+
+    def wavelength(self, wavelength):
+        """
+        Sets the wavelength. Command: >Lxxxx<.
+        According to the manual, the range is 1270 to 1330 nm with a 10 nm step.
+        """
+        if wavelength not in range(1270, 1331, 10):
+            print("Warning: Wavelength must be between 1270 and 1330 nm with a 10 nm step. Adjusting...")
+            wavelength = round((wavelength - 1270) / 10) * 10 + 1270
+            wavelength = max(1270, min(wavelength, 1330))
+        cmd = f"L{int(wavelength)}"
+        self._query(cmd)
+        return self
+
+    def calibrate(self):
+        """
+        Executes calibration (zeroing). Command: >C<.
+        """
+        print("Calibrating... (this takes a few seconds)")
+        self._query("C")
+        return self
+    
+    def get_insertion_loss(self):
+        """
+        Reads the current insertion loss. Command: >IL?<.
+        Returns float with the value in dB.
+        """
+        resp = self._query("i")
+        return -float(resp)
+
+    def close(self):
+        """Close the connection to the instrument."""
+        if self.ser.is_open:
+            self.ser.close()
 
 # import struct
 # from smbus2 import SMBus, i2c_msg
