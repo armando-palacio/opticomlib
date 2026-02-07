@@ -1968,8 +1968,8 @@ class electrical_signal():
 
         return self
     
-    def plot_eye(self, n_traces=None, cmap='viridis', 
-             N_grid_bins=350, grid_sigma=3, ax=None, **plot_kw):
+    def plot_eye(self, n_traces=None, cmap='jet', 
+             N_grid_bins=200, grid_sigma=5, style: Literal['line', 'dot', 'density']='dot', ax=None, **plot_kw):
         r"""Plots a colored eye diagram, internally calculating color density.
 
         Parameters
@@ -1978,11 +1978,16 @@ class electrical_signal():
             Maximum number of traces to plot. If ``None``, all available traces
             will be plotted. Defaults to ``None``.
         cmap : :obj:`str`, optional
-            Name of the matplotlib colormap. Defaults to ``'viridis'``.
+            Name of the matplotlib colormap. Defaults to ``'jet'``.
         N_grid_bins : :obj:`int`, optional
-            Number of bins for the density histogram. Defaults to ``350``.
+            Number of bins for the density histogram. Defaults to ``200``.
         grid_sigma : :obj:`float`, optional
-            Sigma for the Gaussian filter applied to the density. Defaults to ``3``.
+            Sigma for the Gaussian filter applied to the density. Defaults to ``5``.
+        style : Literal['line', 'dot', 'density'], optional
+            Style of the eye diagram plot:
+            - 'line': Plots traces as lines.
+            - 'dot': Plots traces as dots.
+            - 'density': Plots density map only.
         ax : :obj:`matplotlib.axes.Axes`, optional
             Axes object to plot on. If ``None``, creates new figure and axes.
             Defaults to ``None``.
@@ -2031,7 +2036,7 @@ class electrical_signal():
         else:
             n_traces = min(n_traces, MAX_TRACES)
 
-        eyediagram(self, gv.sps, n_traces, cmap, N_grid_bins, grid_sigma, ax, **plot_kw)
+        eyediagram(self, gv.sps, n_traces, cmap, N_grid_bins, grid_sigma, style, ax, **plot_kw)
         self.execution_time += toc()
         return self
 
